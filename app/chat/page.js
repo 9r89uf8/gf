@@ -2,27 +2,51 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useStore } from '@/app/store/store';
-import {getGirl} from "@/app/services/girlService";
-import ConversationHistory from '@/app/components/chat/ConversationHistory';
-import { fetchMessages, sendChatPrompt, fetchAudios, likeMessage } from '@/app/services/chatService';
-import { Container, Paper, Typography, InputBase, Button, styled, alpha, FormControlLabel, Switch, IconButton, Avatar, Box } from '@mui/material';
+import { getGirl } from '@/app/services/girlService';
+import {
+    fetchMessages,
+    sendChatPrompt,
+    fetchAudios,
+    likeMessage,
+} from '@/app/services/chatService';
+import {
+    Container,
+    Paper,
+    Typography,
+    InputBase,
+    Button,
+    styled,
+    alpha,
+    IconButton,
+    Avatar,
+    Box,
+    CircularProgress,
+} from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Footer from "@/app/components/buyAction/Footer";
-import {useRouter} from "next/navigation";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SendIcon from '@mui/icons-material/Send';
+import Footer from '@/app/components/buyAction/Footer';
+import ConversationHistory from '@/app/components/chat/ConversationHistory';
+import { useRouter } from 'next/navigation';
 
+const StyledContainer = styled(Container)(({ theme }) => ({
+    position: 'relative',
+    paddingBottom: theme.spacing(10),
+}));
 
-const Item = styled(Paper)(({ theme }) => ({
+const Header = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
     textAlign: 'center',
-    marginTop: 15,
-    marginBottom: 30,
-    color: '#ffffff',
+    margin: `${theme.spacing(2)} auto`,
+    marginBottom: theme.spacing(4),
+    color: theme.palette.common.white,
     background: 'linear-gradient(45deg, #343a40, #001219)',
     backdropFilter: 'blur(10px)',
-    borderRadius: 10,
+    borderRadius: theme.shape.borderRadius,
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
+    cursor: 'pointer',
+    maxWidth: 400, // Set a maximum width
 }));
 
 const ImagePreview = styled('img')({
@@ -33,6 +57,38 @@ const ImagePreview = styled('img')({
     borderRadius: '5px',
 });
 
+const ChatInput = styled(Paper)(({ theme }) => ({
+    position: 'fixed',
+    bottom: theme.spacing(1),
+    left: 0,
+    right: 0,
+    width: '100%',
+    maxWidth: 'sm',
+    margin: '0 auto',
+    padding: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.paper,
+    zIndex: 1000,
+}));
+
+const ActiveIndicator = styled('div')(({ theme }) => ({
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    width: '15px',
+    height: '15px',
+    backgroundColor: '#007BFF', // Blue color for the active indicator
+    borderRadius: '50%',
+    border: `2px solid ${theme.palette.background.paper}`,
+    animation: 'pulse 2s infinite',
+    '@keyframes pulse': {
+        '0%': { transform: 'scale(1)', opacity: 1 },
+        '50%': { transform: 'scale(1.5)', opacity: 0.7 },
+        '100%': { transform: 'scale(1)', opacity: 1 },
+    },
+}));
 
 const Chat = () => {
     const router = useRouter();
@@ -46,11 +102,27 @@ const Chat = () => {
     const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const messageSent = useStore((state) => state.messageSent);
-    const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
-        getGirl()
+        getGirl();
     }, []);
+
+    useEffect(() => {
+        if (user) {
+            fetchMessages({ userId: user.uid });
+            fetchAudios();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (conversationHistory?.length > 0 && user) {
+            const assistantMessage = conversationHistory[conversationHistory.length - 1];
+            if (assistantMessage.role === 'assistant') {
+                fetchAudios();
+            }
+        }
+    }, [conversationHistory]);
 
     const handleProfileClick = () => {
         router.push('/01uIfxE3VRIbrIygbr2Q');
@@ -58,21 +130,26 @@ const Chat = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!prompt.trim() && !image) return;
+
+        setIsSending(true);
+
         const formData = new FormData();
         formData.append('userId', user.uid);
         formData.append('jornada', jornada);
-        formData.append('audio', isAudioEnabled);
+        formData.append('audio', true);
 
         if (image) {
             formData.append('image', image);
         } else {
-            formData.append('userMessage', prompt);
+            formData.append('userMessage', prompt.trim());
         }
 
         await sendChatPrompt(formData);
         setPrompt('');
         setImage(null);
         setImagePreview(null);
+        setIsSending(false);
     };
 
     const handleImageUpload = (event) => {
@@ -87,121 +164,114 @@ const Chat = () => {
         }
     };
 
-    const handleLike = async (messageId) => {
-        const formData = { messageUid: messageId };
-        await likeMessage(formData);
+    const handleClearImage = () => {
+        setImage(null);
+        setImagePreview(null);
     };
 
-    useEffect(() => {
-        if (user) {
-            fetchMessages({ userId: user.uid });
-            fetchAudios();
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (conversationHistory && conversationHistory.length > 0 && user) {
-            const assistantMessage = conversationHistory[conversationHistory.length - 1];
-            if (assistantMessage.role === 'assistant') {
-                fetchAudios();
-            }
-        }
-    }, [conversationHistory]);
+    const handleLike = async (messageId) => {
+        await likeMessage({ messageUid: messageId });
+    };
 
     const isPromptEntered = prompt.trim().length > 0 || image !== null;
-
+    const canSendMessage = (user && user.freeMessages > 0) || !user;
 
     return (
-        <Container maxWidth="sm">
+        <StyledContainer maxWidth="sm">
+            {conversationHistory?.length === 0 && girl && (
+                <Header elevation={6} onClick={handleProfileClick}>
+                    <Box sx={{ position: 'relative', display: 'inline-block' }}>
+                        <Avatar
+                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                            sx={{ width: 86, height: 86, margin: '0 auto' }}
+                        />
+                        <ActiveIndicator />
+                    </Box>
+                    <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
+                        {girl.username}{' '}
+                        <CheckCircleIcon sx={{ color: 'white', verticalAlign: 'middle' }} />
+                    </Typography>
+                </Header>
+            )}
+
             <ConversationHistory
                 conversationHistory={conversationHistory}
                 user={user}
                 audios={audios}
                 handleLike={handleLike}
             />
-            {conversationHistory && conversationHistory.length <= 0 && (
-                <Item elevation={6}>
-                    {girl&&
-                        <>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Avatar src={'https://d3sog3sqr61u3b.cloudfront.net/'+girl.picture} sx={{ width: 56, height: 56 }} onClick={() => handleProfileClick()} />
-                            </div>
-                            <Typography variant="h5" gutterBottom style={{ marginBottom: 3, marginTop: 7 }} onClick={() => handleProfileClick()}>
-                                {girl.username} <CheckCircleIcon sx={{ color: 'white', verticalAlign: 'middle' }} />
-                            </Typography>
-                        </>
-                    }
 
-                </Item>
-            )}
-
-            {(user && user.freeMessages > 0) || !user ? (
-                <Paper
-                    elevation={4}
-                    component="form"
-                    sx={{
-                        p: '2px 4px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'stretch',
-                        borderRadius: 5,
-                        position: 'fixed',
-                        bottom: 1,
-                        left: 0,
-                        right: 0,
-                        width: '100%',
-                        maxWidth: 'sm',
-                        backgroundColor: '#fff',
-                        zIndex: 1000,
-                    }}
-                    onSubmit={handleSubmit}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <InputBase
-                            sx={{ ml: 1, flex: 1, padding: 2 }}
-                            placeholder={messageSent ? 'Escribiendo...' : 'Escribe algo...'}
-                            multiline
-                            required={!image}
-                            minRows={1}
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            maxRows={4}
-                            inputProps={{ 'aria-label': 'chat input' }}
-                            disabled={image !== null}
-                        />
-                        <input
-                            type="file"
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            ref={fileInputRef}
-                            onChange={handleImageUpload}
-                        />
-                        <IconButton onClick={() => fileInputRef.current.click()}>
-                            <ImageIcon />
+            {canSendMessage ? (
+                <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
+                    <IconButton
+                        onClick={() => fileInputRef.current.click()}
+                        aria-label="Upload Image"
+                    >
+                        <ImageIcon />
+                    </IconButton>
+                    <InputBase
+                        sx={{ ml: 1, flex: 1 }}
+                        placeholder={isSending ? 'Enviando...' : 'Escribe un mensaje...'}
+                        multiline
+                        minRows={1}
+                        maxRows={4}
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        inputProps={{ 'aria-label': 'Escribe un mensaje' }}
+                        disabled={isSending}
+                    />
+                    <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                    />
+                    {isSending ? (
+                        <CircularProgress size={24} sx={{ mr: 2 }} />
+                    ) : (
+                        <IconButton
+                            type="submit"
+                            color="primary"
+                            disabled={!isPromptEntered || !user}
+                            aria-label="Send Message"
+                        >
+                            <SendIcon />
                         </IconButton>
-                        {isPromptEntered && (
-                            <Button
-                                type="submit"
-                                disabled={!isPromptEntered || messageSent || !user}
-                                style={{ marginLeft: 8 }}
-                            >
-                                Enviar
-                            </Button>
-                        )}
-                    </div>
-                    {imagePreview && (
-                        <ImagePreview src={imagePreview} alt="Selected Image" />
                     )}
-                </Paper>
+                </ChatInput>
             ) : (
                 <Footer />
             )}
 
-
-
-
-        </Container>
+            {imagePreview && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        bottom: 70,
+                        left: 0,
+                        right: 0,
+                        textAlign: 'center',
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        padding: 2,
+                        borderRadius: 1,
+                    }}
+                >
+                    <ImagePreview src={imagePreview} alt="Selected" />
+                    <Button
+                        onClick={handleClearImage}
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        sx={{ mt: 1 }}
+                    >
+                        Clear Image
+                    </Button>
+                </Box>
+            )}
+        </StyledContainer>
     );
 };
 
 export default Chat;
+
