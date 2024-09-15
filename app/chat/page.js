@@ -12,49 +12,25 @@ import {
 import {
     Container,
     Paper,
-    Typography,
     InputBase,
     Button,
     styled,
-    alpha,
     IconButton,
-    Avatar,
     Box,
     CircularProgress,
+    Typography,
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SendIcon from '@mui/icons-material/Send';
 import Footer from '@/app/components/buyAction/Footer';
 import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import { useRouter } from 'next/navigation';
+import GirlHeader from '@/app/components/chat/GirlHeader';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     position: 'relative',
-    paddingBottom: theme.spacing(12), // Increased padding to accommodate larger ChatInput
+    paddingBottom: theme.spacing(12),
 }));
-
-const Header = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    margin: `${theme.spacing(2)} auto`,
-    marginBottom: 90,
-    color: theme.palette.common.white,
-    background: 'linear-gradient(45deg, #343a40, #001219)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: theme.shape.borderRadius,
-    border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    maxWidth: 300, // Set a maximum width
-}));
-
-const ImagePreview = styled('img')({
-    maxWidth: '100%',
-    maxHeight: '200px',
-    objectFit: 'contain',
-    marginTop: '10px',
-    borderRadius: '5px',
-});
 
 const ChatInput = styled(Paper)(({ theme }) => ({
     position: 'fixed',
@@ -64,7 +40,7 @@ const ChatInput = styled(Paper)(({ theme }) => ({
     width: '100%',
     maxWidth: 'sm',
     margin: '0 auto',
-    padding: theme.spacing(2), // Increased padding for a larger input area
+    padding: theme.spacing(2),
     display: 'flex',
     alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
@@ -72,22 +48,13 @@ const ChatInput = styled(Paper)(({ theme }) => ({
     zIndex: 1000,
 }));
 
-const ActiveIndicator = styled('div')(({ theme }) => ({
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    width: '15px',
-    height: '15px',
-    backgroundColor: '#007BFF', // Blue color for the active indicator
-    borderRadius: '50%',
-    border: `2px solid ${theme.palette.background.paper}`,
-    animation: 'pulse 2s infinite',
-    '@keyframes pulse': {
-        '0%': { transform: 'scale(1)', opacity: 1 },
-        '50%': { transform: 'scale(1.5)', opacity: 0.7 },
-        '100%': { transform: 'scale(1)', opacity: 1 },
-    },
-}));
+const ImagePreview = styled('img')({
+    maxWidth: '100%',
+    maxHeight: '200px',
+    objectFit: 'contain',
+    marginTop: '10px',
+    borderRadius: '5px',
+});
 
 const Chat = () => {
     const router = useRouter();
@@ -187,27 +154,7 @@ const Chat = () => {
     return (
         <StyledContainer maxWidth="sm">
             {conversationHistory?.length === 0 && girl && (
-                <Header elevation={6}>
-                    <Box sx={{ position: 'relative', display: 'inline-block' }}>
-                        <Avatar
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            sx={{ width: 100, height: 100, margin: '0 auto' }}
-                        />
-                        <ActiveIndicator />
-                    </Box>
-                    <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
-                        {girl.username}{' '}
-                        <CheckCircleIcon sx={{ color: 'white', verticalAlign: 'middle' }} />
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2 }}
-                        onClick={handleProfileClick}
-                    >
-                        View Profile
-                    </Button>
-                </Header>
+                <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />
             )}
 
             <ConversationHistory
@@ -223,7 +170,7 @@ const Chat = () => {
                     elevation={4}
                     sx={{
                         position: 'fixed',
-                        bottom: 110, // Adjusted to appear above ChatInput
+                        bottom: 110,
                         left: 0,
                         right: 0,
                         margin: '0 auto',
@@ -249,17 +196,21 @@ const Chat = () => {
             {canSendMessage ? (
                 <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
                     <IconButton
-                        onClick={() => fileInputRef.current.click()}
+                        onClick={() => {
+                            if (user) {
+                                fileInputRef.current.click();
+                            }
+                        }}
                         aria-label="Upload Image"
                         disabled={!user}
                     >
-                        <ImageIcon fontSize='large'/>
+                        <ImageIcon fontSize="large" />
                     </IconButton>
                     <InputBase
-                        sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }} // Increased font size for a bigger input
+                        sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
                         placeholder={isSending ? 'Enviando...' : 'Escribe un mensaje...'}
                         multiline
-                        maxRows={6} // Increased maximum rows
+                        maxRows={6}
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         inputProps={{ 'aria-label': 'Escribe un mensaje' }}
@@ -281,7 +232,7 @@ const Chat = () => {
                             disabled={!isPromptEntered || (!user && isPromptEntered)}
                             aria-label="Send Message"
                         >
-                            <SendIcon sx={{ fontSize: 32 }}/>
+                            <SendIcon sx={{ fontSize: 32 }} />
                         </IconButton>
                     )}
                 </ChatInput>
@@ -319,5 +270,6 @@ const Chat = () => {
 };
 
 export default Chat;
+
 
 
