@@ -34,7 +34,7 @@ const AudioPlayer = ({ src }) => {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
             <IconButton onClick={togglePlayPause}>
-                {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+                {isPlaying ? <PauseIcon sx={{ fontSize: 36 }}/> : <PlayArrowIcon sx={{ fontSize: 36 }}/>}
             </IconButton>
             <Slider value={progress} sx={{ flex: 1 }} />
         </Box>
