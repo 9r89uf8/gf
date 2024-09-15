@@ -39,7 +39,7 @@ const Header = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     margin: `${theme.spacing(2)} auto`,
-    marginBottom: theme.spacing(4),
+    marginBottom: 90,
     color: theme.palette.common.white,
     background: 'linear-gradient(45deg, #343a40, #001219)',
     backdropFilter: 'blur(10px)',
@@ -223,17 +223,17 @@ const Chat = () => {
                     elevation={4}
                     sx={{
                         position: 'fixed',
-                        bottom: 80, // Adjusted to appear above ChatInput
+                        bottom: 110, // Adjusted to appear above ChatInput
                         left: 0,
                         right: 0,
                         margin: '0 auto',
                         padding: 2,
                         textAlign: 'center',
                         zIndex: 1000,
-                        maxWidth: 'sm',
+                        maxWidth: '300px',
                     }}
                 >
-                    <Typography variant="body1" sx={{ mb: 1 }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>
                         You need to log in or register to chat with {girl?.username}.
                     </Typography>
                     <Button
@@ -252,7 +252,7 @@ const Chat = () => {
                         onClick={() => fileInputRef.current.click()}
                         aria-label="Upload Image"
                     >
-                        <ImageIcon />
+                        <ImageIcon fontSize='large'/>
                     </IconButton>
                     <InputBase
                         sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }} // Increased font size for a bigger input
@@ -281,7 +281,7 @@ const Chat = () => {
                             disabled={!isPromptEntered || (!user && isPromptEntered)}
                             aria-label="Send Message"
                         >
-                            <SendIcon />
+                            <SendIcon sx={{ fontSize: 32 }}/>
                         </IconButton>
                     )}
                 </ChatInput>
