@@ -31,7 +31,7 @@ import { useRouter } from 'next/navigation';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     position: 'relative',
-    paddingBottom: theme.spacing(10),
+    paddingBottom: theme.spacing(12), // Increased padding to accommodate larger ChatInput
 }));
 
 const Header = styled(Paper)(({ theme }) => ({
@@ -45,8 +45,7 @@ const Header = styled(Paper)(({ theme }) => ({
     backdropFilter: 'blur(10px)',
     borderRadius: theme.shape.borderRadius,
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    cursor: 'pointer',
-    maxWidth: 400, // Set a maximum width
+    maxWidth: 300, // Set a maximum width
 }));
 
 const ImagePreview = styled('img')({
@@ -65,7 +64,7 @@ const ChatInput = styled(Paper)(({ theme }) => ({
     width: '100%',
     maxWidth: 'sm',
     margin: '0 auto',
-    padding: theme.spacing(1),
+    padding: theme.spacing(2), // Increased padding for a larger input area
     display: 'flex',
     alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
@@ -128,9 +127,18 @@ const Chat = () => {
         router.push('/01uIfxE3VRIbrIygbr2Q');
     };
 
+    const handleLoginRedirect = () => {
+        router.push('/login'); // Adjust the path to your login or register page
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!prompt.trim() && !image) return;
+
+        if (!user) {
+            // User is not logged in; prevent submission
+            return;
+        }
 
         setIsSending(true);
 
@@ -179,7 +187,7 @@ const Chat = () => {
     return (
         <StyledContainer maxWidth="sm">
             {conversationHistory?.length === 0 && girl && (
-                <Header elevation={6} onClick={handleProfileClick}>
+                <Header elevation={6}>
                     <Box sx={{ position: 'relative', display: 'inline-block' }}>
                         <Avatar
                             src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
@@ -191,6 +199,14 @@ const Chat = () => {
                         {girl.username}{' '}
                         <CheckCircleIcon sx={{ color: 'white', verticalAlign: 'middle' }} />
                     </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ mt: 2 }}
+                        onClick={handleProfileClick}
+                    >
+                        View Profile
+                    </Button>
                 </Header>
             )}
 
@@ -201,6 +217,35 @@ const Chat = () => {
                 handleLike={handleLike}
             />
 
+            {/* Reminder to log in or register */}
+            {isPromptEntered && !user && (
+                <Paper
+                    elevation={4}
+                    sx={{
+                        position: 'fixed',
+                        bottom: 80, // Adjusted to appear above ChatInput
+                        left: 0,
+                        right: 0,
+                        margin: '0 auto',
+                        padding: 2,
+                        textAlign: 'center',
+                        zIndex: 1000,
+                        maxWidth: 'sm',
+                    }}
+                >
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                        You need to log in or register to chat with {girl?.username}.
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleLoginRedirect}
+                    >
+                        Log In or Register
+                    </Button>
+                </Paper>
+            )}
+
             {canSendMessage ? (
                 <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
                     <IconButton
@@ -210,11 +255,11 @@ const Chat = () => {
                         <ImageIcon />
                     </IconButton>
                     <InputBase
-                        sx={{ ml: 1, flex: 1 }}
+                        sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }} // Increased font size for a bigger input
                         placeholder={isSending ? 'Enviando...' : 'Escribe un mensaje...'}
                         multiline
-                        minRows={1}
-                        maxRows={4}
+                        minRows={2} // Increased minimum rows
+                        maxRows={6} // Increased maximum rows
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         inputProps={{ 'aria-label': 'Escribe un mensaje' }}
@@ -233,7 +278,7 @@ const Chat = () => {
                         <IconButton
                             type="submit"
                             color="primary"
-                            disabled={!isPromptEntered || !user}
+                            disabled={!isPromptEntered || (!user && isPromptEntered)}
                             aria-label="Send Message"
                         >
                             <SendIcon />
@@ -274,4 +319,5 @@ const Chat = () => {
 };
 
 export default Chat;
+
 
