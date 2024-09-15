@@ -191,7 +191,7 @@ const Chat = () => {
                     <Box sx={{ position: 'relative', display: 'inline-block' }}>
                         <Avatar
                             src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            sx={{ width: 86, height: 86, margin: '0 auto' }}
+                            sx={{ width: 100, height: 100, margin: '0 auto' }}
                         />
                         <ActiveIndicator />
                     </Box>
@@ -251,6 +251,7 @@ const Chat = () => {
                     <IconButton
                         onClick={() => fileInputRef.current.click()}
                         aria-label="Upload Image"
+                        disabled={!user}
                     >
                         <ImageIcon fontSize='large'/>
                     </IconButton>
@@ -258,7 +259,6 @@ const Chat = () => {
                         sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }} // Increased font size for a bigger input
                         placeholder={isSending ? 'Enviando...' : 'Escribe un mensaje...'}
                         multiline
-                        minRows={2} // Increased minimum rows
                         maxRows={6} // Increased maximum rows
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
