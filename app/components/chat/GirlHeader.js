@@ -49,6 +49,13 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
+                style={{
+                    backgroundImage: 'linear-gradient(45deg, #219ebc, #0077b6)',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '20px',
+                    fontWeight: 'bold'
+                }}
                 onClick={handleProfileClick}
             >
                 View Profile

@@ -1,10 +1,9 @@
 'use client';
 import React, { useEffect } from 'react';
-import { useParams } from 'next/navigation'; // Import useParams
+import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
-import {getGirl} from "@/app/services/girlService";
+import { getGirl } from "@/app/services/girlService";
 import PostsFilter from "@/app/components/posts/PostsFilter";
-import { useRouter } from 'next/navigation';
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
     Container,
@@ -12,96 +11,122 @@ import {
     Typography,
     Button,
     Paper,
-    Avatar
+    Avatar,
+    Grid,
+    Divider,
+    Chip
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import { styled } from "@mui/material/styles";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CakeIcon from '@mui/icons-material/Cake';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
-const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    marginTop: 15,
-    color: '#ffffff',
-    background: 'linear-gradient(45deg, #343a40, #001219)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: 10,
-    border: `1px solid ${theme.palette.divider}`,
+const ProfileCard = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(4),
+    marginTop:10,
+    color: theme.palette.common.white,
+    background: 'linear-gradient(135deg, #2c3e50, #3498db)',
+    borderRadius: theme.shape.borderRadius * 2,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+    width: 150,
+    height: 150,
+    border: `4px solid ${theme.palette.common.white}`,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+    backgroundImage: 'linear-gradient(45deg, #2ecc71, #27ae60)',
+    color: 'white',
+    padding: '10px 24px',
+    borderRadius: '25px',
+    fontWeight: 'bold',
+    textTransform: 'none',
+    boxShadow: '0 4px 6px rgba(46, 204, 113, 0.3)',
+    '&:hover': {
+        backgroundImage: 'linear-gradient(45deg, #27ae60, #2ecc71)',
+    },
 }));
 
 const GirlProfile = () => {
-    const params = useParams(); // Use useParams to access route parameters
+    const params = useParams();
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
-
     const router = useRouter();
-    useEffect(() => {
-        getGirl(); // Access the id parameter
-    }, []);
 
+    useEffect(() => {
+        getGirl();
+    }, []);
 
     const handleChat = () => {
         router.push('/chat');
     };
 
-    return (
-        <Container maxWidth="sm">
-            <Box display="flex" flexDirection="column" height="80vh" overflow="auto">
-                {girl && (
-                    <Item elevation={4}>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Avatar
-                                variant="square"
-                                src={'https://d3sog3sqr61u3b.cloudfront.net/' + girl.picture}
-                                sx={{ width: 116, height: 116, borderRadius: '10%' }}
-                            />
-                        </div>
-                        <Typography variant="h5" gutterBottom>
-                            {girl.username} <CheckCircleIcon sx={{ color: 'white', verticalAlign: 'middle' }} />
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                            {girl.bio}
-                        </Typography>
-                        <Box display="flex" justifyContent="center" mt={2}>
-                            <Button
-                                onClick={() => handleChat()}
-                                style={{
-                                    backgroundImage: 'linear-gradient(45deg, #32cd32, #008080)',
-                                    color: 'white',
-                                    padding: '10px 20px',
-                                    borderRadius: '20px',
-                                    fontWeight: 'bold',
-                                    boxShadow: '0 3px 5px 2px rgba(50, 205, 50, .3)',
-                                }}
-                            >
-                                Mensaje
-                            </Button>
-                        </Box>
-                    </Item>
-                )}
-                <div>
-                    <PostsFilter postsCount={girl.posts.length}/>
-                </div>
+    if (!girl) {
+        return <Typography>Loading...</Typography>;
+    }
 
+    return (
+        <Container maxWidth="md">
+            <ProfileCard elevation={4}>
+                <Grid container spacing={4} alignItems="center">
+                    <Grid item xs={12} md={4}>
+                        <Box display="flex" justifyContent="center">
+                            <StyledAvatar
+                                src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                alt={girl.username}
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} md={8}>
+                        <Box>
+                            <Typography variant="h4" gutterBottom>
+                                {girl.username}
+                                <CheckCircleIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1 }} />
+                            </Typography>
+                            <Box display="flex" alignItems="center" mb={2}>
+                                <CakeIcon sx={{ mr: 1 }} />
+                                <Typography variant="body1">{girl.age} years old</Typography>
+                            </Box>
+                            <Box display="flex" alignItems="center" mb={2}>
+                                <LocationOnIcon sx={{ mr: 1 }} />
+                                <Typography variant="body1">{girl.country}</Typography>
+                            </Box>
+                            <Divider sx={{ my: 2 }} />
+                            <Typography variant="body1" paragraph>
+                                {girl.bio}
+                            </Typography>
+                            <ActionButton
+                                onClick={handleChat}
+                                startIcon={<ChatBubbleOutlineIcon />}
+                            >
+                                Send Message
+                            </ActionButton>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </ProfileCard>
+
+            <Box mb={4}>
+                <PostsFilter postsCount={girl.posts.length} />
             </Box>
 
-
-
-            {girl&&girl.posts&&
-                <Grid container spacing={2} style={{ marginTop: 1 }}>
-                    {girl.posts.map((post, index) => (
+            <Grid container spacing={3}>
+                {girl.posts.map((post, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
                         <GirlPostsComp
-                            key={index}
                             girl={post.girlId}
                             user={user}
                             post={post}
                             index={index}
                         />
-                    ))}
-                </Grid>
-            }
-
+                    </Grid>
+                ))}
+            </Grid>
         </Container>
     );
 };

@@ -8,5 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="ai-gf" />
+    <orderEntry type="module" module-name="next14quinielas" />
   </component>
 </module>
