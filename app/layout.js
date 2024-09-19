@@ -9,7 +9,7 @@ const Layout = ({ children }) => {
         <html lang="es">
         <body>
         <Navbar />
-        <main>{children}</main>
+        <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
         <ConditionalFloatingNavbar />
         </body>
         </html>

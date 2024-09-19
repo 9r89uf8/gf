@@ -131,7 +131,7 @@ export const editUser = async (formData) => {
 };
 
 export const deleteUser = async () => {
-    const setUser = useStore.getState().setUser;
+    const logout = useStore.getState().logout;
     try {
         const response = await fetch('/api/auth/delete', {
             method: 'GET'
@@ -139,7 +139,7 @@ export const deleteUser = async () => {
 
         if (response.ok) {
             const data = await response.json();
-            setUser(data)
+            logout()
             return data;
         } else {
             throw new Error('error');
