@@ -46,8 +46,7 @@ export async function POST(req) {
             const userData = userDoc.data();
 
 
-
-            return new Response(JSON.stringify(userData), {
+            return new Response(JSON.stringify({user: userData, success: true}), {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },
             });

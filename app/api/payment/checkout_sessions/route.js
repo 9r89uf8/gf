@@ -53,8 +53,8 @@ export async function POST(req) {
             mode: 'payment',
             locale: locale,
             metadata: { userId: userId },
-            success_url: `${origin}/payment/result?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/payment/result?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${origin}/payment?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/payment?session_id={CHECKOUT_SESSION_ID}`,
         };
 
         const checkoutSession = await stripe.checkout.sessions.create(params);

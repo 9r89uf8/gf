@@ -62,7 +62,7 @@ const PremiumButton = styled(Button)(({ theme }) => ({
 function GirlPostComp({ girl, user, post, index, onLike }) {
     const router = useRouter();
     const isUserLoggedIn = !!user;
-    const isUserPremium = user && user.isPremium;
+    const isUserPremium = user && user.premium;
     const canViewPremiumContent = isUserPremium || !post.isPremium;
 
     const formatTimestamp = (timestamp) => {

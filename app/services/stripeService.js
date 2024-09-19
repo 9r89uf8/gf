@@ -68,6 +68,7 @@ export const verifySession = async (sessionId) => {
     const setLoading = useStore.getState().setLoading;
     const setError = useStore.getState().setError;
     const setStatus = useStore.getState().setStatus;
+    const setUser = useStore.getState().setUser;
 
     setLoading(true);
     setError(null);
@@ -90,6 +91,7 @@ export const verifySession = async (sessionId) => {
                 type: 'success',
                 message: 'Pago Exitoso',
             });
+            setUser(data.user);
         } else {
             setStatus('cancel');
             addNotification({

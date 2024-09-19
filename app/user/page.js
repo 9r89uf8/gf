@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@/app/store/store';
 import { useRouter } from 'next/navigation';
+import { differenceInDays, differenceInHours } from 'date-fns';
 import { editUser, deleteUser } from "@/app/services/authService";
 import {
     Box,
@@ -61,6 +62,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 const UserProfile = () => {
     const user = useStore((state) => state.user);
+    const girl = useStore((state) => state.girl);
     const [isEditing, setIsEditing] = useState(false);
     const [newUserInfo, setNewUserInfo] = useState({ name: '', email: '', profilePic: '' });
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -128,6 +130,16 @@ const UserProfile = () => {
     const handleRegister = () => {
         router.push('/register');
     };
+
+    // Calculate the days and hours remaining until the membership expires
+    let daysRemaining = null;
+    let hoursRemaining = null;
+
+    if (user&&user.premium&&girl) {
+        const expirationDate = new Date(user.expirationDate._seconds * 1000);
+        daysRemaining = differenceInDays(expirationDate, new Date());
+        hoursRemaining = differenceInHours(expirationDate, new Date()) % 24; // To get the remainder hours after days
+    }
 
     if (!user) {
         return (
@@ -215,9 +227,42 @@ const UserProfile = () => {
                         </ActionButton>
                     </>
                 )}
+
+
+
+
+                {user && user.premium ? (
+                    <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}>
+                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#ffd700' }}>
+                            Membresía Premium
+                        </Typography>
+                        {!user.expired ? (
+                            <>
+                                <Typography variant="h6" sx={{ mb: 1 }}>
+                                    Tu membresía premium está activa.
+                                </Typography>
+                                {daysRemaining !== null && hoursRemaining !== null ? (
+                                    <Typography variant="h6">
+                                        Expira en: <strong>{daysRemaining}</strong> día{daysRemaining !== 1 ? 's' : ''} y <strong>{hoursRemaining}</strong> hora{hoursRemaining !== 1 ? 's' : ''}
+                                    </Typography>
+                                ) : (
+                                    <Typography variant="body2">
+                                        Calculando tiempo restante...
+                                    </Typography>
+                                )}
+                            </>
+                        ) : (
+                            <Typography variant="body1" sx={{ color: '#ff6b6b' }}>
+                                Tu membresía premium ha expirado.
+                            </Typography>
+                        )}
+                    </Box>
+                ) : null}
+
             </StyledCard>
 
             <ActionButton
+                style={{marginBottom: 20}}
                 variant="contained"
                 color="error"
                 startIcon={<DeleteForever />}
