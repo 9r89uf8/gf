@@ -25,6 +25,7 @@ const CheckoutButton = ({user, country, price, girlId}) => {
             color="primary"
             onClick={handleCheckout}
             disabled={loading}
+            sx={{ fontSize: 22 }}
         >
             {loading ? 'Processing...' : 'Pagar'}
         </Button>

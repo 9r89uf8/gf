@@ -29,7 +29,7 @@ import GirlHeader from '@/app/components/chat/GirlHeader';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     position: 'relative',
-    paddingBottom: theme.spacing(12),
+    paddingBottom: theme.spacing(12)
 }));
 
 const ChatInput = styled(Paper)(({ theme }) => ({
