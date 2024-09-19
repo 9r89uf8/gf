@@ -1,43 +1,75 @@
-import React from 'react';
-import { Box, IconButton, Slider } from '@mui/material';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, IconButton, LinearProgress, styled } from '@mui/material';
+import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
+import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
+
+const PlayerWrapper = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(1, 2),
+    borderRadius: theme.shape.borderRadius * 3,
+    background: theme.palette.mode === 'dark'
+        ? 'linear-gradient(45deg, #2c3e50, #34495e)'
+        : 'linear-gradient(45deg, #e0e0e0, #f5f5f5)',
+    boxShadow: theme.shadows[2],
+}));
 
 const AudioPlayer = ({ src }) => {
-    const [isPlaying, setIsPlaying] = React.useState(false);
-    const [audio] = React.useState(new Audio(src));
-    const [progress, setProgress] = React.useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const audioRef = useRef(new Audio(src));
+    const intervalRef = useRef();
 
-    React.useEffect(() => {
-        const updateProgress = () => {
-            setProgress((audio.currentTime / audio.duration) * 100);
-        };
-
-        audio.addEventListener('timeupdate', updateProgress);
-        audio.addEventListener('ended', () => setIsPlaying(false));
-
+    useEffect(() => {
         return () => {
-            audio.removeEventListener('timeupdate', updateProgress);
-            audio.pause();
+            audioRef.current.pause();
+            clearInterval(intervalRef.current);
         };
-    }, [audio]);
+    }, []);
 
-    const togglePlayPause = () => {
+    useEffect(() => {
         if (isPlaying) {
-            audio.pause();
+            audioRef.current.play();
+            startTimer();
         } else {
-            audio.play();
+            audioRef.current.pause();
+            clearInterval(intervalRef.current);
         }
-        setIsPlaying(!isPlaying);
+    }, [isPlaying]);
+
+    const startTimer = () => {
+        clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(() => {
+            if (audioRef.current.ended) {
+                setIsPlaying(false);
+                setProgress(0);
+            } else {
+                setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
+            }
+        }, 1000);
     };
 
+    const togglePlayPause = () => setIsPlaying(!isPlaying);
+
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-            <IconButton onClick={togglePlayPause}>
-                {isPlaying ? <PauseIcon sx={{ fontSize: 36 }}/> : <PlayArrowIcon sx={{ fontSize: 36 }}/>}
+        <PlayerWrapper>
+            <IconButton onClick={togglePlayPause} color="primary" size="small">
+                {isPlaying ? <PauseRoundedIcon sx={{ fontSize: 36 }}/> : <PlayArrowRoundedIcon sx={{ fontSize: 36 }}/>}
             </IconButton>
-            <Slider value={progress} sx={{ flex: 1 }} />
-        </Box>
+            <Box sx={{ flexGrow: 1, ml: 2 }}>
+                <LinearProgress
+                    variant="determinate"
+                    value={progress}
+                    sx={{
+                        height: 4,
+                        borderRadius: 2,
+                        '& .MuiLinearProgress-bar': {
+                            borderRadius: 2,
+                        },
+                    }}
+                />
+            </Box>
+        </PlayerWrapper>
     );
 };
 
