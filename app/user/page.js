@@ -32,6 +32,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
     maxWidth: 400,
     width: '100%',
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({

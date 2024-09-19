@@ -30,6 +30,9 @@ const ProfileCard = styled(Paper)(({ theme }) => ({
     background: 'linear-gradient(135deg, #2c3e50, #3498db)',
     borderRadius: theme.shape.borderRadius * 2,
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({

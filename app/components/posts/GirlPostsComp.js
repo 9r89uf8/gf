@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Paper, Typography, Grid, IconButton } from '@mui/material';
 import VideoPlayer from "@/app/components/videoPlayer/VideoPlayer";
+import {likeGirlPost} from "@/app/services/girlService";
 import { styled } from "@mui/material/styles";
 import LockIcon from '@mui/icons-material/Lock';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -17,6 +18,9 @@ const PostCard = styled(Paper)(({ theme }) => ({
     '&:hover': {
         transform: 'translateY(-5px)',
     },
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 const PostImage = styled('img')({
@@ -41,6 +45,9 @@ const BlurredOverlay = styled(Box)({
 
 const PostContent = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 const PostMeta = styled(Box)(({ theme }) => ({
@@ -73,9 +80,9 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
         return 'Unknown date';
     };
 
-    const handleLike = () => {
+    const handleLike = async () => {
         if (isUserLoggedIn) {
-            onLike(post.id);
+            await likeGirlPost({postId: post.id});
         } else {
             // Optionally, you can redirect to login page or show a login prompt
             console.log("User must be logged in to like posts");
@@ -137,7 +144,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                         </Box>
                         <Box display="flex" alignItems="center">
                             <IconButton onClick={handleLike} color="inherit" size="small">
-                                {post.isLikedByUser ? <FavoriteIcon sx={{ fontSize: 36 }}/> : <FavoriteBorderIcon sx={{ fontSize: 36 }}/>}
+                                {user&&post.likes.includes(user.uid) ? <FavoriteIcon sx={{ fontSize: 36 }}/> : <FavoriteBorderIcon sx={{ fontSize: 36 }}/>}
                             </IconButton>
                             <Typography variant="h5">
                                 {post.likesAmount}
