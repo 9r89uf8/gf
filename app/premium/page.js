@@ -28,7 +28,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
     borderRadius: theme.shape.borderRadius * 2,
-    background: 'linear-gradient(135deg, #57cc99, #38a3a5)',
+    background: 'linear-gradient(135deg, #333533, #8b8c89)',
     color: theme.palette.common.white,
     boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     marginTop: 15
@@ -102,7 +102,7 @@ const PrivateMember = () => {
                     <Typography variant="h5">
                         {girl ? girl.username : 'Username'} <CheckCircleIcon sx={{ verticalAlign: 'middle', ml: 1 }} />
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
+                    <Typography variant="subtitle1" color="text.primary">
                         Miembro Privado
                     </Typography>
                 </CenteredBox>
