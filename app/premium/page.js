@@ -102,7 +102,7 @@ const PrivateMember = () => {
                     <Typography variant="h4">
                         {girl ? girl.username : 'Username'} <CheckCircleIcon sx={{ verticalAlign: 'middle', ml: 1 }} />
                     </Typography>
-                    <Typography variant="subtitle1" color="text.primary">
+                    <Typography variant="h6" color="text.primary">
                         Miembro Privado
                     </Typography>
                 </CenteredBox>
@@ -127,7 +127,7 @@ const PrivateMember = () => {
                             <Avatar src={priceInfo.flag} sx={{ mt: 1, width: 30, height: 20 }} variant="rounded" />
                         </>
                     )}
-                    <Typography variant="h4" color="text.secondary" mt={2}>
+                    <Typography variant="h5" color="text.secondary" mt={2}>
                         Acceso por 15 días
                     </Typography>
                 </PriceBox>

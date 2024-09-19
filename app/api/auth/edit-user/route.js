@@ -1,10 +1,11 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
+import {authMiddleware} from "@/app/middleware/authMiddleware";
 
 export async function PUT(req) {
-    const { email, name, phone, id } = await req.json();
-
-
+    const { email, name } = await req.json();
+    await authMiddleware(req);
+    const id = req.user.uid;
     try {
         // Update the user's email in Firebase Authentication
         await adminAuth.updateUser(id, { email });
@@ -16,8 +17,7 @@ export async function PUT(req) {
 
         const updatedData = {
             email,
-            name,
-            phone
+            name
         };
 
 

@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'; // Updated imports for
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import ChatIcon from '@mui/icons-material/Chat';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { alpha } from '@mui/system';
@@ -49,10 +50,9 @@ export default function FloatingNavbar() {
     const userCart = useStore((state) => state.cart); // Using Zustand store
 
     const routes = [
-        { name: 'HOME', path: '/quinielas', icon: <HomeIcon fontSize='large' /> },
-        { name: 'ADD', path: userCart && userCart.length > 0 ? '/cart' : '/buy', icon: <AddCircleIcon fontSize='large' /> },
-        { name: 'TOP', path: '/quinielas/dashboard', icon: <MonetizationOnIcon fontSize='large' /> },
-        { name: 'USER', path: '/quinielas/user', icon: <AccountCircleIcon fontSize='large' /> }
+        { name: 'HOME', path: '/01uIfxE3VRIbrIygbr2Q', icon: <HomeIcon fontSize='large' /> },
+        { name: 'TOP', path: '/chat', icon: <ChatIcon fontSize='large' /> },
+        { name: 'USER', path: '/user', icon: <AccountCircleIcon fontSize='large' /> }
     ];
 
     return (
