@@ -111,11 +111,8 @@ export const editUser = async (formData) => {
     const setUser = useStore.getState().setUser;
     try {
         const response = await fetch('/api/auth/edit-user', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
+            method: 'POST',
+            body: formData,
         });
 
         if (response.ok) {

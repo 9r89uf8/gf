@@ -1,8 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@/app/store/store';
 import { useRouter } from 'next/navigation';
-import {editUser, deleteUser} from "@/app/services/authService";
+import { editUser, deleteUser } from "@/app/services/authService";
 import {
     Box,
     Card,
@@ -16,8 +16,9 @@ import {
     DialogActions,
     Paper,
     Divider,
+    Avatar,
 } from '@mui/material';
-import { Edit, Save, Close, DeleteForever, PersonAdd } from '@mui/icons-material';
+import { Edit, Save, Close, DeleteForever, PersonAdd, PhotoCamera } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -61,28 +62,67 @@ const ActionButton = styled(Button)(({ theme }) => ({
 const UserProfile = () => {
     const user = useStore((state) => state.user);
     const [isEditing, setIsEditing] = useState(false);
-    const [newUserInfo, setNewUserInfo] = useState(user || { name: '', email: '' });
+    const [newUserInfo, setNewUserInfo] = useState({ name: '', email: '', profilePic: '' });
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [image, setImage] = useState(null);
+    const fileInputRef = useRef(null);
     const router = useRouter();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (user) {
+            setNewUserInfo(user);
+            setLoading(false);
+        } else {
+            // If user is null, we might want to redirect to login or show a message
+            setLoading(false);
+        }
+    }, [user]);
 
     const handleInputChange = (e) => {
         setNewUserInfo({ ...newUserInfo, [e.target.name]: e.target.value });
     };
 
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setImage(e.target.files[0]);
+            setNewUserInfo({ ...newUserInfo, profilePic: URL.createObjectURL(e.target.files[0]) });
+        }
+    };
+
     const handleSave = async () => {
-        await editUser(newUserInfo)
-        setIsEditing(false);
+        const formData = new FormData();
+        formData.append('name', newUserInfo.name);
+        formData.append('email', newUserInfo.email);
+
+        if (image) {
+            formData.append('image', image);
+        }
+
+        try {
+            await editUser(formData);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating user profile:', error);
+            // Handle error (e.g., show error message to user)
+        }
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        setNewUserInfo(user || { name: '', email: '' });
+        setNewUserInfo(user || { name: '', email: '', profilePic: '' });
+        setImage(null);
     };
 
     const handleDeleteUser = async () => {
-        await deleteUser()
-        setOpenDeleteDialog(false);
-        router.push('/register');
+        try {
+            await deleteUser();
+            setOpenDeleteDialog(false);
+            router.push('/register');
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            // Handle error (e.g., show error message to user)
+        }
     };
 
     const handleRegister = () => {
@@ -117,8 +157,31 @@ const UserProfile = () => {
     return (
         <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
             <StyledCard>
+                <Avatar
+                    src={newUserInfo.profilePic}
+                    alt={newUserInfo.name}
+                    sx={{ width: 100, height: 100, margin: 'auto', mb: 2 }}
+                />
                 {isEditing ? (
                     <>
+                        <input
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            id="icon-button-file"
+                            type="file"
+                            onChange={handleImageChange}
+                            ref={fileInputRef}
+                        />
+                        <label htmlFor="icon-button-file">
+                            <Button
+                                variant="contained"
+                                component="span"
+                                startIcon={<PhotoCamera />}
+                                sx={{ mb: 2 }}
+                            >
+                                Cambiar foto de perfil
+                            </Button>
+                        </label>
                         <StyledTextField
                             fullWidth
                             name="name"

@@ -5,7 +5,7 @@ import { auth } from '@/app/utils/firebaseClient';
 import {cookies} from "next/headers";
 
 export async function POST(req) {
-    const { email, password, username, phoneNumber, country } = await req.json();
+    const { email, password, username, country } = await req.json();
 
     try {
         // Create the user in Firebase Authentication
@@ -18,7 +18,7 @@ export async function POST(req) {
         await adminDb.firestore().collection('users').doc(userRecord.uid).set({
             uid: userRecord.uid,
             email,
-            phone: phoneNumber,
+            profilePic: null,
             country,
             freeAudio: 2,
             freeMessages: 8,

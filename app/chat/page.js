@@ -153,7 +153,7 @@ const Chat = () => {
 
     return (
         <StyledContainer maxWidth="sm">
-            {conversationHistory?.length === 0 && girl && (
+            {girl && (
                 <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />
             )}
 

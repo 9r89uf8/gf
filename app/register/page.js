@@ -46,11 +46,10 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [country, setCountry] = useState('');
     const [disableRegister, setDisableRegister] = useState(false);
     const router = useRouter();
-    let data = { email, password, phoneNumber, username, country }
+    let data = { email, password, username, country }
 
 
     useEffect(() => {
@@ -89,28 +88,6 @@ const RegisterPage = () => {
 
                             <form onSubmit={handleRegister}>
                                 <TextField style={{marginBottom: 15}} label="Usuario" name="name" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" fullWidth required
-                                           InputLabelProps={{
-                                               sx: { color: 'black', fontSize:22 } // Apply white color to label
-                                           }}
-                                           sx={{
-                                               '& label.Mui-focused': {
-                                                   color: 'black', // Color of the label when the TextField is focused
-                                               },
-                                               '& .MuiOutlinedInput-root': {
-                                                   '& fieldset': {
-                                                       borderColor: 'black', // Color of the border in normal state
-                                                   },
-                                                   '&.Mui-focused fieldset': {
-                                                       borderColor: 'black', // Color of the border when the TextField is focused
-                                                   },
-                                                   '& input': {
-                                                       color: 'black', // Color of the input text
-                                                   }
-                                               }
-                                           }}
-                                />
-
-                                <TextField style={{marginBottom: 15}} label="Teléfono" name="phone" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} variant="outlined" fullWidth required
                                            InputLabelProps={{
                                                sx: { color: 'black', fontSize:22 } // Apply white color to label
                                            }}
