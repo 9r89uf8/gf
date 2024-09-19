@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Card,
@@ -8,8 +8,11 @@ import {
     Button,
     styled,
     Stack,
+    Modal,
+    IconButton,
 } from '@mui/material';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
 import ActiveIndicator from './ActiveIndicator';
 import AudioPlayer from './AudioPlayer';
 
@@ -30,6 +33,7 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     border: `4px solid ${theme.palette.background.paper}`,
     boxShadow: theme.shadows[3],
     marginTop: -35,
+    cursor: 'pointer',
 }));
 
 const ViewProfileButton = styled(Button)(({ theme }) => ({
@@ -43,44 +47,99 @@ const ViewProfileButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const EnlargedImage = styled('img')({
+    height: 230,
+    objectFit: 'contain',
+});
+
+const CloseButton = styled(IconButton)(({ theme }) => ({
+    position: 'absolute',
+    right: 7,
+    top: 5,
+    color: 'black',
+}));
+
 const GirlHeader = ({ girl, handleProfileClick }) => {
+    const [isImageEnlarged, setIsImageEnlarged] = useState(false);
     const audios = girl.audios || [
         'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_34_25_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
         'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_33_30_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
     ];
 
+    const handleImageClick = () => {
+        setIsImageEnlarged(true);
+    };
+
+    const handleCloseEnlargedImage = () => {
+        setIsImageEnlarged(false);
+    };
+
     return (
-        <StyledCard>
-            <CardContent>
-                <Box display="flex" flexDirection="column" alignItems="center">
-                    <Box position="relative" mb={2}>
-                        <ProfileAvatar
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            alt={girl.username}
-                        />
-                        <ActiveIndicator />
+        <>
+            <StyledCard>
+                <CardContent>
+                    <Box display="flex" flexDirection="column" alignItems="center">
+                        <Box position="relative" mb={2}>
+                            <ProfileAvatar
+                                src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                alt={girl.username}
+                                onClick={handleImageClick}
+                            />
+                            <ActiveIndicator />
+                        </Box>
+                        <Typography variant="h5" gutterBottom fontWeight="bold">
+                            {girl.username}
+                            <VerifiedIcon
+                                sx={{ ml: 1, verticalAlign: 'middle', color: 'primary.main' }}
+                            />
+                        </Typography>
+                        <ViewProfileButton
+                            variant="contained"
+                            onClick={handleProfileClick}
+                            sx={{ mb: 3 }}
+                        >
+                            View Profile
+                        </ViewProfileButton>
+                        <Stack spacing={2} width="100%">
+                            {audios.slice(0, 2).map((audioSrc, index) => (
+                                <AudioPlayer key={index} src={audioSrc} />
+                            ))}
+                        </Stack>
                     </Box>
-                    <Typography variant="h5" gutterBottom fontWeight="bold">
-                        {girl.username}
-                        <VerifiedIcon
-                            sx={{ ml: 1, verticalAlign: 'middle', color: 'primary.main' }}
-                        />
-                    </Typography>
-                    <ViewProfileButton
-                        variant="contained"
-                        onClick={handleProfileClick}
-                        sx={{ mb: 3 }}
-                    >
-                        View Profile
-                    </ViewProfileButton>
-                    <Stack spacing={2} width="100%">
-                        {audios.slice(0, 2).map((audioSrc, index) => (
-                            <AudioPlayer key={index} src={audioSrc} />
-                        ))}
-                    </Stack>
+                </CardContent>
+            </StyledCard>
+            <Modal
+                open={isImageEnlarged}
+                onClose={handleCloseEnlargedImage}
+                aria-labelledby="enlarged-image-modal"
+                aria-describedby="enlarged-profile-image"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        outline: 'none',
+                        borderRadius: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <EnlargedImage
+                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                        alt={girl.username}
+                    />
+                    <CloseButton onClick={handleCloseEnlargedImage} aria-label="close">
+                        <CancelTwoToneIcon sx={{ fontSize: 36,}}/>
+                    </CloseButton>
                 </Box>
-            </CardContent>
-        </StyledCard>
+            </Modal>
+        </>
     );
 };
 
