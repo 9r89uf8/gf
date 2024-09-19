@@ -9,7 +9,10 @@ const UserMessage = styled(Typography)(({ theme }) => ({
     padding: theme.spacing(1),
     margin: theme.spacing(1),
     alignSelf: 'flex-end',
-    color: '#f8f9fa'
+    color: '#f8f9fa',
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 const AssistantMessage = styled(Typography)(({ theme }) => ({
@@ -17,6 +20,9 @@ const AssistantMessage = styled(Typography)(({ theme }) => ({
     color: 'black',
     borderRadius: theme.spacing(1),
     padding: theme.spacing(1),
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
     margin: theme.spacing(1),
     alignSelf: 'flex-start',
     cursor: 'pointer',
@@ -33,7 +39,10 @@ const ResponseMessage = styled(Typography)(({ theme }) => ({
     margin: theme.spacing(1),
     marginBottom: -5,
     marginLeft: 20,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
+    userSelect: 'none', // Add this line
+    WebkitUserSelect: 'none', // Add this line for webkit browsers
+    msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
 function ConversationHistory({ conversationHistory, user, audios, handleLike }) {
