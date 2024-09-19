@@ -27,10 +27,10 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
-    borderRadius: theme.shape.borderRadius * 2,
-    background: 'linear-gradient(135deg, #333533, #8b8c89)',
     color: theme.palette.common.white,
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+    background: 'linear-gradient(135deg, #2c3e50, #3498db)',
+    borderRadius: theme.shape.borderRadius * 2,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
     marginTop: 15
 }));
 
@@ -83,8 +83,8 @@ const PrivateMember = () => {
             return pricingMap[user.country] || pricingMap['US'];
         } else {
             return [
-                { price: 10, currency: 'USD', name: 'dólares', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png' },
-                { price: 170, currency: 'MXN', name: 'pesos', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png' }
+                { price: 4, currency: 'USD', name: 'dólares', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png' },
+                { price: 70, currency: 'MXN', name: 'pesos', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png' }
             ];
         }
     };
@@ -99,7 +99,7 @@ const PrivateMember = () => {
                         src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : ''}
                         sx={{ width: 100, height: 100, mb: 2 }}
                     />
-                    <Typography variant="h5">
+                    <Typography variant="h4">
                         {girl ? girl.username : 'Username'} <CheckCircleIcon sx={{ verticalAlign: 'middle', ml: 1 }} />
                     </Typography>
                     <Typography variant="subtitle1" color="text.primary">
@@ -127,7 +127,7 @@ const PrivateMember = () => {
                             <Avatar src={priceInfo.flag} sx={{ mt: 1, width: 30, height: 20 }} variant="rounded" />
                         </>
                     )}
-                    <Typography variant="h5" color="text.secondary" mt={2}>
+                    <Typography variant="h4" color="text.secondary" mt={2}>
                         Acceso por 15 días
                     </Typography>
                 </PriceBox>
@@ -157,9 +157,9 @@ const PrivateMember = () => {
                         )
                     ) : (
                         <Button
+                            style={{color: 'black', background: 'linear-gradient(135deg, #ffffff, #f5f3f4)'}}
                             variant="contained"
-                            color="primary"
-                            sx={{ mt: 2 }}
+                            sx={{ mt: 2, fontSize: 17 }}
                         >
                             Regístrate para pagar
                         </Button>
@@ -169,15 +169,15 @@ const PrivateMember = () => {
                 <FeatureList>
                     <ListItem>
                         <ListItemIcon><CameraAltIcon sx={{ fontSize: 32 }}/></ListItemIcon>
-                        <ListItemText primary="Fotos Privadas" primaryTypographyProps={{ fontSize: '1.2rem' }} />
+                        <ListItemText primary="Fotos Privadas" primaryTypographyProps={{ fontSize: '1.4rem' }} />
                     </ListItem>
                     <ListItem>
                         <ListItemIcon><SpatialAudioOffIcon sx={{ fontSize: 32 }}/></ListItemIcon>
-                        <ListItemText primary={`Audios de ${girl ? girl.name : 'la chica'}`} primaryTypographyProps={{ fontSize: '1.2rem' }} />
+                        <ListItemText primary={`Audios de ${girl ? girl.name : 'la chica'}`} primaryTypographyProps={{ fontSize: '1.4rem' }} />
                     </ListItem>
                     <ListItem>
                         <ListItemIcon><MessageIcon sx={{ fontSize: 32 }}/></ListItemIcon>
-                        <ListItemText primary="Mensajes ilimitados" primaryTypographyProps={{ fontSize: '1.2rem' }} />
+                        <ListItemText primary="Mensajes ilimitados" primaryTypographyProps={{ fontSize: '1.4rem' }} />
                     </ListItem>
                 </FeatureList>
 
@@ -187,6 +187,7 @@ const PrivateMember = () => {
                     fullWidth
                     sx={{ mt: 2 }}
                     variant="contained"
+                    style={{color: 'white', background: 'linear-gradient(135deg, #161a1d, #0b090a)'}}
                 >
                     {showPaymentInfo ? 'Ocultar' : 'Mostrar'} Seguridad de Pago
                 </Button>

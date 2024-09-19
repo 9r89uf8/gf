@@ -21,8 +21,8 @@ const CheckoutButton = ({user, country, price, girlId}) => {
 
     return (
         <Button
+            style={{color: 'black', background: 'linear-gradient(135deg, #ffffff, #f5f3f4)'}}
             variant="contained"
-            color="primary"
             onClick={handleCheckout}
             disabled={loading}
             sx={{ fontSize: 22 }}
