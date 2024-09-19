@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Button, Paper, Typography, Grid, Avatar } from '@mui/material';
+import { Box, Button, Paper, Typography, Grid, IconButton } from '@mui/material';
 import VideoPlayer from "@/app/components/videoPlayer/VideoPlayer";
 import { styled } from "@mui/material/styles";
 import LockIcon from '@mui/icons-material/Lock';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { useRouter } from "next/navigation";
 
 const PostCard = styled(Paper)(({ theme }) => ({
     overflow: 'hidden',
@@ -57,15 +59,31 @@ const PremiumButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-function GirlPostComp({ girl, user, post, index }) {
+function GirlPostComp({ girl, user, post, index, onLike }) {
+    const router = useRouter();
+    const isUserLoggedIn = !!user;
     const isUserPremium = user && user.isPremium;
     const canViewPremiumContent = isUserPremium || !post.isPremium;
 
     const formatTimestamp = (timestamp) => {
-        if (timestamp && timestamp.toDate) {
-            return timestamp.toDate().toLocaleDateString();
+        if (timestamp && timestamp._seconds) {
+            const date = new Date(timestamp._seconds * 1000);
+            return date.toLocaleDateString();
         }
         return 'Unknown date';
+    };
+
+    const handleLike = () => {
+        if (isUserLoggedIn) {
+            onLike(post.id);
+        } else {
+            // Optionally, you can redirect to login page or show a login prompt
+            console.log("User must be logged in to like posts");
+        }
+    };
+
+    const handleBuyPremium = () => {
+        router.push('/premium');
     };
 
     return (
@@ -84,7 +102,7 @@ function GirlPostComp({ girl, user, post, index }) {
                                     <Typography variant="h6" align="center" gutterBottom>
                                         Premium Content
                                     </Typography>
-                                    <PremiumButton variant="contained">
+                                    <PremiumButton variant="contained" onClick={handleBuyPremium}>
                                         Upgrade to Premium
                                     </PremiumButton>
                                 </BlurredOverlay>
@@ -107,19 +125,21 @@ function GirlPostComp({ girl, user, post, index }) {
                     ) : null}
                 </Box>
                 <PostContent>
-                    <Typography variant="body1" gutterBottom>
+                    <Typography variant="h5" gutterBottom>
                         {post.description}
                     </Typography>
                     <PostMeta>
                         <Box display="flex" alignItems="center">
-                            <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} />
-                            <Typography variant="caption">
+                            <AccessTimeIcon sx={{ mr: 0.5, fontSize: 36 }} />
+                            <Typography variant="h5">
                                 {formatTimestamp(post.timestamp)}
                             </Typography>
                         </Box>
                         <Box display="flex" alignItems="center">
-                            <FavoriteIcon fontSize="small" sx={{ mr: 0.5 }} />
-                            <Typography variant="caption">
+                            <IconButton onClick={handleLike} color="inherit" size="small">
+                                {post.isLikedByUser ? <FavoriteIcon sx={{ fontSize: 36 }}/> : <FavoriteBorderIcon sx={{ fontSize: 36 }}/>}
+                            </IconButton>
+                            <Typography variant="h5">
                                 {post.likesAmount}
                             </Typography>
                         </Box>
