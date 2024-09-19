@@ -21,6 +21,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CakeIcon from '@mui/icons-material/Cake';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 
 const ProfileCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -39,8 +40,13 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: 150,
     height: 150,
     border: `4px solid ${theme.palette.common.white}`,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+    transition: 'transform 0.3s',
+    '&:hover': {
+        transform: 'scale(1.35)',
+    },
 }));
+
 
 const ActionButton = styled(Button)(({ theme }) => ({
     backgroundImage: 'linear-gradient(45deg, #2ecc71, #27ae60)',
@@ -91,6 +97,12 @@ const GirlProfile = () => {
                                 {girl.username}
                                 <CheckCircleIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1 }} />
                             </Typography>
+                            <Box display="flex" alignItems="center" mb={2}>
+                                <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1 }} />
+                                <Typography variant="body1">
+                                    <strong>{girl.followers.toLocaleString()}</strong> Followers
+                                </Typography>
+                            </Box>
                             <Box display="flex" alignItems="center" mb={2}>
                                 <CakeIcon sx={{ mr: 1 }} />
                                 <Typography variant="body1">{girl.age} years old</Typography>

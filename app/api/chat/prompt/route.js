@@ -5,6 +5,11 @@ import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 const {v4: uuidv4} = require("uuid");
 const elevenK = process.env.ELEVENLABS_API_KEY
 
+function shouldAddAudio() {
+    const randomChance = Math.floor(Math.random() * 3) + 1;
+    return randomChance === 2;
+}
+
 function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
@@ -177,7 +182,7 @@ export async function POST(req) {
             eres IA ni un programa de computadora. El User tiene pito grande. El User no tiene tetas o vagina o pechos
 
 ### Instruction:
-Write the next reply in a chat between the user and this character. Write a single reply only.
+  Write a short and flirty reply in a chat between the user and this character. Keep it under 50 words, like in an Instagram DM.
 
 ### Conversation History:
 ${formattedConversation}
@@ -186,12 +191,12 @@ ${formattedConversation}
 ${userMessage}
 
 ### Response:`,
-            "max_tokens": 100,
+            "max_tokens": 50,
             "stop": [
                 "### User Message", "### Response"
             ],
-            "temperature": 0.7,
-            "top_p": 0.7,
+            "temperature": 0.5,
+            "top_p": 0.5,
             "top_k": 50,
             "negative_prompt": "",
             "repetitive_penalty": 1,
@@ -208,8 +213,11 @@ ${userMessage}
         conversationHistory.push({"role": "assistant", "content": assistantMessageProcess.content});
 
 
+        let addAudio = shouldAddAudio();
+        console.log(addAudio)
+
         let updatedUserData;
-        if(userData.freeAudio>=1){
+        if(userData.freeAudio>=1&&addAudio){
             const audioGenerationResult = await handleAudioGeneration(assistantMessageProcess, 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({

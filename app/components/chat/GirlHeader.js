@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useStore } from '@/app/store/store';
 import {
     Box,
     Card,
@@ -15,6 +16,8 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
 import ActiveIndicator from './ActiveIndicator';
 import AudioPlayer from './AudioPlayer';
+import {DeleteForever} from "@mui/icons-material";
+import {deleteMessages} from "@/app/services/chatService";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     maxWidth: 350,
@@ -34,6 +37,11 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     boxShadow: theme.shadows[3],
     marginTop: -35,
     cursor: 'pointer',
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+    margin: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius * 3,
 }));
 
 const ViewProfileButton = styled(Button)(({ theme }) => ({
@@ -61,6 +69,7 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
 
 const GirlHeader = ({ girl, handleProfileClick }) => {
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+    const conversationHistory = useStore((state) => state.conversationHistory);
     const audios = girl.audios || [
         'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_34_25_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
         'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_33_30_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
@@ -72,6 +81,10 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
 
     const handleCloseEnlargedImage = () => {
         setIsImageEnlarged(false);
+    };
+
+    const deleteMessagesHandle = async () => {
+        await deleteMessages()
     };
 
     return (
@@ -105,6 +118,21 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                                 <AudioPlayer key={index} src={audioSrc} />
                             ))}
                         </Stack>
+
+                        {conversationHistory&&conversationHistory.length>0&&
+                            <ActionButton
+                                style={{marginBottom: 2}}
+                                variant="contained"
+                                color="error"
+                                startIcon={<DeleteForever />}
+                                onClick={deleteMessagesHandle}
+                                sx={{ mt: 2 }}
+                            >
+                                Borrar Mensajes
+                            </ActionButton>
+                        }
+
+
                     </Box>
                 </CardContent>
             </StyledCard>

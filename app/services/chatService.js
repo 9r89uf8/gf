@@ -103,3 +103,24 @@ export const sendChatPrompt = async (formData) => {
         return null;
     }
 };
+
+
+export const deleteMessages = async () => {
+    const deleteAll = useStore.getState().clearAll;
+
+    try {
+        const response = await fetch(`/api/chat/delete`, {
+            method: 'GET'
+        });
+        if (response.ok) {
+            const data = await response.json();
+            deleteAll()
+            return data;
+        } else {
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
