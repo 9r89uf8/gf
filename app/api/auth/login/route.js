@@ -28,7 +28,7 @@ export async function POST(request) {
             httpOnly: true,
             sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 36000, // 1 hour
+            maxAge: 48 * 60 * 60, // 1 hour
         });
 
         return new Response(JSON.stringify({ user: userData, token }), {

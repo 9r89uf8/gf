@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useStore } from '@/app/store/store';
 import { getGirl } from '@/app/services/girlService';
+import {checkIfCookie} from "@/app/services/authService";
 import {
     fetchMessages,
     sendChatPrompt,
@@ -71,6 +72,7 @@ const Chat = () => {
     const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
+        checkIfCookie()
         getGirl();
     }, []);
 
@@ -91,7 +93,7 @@ const Chat = () => {
     }, [conversationHistory]);
 
     const handleProfileClick = () => {
-        router.push('/01uIfxE3VRIbrIygbr2Q');
+        router.push('/novia-virtual');
     };
 
     const handleLoginRedirect = () => {

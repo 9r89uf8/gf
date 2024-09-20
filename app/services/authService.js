@@ -107,6 +107,29 @@ export const logoutUser = async () => {
 };
 
 
+export const checkIfCookie = async () => {
+    const logout = useStore.getState().logout;
+    const clear = useStore.getState().clearAll;
+    try {
+        const response = await fetch('/api/auth/verify', {
+            method: 'GET',
+        });
+
+        const data = await response.json();
+        if(data){
+            return data;
+        }else {
+            logout(); // Call the logout action from userSlice
+            clear()
+            return data;
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 export const editUser = async (formData) => {
     const setUser = useStore.getState().setUser;
     try {
