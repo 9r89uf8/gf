@@ -105,19 +105,19 @@ const Footer = () => {
                 <Box style={{ marginLeft: 15 }}>
                     <Box display="flex" alignItems="center" mb={1}>
                         <CameraAltIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
-                        <Typography variant="h4" style={{ marginLeft: 10 }}>
+                        <Typography variant="h5" style={{ marginLeft: 10 }}>
                             Fotos Privadas
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" mb={1}>
                         <SpatialAudioOffIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
-                        <Typography variant="h4" style={{ marginLeft: 10 }}>
+                        <Typography variant="h5" style={{ marginLeft: 10 }}>
                             Audios de {girl.name}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" mb={1}>
                         <MessageIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
-                        <Typography variant="h4" style={{ marginLeft: 10 }}>
+                        <Typography variant="h5" style={{ marginLeft: 10 }}>
                             Mensajes ilimitados
                         </Typography>
                     </Box>
