@@ -21,12 +21,21 @@ import {
 
 const ClipsVideos = () => {
     const router = useRouter();
-    const { clips, hasHydrated } = useStore((state) => ({
+    const {
+        clips,
+        hasHydrated,
+        user,
+        currentClipIndex,
+        setCurrentClipIndex,
+    } = useStore((state) => ({
         clips: state.clips,
         hasHydrated: state.hasHydrated,
+        user: state.user,
+        currentClipIndex: state.currentClipIndex,
+        setCurrentClipIndex: state.setCurrentClipIndex,
     }));
-    const [currentClipIndex, setCurrentClipIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [videosPlayed, setVideosPlayed] = useState(0);
 
     useEffect(() => {
         if (!hasHydrated) return;
@@ -60,15 +69,22 @@ const ClipsVideos = () => {
         );
     }
 
+    const isPremiumUser = user && user.premium;
+    const isLimitedUser = !isPremiumUser;
+    const playLimitReached = isLimitedUser && videosPlayed >= 10;
+
     const currentClip = clips[currentClipIndex];
 
     const handleNextClick = () => {
+        if (playLimitReached) return;
         setCurrentClipIndex((prevIndex) => (prevIndex + 1) % clips.length);
     };
 
     const handlePreviousClick = () => {
+        if (playLimitReached) return;
         setCurrentClipIndex((prevIndex) => (prevIndex - 1 + clips.length) % clips.length);
     };
+
 
     const handleBuyClick = () => {
         router.push('/premium');
@@ -76,6 +92,22 @@ const ClipsVideos = () => {
 
     const handleHomeClick = () => {
         router.push('/novia-virtual');
+    };
+
+    const handleVideoPlay = () => {
+        if (isLimitedUser) {
+            if (videosPlayed >= 10) {
+                return;
+            } else {
+                setVideosPlayed((prev) => prev + 1);
+            }
+        }
+    };
+
+    const handleVideoEnded = () => {
+        if (!playLimitReached) {
+            handleNextClick();
+        }
     };
 
     return (
@@ -88,13 +120,15 @@ const ClipsVideos = () => {
                         title="tiktok"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         controlsList="nodownload"
-                        onEnded={handleNextClick}
-                        {...(!currentClip.premium && { controls: true, autoPlay: true })}
+                        onPlay={handleVideoPlay}
+                        onEnded={handleVideoEnded}
+                        controls={!currentClip.premium && !playLimitReached}
+                        autoPlay={!(playLimitReached || currentClip.premium)}
                         onContextMenu={(e) => e.preventDefault()}
                     />
                 </Card>
 
-                {currentClip.premium && (
+                {(currentClip.premium || playLimitReached) && (
                     <Box
                         style={{
                             display: 'flex',
@@ -112,14 +146,18 @@ const ClipsVideos = () => {
                             color: '#fff',
                         }}
                     >
-                        <Typography>This video is for premium members only.</Typography>
+                        <Typography variant="h5" sx={{ mb: 1 }}>
+                            {playLimitReached
+                                ? 'Has alcanzado el límite de 10 vídeos. Obtén Premium para ver más.'
+                                : 'This video is for premium members only.'}
+                        </Typography>
                         <Button
                             variant="contained"
                             color="primary"
                             style={{ backgroundColor: '#fff', color: '#000' }}
                             onClick={handleBuyClick}
                         >
-                            Get Premium
+                            Comprar
                         </Button>
                     </Box>
                 )}
@@ -138,6 +176,7 @@ const ClipsVideos = () => {
                         style={{ background: 'linear-gradient(to right, #ffbd00, #ff5400)' }}
                         variant="contained"
                         onClick={handlePreviousClick}
+                        disabled={playLimitReached}
                     >
                         <ArrowBackIosIcon fontSize="large" />
                     </IconButton>
@@ -145,6 +184,7 @@ const ClipsVideos = () => {
                         style={{ background: 'linear-gradient(to right, #ffbd00, #ff5400)' }}
                         variant="contained"
                         onClick={handleNextClick}
+                        disabled={playLimitReached}
                     >
                         <ArrowForwardIosIcon fontSize="large" />
                     </IconButton>
@@ -175,3 +215,4 @@ const ClipsVideos = () => {
 };
 
 export default ClipsVideos;
+
