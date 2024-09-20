@@ -261,18 +261,23 @@ const Chat = () => {
                         right: 0,
                         margin: '0 auto',
                         padding: 2,
+                        marginBottom: 3,
                         textAlign: 'center',
                         zIndex: 1000,
                         maxWidth: '300px',
+                        background: 'linear-gradient(45deg, #343a40, #212529)',
+                        color: 'white',
+                        borderRadius: 5,
                     }}
                 >
-                    <Typography variant="h5" sx={{ mb: 1 }}>
+                    <Typography variant="h4" sx={{ mb: 1 }}>
                         Has utilizado todos tus mensajes gratuitos.
                     </Typography>
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={handleBuy}
+                        sx={{ fontSize: 20, margin: '8px 0px 8px 0px' }}
                     >
                         obtener más
                     </Button>
