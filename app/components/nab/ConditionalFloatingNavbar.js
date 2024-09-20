@@ -1,4 +1,3 @@
-// app/components/nab/ConditionalFloatingNavbar.jsx
 'use client';
 
 import React from 'react';
@@ -7,7 +6,8 @@ import FloatingNavbar from "./FloatingNavbar";
 
 const ConditionalFloatingNavbar = () => {
     const pathname = usePathname();
-    const showFloatingNavbar = pathname !== '/chat';
+    const hiddenPaths = ['/chat', '/clips'];
+    const showFloatingNavbar = !hiddenPaths.includes(pathname);
 
     if (!showFloatingNavbar) {
         return null;

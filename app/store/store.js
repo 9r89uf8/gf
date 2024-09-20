@@ -5,6 +5,7 @@ import { createUserSlice } from './userSlice';
 import { createChatSlice } from './chatSlice';
 import { createGirlSlice } from './girlSlice';
 import { createStripeSlice } from './stripeSlice';
+import { createClipsSlice } from './clipsSlice';
 import { createNotificationsSlice } from './notificationsSlice';
 export const useStore = create(
     persist(
@@ -13,6 +14,7 @@ export const useStore = create(
             ...createChatSlice(...a),
             ...createGirlSlice(...a),
             ...createStripeSlice(...a),
+            ...createClipsSlice(...a),
             ...createNotificationsSlice(...a)
         }),
         {

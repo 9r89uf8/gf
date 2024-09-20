@@ -7,6 +7,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import HomeIcon from '@mui/icons-material/Home';
 import ChatIcon from '@mui/icons-material/Chat';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import { alpha, styled } from '@mui/material/styles';
 
 const NAVBAR_HEIGHT = '50px'; // Adjust this value based on your navbar's actual height
@@ -56,6 +57,7 @@ export default function FloatingNavbar() {
     const routes = [
         { name: 'HOME', path: '/novia-virtual', icon: <HomeIcon fontSize='large' /> },
         { name: 'TOP', path: '/chat', icon: <ChatIcon fontSize='large' /> },
+        { name: 'TOP', path: '/clips', icon: <VideoLibraryIcon fontSize='large' /> },
         { name: 'USER', path: '/user', icon: <AccountCircleIcon fontSize='large' /> }
     ];
 
