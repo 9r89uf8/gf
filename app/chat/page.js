@@ -98,6 +98,10 @@ const Chat = () => {
         router.push('/login'); // Adjust the path to your login or register page
     };
 
+    const handleBuy = () => {
+        router.push('/premium'); // Adjust the path to your login or register page
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!prompt.trim() && !image) return;
@@ -193,52 +197,88 @@ const Chat = () => {
                 </Paper>
             )}
 
-            {canSendMessage ? (
-                <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
+
+
+            {/* Always show ChatInput, but disable when canSendMessage is false */}
+            <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
+                <IconButton
+                    onClick={() => {
+                        if (user && canSendMessage) {
+                            fileInputRef.current.click();
+                        }
+                    }}
+                    aria-label="Upload Image"
+                    disabled={!user || !canSendMessage}
+                >
+                    <ImageIcon fontSize="large" />
+                </IconButton>
+                <InputBase
+                    sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
+                    placeholder={
+                        isSending
+                            ? 'Enviando...'
+                            : canSendMessage
+                                ? 'Escribe un mensaje...'
+                                : 'No more free messages'
+                    }
+                    multiline
+                    maxRows={6}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    inputProps={{ 'aria-label': 'Escribe un mensaje' }}
+                    disabled={isSending}
+                />
+                <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    disabled={!canSendMessage}
+                />
+                {isSending ? (
+                    <CircularProgress size={24} sx={{ mr: 2 }} />
+                ) : (
                     <IconButton
-                        onClick={() => {
-                            if (user) {
-                                fileInputRef.current.click();
-                            }
-                        }}
-                        aria-label="Upload Image"
-                        disabled={!user}
+                        type="submit"
+                        color="primary"
+                        disabled={!isPromptEntered || !canSendMessage}
+                        aria-label="Send Message"
                     >
-                        <ImageIcon fontSize="large" />
+                        <SendIcon sx={{ fontSize: 32 }} />
                     </IconButton>
-                    <InputBase
-                        sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
-                        placeholder={isSending ? 'Enviando...' : 'Escribe un mensaje...'}
-                        multiline
-                        maxRows={6}
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        inputProps={{ 'aria-label': 'Escribe un mensaje' }}
-                        disabled={isSending}
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                    />
-                    {isSending ? (
-                        <CircularProgress size={24} sx={{ mr: 2 }} />
-                    ) : (
-                        <IconButton
-                            type="submit"
-                            color="primary"
-                            disabled={!isPromptEntered || (!user && isPromptEntered)}
-                            aria-label="Send Message"
-                        >
-                            <SendIcon sx={{ fontSize: 32 }} />
-                        </IconButton>
-                    )}
-                </ChatInput>
-            ) : (
-                <Footer />
+                )}
+            </ChatInput>
+
+            {/* Message about upgrading when user can't send messages */}
+            {user && !canSendMessage && isPromptEntered && (
+                <Paper
+                    elevation={4}
+                    sx={{
+                        position: 'fixed',
+                        bottom: 80,
+                        left: 0,
+                        right: 0,
+                        margin: '0 auto',
+                        padding: 2,
+                        textAlign: 'center',
+                        zIndex: 1000,
+                        maxWidth: '300px',
+                    }}
+                >
+                    <Typography variant="h5" sx={{ mb: 1 }}>
+                        Has utilizado todos tus mensajes gratuitos.
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleBuy}
+                    >
+                        obtener más
+                    </Button>
+                </Paper>
             )}
+
 
             {imagePreview && (
                 <Box
