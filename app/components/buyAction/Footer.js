@@ -98,26 +98,26 @@ const Footer = () => {
 
 
                 <Typography variant="h5" gutterBottom style={{color: "#fcfcfc", margin: 15}}>
-                    Acceso por 30 días
+                    Acceso por 15 días
                 </Typography>
 
 
                 <Box style={{ marginLeft: 15 }}>
                     <Box display="flex" alignItems="center" mb={1}>
-                        <CameraAltIcon /> {/* Replace with actual icon */}
-                        <Typography variant="h6" style={{ marginLeft: 10 }}>
+                        <CameraAltIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
+                        <Typography variant="h4" style={{ marginLeft: 10 }}>
                             Fotos Privadas
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" mb={1}>
-                        <SpatialAudioOffIcon /> {/* Replace with actual icon */}
-                        <Typography variant="h6" style={{ marginLeft: 10 }}>
+                        <SpatialAudioOffIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
+                        <Typography variant="h4" style={{ marginLeft: 10 }}>
                             Audios de {girl.name}
                         </Typography>
                     </Box>
                     <Box display="flex" alignItems="center" mb={1}>
-                        <MessageIcon /> {/* Replace with actual icon */}
-                        <Typography variant="h6" style={{ marginLeft: 10 }}>
+                        <MessageIcon sx={{ fontSize: 32 }}/> {/* Replace with actual icon */}
+                        <Typography variant="h4" style={{ marginLeft: 10 }}>
                             Mensajes ilimitados
                         </Typography>
                     </Box>
