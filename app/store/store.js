@@ -7,24 +7,35 @@ import { createGirlSlice } from './girlSlice';
 import { createStripeSlice } from './stripeSlice';
 import { createClipsSlice } from './clipsSlice';
 import { createNotificationsSlice } from './notificationsSlice';
+
 export const useStore = create(
     persist(
-        (...a) => ({
-            ...createUserSlice(...a),
-            ...createChatSlice(...a),
-            ...createGirlSlice(...a),
-            ...createStripeSlice(...a),
-            ...createClipsSlice(...a),
-            ...createNotificationsSlice(...a)
+        (set, get) => ({
+            ...createUserSlice(set, get),
+            ...createChatSlice(set, get),
+            ...createGirlSlice(set, get),
+            ...createStripeSlice(set, get),
+            ...createClipsSlice(set, get),
+            ...createNotificationsSlice(set, get),
+            hasHydrated: false,
+            setHasHydrated: (state) => set({ hasHydrated: state }),
         }),
         {
-            name: 'aigf', // unique name for the storage
-            storage: createJSONStorage(() => localStorage), // use local storage
+            name: 'aigf',
+            storage: createJSONStorage(() => localStorage),
+            onRehydrateStorage: () => (state, error) => {
+                if (error) {
+                    console.log('An error occurred during hydration', error);
+                } else {
+                    state.setHasHydrated(true);
+                }
+            },
         }
     )
 );
 
 export default useStore;
+
 
 
 
