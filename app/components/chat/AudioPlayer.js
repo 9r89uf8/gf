@@ -2,16 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, IconButton, LinearProgress, styled } from '@mui/material';
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
+import {alpha} from "@mui/material/styles";
 
 const PlayerWrapper = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(1, 2),
-    borderRadius: theme.shape.borderRadius * 3,
-    background: theme.palette.mode === 'dark'
-        ? 'linear-gradient(45deg, #2c3e50, #34495e)'
-        : 'linear-gradient(45deg, #e0e0e0, #f5f5f5)',
-    boxShadow: theme.shadows[2],
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: 15,
+    border: `1px solid ${alpha('#ffffff', 0.2)}`,
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+    overflow: 'visible',
 }));
 
 const AudioPlayer = ({ src }) => {

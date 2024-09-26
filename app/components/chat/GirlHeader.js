@@ -12,46 +12,65 @@ import {
     Modal,
     IconButton,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
 import ActiveIndicator from './ActiveIndicator';
 import AudioPlayer from './AudioPlayer';
-import {DeleteForever} from "@mui/icons-material";
-import {deleteMessages} from "@/app/services/chatService";
+import { DeleteForever } from "@mui/icons-material";
+import { deleteMessages } from "@/app/services/chatService";
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const GlassCard = styled(Card)(({ theme }) => ({
     maxWidth: 350,
     margin: `${theme.spacing(3)} auto`,
-    background: theme.palette.mode === 'dark'
-        ? 'linear-gradient(45deg, #1a2027, #2c3e50)'
-        : 'linear-gradient(45deg, #e0e0e0, #f5f5f5)',
-    boxShadow: theme.shadows[10],
-    borderRadius: theme.shape.borderRadius * 2,
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: 15,
+    border: `1px solid ${alpha('#ffffff', 0.2)}`,
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
     overflow: 'visible',
 }));
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     width: 120,
     height: 120,
-    border: `4px solid ${theme.palette.background.paper}`,
+    border: `4px solid ${alpha('#ffffff', 0.3)}`,
     boxShadow: theme.shadows[3],
     marginTop: -35,
     cursor: 'pointer',
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
-    margin: theme.spacing(1),
-    borderRadius: theme.shape.borderRadius * 3,
+const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    margin: '10px 0',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
 }));
 
-const ViewProfileButton = styled(Button)(({ theme }) => ({
-    borderRadius: theme.shape.borderRadius * 3,
-    padding: theme.spacing(1, 3),
+const ViewProfileButton = styled(GradientButton)({
+    borderRadius: 20,
     fontWeight: 600,
     textTransform: 'none',
-    background: 'linear-gradient(45deg, #2196f3, #21cbf3)',
+});
+
+const DeleteButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FF3D00 30%, #FF6E40 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 0, 0, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    margin: '10px 0',
     '&:hover': {
-        background: 'linear-gradient(45deg, #1e88e5, #1eb8e5)',
+        background: 'linear-gradient(45deg, #DD2C00 30%, #FF3D00 90%)',
     },
 }));
 
@@ -64,7 +83,7 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
     right: 7,
     top: 5,
-    color: 'black',
+    color: 'white',
 }));
 
 const GirlHeader = ({ girl, handleProfileClick }) => {
@@ -89,7 +108,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
 
     return (
         <>
-            <StyledCard>
+            <GlassCard>
                 <CardContent>
                     <Box display="flex" flexDirection="column" alignItems="center">
                         <Box position="relative" mb={2}>
@@ -100,10 +119,10 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                             />
                             <ActiveIndicator />
                         </Box>
-                        <Typography variant="h5" gutterBottom fontWeight="bold">
+                        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                             {girl.username}
                             <VerifiedIcon
-                                sx={{ ml: 1, verticalAlign: 'middle', color: 'primary.main' }}
+                                sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
                             />
                         </Typography>
                         <ViewProfileButton
@@ -119,23 +138,19 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                             ))}
                         </Stack>
 
-                        {conversationHistory&&conversationHistory.length>0&&
-                            <ActionButton
-                                style={{marginBottom: 2}}
+                        {conversationHistory && conversationHistory.length > 0 &&
+                            <DeleteButton
                                 variant="contained"
-                                color="error"
                                 startIcon={<DeleteForever />}
                                 onClick={deleteMessagesHandle}
                                 sx={{ mt: 2 }}
                             >
                                 Borrar Mensajes
-                            </ActionButton>
+                            </DeleteButton>
                         }
-
-
                     </Box>
                 </CardContent>
-            </StyledCard>
+            </GlassCard>
             <Modal
                 open={isImageEnlarged}
                 onClose={handleCloseEnlargedImage}
@@ -148,7 +163,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
+                        bgcolor: 'rgba(0, 0, 0, 0.8)',
                         boxShadow: 24,
                         p: 4,
                         outline: 'none',
@@ -163,7 +178,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                         alt={girl.username}
                     />
                     <CloseButton onClick={handleCloseEnlargedImage} aria-label="close">
-                        <CancelTwoToneIcon sx={{ fontSize: 36,}}/>
+                        <CancelTwoToneIcon sx={{ fontSize: 36 }}/>
                     </CloseButton>
                 </Box>
             </Modal>
