@@ -44,8 +44,7 @@ const PriceBox = styled(Box)(({ theme }) => ({
     marginBottom: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    alignItems: 'center'
 }));
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
@@ -125,7 +124,7 @@ const PrivateMember = () => {
                     <CenteredBox mb={2}>
                         <Avatar
                             src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : ''}
-                            sx={{ width: 100, height: 100, mb: 2 }}
+                            sx={{ width: 160, height: 160, mb: 2 }}
                         />
                         <Typography variant="h4">
                             {girl ? girl.username : 'Username'} <CheckCircleIcon sx={{ verticalAlign: 'middle', ml: 1 }} />
@@ -142,7 +141,7 @@ const PrivateMember = () => {
                             priceInfo.map((price, index) => (
                                 <Box key={index} textAlign="center" mb={index === 0 ? 2 : 0}>
                                     <PriceTypography variant="h4" gutterBottom fontWeight="bold">
-                                        ${price.price.toFixed(0)} {price.currency}
+                                        ${price.price.toFixed(0)} {price.name}
                                     </PriceTypography>
                                     <Avatar src={price.flag} sx={{ mt: 1, width: 30, height: 20, mx: 'auto' }} variant="rounded" />
                                 </Box>
@@ -150,7 +149,7 @@ const PrivateMember = () => {
                         ) : (
                             <>
                                 <PriceTypography variant="h4" gutterBottom fontWeight="bold">
-                                    ${priceInfo.price.toFixed(0)} {priceInfo.currency}
+                                    ${priceInfo.price.toFixed(0)} {priceInfo.name}
                                 </PriceTypography>
                                 <Avatar src={priceInfo.flag} sx={{ mt: 1, width: 30, height: 20 }} variant="rounded" />
                             </>
@@ -195,15 +194,15 @@ const PrivateMember = () => {
 
                     <FeatureList>
                         <ListItem>
-                            <ListItemIcon><CameraAltIcon sx={{ fontSize: 32, color: 'white' }}/></ListItemIcon>
+                            <ListItemIcon><CameraAltIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
                             <ListItemText primary="Fotos Privadas" primaryTypographyProps={{ fontSize: '1.4rem' }} />
                         </ListItem>
                         <ListItem>
-                            <ListItemIcon><SpatialAudioOffIcon sx={{ fontSize: 32, color: 'white' }}/></ListItemIcon>
+                            <ListItemIcon><SpatialAudioOffIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
                             <ListItemText primary={`Audios de ${girl ? girl.name : 'la chica'}`} primaryTypographyProps={{ fontSize: '1.4rem' }} />
                         </ListItem>
                         <ListItem>
-                            <ListItemIcon><MessageIcon sx={{ fontSize: 32, color: 'white' }}/></ListItemIcon>
+                            <ListItemIcon><MessageIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
                             <ListItemText primary="Mensajes ilimitados" primaryTypographyProps={{ fontSize: '1.4rem' }} />
                         </ListItem>
                     </FeatureList>
