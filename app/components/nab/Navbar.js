@@ -41,7 +41,7 @@ const Navbar = () => {
         <AppBar
             position="relative"
             sx={{
-                background: 'rgba(0,0,0,0.1)',
+                background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)',
                 backdropFilter: 'blur(10px)',
                 margin: '16px auto',
                 borderRadius: '8px',
@@ -53,7 +53,7 @@ const Navbar = () => {
             <Toolbar>
                 <Box display="flex" alignItems="center" flexGrow={1}>
                     <img
-                        src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Quinielas+(2).png"
+                        src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
                         alt="logo"
                         style={{ width: 45, height: 'auto', marginRight: 4 }}
                     />
