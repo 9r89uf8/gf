@@ -106,24 +106,24 @@ const GirlProfile = () => {
                             <Box>
                                 <Typography variant="h4" gutterBottom>
                                     {girl.username}
-                                    <CheckCircleIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1 }} />
+                                    <CheckCircleIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1, fontSize: 36 }} />
                                 </Typography>
                                 <Box display="flex" alignItems="center" mb={2}>
-                                    <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1 }} />
-                                    <Typography variant="body1">
+                                    <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
+                                    <Typography variant="h6">
                                         <strong>{girl.followers.toLocaleString()}</strong> Followers
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
-                                    <CakeIcon sx={{ mr: 1 }} />
-                                    <Typography variant="body1">{girl.age} years old</Typography>
+                                    <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
+                                    <Typography variant="h6">{girl.age} years old</Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
-                                    <LocationOnIcon sx={{ mr: 1 }} />
-                                    <Typography variant="body1">{girl.country}</Typography>
+                                    <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
+                                    <Typography variant="h6">{girl.country}</Typography>
                                 </Box>
                                 <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
-                                <Typography variant="body1" paragraph>
+                                <Typography variant="h6" paragraph>
                                     {girl.bio}
                                 </Typography>
                                 <GradientButton

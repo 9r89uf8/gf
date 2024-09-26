@@ -67,7 +67,7 @@ const Navbar = () => {
                             zIndex: 1, // Ensure logo is above other elements
                         }}
                     />
-                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 18 }}> {/* Adjust marginLeft to accommodate larger logo */}
+                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 22 }}> {/* Adjust marginLeft to accommodate larger logo */}
                         Arely
                     </Button>
                 </Box>
@@ -82,7 +82,7 @@ const Navbar = () => {
                         onClick={handleMenuOpen}
                         color="inherit"
                     >
-                        <DehazeIcon />
+                        <DehazeIcon sx={{ fontSize: 40 }}/>
                     </IconButton>
                     <Menu
                         id="menu-appbar"
