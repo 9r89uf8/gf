@@ -1,8 +1,8 @@
 // app/api/auth/register/route.js
-import {adminDb} from '@/app/utils/firebaseAdmin';
-import {authMiddleware} from "@/app/middleware/authMiddleware";
-import {v4 as uuidv4} from "uuid";
-import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
+import { authMiddleware } from "@/app/middleware/authMiddleware";
+import { v4 as uuidv4 } from "uuid";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 // Set the AWS region
 const REGION = "us-east-2";
@@ -62,7 +62,9 @@ export async function POST(req) {
 
         if (file) {
             const fileName = uuidv4();
-            girlRecord.picture = await uploadToS3(file, fileName);
+            await uploadToS3(file, fileName);
+            const fileType = file.type.split('/')[1]; // Assuming the mimetype is something like 'video/mp4'
+            girlRecord.picture = `${fileName}.${fileType}`;
         }
 
         await girlDoc.update(girlRecord);
