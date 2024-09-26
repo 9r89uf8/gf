@@ -38,7 +38,18 @@ const Navbar = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#161a1d' }}>
+        <AppBar
+            position="relative"
+            sx={{
+                background: 'rgba(0,0,0,0.1)',
+                backdropFilter: 'blur(10px)',
+                margin: '16px auto',
+                borderRadius: '8px',
+                boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.16)',
+                width: 'calc(100% - 32px)',
+                maxWidth: '1200px',
+            }}
+        >
             <Toolbar>
                 <Box display="flex" alignItems="center" flexGrow={1}>
                     <img
@@ -46,7 +57,9 @@ const Navbar = () => {
                         alt="logo"
                         style={{ width: 45, height: 'auto', marginRight: 4 }}
                     />
-                    <Button color="inherit" onClick={() => router.push('/')}>GF</Button>
+                    <Button color="inherit" onClick={() => router.push('/')}>
+                        GF
+                    </Button>
                 </Box>
 
                 <div>
@@ -69,14 +82,21 @@ const Navbar = () => {
                     >
                         {user ? (
                             <MenuItem onClick={handleSignOut}>Salir</MenuItem>
-                        ) : [
-                            <MenuItem key="login" onClick={handleLogin}>Entrar a mi cuenta</MenuItem>,
-                            <MenuItem key="register" onClick={handleRegister}>Crear Cuenta</MenuItem>
-                        ]}
+                        ) : (
+                            [
+                                <MenuItem key="login" onClick={handleLogin}>
+                                    Entrar a mi cuenta
+                                </MenuItem>,
+                                <MenuItem key="register" onClick={handleRegister}>
+                                    Crear Cuenta
+                                </MenuItem>,
+                            ]
+                        )}
                     </Menu>
                 </div>
             </Toolbar>
         </AppBar>
+
     );
 };
 

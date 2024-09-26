@@ -111,7 +111,6 @@ const RegisterPage = () => {
                 flexDirection: "column",
                 justifyContent: "space-between",
                 alignItems: "center",
-                background: 'linear-gradient(45deg, #343a40 0%, #212529 100%)',
                 padding: 2
             }}
         >

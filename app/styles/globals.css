@@ -1,10 +1,11 @@
-/* styles/globals.css */
 body {
     margin: 0;
     padding: 0;
+    background: linear-gradient(45deg, #343a40 0%, #212529 100%);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 * {
     box-sizing: border-box;
 }
+
