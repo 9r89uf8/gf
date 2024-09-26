@@ -42,3 +42,41 @@ export const likeGirlPost = async (formData) => {
         return null;
     }
 };
+
+export const addPost = async (formData) => {
+    const updatePost = useStore.getState().updatePost;
+    try {
+        const response = await fetch('/api/post/add', {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } else {
+            throw new Error('Failed to update');
+        }
+    } catch (error) {
+        console.error('Error updating:', error);
+        return null;
+    }
+};
+
+export const updateGirl = async (formData) => {
+    const updatePost = useStore.getState().updatePost;
+    try {
+        const response = await fetch('/api/girl/update', {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } else {
+            throw new Error('Failed to update');
+        }
+    } catch (error) {
+        console.error('Error updating:', error);
+        return null;
+    }
+};
