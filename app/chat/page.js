@@ -135,6 +135,7 @@ const Chat = () => {
                 user={user}
                 audios={audios}
                 handleLike={handleLike}
+                girl={girl}
             />
 
             {/* Reminder to log in or register */}

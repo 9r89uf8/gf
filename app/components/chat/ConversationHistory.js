@@ -45,7 +45,7 @@ const ResponseMessage = styled(Typography)(({ theme }) => ({
     msUserSelect: 'none', // Add this line for IE/Edge
 }));
 
-function ConversationHistory({ conversationHistory, user, audios, handleLike }) {
+function ConversationHistory({ conversationHistory, user, audios, handleLike, girl }) {
     const messagesEndRef = useRef(null);
     const router = useRouter();
 
@@ -65,7 +65,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike }) 
     };
 
     const handleProfileClick = () => {
-        router.push('/01uIfxE3VRIbrIygbr2Q');
+        router.push('/novia-virtual');
     };
 
     return (
@@ -103,7 +103,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike }) 
                             </Box>
                         )}
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', margin: 1, maxWidth: '200px' }}>
-                            <Avatar src='https://d3sog3sqr61u3b.cloudfront.net/403828389_1025632782006392_7838418717459113839_n.webp.jpg'
+                            <Avatar src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                     onClick={() => handleProfileClick()}
                                     sx={{ backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)', width: 54, height: 54, marginBottom: 1, marginTop: 3 }}/>
                         <Badge

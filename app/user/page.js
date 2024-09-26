@@ -20,21 +20,23 @@ import {
     Avatar,
 } from '@mui/material';
 import { Edit, Save, Close, DeleteForever, PersonAdd, PhotoCamera } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 
 const StyledCard = styled(Card)(({ theme }) => ({
-    padding: theme.spacing(4),
-    borderRadius: theme.shape.borderRadius * 2,
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-    backdropFilter: 'blur(4px)',
-    background: 'linear-gradient(135deg, #38a3a5, #57cc99)',
-    color: theme.palette.common.white,
     textAlign: 'center',
-    maxWidth: 400,
-    width: '100%',
-    userSelect: 'none', // Add this line
-    WebkitUserSelect: 'none', // Add this line for webkit browsers
-    msUserSelect: 'none', // Add this line for IE/Edge
+    color: 'white',
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: 15,
+    marginBottom: 40,
+    border: `1px solid ${alpha('#ffffff', 0.2)}`,
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    msUserSelect: 'none',
+    width: '100%', // Set width to 100%
+    maxWidth: '500px', // Add a max-width for larger screens
+    padding: theme.spacing(3), // Add some padding
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -146,7 +148,7 @@ const UserProfile = () => {
 
     if (!user) {
         return (
-            <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+            <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2, width: '100%' }}>
                 <StyledCard>
                     <Typography variant="h3" gutterBottom>Bienvenido</Typography>
                     <Typography variant="h5" paragraph>
@@ -170,7 +172,7 @@ const UserProfile = () => {
     }
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2 }}>
+        <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2, width: '100%' }}>
             <StyledCard>
                 <Avatar
                     src={newUserInfo.profilePic}
