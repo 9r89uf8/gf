@@ -43,13 +43,22 @@ const uploadToS3 = async (file, fileName) => {
 
 export async function POST(req) {
     try {
-        // await authMiddleware(req);
+        await authMiddleware(req);
         const formData = await req.formData();
         const username = formData.get('username');
         const age = formData.get('age');
         const country = formData.get('country');
         const bio = formData.get('bio');
         const file = formData.get('picture');
+        let userId = req.user.uid
+
+        // Check if the user is admin
+        if (userId !== 'hRZgS7woczXIruLyLjWu9axjPbo2') {
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
 
         const girlDoc = adminDb.firestore().collection('girls').doc('01uIfxE3VRIbrIygbr2Q');
 

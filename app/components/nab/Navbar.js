@@ -26,6 +26,21 @@ const Navbar = () => {
         router.push('/login');
     };
 
+    const handlePicture = () => {
+        handleMenuClose();
+        router.push('/admin/picture');
+    };
+
+    const handlePosts = () => {
+        handleMenuClose();
+        router.push('/admin/add');
+    };
+
+    const handleUpdate = () => {
+        handleMenuClose();
+        router.push('/admin/update');
+    };
+
     const handleRegister = () => {
         handleMenuClose();
         router.push('/register');
@@ -91,7 +106,16 @@ const Navbar = () => {
                         onClose={handleMenuClose}
                     >
                         {user ? (
-                            <MenuItem onClick={handleSignOut}>Salir</MenuItem>
+                            <>
+                                {user && user.uid === 'hRZgS7woczXIruLyLjWu9axjPbo2' && (
+                                    <>
+                                        <MenuItem onClick={handlePicture}>Add Pictures</MenuItem>
+                                        <MenuItem onClick={handlePosts}>Add Posts</MenuItem>
+                                        <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
+                                    </>
+                                )}
+                                <MenuItem onClick={handleSignOut}>Salir</MenuItem>
+                            </>
                         ) : (
                             [
                                 <MenuItem key="login" onClick={handleLogin}>

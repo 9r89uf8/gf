@@ -55,9 +55,9 @@ export async function POST(req) {
     try {
         await authMiddleware(req);
         const formData = await req.formData();
-        const premium = formData.get('premium');
         const description = formData.get('description');
         const file = formData.get('image');
+
         let userId = req.user.uid
 
         // Check if the user is admin
@@ -68,17 +68,8 @@ export async function POST(req) {
             });
         }
 
-        const girlDoc = await adminDb.firestore().collection('girls').doc('01uIfxE3VRIbrIygbr2Q').get();
-        const girlData = girlDoc.data();
-
         const postRecord = {
-            girlName:girlData.name,
-            girlId: '01uIfxE3VRIbrIygbr2Q',
-            girlPicUrl: girlData.picture,
             description,
-            likes: [],
-            likesAmount: Math.floor(Math.random() * (30000 - 14000 + 1)) + 14000,
-            isPremium: premium,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
 
@@ -101,7 +92,7 @@ export async function POST(req) {
 
 
         // Save the post to Firestore
-        const postRef = await adminDb.firestore().collection('posts').add(postRecord);
+        const postRef = await adminDb.firestore().collection('pictures').add(postRecord);
 
         return new Response(JSON.stringify({
             id: postRef.id,
