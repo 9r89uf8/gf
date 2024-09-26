@@ -15,6 +15,7 @@ import {
     ListItemIcon,
     ListItemText,
     Collapse,
+    Grid,
 } from '@mui/material';
 import { styled, alpha } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -86,30 +87,57 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const PriceCard = styled(Card)(({ theme }) => ({
+    color: theme.palette.common.white,
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(3),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        transform: 'scale(1.05)',
+        boxShadow: '0 8px 16px 0 rgba(0,0,0,0.2)',
+    },
+}));
+
 const PrivateMember = () => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const [showPaymentInfo, setShowPaymentInfo] = useState(false);
+    const [selectedCountry, setSelectedCountry] = useState(null);
 
     const allowedCountries = ['US', 'MX', 'AR'];
 
-    const calculatePrice = () => {
-        if (user && girl) {
-            const pricingMap = {
-                'MX': { price: girl.memberPrice * 17, currency: 'MXN', name: 'pesos', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png' },
-                'AR': { price: girl.memberPrice * 800, currency: 'ARS', name: 'pesos', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(6).png' },
-                'US': { price: girl.memberPrice, currency: 'USD', name: 'dólares', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png' },
-            };
-            return pricingMap[user.country] || pricingMap['US'];
-        } else {
-            return [
-                { price: 4, currency: 'USD', name: 'dólares', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png' },
-                { price: 70, currency: 'MXN', name: 'pesos', flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png' }
-            ];
-        }
-    };
-
-    const priceInfo = calculatePrice();
+    const pricingOptions = [
+        {
+            country: 'US',
+            price: girl ? girl.memberPrice : 4,
+            currency: 'USD',
+            name: 'dólares',
+            flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png',
+            gradient: 'linear-gradient(45deg, #3f51b5 30%, #2196f3 90%)'
+        },
+        {
+            country: 'MX',
+            price: girl ? girl.memberPrice * 17 : 70,
+            currency: 'MXN',
+            name: 'pesos',
+            flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png',
+            gradient: 'linear-gradient(45deg, #7ae582 30%, #25a18e 90%)'
+        },
+        {
+            country: 'AR',
+            price: girl ? girl.memberPrice * 800 : 3200,
+            currency: 'ARS',
+            name: 'pesos',
+            flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(6).png',
+            gradient: 'linear-gradient(45deg, #48cae4 30%, #00b4d8 90%)'
+        },
+    ];
 
     return (
         <Box
@@ -136,28 +164,41 @@ const PrivateMember = () => {
 
                     <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
 
-                    <PriceBox>
-                        {Array.isArray(priceInfo) ? (
-                            priceInfo.map((price, index) => (
-                                <Box key={index} textAlign="center" mb={index === 0 ? 2 : 0}>
-                                    <PriceTypography variant="h4" gutterBottom fontWeight="bold">
-                                        ${price.price.toFixed(0)} {price.name}
+
+                        <Typography variant="h4" align="center" gutterBottom>
+                            Elige Tu País
+                        </Typography>
+
+                    <Grid container spacing={3} justifyContent="center">
+                        {pricingOptions.map((option) => (
+                            <Grid item xs={12} sm={4} key={option.country}>
+                                <PriceCard
+                                    onClick={() => setSelectedCountry(option.country)}
+                                    sx={{
+                                        background: selectedCountry === option.country
+                                            ? 'linear-gradient(45deg, #f48c06 30%, #dc2f02 90%)'
+                                            : option.gradient,
+                                    }}
+                                >
+                                    <Avatar src={option.flag} sx={{ width: 40, height: 30, mb: 2 }} variant="rounded" />
+                                    <Typography variant="h4" fontWeight="bold">
+                                        ${option.price.toFixed(0)}
+                                    </Typography>
+                                    <Typography variant="h6">
+                                        {option.name}
+                                    </Typography>
+                                    <PriceTypography variant="h5" mt={2} fontWeight="bold">
+                                        Acceso por 15 días
                                     </PriceTypography>
-                                    <Avatar src={price.flag} sx={{ mt: 1, width: 30, height: 20, mx: 'auto' }} variant="rounded" />
-                                </Box>
-                            ))
-                        ) : (
-                            <>
-                                <PriceTypography variant="h4" gutterBottom fontWeight="bold">
-                                    ${priceInfo.price.toFixed(0)} {priceInfo.name}
-                                </PriceTypography>
-                                <Avatar src={priceInfo.flag} sx={{ mt: 1, width: 30, height: 20 }} variant="rounded" />
-                            </>
-                        )}
-                        <PriceTypography variant="h5" mt={2} fontWeight="bold">
-                            Acceso por 15 días
-                        </PriceTypography>
-                    </PriceBox>
+                                    <Typography variant="subtitle1" mt={2}>
+                                        {option.country === 'US' ? 'United States' : option.country === 'MX' ? 'México' : 'Argentina'}
+                                    </Typography>
+                                </PriceCard>
+                            </Grid>
+                        ))}
+                    </Grid>
+
+
 
                     <SafetyBox>
                         <Typography variant="h5" fontWeight="bold">
