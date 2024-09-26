@@ -1,9 +1,9 @@
 // app/login/page.jsx
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { loginUser } from "@/app/services/authService";
 import { useStore } from '@/app/store/store';
-import { loginUser } from '@/app/services/authService';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { alpha, styled } from '@mui/material/styles';
+import { People, Lock, Bolt, TrendingUp } from '@mui/icons-material';
 import Link from 'next/link';
 
 const GlassCard = styled(Card)(({ theme }) => ({
@@ -21,7 +22,7 @@ const GlassCard = styled(Card)(({ theme }) => ({
     backdropFilter: 'blur(10px)',
     borderRadius: 15,
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.15)',
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
 }));
 
 const GradientButton = styled(Button)(({ theme }) => ({
@@ -65,17 +66,35 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
 }));
 
+const FeatureBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 10,
+    color: 'white',
+}));
+
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [disableLogin, setDisableLogin] = useState(false);
+    const [userCount, setUserCount] = useState(0);
     const router = useRouter();
     const setUser = useStore((state) => state.setUser);
 
+    useEffect(() => {
+        // Simulating fetching user count
+        setUserCount(Math.floor(Math.random() * 1000000) + 500000);
+    }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
+        setDisableLogin(true);
         const { user, error } = await loginUser(email, password, setUser);
+        setDisableLogin(false);
         if (user) {
             router.push('/chat');
+        } else {
+            console.error(error);
         }
     };
 
@@ -97,6 +116,34 @@ const LoginPage = () => {
                         <Typography variant="h4" sx={{ color: 'white', marginBottom: 3, fontWeight: 'bold' }}>
                             Ingrese a su cuenta
                         </Typography>
+
+                        <Box sx={{ marginBottom: 3, textAlign: 'left' }}>
+                            <FeatureBox>
+                                <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 36 }} />
+                                <Typography variant="body1">
+                                    ¡Ya somos {userCount.toLocaleString()} usuarios!
+                                </Typography>
+                            </FeatureBox>
+                            <FeatureBox>
+                                <Lock sx={{ marginRight: 1, color: '#FF8E53', fontSize: 36 }} />
+                                <Typography variant="body1">
+                                    100% anónimo y seguro
+                                </Typography>
+                            </FeatureBox>
+                            <FeatureBox>
+                                <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 36 }} />
+                                <Typography variant="body1">
+                                    Mensajes encriptados
+                                </Typography>
+                            </FeatureBox>
+                            <FeatureBox>
+                                <TrendingUp sx={{ marginRight: 1, color: '#FF8E53', fontSize: 36 }} />
+                                <Typography variant="body1">
+                                    ¡La app de más rápido crecimiento en LATAM!
+                                </Typography>
+                            </FeatureBox>
+                        </Box>
+
                         <form onSubmit={handleLogin}>
                             <StyledTextField
                                 label="Correo electrónico"
@@ -120,6 +167,7 @@ const LoginPage = () => {
                             <GradientButton
                                 type="submit"
                                 variant="contained"
+                                disabled={disableLogin}
                                 fullWidth
                             >
                                 Entrar
@@ -142,9 +190,9 @@ const LoginPage = () => {
                             ¿Olvidaste tu contraseña?
                         </Button>
                     </CardContent>
-            </GlassCard>
-
+                </GlassCard>
             </Box>
+
             <GlassCard sx={{ padding: 2, maxWidth: '100%', marginTop: 5 }}>
                 <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Quinielas+(1).png" alt="logo" style={{width: 45, height: "auto", marginBottom: 1}}/>
                 <Typography sx={{ color: 'white', fontSize:'14px' }}>
