@@ -1,61 +1,31 @@
+// Chat.js
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useStore } from '@/app/store/store';
 import { getGirl } from '@/app/services/girlService';
-import {checkIfCookie} from "@/app/services/authService";
+import { checkIfCookie } from '@/app/services/authService';
 import {
     fetchMessages,
     sendChatPrompt,
     fetchAudios,
     likeMessage,
 } from '@/app/services/chatService';
-import {
-    Container,
-    Paper,
-    InputBase,
-    Button,
-    styled,
-    IconButton,
-    Box,
-    CircularProgress,
-    Typography,
-} from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
-import SendIcon from '@mui/icons-material/Send';
-import Footer from '@/app/components/buyAction/Footer';
-import ConversationHistory from '@/app/components/chat/ConversationHistory';
+import { Container, styled } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import GirlHeader from '@/app/components/chat/GirlHeader';
+
+// Import the new components
+import ChatInputComponent from '@/app/components/chat/ChatInputComponent';
+import ImagePreviewComponent from '@/app/components/chat/ImagePreviewComponent';
+import LoginReminder from '@/app/components/chat/LoginReminder';
+import UpgradeReminder from '@/app/components/chat/UpgradeReminder';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     position: 'relative',
-    paddingBottom: theme.spacing(12)
+    paddingBottom: theme.spacing(12),
 }));
-
-const ChatInput = styled(Paper)(({ theme }) => ({
-    position: 'fixed',
-    bottom: theme.spacing(1),
-    left: 0,
-    right: 0,
-    width: '100%',
-    maxWidth: 'sm',
-    margin: '0 auto',
-    padding: theme.spacing(2),
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.background.paper,
-    zIndex: 1000,
-}));
-
-const ImagePreview = styled('img')({
-    maxWidth: '100%',
-    maxHeight: '200px',
-    objectFit: 'contain',
-    marginTop: '10px',
-    borderRadius: '5px',
-});
 
 const Chat = () => {
     const router = useRouter();
@@ -68,11 +38,10 @@ const Chat = () => {
     const audios = useStore((state) => state.audios);
     const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
-    const messageSent = useStore((state) => state.messageSent);
     const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
-        checkIfCookie()
+        checkIfCookie();
         getGirl();
     }, []);
 
@@ -101,7 +70,7 @@ const Chat = () => {
     };
 
     const handleBuy = () => {
-        router.push('/premium'); // Adjust the path to your login or register page
+        router.push('/premium'); // Adjust the path to your premium page
     };
 
     const handleSubmit = async (event) => {
@@ -159,9 +128,7 @@ const Chat = () => {
 
     return (
         <StyledContainer maxWidth="sm">
-            {girl && (
-                <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />
-            )}
+            {girl && <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />}
 
             <ConversationHistory
                 conversationHistory={conversationHistory}
@@ -172,151 +139,42 @@ const Chat = () => {
 
             {/* Reminder to log in or register */}
             {isPromptEntered && !user && (
-                <Paper
-                    elevation={4}
-                    sx={{
-                        position: 'fixed',
-                        bottom: 110,
-                        left: 0,
-                        right: 0,
-                        margin: '0 auto',
-                        padding: 2,
-                        textAlign: 'center',
-                        zIndex: 1000,
-                        maxWidth: '300px',
-                    }}
-                >
-                    <Typography variant="h6" sx={{ mb: 1 }}>
-                        You need to log in or register to chat with {girl?.username}.
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleLoginRedirect}
-                    >
-                        Log In or Register
-                    </Button>
-                </Paper>
+                <LoginReminder girl={girl} handleLoginRedirect={handleLoginRedirect} />
             )}
 
-
-
-            {/* Always show ChatInput, but disable when canSendMessage is false */}
-            <ChatInput component="form" onSubmit={handleSubmit} elevation={4}>
-                <IconButton
-                    onClick={() => {
-                        if (user && canSendMessage) {
-                            fileInputRef.current.click();
-                        }
-                    }}
-                    aria-label="Upload Image"
-                    disabled={!user || !canSendMessage}
-                >
-                    <ImageIcon fontSize="large" />
-                </IconButton>
-                <InputBase
-                    sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
-                    placeholder={
-                        isSending
-                            ? 'Enviando...'
-                            : canSendMessage
-                                ? 'Escribe un mensaje...'
-                                : 'No more free messages'
-                    }
-                    multiline
-                    maxRows={6}
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    inputProps={{ 'aria-label': 'Escribe un mensaje' }}
-                    disabled={isSending}
-                />
-                <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    disabled={!canSendMessage}
-                />
-                {isSending ? (
-                    <CircularProgress size={24} sx={{ mr: 2 }} />
-                ) : (
-                    <IconButton
-                        type="submit"
-                        color="primary"
-                        disabled={!isPromptEntered || !canSendMessage}
-                        aria-label="Send Message"
-                    >
-                        <SendIcon sx={{ fontSize: 32 }} />
-                    </IconButton>
-                )}
-            </ChatInput>
+            {/* Always show ChatInputComponent */}
+            <ChatInputComponent
+                handleSubmit={handleSubmit}
+                user={user}
+                canSendMessage={canSendMessage}
+                fileInputRef={fileInputRef}
+                handleImageUpload={handleImageUpload}
+                isSending={isSending}
+                prompt={prompt}
+                setPrompt={setPrompt}
+                isPromptEntered={isPromptEntered}
+                girl={girl} // Pass the girl prop
+            />
 
             {/* Message about upgrading when user can't send messages */}
             {user && !canSendMessage && isPromptEntered && (
-                <Paper
-                    elevation={4}
-                    sx={{
-                        position: 'fixed',
-                        bottom: 80,
-                        left: 0,
-                        right: 0,
-                        margin: '0 auto',
-                        padding: 2,
-                        marginBottom: 3,
-                        textAlign: 'center',
-                        zIndex: 1000,
-                        maxWidth: '300px',
-                        background: 'linear-gradient(45deg, #343a40, #212529)',
-                        color: 'white',
-                        borderRadius: 5,
-                    }}
-                >
-                    <Typography variant="h4" sx={{ mb: 1 }}>
-                        Has utilizado todos tus mensajes gratuitos.
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleBuy}
-                        sx={{ fontSize: 20, margin: '8px 0px 8px 0px' }}
-                    >
-                        obtener más
-                    </Button>
-                </Paper>
+                <UpgradeReminder handleBuy={handleBuy} />
             )}
 
-
+            {/* Image Preview */}
             {imagePreview && (
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        bottom: 70,
-                        left: 0,
-                        right: 0,
-                        textAlign: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        padding: 2,
-                        borderRadius: 1,
-                    }}
-                >
-                    <ImagePreview src={imagePreview} alt="Selected" />
-                    <Button
-                        onClick={handleClearImage}
-                        variant="contained"
-                        color="secondary"
-                        size="small"
-                        sx={{ mt: 1 }}
-                    >
-                        Clear Image
-                    </Button>
-                </Box>
+                <ImagePreviewComponent
+                    imagePreview={imagePreview}
+                    handleClearImage={handleClearImage}
+                />
             )}
         </StyledContainer>
     );
 };
 
 export default Chat;
+
+
 
 
 

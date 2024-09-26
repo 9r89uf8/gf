@@ -25,6 +25,7 @@ import SpatialAudioOffIcon from '@mui/icons-material/SpatialAudioOff';
 import MessageIcon from '@mui/icons-material/Message';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import {useRouter} from "next/navigation";
 
 const GlassCard = styled(Card)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -105,12 +106,18 @@ const PriceCard = styled(Card)(({ theme }) => ({
 }));
 
 const PrivateMember = () => {
+    const router = useRouter();
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const [showPaymentInfo, setShowPaymentInfo] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
 
     const allowedCountries = ['US', 'MX', 'AR'];
+
+
+    const handleLoginRedirect = () => {
+        router.push('/register'); // Adjust the path to your login or register page
+    };
 
     const pricingOptions = [
         {
@@ -227,6 +234,7 @@ const PrivateMember = () => {
                             <GradientButton
                                 variant="contained"
                                 sx={{ mt: 2, fontSize: 17 }}
+                                onClick={handleLoginRedirect}
                             >
                                 Crear Cuenta
                             </GradientButton>
