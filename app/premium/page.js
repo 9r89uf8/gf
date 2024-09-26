@@ -37,7 +37,7 @@ const GlassCard = styled(Card)(({ theme }) => ({
 }));
 
 const PriceBox = styled(Box)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    background: 'linear-gradient(45deg, #ffffff 30%, #f8f9fa 90%)',
     borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(3),
     marginTop: theme.spacing(2),
@@ -49,7 +49,7 @@ const PriceBox = styled(Box)(({ theme }) => ({
 }));
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
-    color: 'white',
+    color: 'black',
     textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
 }));
 
@@ -188,7 +188,7 @@ const PrivateMember = () => {
                                 variant="contained"
                                 sx={{ mt: 2, fontSize: 17 }}
                             >
-                                Regístrate para pagar
+                                Crear Cuenta
                             </GradientButton>
                         )}
                     </Box>
@@ -223,10 +223,10 @@ const PrivateMember = () => {
                             <Typography variant="h6" gutterBottom>
                                 Seguridad en el Pago
                             </Typography>
-                            <Typography variant="body2" paragraph>
+                            <Typography variant="h6" paragraph>
                                 Tu seguridad es nuestra prioridad. Todos los pagos son procesados de manera segura por Stripe.
                             </Typography>
-                            <Typography variant="body2" paragraph>
+                            <Typography variant="h6" paragraph>
                                 No almacenamos ningún dato de tarjetas de crédito en nuestros servidores. Stripe se encarga de todo, garantizando la seguridad y confidencialidad de tu información.
                             </Typography>
                             <Button

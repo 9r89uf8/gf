@@ -55,7 +55,7 @@ export async function POST(req) {
     try {
         // await authMiddleware(req);
         const formData = await req.formData();
-        const premiun = formData.get('premium');
+        const premium = formData.get('premium');
         const description = formData.get('description');
         const file = formData.get('image');
 
@@ -69,7 +69,7 @@ export async function POST(req) {
             description,
             likes: [],
             likesAmount: Math.floor(Math.random() * (30000 - 14000 + 1)) + 14000,
-            isPremium: premiun,
+            isPremium: premium,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
 
