@@ -5,8 +5,8 @@ import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Box } from '@mui/m
 import { useRouter } from 'next/navigation';
 import DehazeIcon from '@mui/icons-material/Dehaze';
 import { AccountCircle } from '@mui/icons-material';
-import { useStore } from '@/app/store/store'; // Ensure this path is correct according to your structure
-import {logoutUser} from "@/app/services/authService"; // Ensure this path is correct according to your structure
+import { useStore } from '@/app/store/store';
+import { logoutUser } from "@/app/services/authService";
 
 const Navbar = () => {
     const router = useRouter();
@@ -32,7 +32,7 @@ const Navbar = () => {
     };
 
     const handleSignOut = async () => {
-        await logoutUser(); // Ensure logoutUser properly clears any session data on the server
+        await logoutUser();
         handleMenuClose();
         router.push('/login');
     };
@@ -48,16 +48,26 @@ const Navbar = () => {
                 boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.16)',
                 width: 'calc(100% - 32px)',
                 maxWidth: '1200px',
+                overflow: 'visible', // Allow content to overflow
             }}
         >
-            <Toolbar>
-                <Box display="flex" alignItems="center" flexGrow={1}>
-                    <img
+            <Toolbar sx={{ minHeight: '64px', position: 'relative' }}> {/* Adjust minHeight as needed */}
+                <Box display="flex" alignItems="center" flexGrow={1} sx={{ position: 'relative' }}>
+                    <Box
+                        component="img"
                         src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
                         alt="logo"
-                        style={{ width: 45, height: 'auto', marginRight: 4 }}
+                        sx={{
+                            width: '80px', // Increased size
+                            height: 'auto',
+                            marginRight: 2,
+                            position: 'absolute',
+                            left: '-10px', // Adjust to make it overflow to the left
+                            top: '-10px', // Adjust to make it overflow to the top
+                            zIndex: 1, // Ensure logo is above other elements
+                        }}
                     />
-                    <Button color="inherit" onClick={() => router.push('/')}>
+                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px' }}> {/* Adjust marginLeft to accommodate larger logo */}
                         GF
                     </Button>
                 </Box>
@@ -96,7 +106,6 @@ const Navbar = () => {
                 </div>
             </Toolbar>
         </AppBar>
-
     );
 };
 
