@@ -145,14 +145,12 @@ const GirlProfile = () => {
                 <Grid container spacing={3}>
                     {girl.posts.map((post, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
-                            <GlassCard>
                                 <GirlPostsComp
                                     girl={post.girlId}
                                     user={user}
                                     post={post}
                                     index={index}
                                 />
-                            </GlassCard>
                         </Grid>
                     ))}
                 </Grid>
