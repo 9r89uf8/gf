@@ -95,7 +95,7 @@ const AddPost = () => {
         event.preventDefault();
 
         const formData = new FormData();
-        formData.append('premium', isPremium);
+        formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('description', description);
         if (image) {
             formData.append('image', image);

@@ -58,6 +58,7 @@ export async function POST(req) {
         const premium = formData.get('premium');
         const description = formData.get('description');
         const file = formData.get('image');
+
         let userId = req.user.uid
 
         // Check if the user is admin
