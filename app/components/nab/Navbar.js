@@ -67,8 +67,8 @@ const Navbar = () => {
                             zIndex: 1, // Ensure logo is above other elements
                         }}
                     />
-                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px' }}> {/* Adjust marginLeft to accommodate larger logo */}
-                        GF
+                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 18 }}> {/* Adjust marginLeft to accommodate larger logo */}
+                        Arely
                     </Button>
                 </Box>
 
