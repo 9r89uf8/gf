@@ -65,7 +65,7 @@ export async function POST(req) {
         const postRecord = {
             girlName:girlData.name,
             girlId: '01uIfxE3VRIbrIygbr2Q',
-            girlPicUrl: girlData.girlPicUrl,
+            girlPicUrl: girlData.picture,
             description,
             likes: [],
             likesAmount: Math.floor(Math.random() * (30000 - 14000 + 1)) + 14000,
