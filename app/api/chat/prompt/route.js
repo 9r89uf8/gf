@@ -5,6 +5,44 @@ import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 const {v4: uuidv4} = require("uuid");
 const elevenK = process.env.ELEVENLABS_API_KEY
 
+function splitTextAtPunctuationOrSecondEmoji(text) {
+    // If text is less than 10 characters, don't split it
+    if (text.length < 18) {
+        return [text, ''];
+    }
+
+    // Regular expression to match the first occurrence of period, question mark, or exclamation point
+    const punctuationRegex = /(\.|\?|!)\s*/;
+
+    // Regular expression to match emojis
+    const emojiRegex = /\p{Emoji}/gu;
+
+    // Find the index where the first punctuation mark occurs
+    const punctuationMatch = text.match(punctuationRegex);
+
+    // Find all emoji matches
+    let emojiMatches = [...text.matchAll(emojiRegex)];
+
+    if (punctuationMatch && (!emojiMatches[1] || punctuationMatch.index < emojiMatches[1].index)) {
+        // If punctuation comes first or there's no second emoji, split at punctuation
+        const index = punctuationMatch.index + punctuationMatch[0].length;
+        return [text.substring(0, index), text.substring(index)];
+    } else if (emojiMatches[1]) {
+        // If there's a second emoji and it comes before punctuation, split at the second emoji
+        const index = emojiMatches[1].index + emojiMatches[1][0].length;
+        return [text.substring(0, index), text.substring(index)];
+    } else if (emojiMatches.length === 1 && text.endsWith(emojiMatches[0][0])) {
+        // If there's only one emoji and it's at the end of the text, split before the emoji
+        const index = emojiMatches[0].index;
+        return [text.substring(0, index), text.substring(index)];
+    } else {
+        // If no punctuation or emoji is found, return the whole text as the first part and an empty string as the second
+        return [text, ''];
+    }
+}
+
+
+
 function shouldAddAudio() {
     const randomChance = Math.floor(Math.random() * 3) + 1;
     return randomChance === 2;
@@ -14,13 +52,25 @@ function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
 function processAssistantMessage(assistantMessage) {
-    return {
+    const [firstPart, secondPart] = splitTextAtPunctuationOrSecondEmoji(assistantMessage);
+    let response = [{
         uid: uuidv4(),
         role: "assistant",
         liked: false,
-        content: removeHashSymbols(assistantMessage),
+        content: removeHashSymbols(firstPart),
         timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-    };
+    }];
+    if (secondPart) {
+        response.push({
+            uid: uuidv4(),
+            role: "assistant",
+            liked: false,
+            content: removeHashSymbols(secondPart),
+            timestamp: adminDb.firestore.FieldValue.serverTimestamp()
+        });
+    }
+
+    return response;
 }
 
 async function handleAudioGeneration(response, girlAudioId, userId, audioAmount) {
@@ -210,15 +260,18 @@ ${userMessage}
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
         // Update conversation history
         conversationHistory.push({ "role": "user", "content": userMessage });
-        conversationHistory.push({"role": "assistant", "content": assistantMessageProcess.content});
+
+        assistantMessageProcess.forEach(response=>{
+            conversationHistory.push({"role": "assistant", "content": response.content});
+        })
+        // conversationHistory.push({"role": "assistant", "content": assistantMessageProcess.content});
 
 
         let addAudio = shouldAddAudio();
-        console.log(addAudio)
 
         let updatedUserData;
         if(userData.freeAudio>=1&&addAudio){
-            const audioGenerationResult = await handleAudioGeneration(assistantMessageProcess, 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
+            const audioGenerationResult = await handleAudioGeneration(assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({
                 freeAudio: adminDb.firestore.FieldValue.increment(-1),
@@ -251,7 +304,10 @@ ${userMessage}
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
 
-        await displayMessageRef.add(assistantMessageProcess);
+        for (const response1 of assistantMessageProcess) {
+            await displayMessageRef.add(response1);
+        }
+        // await displayMessageRef.add(assistantMessageProcess);
 
         // Fetch updated display messages
         const displayMessagesSnapshot = await displayMessageRef.orderBy('timestamp', 'asc').get();
