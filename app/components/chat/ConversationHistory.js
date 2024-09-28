@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Badge, styled, Avatar } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Typography, Badge, styled, Avatar, Modal } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import LikesIcon from "@mui/icons-material/Favorite";
 
@@ -49,6 +49,10 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
     const messagesEndRef = useRef(null);
     const router = useRouter();
 
+    // State variables for modal
+    const [openModal, setOpenModal] = useState(false);
+    const [modalImageSrc, setModalImageSrc] = useState('');
+
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -66,6 +70,17 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
 
     const handleProfileClick = () => {
         router.push('/novia-virtual');
+    };
+
+    // Functions to handle modal open and close
+    const handleOpenModal = (imageSrc) => {
+        setModalImageSrc(imageSrc);
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setModalImageSrc('');
     };
 
     return (
@@ -110,7 +125,9 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                 maxHeight: '300px',
                                                 borderRadius: '8px',
                                                 marginTop: 9,
+                                                cursor: 'pointer',
                                             }}
+                                            onClick={() => handleOpenModal(message.image)} // Open modal on click
                                         />
                                     ) : (
                                         <UserMessage style={{ fontSize: 22 }}>
@@ -205,8 +222,34 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                 horizontal: 'right',
                                             }}
                                         >
-                                            <div onClick={() => handleLike(message.id)}>
-                                                {audioMessage ? (
+                                            <div onClick={() => handleLike({id:message.id, image: message.image})}>
+                                                {message.image ? (
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            alignItems: 'flex-start',
+                                                            margin: 1,
+                                                            maxWidth: '200px',
+                                                        }}
+                                                    >
+                                                        <img
+                                                            src={`https://d3sog3sqr61u3b.cloudfront.net/${message.image}`}
+                                                            alt="assistant message"
+                                                            style={{
+                                                                maxWidth: '100%',
+                                                                maxHeight: '300px',
+                                                                borderRadius: '8px',
+                                                                marginTop: 9,
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() => handleOpenModal(message.image)} // Open modal on click
+                                                        />
+                                                        <AssistantMessage style={{ fontSize: 22 }}>
+                                                            {message.content}
+                                                        </AssistantMessage>
+                                                    </Box>
+                                                ) : audioMessage ? (
                                                     <Box
                                                         sx={{
                                                             display: 'flex',
@@ -236,9 +279,27 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                         }
                     })}
             <div ref={messagesEndRef} />
+
+            {/* Modal component for displaying the image */}
+            <Modal
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-image"
+                aria-describedby="modal-image-fullscreen"
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+                <img
+                    src={`https://d3sog3sqr61u3b.cloudfront.net/${modalImageSrc}`}
+                    alt="Expanded Image"
+                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    onClick={handleCloseModal} // Close modal when image is clicked
+                />
+            </Modal>
         </>
     );
 }
 
 export default ConversationHistory;
+
+
 

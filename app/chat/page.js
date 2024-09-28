@@ -119,8 +119,10 @@ const Chat = () => {
         setImagePreview(null);
     };
 
-    const handleLike = async (messageId) => {
-        await likeMessage({ messageUid: messageId });
+    const handleLike = async ({id, image}) => {
+        if(!image){
+            await likeMessage({ messageUid: id });
+        }
     };
 
     const isPromptEntered = prompt.trim().length > 0 || image !== null;

@@ -117,7 +117,6 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                                 alt={girl.username}
                                 onClick={handleImageClick}
                             />
-                            <ActiveIndicator />
                         </Box>
                         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                             {girl.username}
