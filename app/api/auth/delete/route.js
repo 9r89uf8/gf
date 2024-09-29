@@ -1,11 +1,16 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import {authMiddleware} from "@/app/middleware/authMiddleware";
+import {NextResponse} from "next/server";
 
 export async function GET(req) {
-    await authMiddleware(req);
-    const id = req.user.uid;
     try {
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
+        const id = authResult.user.uid;
 
         // Delete the user's authentication record
         await adminDb.auth().deleteUser(id);

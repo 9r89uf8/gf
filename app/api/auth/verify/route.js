@@ -1,18 +1,16 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import {authMiddleware} from "@/app/middleware/authMiddleware";
+import {NextResponse} from "next/server";
 
 export async function GET(req) {
     try {
 
-        let isAuthenticated = await authMiddleware(req)
+        const authResult = await authMiddleware(req);
 
-        return new Response(JSON.stringify(isAuthenticated.authenticated), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        let isAuthenticated = authResult.authenticated
+
+        return NextResponse.json({ isAuthenticated}, { status: 200 });
     } catch (error) {
         console.log(error.message)
         return new Response(JSON.stringify({ error: error.message }), {

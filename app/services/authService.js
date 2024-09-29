@@ -116,7 +116,7 @@ export const checkIfCookie = async () => {
         });
 
         const data = await response.json();
-        if(data){
+        if(data.isAuthenticated) {
             return data;
         }else {
             logout(); // Call the logout action from userSlice

@@ -2,11 +2,16 @@
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
 import { v4 as uuidv4 } from "uuid";
+import {NextResponse} from "next/server";
 
 export async function POST(req) {
     try {
-        await authMiddleware(req);
-        const userId = req.user.uid;
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
+        const userId = authResult.user.uid;
         const { postId } = await req.json();
 
         // Reference to the specific post document

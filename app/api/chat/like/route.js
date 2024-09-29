@@ -2,16 +2,22 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
 import { v4 as uuidv4 } from 'uuid';
+import {NextResponse} from "next/server";
 
 export async function POST(req) {
     try {
-        await authMiddleware(req);
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
+        const userId = authResult.user.uid;
         const { messageUid } = await req.json();
 
         // Reference to the specific message in the 'displayMessages' subcollection
         let messageRef = adminDb.firestore()
             .collection('users')
-            .doc(req.user.uid)
+            .doc(userId)
             .collection('displayMessages')
             .doc(messageUid)
 

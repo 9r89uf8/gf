@@ -1,12 +1,18 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
+import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from "uuid";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
     try {
-        await authMiddleware(req);
-        const userId = req.user.uid;
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+        const userId = authResult.user.uid;
 
         // Get references to user's subcollections
         const userRef = adminDb.firestore().collection('users').doc(userId);
@@ -28,17 +34,9 @@ export async function GET(req) {
             await deleteCollection(collectionRef);
         }
 
-        return new Response(JSON.stringify({ message: 'All user data deleted successfully' }), {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        return NextResponse.json({ message: 'All user data deleted successfully' }, { status: 200 });
     } catch (error) {
         console.error('Error deleting user data:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }

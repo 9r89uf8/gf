@@ -3,6 +3,7 @@ import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
 import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {NextResponse} from "next/server";
 
 // Set the AWS region
 const REGION = "us-east-2";
@@ -43,7 +44,11 @@ const uploadToS3 = async (file, fileName) => {
 
 export async function POST(req) {
     try {
-        await authMiddleware(req);
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
         const formData = await req.formData();
         const username = formData.get('username');
         const age = formData.get('age');

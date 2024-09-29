@@ -3,6 +3,7 @@ import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import { v4 as uuidv4 } from "uuid";
+import {NextResponse} from "next/server";
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const axios = require("axios");
 const fs = require("fs");
@@ -53,12 +54,16 @@ const uploadToS3 = (file, fileName) => {
 
 export async function POST(req) {
     try {
-        await authMiddleware(req);
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
+        const userId = authResult.user.uid;
         const formData = await req.formData();
         const description = formData.get('description');
         const file = formData.get('image');
 
-        let userId = req.user.uid
 
         // Check if the user is admin
         if (userId !== 'hRZgS7woczXIruLyLjWu9axjPbo2') {

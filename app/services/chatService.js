@@ -43,7 +43,7 @@ export const fetchAudios = async () => {
             return data;
         } else {
             console.log('errror')
-            throw new Error('Failed to fetch the latest jornada');
+            throw new Error('Failed to fetch audios');
         }
     } catch (error) {
         console.error(error.message);

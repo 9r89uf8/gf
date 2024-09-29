@@ -1,13 +1,21 @@
 // app/api/posts/route.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
+import {NextResponse} from "next/server";
+
 
 export async function GET(req) {
     try {
-        await authMiddleware(req);
+        const authResult = await authMiddleware(req);
+        if (!authResult.authenticated) {
+            return NextResponse.json({ error: authResult.error }, { status: 401 });
+        }
+
+        const userId = authResult.user.uid;
+
 
         // Get reference to user's 'audios' subcollection
-        let audioRef = adminDb.firestore().collection('users').doc(req.user.uid).collection('displayAudios').orderBy('timestamp', 'asc');
+        let audioRef = adminDb.firestore().collection('users').doc(userId).collection('displayAudios').orderBy('timestamp', 'asc');
 
         // Get the documents from the 'audios' subcollection
         let audioDocs = await audioRef.get();
@@ -27,6 +35,7 @@ export async function GET(req) {
             headers: { 'Content-Type': 'application/json' },
         });
     } catch (error) {
+        console.log(error.message)
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
