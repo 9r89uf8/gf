@@ -26,6 +26,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {useRouter} from "next/navigation";
+import VerifiedIcon from "@mui/icons-material/Verified";
 
 const GlassCard = styled(Card)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -38,16 +39,6 @@ const GlassCard = styled(Card)(({ theme }) => ({
     marginTop: 15
 }));
 
-const PriceBox = styled(Box)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #ffffff 30%, #f8f9fa 90%)',
-    borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(3),
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-}));
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
     color: 'black',
@@ -76,11 +67,11 @@ const SafetyBox = styled(Box)(({ theme }) => ({
 }));
 
 const GradientButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    background: 'linear-gradient(45deg, #f8f9fa 30%, #e9ecef 90%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-    color: 'white',
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: 'black',
     height: 48,
     padding: '0 30px',
     '&:hover': {
@@ -161,15 +152,18 @@ const PrivateMember = () => {
                             src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : ''}
                             sx={{ width: 160, height: 160, mb: 2 }}
                         />
-                        <Typography variant="h4">
-                            {girl ? girl.username : 'Username'} <CheckCircleIcon sx={{ verticalAlign: 'middle', ml: 1 }} />
+                        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
+                            {girl ? girl.username : 'Username'}
+                            <VerifiedIcon
+                                sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
+                            />
                         </Typography>
-                        <Typography variant="h6" color="text.primary">
-                            Miembro Privado
-                        </Typography>
+                        {/*<Typography variant="h6" color="text.primary">*/}
+                        {/*    Miembro Privado*/}
+                        {/*</Typography>*/}
                     </CenteredBox>
 
-                    <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
+                    <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)', marginBottom: 4 }} />
 
 
                         <Typography variant="h4" align="center" gutterBottom>
@@ -197,8 +191,8 @@ const PrivateMember = () => {
                                     <PriceTypography variant="h5" mt={2} fontWeight="bold">
                                         Acceso por 15 días
                                     </PriceTypography>
-                                    <Typography variant="subtitle1" mt={2}>
-                                        {option.country === 'US' ? 'United States' : option.country === 'MX' ? 'México' : 'Argentina'}
+                                    <Typography variant="h6" mt={2}>
+                                        {option.country === 'US' ? 'Estados Unidos' : option.country === 'MX' ? 'México' : 'Argentina'}
                                     </Typography>
                                 </PriceCard>
                             </Grid>

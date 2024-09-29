@@ -66,6 +66,22 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const GradientButtonBuy = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #80ed99 30%, #57cc99 90%)',
+    border: 0,
+    borderRadius: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+    color: 'black',
+    height: 48,
+    padding: '0 30px',
+    margin: '10px 0',
+    fontWeight: 'bold',
+    textTransform: 'none',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
+}));
+
 const GirlProfile = () => {
     const params = useParams();
     const user = useStore((state) => state.user);
@@ -78,6 +94,10 @@ const GirlProfile = () => {
 
     const handleChat = () => {
         router.push('/chat');
+    };
+
+    const handlePremium = () => {
+        router.push('/premium');
     };
 
     if (!girl) {
@@ -111,12 +131,12 @@ const GirlProfile = () => {
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
                                     <Typography variant="h6">
-                                        <strong>{girl.followers.toLocaleString()}</strong> Followers
+                                        <strong>{girl.followers.toLocaleString()}</strong> Seguidores
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">{girl.age} years old</Typography>
+                                    <Typography variant="h6">{girl.age} años</Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
@@ -130,8 +150,14 @@ const GirlProfile = () => {
                                     onClick={handleChat}
                                     startIcon={<ChatBubbleOutlineIcon />}
                                 >
-                                    Send Message
+                                    Enviar Mensaje
                                 </GradientButton>
+
+                                <GradientButtonBuy
+                                    onClick={handlePremium}
+                                >
+                                    Comprar Premium
+                                </GradientButtonBuy>
                             </Box>
                         </Grid>
                     </Grid>

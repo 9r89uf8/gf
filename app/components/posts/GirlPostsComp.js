@@ -107,10 +107,10 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                                 <BlurredOverlay>
                                     <LockIcon sx={{ fontSize: 40, mb: 2 }} />
                                     <Typography variant="h6" align="center" gutterBottom>
-                                        Premium Content
+                                        Contenido Premium
                                     </Typography>
                                     <PremiumButton variant="contained" onClick={handleBuyPremium}>
-                                        Upgrade to Premium
+                                        Comprar Premium
                                     </PremiumButton>
                                 </BlurredOverlay>
                             )}

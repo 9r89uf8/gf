@@ -56,13 +56,13 @@ const PostsFilter = ({ postsCount }) => {
                         <PhotoLibraryIcon fontSize="large" />
                     </IconWrapper>
                     <Typography variant="h6" gutterBottom>
-                        Photo Gallery
+                        Galería de fotos
                     </Typography>
                     <GradientText variant="h4">
                         {postsCount}
                     </GradientText>
                     <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                        {postsCount === 1 ? 'Photo' : 'Photos'}
+                        {postsCount === 1 ? 'foto' : 'fotos'}
                     </Typography>
                 </GlassCard>
             </Grid>

@@ -129,7 +129,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                             onClick={handleProfileClick}
                             sx={{ mb: 3 }}
                         >
-                            View Profile
+                            Ver Perfil
                         </ViewProfileButton>
                         <Stack spacing={2} width="100%">
                             {audios.slice(0, 2).map((audioSrc, index) => (
