@@ -8,7 +8,7 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const axios = require("axios");
 const fs = require("fs");
 
-
+export const dynamic = 'force-dynamic';
 
 // Set the AWS region
 const REGION = "us-east-2"; // e.g. "us-east-1"

@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import {NextResponse} from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 // Set the AWS region
 const REGION = "us-east-2";
 
