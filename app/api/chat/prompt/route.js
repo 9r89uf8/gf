@@ -7,7 +7,6 @@ const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 const {v4: uuidv4} = require("uuid");
 const elevenK = process.env.ELEVENLABS_API_KEY
 
-
 function parseAssistantMessage(message) {
     const imageTagRegex = /\[IMAGE:\s*(.*?)\]/i;
     const imageMatch = message.match(imageTagRegex);
