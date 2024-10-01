@@ -11,6 +11,8 @@ import {
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ChatPreview from '@/app/components/landing/ChatPreview';
+import VerifiedIcon from "@mui/icons-material/Verified";
+import CakeIcon from "@mui/icons-material/Cake";
 
 const GlassCard = ({ children }) => (
     <Card
@@ -48,6 +50,7 @@ const Home = () => {
                 {/* Introduction and Value Proposition */}
                 <GlassCard>
                     <Grid container spacing={4} alignItems="center">
+                        {/* Header Section */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="h2" gutterBottom>
                                 Meet Your AI Girlfriend
@@ -57,32 +60,11 @@ const Home = () => {
                                 are here to chat, entertain, and keep you company anytime,
                                 anywhere.
                             </Typography>
-                            <Link href="/register" passHref legacyBehavior>
-                                <Button
-                                    startIcon={<PlayArrowIcon />}
-                                    sx={{
-                                        background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-                                        border: 0,
-                                        borderRadius: 25,
-                                        boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-                                        color: 'white',
-                                        height: 48,
-                                        padding: '0 30px',
-                                        mt: 2,
-                                        fontWeight: 'bold',
-                                        textTransform: 'none',
-                                        '&:hover': {
-                                            background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
-                                        },
-                                    }}
-                                >
-                                    Get Started
-                                </Button>
-                            </Link>
                         </Grid>
+
+                        {/* Image Section */}
                         <Grid item xs={12} md={6}>
                             <Box display="flex" justifyContent="center">
-                                {/* Image Component */}
                                 <Box
                                     sx={{
                                         borderRadius: '50%',
@@ -103,6 +85,71 @@ const Home = () => {
                                         }}
                                     />
                                 </Box>
+                            </Box>
+                        </Grid>
+
+                        {/* Profile Info Section */}
+                        <Grid item xs={12} md={6}>
+                            <Box>
+                                <Box display="flex" justifyContent="center">
+                                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
+                                        ArelyDiaz3
+                                        <VerifiedIcon
+                                            sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
+                                        />
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+                                    <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
+                                    <Typography variant="h6">17 años</Typography>
+                                </Box>
+                            </Box>
+                        </Grid>
+
+                        {/* Action Buttons Section */}
+                        <Grid item xs={12} md={6}>
+                            <Box display="flex" justifyContent="center" gap={2}>
+                                <Link href="/register" passHref legacyBehavior>
+                                    <Button
+                                        sx={{
+                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                            border: 0,
+                                            borderRadius: 25,
+                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                            color: 'white',
+                                            height: 48,
+                                            padding: '0 15px',
+                                            fontWeight: 'bold',
+                                            textTransform: 'none',
+                                            '&:hover': {
+                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                            },
+                                        }}
+                                    >
+                                        View Profile
+                                    </Button>
+                                </Link>
+                                <Link href="/register" passHref legacyBehavior>
+                                    <Button
+                                        startIcon={<ChatBubbleOutlineIcon />}
+                                        sx={{
+                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                            border: 0,
+                                            borderRadius: 25,
+                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                            color: 'white',
+                                            height: 48,
+                                            padding: '0 15px',
+                                            fontWeight: 'bold',
+                                            textTransform: 'none',
+                                            '&:hover': {
+                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                            },
+                                        }}
+                                    >
+                                        Message
+                                    </Button>
+                                </Link>
                             </Box>
                         </Grid>
                     </Grid>
