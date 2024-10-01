@@ -193,9 +193,9 @@ const Home = () => {
                     <Typography variant="h4" gutterBottom align="center">
                         See It in Action
                     </Typography>
-                    <Box display="flex" justifyContent="center">
-                        <ChatPreview />
-                    </Box>
+
+                    <ChatPreview />
+
                     <Box textAlign="center">
                         <Link href="/register" passHref legacyBehavior>
                             <Button

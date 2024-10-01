@@ -6,10 +6,7 @@ const chatContainerStyles = {
     maxWidth: 600,
     maxHeight: 700,
     overflowY: 'auto',
-    backgroundColor: '#f0f0f0',
-    padding: 2,
-    borderRadius: 2,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    padding: 2
 };
 
 const messageRowStyles = (isUser) => ({
@@ -24,7 +21,7 @@ const messageBubbleStyles = (isUser) => ({
     padding: 1.5,
     borderRadius: 2,
     background: isUser
-        ? '#dcf8c6'
+        ? '#ffffff'
         : 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)',
     color: isUser ? '#000' : '#fff',
     position: 'relative',
