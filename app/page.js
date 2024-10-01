@@ -1,91 +1,185 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import React from 'react';
+import Link from 'next/link';
+import {
+    Container,
+    Box,
+    Typography,
+    Button,
+    Card,
+    Grid,
+} from '@mui/material';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ChatPreview from '@/app/components/landing/ChatPreview';
 
-const inter = Inter({ subsets: ['latin'] })
+const GlassCard = ({ children }) => (
+    <Card
+        sx={{
+            textAlign: 'center',
+            color: 'white',
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: 5,
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+            padding: 3,
+            marginBottom: 4,
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            msUserSelect: 'none',
+        }}
+    >
+        {children}
+    </Card>
+);
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+const Home = () => {
+    return (
+        <Box
+            sx={{
+                minHeight: '100vh',
+                backgroundImage: 'url(/background.jpg)', // Replace with your background image
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                padding: 2,
+            }}
         >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+            <Container maxWidth="lg">
+                {/* Introduction and Value Proposition */}
+                <GlassCard>
+                    <Grid container spacing={4} alignItems="center">
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h2" gutterBottom>
+                                Meet Your AI Girlfriend
+                            </Typography>
+                            <Typography variant="h5" paragraph>
+                                Experience companionship like never before. Our AI girlfriends
+                                are here to chat, entertain, and keep you company anytime,
+                                anywhere.
+                            </Typography>
+                            <Link href="/register" passHref legacyBehavior>
+                                <Button
+                                    startIcon={<PlayArrowIcon />}
+                                    sx={{
+                                        background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                        border: 0,
+                                        borderRadius: 25,
+                                        boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                        color: 'white',
+                                        height: 48,
+                                        padding: '0 30px',
+                                        mt: 2,
+                                        fontWeight: 'bold',
+                                        textTransform: 'none',
+                                        '&:hover': {
+                                            background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                        },
+                                    }}
+                                >
+                                    Get Started
+                                </Button>
+                            </Link>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Box display="flex" justifyContent="center">
+                                {/* Image Component */}
+                                <Box
+                                    sx={{
+                                        borderRadius: '50%',
+                                        width: { xs: 250, md: 350 },
+                                        height: { xs: 250, md: 350 },
+                                        overflow: 'hidden',
+                                        border: '4px solid rgba(255, 255, 255, 0.5)',
+                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                                    }}
+                                >
+                                    <img
+                                        src="/next.svg" // Replace with your AI girlfriend image
+                                        alt="AI Girlfriend"
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </GlassCard>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
+                {/* Key Features and Benefits */}
+                <GlassCard>
+                    <Typography variant="h4" gutterBottom align="center">
+                        Why Choose Our AI Girlfriend?
+                    </Typography>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={4}>
+                            <Box textAlign="center">
+                                <Typography variant="h6">24/7 Availability</Typography>
+                                <Typography variant="body1">
+                                    Your AI girlfriend is always here for you, day or night.
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Box textAlign="center">
+                                <Typography variant="h6">Personalized Conversations</Typography>
+                                <Typography variant="body1">
+                                    Enjoy chats tailored to your interests and preferences.
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Box textAlign="center">
+                                <Typography variant="h6">Ever-Evolving AI</Typography>
+                                <Typography variant="body1">
+                                    Our AI learns and grows with you, offering a unique experience.
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </GlassCard>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+                {/* Brief Demo or Preview */}
+                <GlassCard>
+                    <Typography variant="h4" gutterBottom align="center">
+                        See It in Action
+                    </Typography>
+                    <Box display="flex" justifyContent="center">
+                        <ChatPreview />
+                    </Box>
+                    <Box textAlign="center">
+                        <Link href="/register" passHref legacyBehavior>
+                            <Button
+                                startIcon={<ChatBubbleOutlineIcon />}
+                                sx={{
+                                    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                    border: 0,
+                                    borderRadius: 25,
+                                    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                    color: 'white',
+                                    height: 48,
+                                    padding: '0 30px',
+                                    mt: 2,
+                                    fontWeight: 'bold',
+                                    textTransform: 'none',
+                                    '&:hover': {
+                                        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                    },
+                                }}
+                            >
+                                Start Your Own Conversation
+                            </Button>
+                        </Link>
+                    </Box>
+                </GlassCard>
+            </Container>
+        </Box>
+    );
+};
+
+export default Home;
+
+
+
