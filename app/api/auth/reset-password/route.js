@@ -3,7 +3,7 @@ import { adminAuth } from "@/app/utils/firebaseAdmin";
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
 
-const DOMAIN = "quinielasligamx.com";
+const DOMAIN = "noviachat.com";
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API });
 
@@ -16,7 +16,7 @@ export async function POST(req) {
         const passwordResetLink = await adminAuth.generatePasswordResetLink(email);
 
         const data = {
-            from: "Nueva contraseña <mailgun@quinielasligamx.com>",
+            from: "Nueva contraseña <mailgun@noviachat.com>",
             to: email,
             subject: 'Crear nueva contraseña',
             template: 'password',
