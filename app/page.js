@@ -97,16 +97,16 @@ const Home = () => {
                         <Grid item xs={12} md={6}>
                             <Box>
                                 <Box display="flex" justifyContent="center">
-                                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
+                                    <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                                         ArelyDiaz3
                                         <VerifiedIcon
-                                            sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
+                                            sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7', fontSize: 36 }}
                                         />
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">17 años</Typography>
+                                    <Typography variant="h5">17 años</Typography>
                                 </Box>
                             </Box>
                         </Grid>
@@ -117,10 +117,11 @@ const Home = () => {
                                 <Link href="/register" passHref legacyBehavior>
                                     <Button
                                         sx={{
-                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                            background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
                                             border: 0,
                                             borderRadius: 25,
-                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                            fontSize:25,
+                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
                                             color: 'white',
                                             height: 48,
                                             padding: '0 15px',
@@ -131,17 +132,17 @@ const Home = () => {
                                             },
                                         }}
                                     >
-                                        View Profile
+                                        Ver Fotos
                                     </Button>
                                 </Link>
                                 <Link href="/register" passHref legacyBehavior>
                                     <Button
-                                        startIcon={<ChatBubbleOutlineIcon />}
                                         sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
                                             border: 0,
+                                            fontSize:25,
                                             borderRadius: 25,
-                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
                                             color: 'white',
                                             height: 48,
                                             padding: '0 15px',
@@ -152,7 +153,7 @@ const Home = () => {
                                             },
                                         }}
                                     >
-                                        Message
+                                        Mensaje
                                     </Button>
                                 </Link>
                             </Box>
