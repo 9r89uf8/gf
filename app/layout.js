@@ -2,6 +2,7 @@
 import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
 import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingNavbar";
+import ServiceWorkerRegister from "@/app/components/sw/ServiceWorkerRegister";
 import './styles/globals.css';
 
 function generateSchemaMarkup() {
@@ -62,6 +63,7 @@ const Layout = ({ children }) => {
             />
         </head>
         <body>
+        <ServiceWorkerRegister />
         <Navbar/>
         <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
         <ConditionalFloatingNavbar/>
