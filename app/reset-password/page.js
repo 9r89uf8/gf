@@ -1,7 +1,6 @@
-'use client';
-
+'use client'
 import React, { useState } from 'react';
-import { Box, Card, Typography, TextField } from '@mui/material';
+import { Box, Card, Typography, TextField, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { passwordReset } from '@/app/services/authService';
 import { alpha, styled } from "@mui/material/styles";
@@ -67,12 +66,14 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 const ResetPassword = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         await passwordReset(email);
         setIsLoading(false);
+        setIsSubmitted(true);
     };
 
     return (
@@ -87,36 +88,41 @@ const ResetPassword = () => {
                 padding: 2,
             }}
         >
-
             <GlassCard sx={{ width: '380px', maxWidth: '90%', padding: 3 }}>
                 <Typography variant="h4" sx={{ color: 'white', marginBottom: 3, fontWeight: 'bold' }}>
                     Solicitud de nueva contraseña
                 </Typography>
-                <Typography variant="subtitle1" sx={{ color: 'white', marginBottom: 2 }}>
+                <Typography variant="h6" sx={{ color: 'white', marginBottom: 2 }}>
                     Introduce tu correo electrónico
                 </Typography>
 
-                <form onSubmit={handleSubmit}>
-                    <StyledTextField
-                        required
-                        fullWidth
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        label="Correo electrónico"
-                        variant="outlined"
-                        InputProps={{
-                            startAdornment: (
-                                <LockOutlinedIcon sx={{ color: 'white', mr: 1 }} />
-                            ),
-                        }}
-                    />
+                {isSubmitted ? (
+                    <Alert severity="success" sx={{ mb: 2, backgroundColor: 'rgba(76, 175, 80, 0.1)', color: 'white', fontSize: 19 }}>
+                        Por favor, revisa tu correo electrónico para encontrar el correo para crear una nueva contraseña.
+                    </Alert>
+                ) : (
+                    <form onSubmit={handleSubmit}>
+                        <StyledTextField
+                            required
+                            fullWidth
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            label="Correo electrónico"
+                            variant="outlined"
+                            InputProps={{
+                                startAdornment: (
+                                    <LockOutlinedIcon sx={{ color: 'white', mr: 1 }} />
+                                ),
+                            }}
+                        />
 
-                    <GradientButton type="submit" disabled={isLoading}>
-                        {isLoading ? "Cargando..." : "Enviar"}
-                    </GradientButton>
-                </form>
+                        <GradientButton type="submit" disabled={isLoading || isSubmitted}>
+                            {isLoading ? "Enviando..." : "Enviar"}
+                        </GradientButton>
+                    </form>
+                )}
             </GlassCard>
         </Box>
     );
