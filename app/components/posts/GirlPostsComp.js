@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { Box, Button, Paper, Typography, Grid, IconButton } from '@mui/material';
 import VideoPlayer from "@/app/components/videoPlayer/VideoPlayer";

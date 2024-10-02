@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
 import PostsFilter from "@/app/components/posts/PostsFilter";
-import { Skeleton } from '@mui/material';
 
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
@@ -88,7 +87,6 @@ const GradientButtonBuy = styled(Button)(({ theme }) => ({
 }));
 
 const GirlProfile = () => {
-    const params = useParams();
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
@@ -105,73 +103,6 @@ const GirlProfile = () => {
         router.push('/premium');
     };
 
-    if (!girl) {
-        return (
-            <Box
-                sx={{
-                    minHeight: "100vh",
-                    padding: 2,
-                }}
-            >
-                <Container maxWidth="md">
-                    <GlassCard elevation={4}>
-                        <Grid container spacing={4} alignItems="center">
-                            <Grid item xs={12} md={4}>
-                                <Box display="flex" justifyContent="center">
-                                    <Skeleton variant="circular" width={150} height={150} />
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
-                                <Skeleton variant="text" width="60%" height={50} />
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <Skeleton variant="text" width="40%" height={30} />
-                                </Box>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <Skeleton variant="text" width="30%" height={30} />
-                                </Box>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <Skeleton variant="text" width="50%" height={30} />
-                                </Box>
-                                <Divider
-                                    sx={{
-                                        my: 2,
-                                        backgroundColor: "rgba(255, 255, 255, 0.2)",
-                                    }}
-                                />
-                                <Skeleton variant="text" width="100%" height={80} />
-                                <Skeleton
-                                    variant="rectangular"
-                                    width={200}
-                                    height={48}
-                                    sx={{ borderRadius: 25, mb: 2 }}
-                                />
-                                <Skeleton
-                                    variant="rectangular"
-                                    width={200}
-                                    height={48}
-                                    sx={{ borderRadius: 25 }}
-                                />
-                            </Grid>
-                        </Grid>
-                    </GlassCard>
-
-                    <GlassCard>
-                        <Skeleton variant="rectangular" width="100%" height={50} />
-                    </GlassCard>
-
-                    <Grid container spacing={3}>
-                        {[...Array(6)].map((_, index) => (
-                            <Grid item xs={12} sm={6} md={4} key={index}>
-                                <Skeleton variant="rectangular" width="100%" height={200} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </Box>
-        );
-    }
-
-
     return (
         <Box
             sx={{
@@ -185,34 +116,34 @@ const GirlProfile = () => {
                         <Grid item xs={12} md={4}>
                             <Box display="flex" justifyContent="center">
                                 <StyledAvatar
-                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                                    alt={girl.username}
+                                    src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : '/profileTwo.jpg'}
+                                    alt='novia virtual foto'
                                 />
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box>
                                 <Typography variant="h4" gutterBottom>
-                                    {girl.username}
+                                    {girl ? girl.username : 'arely4diaz'}
                                     <VerifiedIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1, fontSize: 36 }} />
                                 </Typography>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
                                     <Typography variant="h6">
-                                        <strong>{girl.followers.toLocaleString()}</strong> Seguidores
+                                        <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores
                                     </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">{girl.age} años</Typography>
+                                    <Typography variant="h6">{girl ? girl.age : '16'} años</Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">{girl.country}</Typography>
+                                    <Typography variant="h6">{girl ? girl.country : 'Monterrey, México'}</Typography>
                                 </Box>
                                 <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
                                 <Typography variant="h6" paragraph>
-                                    {girl.bio}
+                                    {girl ? girl.bio : 'No sean chismosos 😂😏'}
                                 </Typography>
                                 <GradientButton
                                     onClick={handleChat}
@@ -231,11 +162,11 @@ const GirlProfile = () => {
                 </GlassCard>
 
                 <GlassCard>
-                    <PostsFilter postsCount={girl.posts.length} />
+                    <PostsFilter postsCount={girl ? girl.posts.length : '9'} />
                 </GlassCard>
 
                 <Grid container spacing={3}>
-                    {girl.posts.map((post, index) => (
+                    {girl&&girl.posts.map((post, index) => (
                         <Grid item xs={12} sm={6} md={4} key={index}>
                                 <GirlPostsComp
                                     girl={post.girlId}
