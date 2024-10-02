@@ -41,7 +41,7 @@ const GlassCard = styled(Card)(({ theme }) => ({
 
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
-    color: 'black',
+    color: '#212529',
     textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
 }));
 
@@ -133,7 +133,7 @@ const PrivateMember = () => {
             currency: 'ARS',
             name: 'pesos',
             flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(6).png',
-            gradient: 'linear-gradient(45deg, #48cae4 30%, #00b4d8 90%)'
+            gradient: 'linear-gradient(45deg, #00afb9 30%, #0081a7 90%)'
         },
     ];
 
@@ -181,8 +181,8 @@ const PrivateMember = () => {
                                             : option.gradient,
                                     }}
                                 >
-                                    <Avatar src={option.flag} sx={{ width: 40, height: 30, mb: 2 }} variant="rounded" />
-                                    <Typography variant="h4" fontWeight="bold">
+                                    <Avatar src={option.flag} sx={{ mb: 2, width: 56, height: 56 }} variant="rounded" />
+                                    <Typography variant="h3" fontWeight="bold">
                                         ${option.price.toFixed(0)}
                                     </Typography>
                                     <Typography variant="h6">
