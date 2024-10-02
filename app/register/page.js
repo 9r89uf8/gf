@@ -26,7 +26,8 @@ const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+    fontSize: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
     color: 'white',
     height: 48,
     padding: '0 30px',
@@ -57,9 +58,14 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
     '& .MuiInputBase-input': {
         color: 'white',
+        fontSize: '1.4rem', // Increased font size for input text
     },
     '& .MuiInputLabel-root': {
         color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: '1.5rem', // Increased font size for label text
+    },
+    '& .MuiInputLabel-shrink': {
+        fontSize: '1.1rem', // Slightly larger font size for shrunk label
     },
 }));
 
@@ -123,26 +129,26 @@ const RegisterPage = () => {
 
                         <Box sx={{ marginBottom: 3, textAlign: 'left' }}>
                             <FeatureBox>
-                                <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 36 }} />
-                                <Typography variant="body1">
+                                <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
+                                <Typography variant="h6">
                                     ¡Ya somos {userCount.toLocaleString()} usuarios!
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
-                                <Lock sx={{ marginRight: 1, color: '#FF8E53', fontSize: 36 }} />
-                                <Typography variant="body1">
+                                <Lock sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
+                                <Typography variant="h6">
                                     100% anónimo y seguro
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
-                                <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 36 }} />
-                                <Typography variant="body1">
+                                <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
+                                <Typography variant="h6">
                                     Mensajes encriptados
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
-                                <TrendingUp sx={{ marginRight: 1, color: '#FF8E53', fontSize: 36 }} />
-                                <Typography variant="body1">
+                                <TrendingUp sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
+                                <Typography variant="h6">
                                     ¡La app de más rápido crecimiento en LATAM!
                                 </Typography>
                             </FeatureBox>
@@ -179,9 +185,7 @@ const RegisterPage = () => {
                             />
                             <GradientButton
                                 type="submit"
-                                variant="contained"
                                 disabled={disableRegister}
-                                fullWidth
                             >
                                 Crear Cuenta
                             </GradientButton>
@@ -192,7 +196,7 @@ const RegisterPage = () => {
 
             <GlassCard sx={{ padding: 2, maxWidth: '100%', marginTop: 5 }}>
                 <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" alt="logo" style={{width: 45, height: "auto", marginBottom: 1}}/>
-                <Typography sx={{ color: 'white', fontSize:'14px' }}>
+                <Typography sx={{ color: 'white', fontSize:'20px' }}>
                     © 2024 - Todos los Derechos Reservados LIGA MX. Quinielas liga mx 2024-2025.
                 </Typography>
             </GlassCard>
