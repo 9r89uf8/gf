@@ -50,7 +50,7 @@ const EnhancedAIFeaturesCard = () => (
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
-                    icon={<AudiotrackOutlined sx={{ fontSize: 100, color: '#ff80ab' }} />}
+                    icon={<AudiotrackOutlined sx={{ fontSize: 90, color: '#ff80ab' }} />}
                     title="Auditory Bliss"
                     description="Enjoy soothing voice messages and personalized audio content."
                 />
@@ -64,7 +64,7 @@ const EnhancedAIFeaturesCard = () => (
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
-                    icon={<FavoriteBorderOutlined sx={{ fontSize: 80, color: '#ff80ab' }} />}
+                    icon={<FavoriteBorderOutlined sx={{ fontSize: 70, color: '#ff80ab' }} />}
                     title="Emotional Connection"
                     description="Form a unique bond with an AI that understands and responds to your emotions."
                 />
