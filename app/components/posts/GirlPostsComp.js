@@ -58,7 +58,8 @@ const PostMeta = styled(Box)(({ theme }) => ({
 }));
 
 const PremiumButton = styled(Button)(({ theme }) => ({
-    backgroundImage: 'linear-gradient(45deg, #f1c40f, #f39c12)',
+    background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
+    fontSize: 21,
     color: theme.palette.common.white,
     fontWeight: 'bold',
     '&:hover': {
@@ -105,8 +106,8 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                             />
                             {!canViewPremiumContent && (
                                 <BlurredOverlay>
-                                    <LockIcon sx={{ fontSize: 40, mb: 2 }} />
-                                    <Typography variant="h6" align="center" gutterBottom>
+                                    <LockIcon sx={{ fontSize: 60, mb: 2 }} />
+                                    <Typography variant="h4" align="center" gutterBottom>
                                         Contenido Premium
                                     </Typography>
                                     <PremiumButton variant="contained" onClick={handleBuyPremium}>

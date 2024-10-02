@@ -20,6 +20,7 @@ import { alpha, styled } from "@mui/material/styles";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CakeIcon from '@mui/icons-material/Cake';
+import VerifiedIcon from "@mui/icons-material/Verified";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 
@@ -54,8 +55,9 @@ const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
     color: 'white',
+    fontSize: 24,
     height: 48,
     padding: '0 30px',
     margin: '10px 0',
@@ -67,11 +69,12 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 const GradientButtonBuy = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #80ed99 30%, #57cc99 90%)',
+    background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-    color: 'black',
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: '#e9ecef',
+    fontSize: 24,
     height: 48,
     padding: '0 30px',
     margin: '10px 0',
@@ -126,7 +129,7 @@ const GirlProfile = () => {
                             <Box>
                                 <Typography variant="h4" gutterBottom>
                                     {girl.username}
-                                    <CheckCircleIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1, fontSize: 36 }} />
+                                    <VerifiedIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1, fontSize: 36 }} />
                                 </Typography>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
@@ -148,7 +151,6 @@ const GirlProfile = () => {
                                 </Typography>
                                 <GradientButton
                                     onClick={handleChat}
-                                    startIcon={<ChatBubbleOutlineIcon />}
                                 >
                                     Enviar Mensaje
                                 </GradientButton>

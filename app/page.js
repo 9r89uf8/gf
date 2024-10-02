@@ -114,7 +114,7 @@ const Home = () => {
                         {/* Action Buttons Section */}
                         <Grid item xs={12} md={6}>
                             <Box display="flex" justifyContent="center" gap={2}>
-                                <Link href="/register" passHref legacyBehavior>
+                                <Link href="/novia-virtual" passHref legacyBehavior>
                                     <Button
                                         sx={{
                                             background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
@@ -132,10 +132,10 @@ const Home = () => {
                                             },
                                         }}
                                     >
-                                        Ver Fotos
+                                        Fotos
                                     </Button>
                                 </Link>
-                                <Link href="/register" passHref legacyBehavior>
+                                <Link href="/chat" passHref legacyBehavior>
                                     <Button
                                         sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
