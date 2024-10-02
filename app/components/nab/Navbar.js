@@ -83,7 +83,7 @@ const Navbar = () => {
                         }}
                     />
                     <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 22 }}> {/* Adjust marginLeft to accommodate larger logo */}
-                        Arely
+                        NoviaChat
                     </Button>
                 </Box>
 

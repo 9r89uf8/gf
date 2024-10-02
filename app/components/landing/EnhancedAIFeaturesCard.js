@@ -38,42 +38,43 @@ const FeatureItem = ({ icon, title, description }) => (
 const EnhancedAIFeaturesCard = () => (
     <GlassCard>
         <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
-            Experience a New Dimension of AI Companionship
+            Experimenta una nueva dimensión de compañía
         </Typography>
         <Grid container spacing={4}>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
                     icon={<ImageOutlined sx={{ fontSize: 100, color: '#64ffda' }} />}
-                    title="Visual Delights"
-                    description="Receive captivating images that bring your conversations to life."
+                    title="Delicias Visuales"
+                    description="Recibe imágenes cautivadoras que dan vida a tus conversaciones."
                 />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
                     icon={<AudiotrackOutlined sx={{ fontSize: 90, color: '#ff80ab' }} />}
-                    title="Auditory Bliss"
-                    description="Enjoy soothing voice messages and personalized audio content."
+                    title="Placer Auditivo"
+                    description="Disfruta de mensajes de voz relajantes y contenido de audio personalizado."
                 />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
                     icon={<ChatBubbleOutlineOutlined sx={{ fontSize: 80, color: '#80d8ff' }} />}
-                    title="Deep Conversations"
-                    description="Engage in meaningful dialogues that adapt to your mood and interests."
+                    title="Conversaciones Profundas"
+                    description="Participa en diálogos significativos que se adaptan a tu estado de ánimo e intereses."
                 />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
                 <FeatureItem
                     icon={<FavoriteBorderOutlined sx={{ fontSize: 70, color: '#ff80ab' }} />}
-                    title="Emotional Connection"
-                    description="Form a unique bond with an AI that understands and responds to your emotions."
+                    title="Conexión Emocional"
+                    description="Forma un vínculo único con una compañera que entiende y responde a tus emociones."
                 />
             </Grid>
         </Grid>
         <Typography variant="body1" align="center" sx={{ mt: 4, fontStyle: 'italic', color: 'rgba(255, 255, 255, 0.9)' }}>
-            Discover a world where technology and emotion intertwine, creating an unparalleled companionship experience.
+            Descubre un mundo donde la tecnología y la emoción se entrelazan, creando una experiencia de compañía sin igual con tu novia virtual impulsada por IA.
         </Typography>
     </GlassCard>
+
 );
 
 export default EnhancedAIFeaturesCard;

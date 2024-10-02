@@ -62,7 +62,7 @@ const ChatPreview = () => {
             <Box sx={messageRowStyles(true)}>
                 <Avatar src="/thirteen.svg" alt="User" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(true)}>
-                    <Typography variant="body1">Hi there!</Typography>
+                    <Typography variant="body1">Hola preciosa</Typography>
                 </Box>
             </Box>
 
@@ -71,7 +71,7 @@ const ChatPreview = () => {
                 <Avatar src="/next.svg" alt="AI Girlfriend" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(false)}>
                     <Typography variant="body1">
-                        Hey! How was your day? 😊
+                        ¡Ey! ¿Cómo estuvo tu día? 😊
                     </Typography>
                 </Box>
             </Box>
@@ -94,7 +94,7 @@ const ChatPreview = () => {
                     <IconButton>
                         <PlayArrowIcon sx={{ color: '#fff' }} />
                     </IconButton>
-                    <Typography variant="body2">0:30</Typography>
+                    <Typography variant="body2">0:10</Typography>
                 </Box>
             </Box>
 
@@ -103,7 +103,7 @@ const ChatPreview = () => {
                 <Avatar src="/thirteen.svg" alt="User" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(true)}>
                     <Typography variant="body1">
-                        It was great, thanks for asking!
+                        ¡Fue genial, gracias por preguntar!
                     </Typography>
                 </Box>
             </Box>

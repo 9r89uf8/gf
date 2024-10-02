@@ -197,7 +197,7 @@ const RegisterPage = () => {
             <GlassCard sx={{ padding: 2, maxWidth: '100%', marginTop: 5 }}>
                 <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" alt="logo" style={{width: 45, height: "auto", marginBottom: 1}}/>
                 <Typography sx={{ color: 'white', fontSize:'20px' }}>
-                    © 2024 - Todos los Derechos Reservados LIGA MX. Quinielas liga mx 2024-2025.
+                    © 2024 - Todos los Derechos Reservados NoviaChat. NoviaChat 2025.
                 </Typography>
             </GlassCard>
         </Box>

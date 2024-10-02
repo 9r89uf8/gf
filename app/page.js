@@ -57,13 +57,11 @@ const Home = () => {
                     <Grid container spacing={4} alignItems="center">
                         {/* Header Section */}
                         <Grid item xs={12} md={6}>
-                            <Typography variant="h2" gutterBottom>
-                                Meet Your AI Girlfriend
+                            <Typography variant="h3" gutterBottom>
+                                Conoce a tu compañera ideal
                             </Typography>
                             <Typography variant="h5" paragraph>
-                                Experience companionship like never before. Our AI girlfriends
-                                are here to chat, entertain, and keep you company anytime,
-                                anywhere.
+                                Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
                             </Typography>
                         </Grid>
 
@@ -166,7 +164,7 @@ const Home = () => {
                 {/* Brief Demo or Preview */}
                 <GlassCard>
                     <Typography variant="h4" gutterBottom align="center">
-                        See It in Action
+                        Ejemplo de Conversación
                     </Typography>
 
                     <ChatPreview />
