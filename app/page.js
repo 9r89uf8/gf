@@ -13,6 +13,9 @@ import {
 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PeopleIcon from '@mui/icons-material/People';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ChatPreview from '@/app/components/landing/ChatPreview';
 import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -157,6 +160,49 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </GlassCard>
+
+                {/* Company Stats Section */}
+                <GlassCard>
+                    <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
+                        La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos
+                    </Typography>
+                    <Grid container spacing={4} justifyContent="center">
+                        <Grid item xs={12} md={4}>
+                            <Box display="flex" flexDirection="column" alignItems="center">
+                                <PeopleIcon sx={{ fontSize: 80, color: '#4FC3F7' }} />
+                                <Typography variant="h4" fontWeight="bold">
+                                    2M+
+                                </Typography>
+                                <Typography variant="h6">
+                                    Usuarios satisfechos
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Box display="flex" flexDirection="column" alignItems="center">
+                                <CalendarTodayIcon sx={{ fontSize: 80, color: '#4FC3F7' }} />
+                                <Typography variant="h4" fontWeight="bold">
+                                    Desde 2023
+                                </Typography>
+                                <Typography variant="h6">
+                                    Ofreciendo compañía virtual
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Box display="flex" flexDirection="column" alignItems="center">
+                                <ThumbUpIcon sx={{ fontSize: 80, color: '#4FC3F7' }} />
+                                <Typography variant="h4" fontWeight="bold">
+                                    93%
+                                </Typography>
+                                <Typography variant="h6">
+                                    Tasa de satisfacción
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </GlassCard>
+
 
                 <EnhancedAIFeaturesCard/>
 

@@ -156,7 +156,7 @@ const RegisterPage = () => {
 
                         <form onSubmit={handleRegister}>
                             <StyledTextField
-                                label="Usuario"
+                                label="Nombre"
                                 name="name"
                                 value={username}
                                 onChange={e => setUsername(e.target.value)}

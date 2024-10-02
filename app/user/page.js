@@ -152,7 +152,7 @@ const UserProfile = () => {
                 <StyledCard>
                     <Typography variant="h3" gutterBottom>Bienvenido</Typography>
                     <Typography variant="h5" paragraph>
-                        Puedes registrarte de forma anónima con un correo electrónico ficticio.
+                        Puedes registrarte de forma anónima con un correo electrónico falso.
                         Tu privacidad es importante para nosotros.
                     </Typography>
                     <ActionButton
