@@ -69,11 +69,11 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 const GradientButtonBuy = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
+    background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
     border: 0,
     borderRadius: 25,
     boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
-    color: '#e9ecef',
+    color: 'white',
     fontSize: 24,
     height: 48,
     padding: '0 30px',

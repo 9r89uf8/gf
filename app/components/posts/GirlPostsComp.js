@@ -58,7 +58,7 @@ const PostMeta = styled(Box)(({ theme }) => ({
 }));
 
 const PremiumButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
+    background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
     fontSize: 21,
     color: theme.palette.common.white,
     fontWeight: 'bold',

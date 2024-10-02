@@ -57,6 +57,7 @@ const GradientButton = styled(Button)(({ theme }) => ({
 const ViewProfileButton = styled(GradientButton)({
     borderRadius: 20,
     fontWeight: 600,
+    fontSize: 23,
     textTransform: 'none',
 });
 

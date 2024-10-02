@@ -117,10 +117,10 @@ const Home = () => {
                                 <Link href="/novia-virtual" passHref legacyBehavior>
                                     <Button
                                         sx={{
-                                            background: 'linear-gradient(45deg, #ffbd00 30%, #ff5400 90%)',
+                                            background: 'linear-gradient(45deg, #06d6a0 30%, #118ab2 90%)',
                                             border: 0,
                                             borderRadius: 25,
-                                            fontSize:25,
+                                            fontSize:30,
                                             boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
                                             color: 'white',
                                             height: 48,
@@ -140,7 +140,7 @@ const Home = () => {
                                         sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
                                             border: 0,
-                                            fontSize:25,
+                                            fontSize:30,
                                             borderRadius: 25,
                                             boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
                                             color: 'white',

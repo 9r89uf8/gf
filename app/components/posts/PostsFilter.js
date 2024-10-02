@@ -55,13 +55,13 @@ const PostsFilter = ({ postsCount }) => {
                     <IconWrapper>
                         <PhotoLibraryIcon fontSize="large" />
                     </IconWrapper>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h5" gutterBottom>
                         Galería de fotos
                     </Typography>
-                    <GradientText variant="h4">
+                    <GradientText variant="h3">
                         {postsCount}
                     </GradientText>
-                    <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    <Typography variant="h6" sx={{ mt: 1 }}>
                         {postsCount === 1 ? 'foto' : 'fotos'}
                     </Typography>
                 </GlassCard>
