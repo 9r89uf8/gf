@@ -50,7 +50,7 @@ const Layout = ({ children }) => {
             <meta name="twitter:image" content="https://www.noviachat.com/imagen-twitter.jpg"/>
 
 
-            <link rel="icon" href="/public/favicon.ico"/>
+            <link rel="icon" href="/favicon.ico"/>
             <link rel="manifest" href="/manifest.json"/>
             <meta name="theme-color" content="#FF4081"/>
 
