@@ -80,15 +80,17 @@ const Home = () => {
                                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
                                     }}
                                 >
-                                    <img
-                                        src="/profileTwo.jpg" // Replace with your AI girlfriend image
-                                        alt="AI Girlfriend"
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                        }}
-                                    />
+                                    <Link href="/novia-virtual" passHref legacyBehavior>
+                                        <img
+                                            src="/profileTwo.jpg" // Replace with your AI girlfriend image
+                                            alt="AI Girlfriend"
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
+                                    </Link>
                                 </Box>
                             </Box>
                         </Grid>
@@ -106,7 +108,7 @@ const Home = () => {
                                 </Box>
                                 <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h5">17 años</Typography>
+                                    <Typography variant="h5">22 años</Typography>
                                 </Box>
                             </Box>
                         </Grid>
@@ -226,7 +228,7 @@ const Home = () => {
                             fullWidth
                             disabled
                             variant="outlined"
-                            placeholder="Type your message..."
+                            placeholder="Escribe tu mensaje..."
                             sx={{
                                 maxWidth: '500px',
                                 '& .MuiOutlinedInput-root': {
@@ -265,6 +267,13 @@ const Home = () => {
                             }}
                         />
                     </Box>
+                </GlassCard>
+
+                <GlassCard>
+                    <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" alt="logo" style={{width: 45, height: "auto", marginBottom: 1}}/>
+                    <Typography sx={{ color: 'white', fontSize:'20px' }}>
+                        © 2024 - Todos los Derechos Reservados NoviaChat. NoviaChat 2025.
+                    </Typography>
                 </GlassCard>
             </Container>
         </Box>
