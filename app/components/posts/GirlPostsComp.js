@@ -107,7 +107,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                             {!canViewPremiumContent && (
                                 <BlurredOverlay>
                                     <LockIcon sx={{ fontSize: 60, mb: 2 }} />
-                                    <Typography variant="h4" align="center" gutterBottom>
+                                    <Typography variant="h5" align="center" gutterBottom>
                                         Contenido Premium
                                     </Typography>
                                     <PremiumButton variant="contained" onClick={handleBuyPremium}>
