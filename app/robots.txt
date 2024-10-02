@@ -1,0 +1,32 @@
+User-agent: *
+Disallow: /terms
+Disallow: /privacy
+Disallow: /about
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Disallow: /plans
+Disallow: /jornada
+Disallow: /all
+Disallow: /success
+Disallow: /create
+Disallow: /chat
+Disallow: /contact
+Disallow: /user
+Disallow: /winners
+Disallow: /top
+Disallow: /buy
+Disallow: /pay
+Disallow: /girl
+Disallow: /users
+Disallow: /clips
+Disallow: /admin
+Disallow: /user
+Disallow: /premium
+Disallow: /chat
+
+
+Allow: /
+
+
+Sitemap: https://www.noviachat.com/sitemap.xml

@@ -37,7 +37,7 @@ const avatarStyles = {
 };
 
 const imageMessageStyles = {
-    maxWidth: '70%',
+    maxWidth: '40%',
     borderRadius: 2,
     marginTop: 1, // Added margin between avatar and image
 };
@@ -60,7 +60,7 @@ const ChatPreview = () => {
         <Box sx={chatContainerStyles}>
             {/* User Message */}
             <Box sx={messageRowStyles(true)}>
-                <Avatar src="/thirteen.svg" alt="User" sx={avatarStyles} />
+                <Avatar src="/vercel.svg" alt="User" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(true)}>
                     <Typography variant="body1">Hola preciosa</Typography>
                 </Box>
@@ -68,7 +68,7 @@ const ChatPreview = () => {
 
             {/* AI Girlfriend Text Message */}
             <Box sx={messageRowStyles(false)}>
-                <Avatar src="/next.svg" alt="AI Girlfriend" sx={avatarStyles} />
+                <Avatar src="/profileTwo.jpg" alt="AI Girlfriend" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(false)}>
                     <Typography variant="body1">
                         ¡Ey! ¿Cómo estuvo tu día? 😊
@@ -78,10 +78,10 @@ const ChatPreview = () => {
 
             {/* AI Girlfriend Image Message */}
             <Box sx={messageRowStyles(false)}>
-                <Avatar src="/next.svg" alt="AI Girlfriend" sx={avatarStyles} />
+                <Avatar src="/profileTwo.jpg" alt="AI Girlfriend" sx={avatarStyles} />
                 <Box
                     component="img"
-                    src="/vercel.svg"
+                    src="/profile.jpg"
                     alt="AI sent an image"
                     sx={imageMessageStyles}
                 />
@@ -89,7 +89,7 @@ const ChatPreview = () => {
 
             {/* AI Girlfriend Audio Message */}
             <Box sx={messageRowStyles(false)}>
-                <Avatar src="/next.svg" alt="AI Girlfriend" sx={avatarStyles} />
+                <Avatar src="/profileTwo.jpg" alt="AI Girlfriend" sx={avatarStyles} />
                 <Box sx={audioMessageStyles(false)}>
                     <IconButton>
                         <PlayArrowIcon sx={{ color: '#fff' }} />
@@ -100,7 +100,7 @@ const ChatPreview = () => {
 
             {/* User Message */}
             <Box sx={messageRowStyles(true)}>
-                <Avatar src="/thirteen.svg" alt="User" sx={avatarStyles} />
+                <Avatar src="/vercel.svg" alt="User" sx={avatarStyles} />
                 <Box sx={messageBubbleStyles(true)}>
                     <Typography variant="body1">
                         ¡Fue genial, gracias por preguntar!

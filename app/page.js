@@ -45,7 +45,6 @@ const Home = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundImage: 'url(/background.jpg)', // Replace with your background image
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 padding: 2,
@@ -79,7 +78,7 @@ const Home = () => {
                                     }}
                                 >
                                     <img
-                                        src="/next.svg" // Replace with your AI girlfriend image
+                                        src="/profileTwo.jpg" // Replace with your AI girlfriend image
                                         alt="AI Girlfriend"
                                         style={{
                                             width: '100%',
