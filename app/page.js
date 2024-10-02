@@ -4,6 +4,9 @@ import {
     Container,
     Box,
     Typography,
+    IconButton,
+    InputAdornment,
+    TextField,
     Button,
     Card,
     Grid,
@@ -11,8 +14,10 @@ import {
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ChatPreview from '@/app/components/landing/ChatPreview';
+import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import CakeIcon from "@mui/icons-material/Cake";
+import SendIcon from '@mui/icons-material/Send';
 
 const GlassCard = ({ children }) => (
     <Card
@@ -155,38 +160,7 @@ const Home = () => {
                     </Grid>
                 </GlassCard>
 
-                {/* Key Features and Benefits */}
-                <GlassCard>
-                    <Typography variant="h4" gutterBottom align="center">
-                        Why Choose Our AI Girlfriend?
-                    </Typography>
-                    <Grid container spacing={4}>
-                        <Grid item xs={12} md={4}>
-                            <Box textAlign="center">
-                                <Typography variant="h6">24/7 Availability</Typography>
-                                <Typography variant="body1">
-                                    Your AI girlfriend is always here for you, day or night.
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Box textAlign="center">
-                                <Typography variant="h6">Personalized Conversations</Typography>
-                                <Typography variant="body1">
-                                    Enjoy chats tailored to your interests and preferences.
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Box textAlign="center">
-                                <Typography variant="h6">Ever-Evolving AI</Typography>
-                                <Typography variant="body1">
-                                    Our AI learns and grows with you, offering a unique experience.
-                                </Typography>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </GlassCard>
+                <EnhancedAIFeaturesCard/>
 
                 {/* Brief Demo or Preview */}
                 <GlassCard>
@@ -196,29 +170,56 @@ const Home = () => {
 
                     <ChatPreview />
 
-                    <Box textAlign="center">
-                        <Link href="/register" passHref legacyBehavior>
-                            <Button
-                                startIcon={<ChatBubbleOutlineIcon />}
-                                sx={{
-                                    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-                                    border: 0,
-                                    borderRadius: 25,
-                                    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-                                    color: 'white',
-                                    height: 48,
-                                    padding: '0 30px',
-                                    mt: 2,
-                                    fontWeight: 'bold',
-                                    textTransform: 'none',
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            mt: 2,
+                        }}
+                    >
+                        <TextField
+                            fullWidth
+                            disabled
+                            variant="outlined"
+                            placeholder="Type your message..."
+                            sx={{
+                                maxWidth: '500px',
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '25px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                     '&:hover': {
-                                        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                     },
-                                }}
-                            >
-                                Start Your Own Conversation
-                            </Button>
-                        </Link>
+                                    '& fieldset': {
+                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                    },
+                                },
+                                '& .MuiOutlinedInput-input': {
+                                    color: 'white',
+                                },
+                                '& .MuiInputLabel-root': {
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                },
+                            }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            edge="end"
+                                            sx={{
+                                                color: 'white',
+                                                '&:hover': {
+                                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                                },
+                                            }}
+                                        >
+                                            <SendIcon />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
                     </Box>
                 </GlassCard>
             </Container>
