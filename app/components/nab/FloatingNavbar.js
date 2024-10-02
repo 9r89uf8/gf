@@ -58,9 +58,8 @@ export default function FloatingNavbar() {
     }, []);
 
     const routes = [
-        { name: 'HOME', path: '/novia-virtual', icon: <HomeIcon fontSize='large' /> },
+        { name: 'HOME', path: '/novia-virtual', icon: <VideoLibraryIcon fontSize='large' /> },
         { name: 'TOP', path: '/chat', icon: <ChatIcon fontSize='large' /> },
-        { name: 'TOP', path: '/clips', icon: <VideoLibraryIcon fontSize='large' /> },
         { name: 'USER', path: '/user', icon: <AccountCircleIcon fontSize='large' /> }
     ];
 

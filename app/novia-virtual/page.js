@@ -4,6 +4,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
 import PostsFilter from "@/app/components/posts/PostsFilter";
+import { Skeleton } from '@mui/material';
+
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
     Container,
@@ -104,8 +106,71 @@ const GirlProfile = () => {
     };
 
     if (!girl) {
-        return <Typography>Loading...</Typography>;
+        return (
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    padding: 2,
+                }}
+            >
+                <Container maxWidth="md">
+                    <GlassCard elevation={4}>
+                        <Grid container spacing={4} alignItems="center">
+                            <Grid item xs={12} md={4}>
+                                <Box display="flex" justifyContent="center">
+                                    <Skeleton variant="circular" width={150} height={150} />
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={8}>
+                                <Skeleton variant="text" width="60%" height={50} />
+                                <Box display="flex" alignItems="center" mb={2}>
+                                    <Skeleton variant="text" width="40%" height={30} />
+                                </Box>
+                                <Box display="flex" alignItems="center" mb={2}>
+                                    <Skeleton variant="text" width="30%" height={30} />
+                                </Box>
+                                <Box display="flex" alignItems="center" mb={2}>
+                                    <Skeleton variant="text" width="50%" height={30} />
+                                </Box>
+                                <Divider
+                                    sx={{
+                                        my: 2,
+                                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                                    }}
+                                />
+                                <Skeleton variant="text" width="100%" height={80} />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200}
+                                    height={48}
+                                    sx={{ borderRadius: 25, mb: 2 }}
+                                />
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={200}
+                                    height={48}
+                                    sx={{ borderRadius: 25 }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </GlassCard>
+
+                    <GlassCard>
+                        <Skeleton variant="rectangular" width="100%" height={50} />
+                    </GlassCard>
+
+                    <Grid container spacing={3}>
+                        {[...Array(6)].map((_, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Skeleton variant="rectangular" width="100%" height={200} />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Container>
+            </Box>
+        );
     }
+
 
     return (
         <Box
