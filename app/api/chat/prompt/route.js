@@ -254,13 +254,10 @@ export async function POST(req) {
 
         conversationHistory.push({ "role": "user", "content": userMessage });
 
-
-
-        console.log('calling the together api')
         const response = await together.chat.completions.create({
             messages: conversationHistory,
             model: "NousResearch/Hermes-3-Llama-3.1-405B-Turbo",
-            max_tokens: 512,
+            max_tokens: 212,
             temperature: 0.7,
             top_p: 0.7,
             top_k: 50,
@@ -270,7 +267,6 @@ export async function POST(req) {
         });
 
         let assistantMessage = response.choices[0].message.content
-        console.log('done calling the api')
 
 
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
