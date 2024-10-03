@@ -45,8 +45,9 @@ const Chat = () => {
         getGirl();
     }, []);
 
+
     useEffect(() => {
-        if (user&&!conversationHistory) {
+        if (user&&conversationHistory&&conversationHistory.length===0) {
             fetchMessages({ userId: user.uid });
             fetchAudios();
         }
@@ -142,7 +143,7 @@ const Chat = () => {
 
             {/* Reminder to log in or register */}
             {isPromptEntered && !user && (
-                <LoginReminder girl={girl} handleLoginRedirect={handleLoginRedirect} />
+                <LoginReminder />
             )}
 
             {/* Always show ChatInputComponent */}
