@@ -33,11 +33,8 @@ const UpgradeReminder = ({ onUpgrade }) => (
         zIndex={1000}
     >
         <GradientPaper elevation={4}>
-            <Typography variant="h4" fontWeight="bold" mb={2}>
-                Cuenta Premium
-            </Typography>
-            <Typography variant="h6" mb={2}>
-                Cuenta premium incluye:
+            <Typography variant="h5" fontWeight="bold" mb={2}>
+                Cuenta Premium incluye:
             </Typography>
             <Box mb={3}>
                 <FeatureItem icon={<ImageIcon style={{fontSize:40}}/>} text="Arelydias3 te puede enviar fotos." />
@@ -57,7 +54,7 @@ const UpgradeReminder = ({ onUpgrade }) => (
                     },
                     fontWeight: 'bold',
                     textTransform: 'none',
-                    fontSize: 18
+                    fontSize: 16
                 }}
             >
                 Comprar Premium
