@@ -42,7 +42,7 @@ const CheckoutButton = ({user, country, price, girlId}) => {
             disabled={loading}
             sx={{ fontSize: 26 }}
         >
-            {loading ? 'Processing...' : 'Pagar'}
+            {loading ? 'Espera...' : 'Pagar'}
         </GradientButton>
     );
 };

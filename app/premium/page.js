@@ -221,7 +221,7 @@ const PrivateMember = () => {
                                     <Typography variant="h6" mt={2}>
                                         para personas de
                                     </Typography>
-                                    <Typography variant="h4" mt={2} style={{marginTop: -3, color: 'white'}}>
+                                    <Typography variant="h5" mt={2} style={{marginTop: -3, color: 'white'}}>
                                         {option.country === 'US' ? 'Estados Unidos' : option.country === 'MX' ? 'México' : 'Argentina'}
                                     </Typography>
                                 </PriceCard>

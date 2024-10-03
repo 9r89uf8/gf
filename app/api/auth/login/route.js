@@ -13,6 +13,12 @@ export async function POST(request) {
         const user = userCredential.user;
         const token = await user.getIdToken();
 
+        // Set the session duration (e.g., 48 hours)
+        const expiresIn = 48 * 60 * 60 * 1000; // in milliseconds
+
+        // Create a session cookie with the specified expiration time
+        const sessionCookie = await adminDb.auth().createSessionCookie(token, { expiresIn });
+
         // Fetch the user document from Firestore
         const userDoc = await adminDb.firestore().collection('users').doc(userCredential.user.uid).get();
 
@@ -23,12 +29,12 @@ export async function POST(request) {
         const userData = userDoc.data();
         // Set the token in an httpOnly cookie
         const cookieStore = cookies();
-        cookieStore.set('token', token, {
+        cookieStore.set('token', sessionCookie, {
             path: '/',
             httpOnly: true,
             sameSite: 'lax',
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 48 * 60 * 60, // 1 hour
+            maxAge: expiresIn / 1000, // Convert to seconds
         });
 
         return new Response(JSON.stringify({ user: userData, token }), {

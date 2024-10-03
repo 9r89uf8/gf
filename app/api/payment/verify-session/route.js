@@ -34,7 +34,24 @@ export async function POST(req) {
                 expirationDate: timestamp.fromDate(expirationTimestamp)
             });
 
+            //we will delete all messages and audios from the user
+            const subcollections = ['conversations', 'displayMessages', 'displayAudios'];
 
+            // Function to delete all documents in a collection
+            async function deleteCollection(collectionRef) {
+                const batch = adminDb.firestore().batch();
+                const snapshot = await collectionRef.get();
+                snapshot.docs.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+            }
+
+            // Delete documents from each subcollection
+            for (const subcollection of subcollections) {
+                const collectionRef = userRef.collection(subcollection);
+                await deleteCollection(collectionRef);
+            }
 
             const userDoc = await adminDb
                 .firestore()
