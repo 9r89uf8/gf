@@ -76,7 +76,7 @@ const DeleteButton = styled(Button)(({ theme }) => ({
 }));
 
 const EnlargedImage = styled('img')({
-    height: 230,
+    height: 280,
     objectFit: 'contain',
 });
 
