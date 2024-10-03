@@ -195,7 +195,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                             flexDirection: 'column',
                                             alignItems: 'flex-start',
                                             margin: 1,
-                                            maxWidth: '200px',
+                                            maxWidth: '300px',
                                         }}
                                     >
                                         {/* Show avatar based on shouldDisplayAvatar */}
