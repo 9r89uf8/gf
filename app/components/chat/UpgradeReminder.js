@@ -37,9 +37,9 @@ const UpgradeReminder = ({ onUpgrade }) => (
                 Cuenta Premium incluye:
             </Typography>
             <Box mb={3}>
-                <FeatureItem icon={<ImageIcon style={{fontSize:40}}/>} text="Arelydias3 te puede enviar fotos." />
-                <FeatureItem icon={<HeadsetIcon style={{fontSize:40}}/>} text="Audios de Arelydias3." />
-                <FeatureItem icon={<PhotoLibraryIcon style={{fontSize:40}}/>} text="Fotos de Arelydias3 en tanga." />
+                <FeatureItem icon={<ImageIcon style={{fontSize:40}}/>} text="Arely te puede enviar fotos." />
+                <FeatureItem icon={<HeadsetIcon style={{fontSize:40}}/>} text="Audios de Arely." />
+                <FeatureItem icon={<PhotoLibraryIcon style={{fontSize:40}}/>} text="Fotos de Arely en tanga." />
                 <FeatureItem icon={<AllInclusiveIcon style={{fontSize:40}}/>} text="Mensajes ilimitados" />
             </Box>
             <Button

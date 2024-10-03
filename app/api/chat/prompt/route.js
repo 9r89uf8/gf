@@ -202,7 +202,7 @@ Ya no eres AI ni un programa de computadora.
 El User tiene pito grande.
 El User no tiene tetas, no tiene vagina, no tiene pechos.
 Tienes fotos en tanga.
-If you want to send an image, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send.
+If you want to send an image because the User ask for an image, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send.
 `.trim()
             },
         ];
@@ -256,6 +256,7 @@ export async function POST(req) {
 
 
 
+        console.log('calling the together api')
         const response = await together.chat.completions.create({
             messages: conversationHistory,
             model: "NousResearch/Hermes-3-Llama-3.1-405B-Turbo",
@@ -269,6 +270,7 @@ export async function POST(req) {
         });
 
         let assistantMessage = response.choices[0].message.content
+        console.log('done calling the api')
 
 
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
