@@ -18,7 +18,7 @@ const UserMessage = styled(Typography)(({ theme }) => ({
 
 const AssistantMessage = styled(Typography)(({ theme }) => ({
     background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .2)',
     color: 'black',
     borderRadius: theme.spacing(1),
     padding: theme.spacing(1),
@@ -132,7 +132,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                             onClick={() => handleOpenModal(message.image)} // Open modal on click
                                         />
                                     ) : (
-                                        <UserMessage style={{ fontSize: 22 }}>
+                                        <UserMessage style={{ fontSize: 24 }}>
                                             {message.content}
                                         </UserMessage>
                                     )}
@@ -183,7 +183,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                             >
                                                 te respondió
                                             </Typography>
-                                            <ResponseMessage style={{ fontSize: 22 }}>
+                                            <ResponseMessage style={{ fontSize: 24 }}>
                                                 {lastUserMessage.content}
                                             </ResponseMessage>
                                         </Box>
@@ -247,7 +247,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                             }}
                                                             onClick={() => handleOpenModal(message.image)} // Open modal on click
                                                         />
-                                                        <AssistantMessage style={{ fontSize: 22 }}>
+                                                        <AssistantMessage style={{ fontSize: 24 }}>
                                                             {message.content}
                                                         </AssistantMessage>
                                                     </Box>
@@ -269,7 +269,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                         </audio>
                                                     </Box>
                                                 ) : (
-                                                    <AssistantMessage style={{ fontSize: 22 }}>
+                                                    <AssistantMessage style={{ fontSize: 24 }}>
                                                         {message.content}
                                                     </AssistantMessage>
                                                 )}
@@ -282,11 +282,12 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                         sx={{
                                                             margin: '0 auto',
                                                             padding: 2,
+                                                            marginTop: 3,
                                                             textAlign: 'center',
                                                             background: 'linear-gradient(45deg, #495057 30%, #212529 90%)',
                                                         }}
                                                     >
-                                                        <Typography variant="h6" sx={{ mb: 1, color: 'white' }}>
+                                                        <Typography variant="h5" sx={{ mb: 1, color: 'white' }}>
                                                             Pudes comprar premium aqui
                                                         </Typography>
                                                         <Button
@@ -294,6 +295,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                             href="/premium" // Replace with your premium page URL
                                                             sx={{
                                                                 marginTop: 1,
+                                                                fontSize: 18,
                                                                 background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                                                                 border: 0,
                                                                 boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
