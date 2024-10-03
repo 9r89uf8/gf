@@ -9,7 +9,7 @@ export const authMiddleware = async (req) => {
     }
 
     try {
-        const decodedToken = await adminAuth.verifyIdToken(token);
+        const decodedToken = await adminAuth.verifySessionCookie(token, true);
         return { authenticated: true, user: decodedToken };
     } catch (error) {
         console.error('Invalid token:', error);
