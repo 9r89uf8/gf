@@ -90,6 +90,7 @@ const GirlProfile = () => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
+    const showPremiumButton = !user || (user && !user.premium);
 
     useEffect(() => {
         getGirl();
@@ -151,11 +152,11 @@ const GirlProfile = () => {
                                     Enviar Mensaje
                                 </GradientButton>
 
-                                <GradientButtonBuy
-                                    onClick={handlePremium}
-                                >
-                                    Comprar Premium
-                                </GradientButtonBuy>
+                                {showPremiumButton && (
+                                    <GradientButtonBuy onClick={handlePremium}>
+                                        Comprar Premium
+                                    </GradientButtonBuy>
+                                )}
                             </Box>
                         </Grid>
                     </Grid>

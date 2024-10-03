@@ -36,8 +36,7 @@ const PaymentResultPage = () => {
     }
 
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Container maxWidth="sm" sx={{ py: 4 }}>
                 <Paper elevation={3} sx={{ p: 4, borderRadius: 2, textAlign: 'center', width: '100%' }}>
                     {status === 'success' ? (
                         <>
@@ -95,7 +94,6 @@ const PaymentResultPage = () => {
                         </>
                     )}
                 </Paper>
-            </Box>
         </Container>
     );
 };
