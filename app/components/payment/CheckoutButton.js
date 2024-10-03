@@ -8,7 +8,7 @@ import { useStore } from '@/app/store/store';
 import {styled} from "@mui/material/styles";
 
 const GradientButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    background: 'linear-gradient(45deg, #343a40 30%, #212529 90%)',
     border: 0,
     borderRadius: 25,
     marginTop: 15,
@@ -40,7 +40,7 @@ const CheckoutButton = ({user, country, price, girlId}) => {
             variant="contained"
             onClick={handleCheckout}
             disabled={loading}
-            sx={{ fontSize: 30 }}
+            sx={{ fontSize: 26 }}
         >
             {loading ? 'Processing...' : 'Pagar'}
         </GradientButton>

@@ -166,9 +166,9 @@ const PrivateMember = () => {
                     <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)', marginBottom: 4 }} />
 
 
-                        <Typography variant="h4" align="center" gutterBottom>
-                            Elige Tu País
-                        </Typography>
+                    <Typography variant="h4" align="center" gutterBottom>
+                        Elige Tu País
+                    </Typography>
 
                     <Grid container spacing={3} justifyContent="center">
                         {pricingOptions.map((option) => (
@@ -188,10 +188,40 @@ const PrivateMember = () => {
                                     <Typography variant="h6">
                                         {option.name}
                                     </Typography>
+
+
+                                    <Box display="flex" justifyContent="center">
+                                        {user ? (
+                                            allowedCountries.includes(user.country) ? (
+                                                <CheckoutButton
+                                                    girlId={girl.uid}
+                                                    price={girl.memberPrice}
+                                                    user={user.uid}
+                                                    country={user.country}
+                                                />
+                                            ) : (
+                                                <Typography variant="body1" color="error" align="center">
+                                                    Este servicio solo está disponible para usuarios de EE. UU., México o Argentina.
+                                                </Typography>
+                                            )
+                                        ) : (
+                                            <GradientButton
+                                                variant="contained"
+                                                sx={{ mt: 2, fontSize: 17 }}
+                                                onClick={handleLoginRedirect}
+                                            >
+                                                Crear Cuenta
+                                            </GradientButton>
+                                        )}
+                                    </Box>
+
                                     <PriceTypography variant="h5" mt={2} fontWeight="bold">
                                         Acceso por 15 días
                                     </PriceTypography>
                                     <Typography variant="h6" mt={2}>
+                                        para personas de
+                                    </Typography>
+                                    <Typography variant="h4" mt={2} style={{marginTop: -3, color: 'white'}}>
                                         {option.country === 'US' ? 'Estados Unidos' : option.country === 'MX' ? 'México' : 'Argentina'}
                                     </Typography>
                                 </PriceCard>
@@ -210,30 +240,30 @@ const PrivateMember = () => {
                         </Typography>
                     </SafetyBox>
 
-                    <Box display="flex" justifyContent="center">
-                        {user ? (
-                            allowedCountries.includes(user.country) ? (
-                                <CheckoutButton
-                                    girlId={girl.uid}
-                                    price={girl.memberPrice}
-                                    user={user.uid}
-                                    country={user.country}
-                                />
-                            ) : (
-                                <Typography variant="body1" color="error" align="center">
-                                    Este servicio solo está disponible para usuarios de EE. UU., México o Argentina.
-                                </Typography>
-                            )
-                        ) : (
-                            <GradientButton
-                                variant="contained"
-                                sx={{ mt: 2, fontSize: 17 }}
-                                onClick={handleLoginRedirect}
-                            >
-                                Crear Cuenta
-                            </GradientButton>
-                        )}
-                    </Box>
+                    {/*<Box display="flex" justifyContent="center">*/}
+                    {/*    {user ? (*/}
+                    {/*        allowedCountries.includes(user.country) ? (*/}
+                    {/*            <CheckoutButton*/}
+                    {/*                girlId={girl.uid}*/}
+                    {/*                price={girl.memberPrice}*/}
+                    {/*                user={user.uid}*/}
+                    {/*                country={user.country}*/}
+                    {/*            />*/}
+                    {/*        ) : (*/}
+                    {/*            <Typography variant="body1" color="error" align="center">*/}
+                    {/*                Este servicio solo está disponible para usuarios de EE. UU., México o Argentina.*/}
+                    {/*            </Typography>*/}
+                    {/*        )*/}
+                    {/*    ) : (*/}
+                    {/*        <GradientButton*/}
+                    {/*            variant="contained"*/}
+                    {/*            sx={{ mt: 2, fontSize: 17 }}*/}
+                    {/*            onClick={handleLoginRedirect}*/}
+                    {/*        >*/}
+                    {/*            Crear Cuenta*/}
+                    {/*        </GradientButton>*/}
+                    {/*    )}*/}
+                    {/*</Box>*/}
 
                     <FeatureList>
                         <ListItem>
