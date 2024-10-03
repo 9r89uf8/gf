@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Badge, styled, Avatar, Modal } from '@mui/material';
+import { Box, Typography, Badge, styled, Avatar, Modal, Button, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import LikesIcon from "@mui/icons-material/Favorite";
 
 const UserMessage = styled(Typography)(({ theme }) => ({
-    background: 'linear-gradient(to right, #343a40, #343a40)',
+    background: 'linear-gradient(to right, #2c3e50, #4a5568)',
+    boxShadow: '0 4px 6px rgba(72, 87, 118, 0.3), 0 1px 3px rgba(0, 0, 0, 0.08)',
     borderRadius: theme.spacing(1),
     padding: theme.spacing(1),
     margin: theme.spacing(1),
@@ -16,7 +17,8 @@ const UserMessage = styled(Typography)(({ theme }) => ({
 }));
 
 const AssistantMessage = styled(Typography)(({ theme }) => ({
-    background: 'linear-gradient(to right, #00b4d8, #0077b6)',
+    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
     color: 'black',
     borderRadius: theme.spacing(1),
     padding: theme.spacing(1),
@@ -270,6 +272,36 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                     <AssistantMessage style={{ fontSize: 22 }}>
                                                         {message.content}
                                                     </AssistantMessage>
+                                                )}
+
+                                                {/* Display the Buy Premium button if displayLink is true */}
+                                                {message.displayLink && (
+
+                                                    <Paper
+                                                        elevation={4}
+                                                        sx={{
+                                                            margin: '0 auto',
+                                                            padding: 2,
+                                                            textAlign: 'center',
+                                                            background: 'linear-gradient(45deg, #495057 30%, #212529 90%)',
+                                                        }}
+                                                    >
+                                                        <Typography variant="h6" sx={{ mb: 1, color: 'white' }}>
+                                                            Pudes comprar premium aqui
+                                                        </Typography>
+                                                        <Button
+                                                            variant="contained"
+                                                            href="/premium" // Replace with your premium page URL
+                                                            sx={{
+                                                                marginTop: 1,
+                                                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                                                border: 0,
+                                                                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                                            }}
+                                                        >
+                                                            Premium
+                                                        </Button>
+                                                    </Paper>
                                                 )}
                                             </div>
                                         </Badge>
