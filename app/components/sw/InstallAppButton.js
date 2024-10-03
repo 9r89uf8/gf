@@ -45,7 +45,7 @@ export default function InstallAppButton() {
         <Button
             onClick={handleInstallClick}
             sx={{
-                background: 'linear-gradient(45deg, #ff6f61 30%, #ff9966 90%)',
+                background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
                 borderRadius: 25,
                 fontSize: 30,
                 color: 'white',

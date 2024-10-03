@@ -66,8 +66,6 @@ const Home = () => {
                             <Typography variant="h5" paragraph>
                                 Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
                             </Typography>
-
-                            <InstallAppButton />
                         </Grid>
 
                         {/* Image Section */}
@@ -164,6 +162,13 @@ const Home = () => {
                             </Box>
                         </Grid>
                     </Grid>
+                </GlassCard>
+
+                <GlassCard>
+                    <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
+                        Descarga la Aplicación
+                    </Typography>
+                    <InstallAppButton />
                 </GlassCard>
 
                 {/* Company Stats Section */}
