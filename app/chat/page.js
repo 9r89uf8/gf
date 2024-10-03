@@ -46,7 +46,7 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        if (user) {
+        if (user&&!conversationHistory) {
             fetchMessages({ userId: user.uid });
             fetchAudios();
         }
