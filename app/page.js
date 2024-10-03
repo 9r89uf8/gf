@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import InstallAppButton from "@/app/components/sw/InstallAppButton";
 import {
     Container,
     Box,
@@ -65,6 +66,8 @@ const Home = () => {
                             <Typography variant="h5" paragraph>
                                 Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
                             </Typography>
+
+                            <InstallAppButton />
                         </Grid>
 
                         {/* Image Section */}
