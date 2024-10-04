@@ -22,7 +22,7 @@ const FeatureItem = ({ icon, text }) => (
     </Box>
 );
 
-const UpgradeReminder = ({ onUpgrade }) => (
+const UpgradeReminder = ({ handleBuy }) => (
     <Box
         position="fixed"
         bottom={80}
@@ -45,7 +45,7 @@ const UpgradeReminder = ({ onUpgrade }) => (
             <Button
                 variant="contained"
                 fullWidth
-                onClick={onUpgrade}
+                onClick={handleBuy}
                 sx={{
                     backgroundColor: 'common.white',
                     color: 'primary.main',

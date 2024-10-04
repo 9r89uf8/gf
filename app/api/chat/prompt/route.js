@@ -7,6 +7,9 @@ const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 const {v4: uuidv4} = require("uuid");
 const elevenK = process.env.ELEVENLABS_API_KEY
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 function parseAssistantMessage(message) {
     const imageTagRegex = /\[IMAGE:\s*(.*?)\]/i;
     const imageMatch = message.match(imageTagRegex);
@@ -413,7 +416,10 @@ export async function POST(req) {
 
         return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages, updatedUserData }), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0'
+            }
         });
     } catch (error) {
         console.log(error.message);

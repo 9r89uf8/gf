@@ -11,6 +11,11 @@ import {
     Stack,
     Modal,
     IconButton,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -89,6 +94,7 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
 
 const GirlHeader = ({ girl, handleProfileClick }) => {
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const audios = girl.audios || [
         'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_34_25_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
@@ -103,8 +109,18 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
         setIsImageEnlarged(false);
     };
 
-    const deleteMessagesHandle = async () => {
-        await deleteMessages()
+
+    const handleOpenDeleteDialog = () => {
+        setOpenDeleteDialog(true);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
+    };
+
+    const handleConfirmDelete = async () => {
+        await deleteMessages();
+        handleCloseDeleteDialog();
     };
 
     return (
@@ -142,7 +158,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                             <DeleteButton
                                 variant="contained"
                                 startIcon={<DeleteForever />}
-                                onClick={deleteMessagesHandle}
+                                onClick={handleOpenDeleteDialog}
                                 sx={{ mt: 2 }}
                             >
                                 Borrar Mensajes
@@ -182,6 +198,30 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                     </CloseButton>
                 </Box>
             </Modal>
+
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDeleteDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"¿Estás seguro de que quieres borrar todos los mensajes?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Todos los mensajes serán eliminados permanentemente.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                        Cancelar
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="primary" autoFocus>
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };
