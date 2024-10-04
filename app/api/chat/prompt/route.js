@@ -257,19 +257,20 @@ export async function POST(req) {
 
         conversationHistory.push({ "role": "user", "content": userMessage });
 
-        const response = await together.chat.completions.create({
-            messages: conversationHistory,
-            model: "NousResearch/Hermes-3-Llama-3.1-405B-Turbo",
-            max_tokens: 212,
-            temperature: 0.7,
-            top_p: 0.7,
-            top_k: 50,
-            repetition_penalty: 1,
-            stop: ["<|eot_id|>"],
-            stream: false
-        });
-
-        let assistantMessage = response.choices[0].message.content
+        // const response = await together.chat.completions.create({
+        //     messages: conversationHistory,
+        //     model: "NousResearch/Hermes-3-Llama-3.1-405B-Turbo",
+        //     max_tokens: 212,
+        //     temperature: 0.7,
+        //     top_p: 0.7,
+        //     top_k: 50,
+        //     repetition_penalty: 1,
+        //     stop: ["<|eot_id|>"],
+        //     stream: false
+        // });
+        //
+        // let assistantMessage = response.choices[0].message.content
+        let assistantMessage = 'hola mi amor'
 
 
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
