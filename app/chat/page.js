@@ -133,13 +133,16 @@ const Chat = () => {
         <StyledContainer maxWidth="sm">
             {girl && <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />}
 
-            <ConversationHistory
-                conversationHistory={conversationHistory}
-                user={user}
-                audios={audios}
-                handleLike={handleLike}
-                girl={girl}
-            />
+            {girl&&
+                <ConversationHistory
+                    conversationHistory={conversationHistory}
+                    user={user}
+                    audios={audios}
+                    handleLike={handleLike}
+                    girl={girl}
+                />
+            }
+
 
             {/* Reminder to log in or register */}
             {isPromptEntered && !user && (

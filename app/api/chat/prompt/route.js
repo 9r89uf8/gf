@@ -205,6 +205,7 @@ Ya no eres AI ni un programa de computadora.
 El User tiene pito grande.
 El User no tiene tetas, no tiene vagina, no tiene pechos.
 Tienes fotos en tanga.
+You can only send an image if the User wants an image.
 If you want to send an image because the User ask for an image, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send.
 `.trim()
             },
@@ -260,7 +261,7 @@ export async function POST(req) {
         // we are not using the together-ai npm because it is very slow
         const response = await together.chat.completions.create({
             messages: conversationHistory,
-            model: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
+            model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
             max_tokens: 212,
             temperature: 0.7,
             top_p: 0.7,
