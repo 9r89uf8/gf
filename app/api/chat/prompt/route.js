@@ -257,20 +257,47 @@ export async function POST(req) {
 
         conversationHistory.push({ "role": "user", "content": userMessage });
 
-        // const response = await together.chat.completions.create({
-        //     messages: conversationHistory,
-        //     model: "NousResearch/Hermes-3-Llama-3.1-405B-Turbo",
-        //     max_tokens: 212,
-        //     temperature: 0.7,
-        //     top_p: 0.7,
-        //     top_k: 50,
-        //     repetition_penalty: 1,
-        //     stop: ["<|eot_id|>"],
-        //     stream: false
-        // });
-        //
-        // let assistantMessage = response.choices[0].message.content
-        let assistantMessage = 'hola mi amor'
+        // we are not using the together-ai npm because it is very slow
+        const response = await together.chat.completions.create({
+            messages: conversationHistory,
+            model: "NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO",
+            max_tokens: 212,
+            temperature: 0.7,
+            top_p: 0.7,
+            top_k: 50,
+            repetition_penalty: 1,
+            stop: ["<|im_end|>\",\"<|im_start|>"],
+            stream: false
+        });
+
+        let assistantMessage = response.choices[0].message.content
+
+
+        // const options = {
+        //     method: 'POST',
+        //     url: 'https://api.together.xyz/v1/chat/completions',
+        //     headers: {
+        //         accept: 'application/json',
+        //         'content-type': 'application/json',
+        //         authorization: `Bearer ${process.env.TOGETHER_API_KEY}`
+        //     },
+        //     data: {
+        //         messages: [
+        //             {role: 'system', content: 'You are a helpful assistant'},
+        //             {role: 'user', content: 'What is 1 + 1?'}
+        //         ],
+        //         model: 'NousResearch/Hermes-3-Llama-3.1-405B-Turbo',
+        //         temperature: 0.7,
+        //         top_p: 0.7,
+        //         top_k: 50,
+        //         repetition_penalty: 1,
+        //         stop: ["<|eot_id|>"],
+        //         stream: false
+        //     }
+        // };
+        // const response = await axios.request(options);
+        // console.log(response.data);
+        // let assistantMessage = 'hola mi amor'
 
 
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
