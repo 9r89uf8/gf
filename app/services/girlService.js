@@ -38,7 +38,7 @@ export const likeGirlPost = async (formData) => {
             throw new Error('Failed to update');
         }
     } catch (error) {
-        console.error('Error updating:', error);
+        console.error('Error updating:', error.message);
         return null;
     }
 };

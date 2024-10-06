@@ -92,6 +92,7 @@ const Chat = () => {
 
         if (image) {
             formData.append('image', image);
+            formData.append('userMessage', prompt.trim());
         } else {
             formData.append('userMessage', prompt.trim());
         }

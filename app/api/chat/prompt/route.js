@@ -253,14 +253,17 @@ export async function POST(req) {
             fileUrl = await uploadToFirebaseStorage(buffer, filePath, file.mimetype);
         }
 
-        // if(fileUrl){
-        //     userMessage = 'te acabo de mandar una foto de mi pito. que opinas?'
-        // }
+        if(fileUrl){
+            let newUserMessage = 'te acabo de mandar una foto de mi pito. que opinas?'
+            conversationHistory.push({ "role": "user", "content": newUserMessage });
+        }else {
+            conversationHistory.push({ "role": "user", "content": userMessage });
+        }
         // Format the conversation history for together.ai
         const formattedConversation = formatLastSixMessages(conversationHistory)
         // console.log(conversationHistory)
 
-        conversationHistory.push({ "role": "user", "content": userMessage });
+        // conversationHistory.push({ "role": "user", "content": userMessage });
 
         // we are not using the together-ai npm because it is very slow
         const response = await together.chat.completions.create({
@@ -443,7 +446,10 @@ export async function POST(req) {
         // Fetch updated display messages
         const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
         const displayMessagesSnapshot = await displayMessageRef.orderBy('timestamp', 'asc').get();
-        const displayMessages = displayMessagesSnapshot.docs.map(doc => doc.data());
+        const displayMessages = displayMessagesSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
 
 
         return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages, updatedUserData }), {
