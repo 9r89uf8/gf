@@ -229,7 +229,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                 horizontal: 'right',
                                             }}
                                         >
-                                            <div onClick={() => handleLike({id:message.id, image: message.image})}>
+                                            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleLike({id: message.id, image: message.image}); }}>
                                                 {message.image ? (
                                                     <Box
                                                         sx={{
