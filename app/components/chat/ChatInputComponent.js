@@ -1,5 +1,5 @@
 // ChatInputComponent.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Paper,
     IconButton,
@@ -92,7 +92,10 @@ const ChatInputComponent = ({
                                 setPrompt,
                                 isPromptEntered,
                                 girl,
-                            }) => (
+                            }) => {
+    const [imageSelected, setImageSelected] = useState(false);
+
+    return (
     <ChatInputStyled component="form" onSubmit={handleSubmit} elevation={4}>
         <IconButton
             onClick={() => {
@@ -126,7 +129,10 @@ const ChatInputComponent = ({
             accept="image/*"
             style={{ display: 'none' }}
             ref={fileInputRef}
-            onChange={handleImageUpload}
+            onChange={(e) => {
+                handleImageUpload(e);
+                setImageSelected(e.target.files.length > 0);
+            }}
             disabled={!canSendMessage}
         />
         {isSending ? (
@@ -137,7 +143,7 @@ const ChatInputComponent = ({
                 <IconButton
                     type="submit"
                     color="primary"
-                    disabled={!isPromptEntered || !canSendMessage}
+                    disabled={!isPromptEntered || !canSendMessage||(imageSelected&&!isPromptEntered)}
                     aria-label="Send Message"
                 >
                     <SendIcon sx={{ fontSize: 32 }} />
@@ -145,7 +151,8 @@ const ChatInputComponent = ({
             </motion.div>
         )}
     </ChatInputStyled>
-);
+    )
+};
 
 export default ChatInputComponent;
 

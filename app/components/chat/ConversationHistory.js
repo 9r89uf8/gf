@@ -119,20 +119,25 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                     }}
                                 >
                                     {message.image ? (
-                                        <img
-                                            src={message.image}
-                                            alt="user message"
-                                            style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '300px',
-                                                borderRadius: '8px',
-                                                marginTop: 9,
-                                                cursor: 'pointer',
-                                            }}
-                                            onClick={() => handleOpenModal(message.image)} // Open modal on click
-                                        />
+                                        <>
+                                            <img
+                                                src={message.image}
+                                                alt="user message"
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '300px',
+                                                    borderRadius: '8px',
+                                                    marginTop: 9,
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={() => handleOpenModal(message.image)} // Open modal on click
+                                            />
+                                            <UserMessage style={{fontSize: 24}}>
+                                                {message.content}
+                                            </UserMessage>
+                                        </>
                                     ) : (
-                                        <UserMessage style={{ fontSize: 24 }}>
+                                        <UserMessage style={{fontSize: 24}}>
                                             {message.content}
                                         </UserMessage>
                                     )}

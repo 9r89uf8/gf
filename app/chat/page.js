@@ -126,7 +126,7 @@ const Chat = () => {
         }
     };
 
-    const isPromptEntered = prompt.trim().length > 0 || image !== null;
+    const isPromptEntered = prompt.trim().length > 0;
     const canSendMessage = (user && user.freeMessages > 0) || !user;
 
     return (

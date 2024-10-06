@@ -1,12 +1,12 @@
 // ImagePreviewComponent.js
 import React from 'react';
-import { Box, Button, styled } from '@mui/material';
+import { Box, Paper, IconButton, styled } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const ImagePreviewStyled = styled('img')({
     maxWidth: '100%',
-    maxHeight: '200px',
+    maxHeight: '300px',
     objectFit: 'contain',
-    marginTop: '10px',
     borderRadius: '5px',
 });
 
@@ -15,25 +15,36 @@ const ImagePreviewComponent = ({ imagePreview, handleClearImage }) => (
         sx={{
             position: 'fixed',
             bottom: 70,
-            left: 0,
-            right: 0,
-            textAlign: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            padding: 2,
-            borderRadius: 1,
+            left: '50%',
+            transform: 'translateX(-50%)',
         }}
     >
-        <ImagePreviewStyled src={imagePreview} alt="Selected" />
-        <Button
-            onClick={handleClearImage}
-            variant="contained"
-            color="secondary"
-            size="small"
-            sx={{ mt: 1 }}
+        <Paper
+            elevation={3}
+            sx={{
+                position: 'relative',
+                padding: 2,
+                borderRadius: 2,
+                maxWidth: 400,
+                width: '90%',
+                textAlign: 'center',
+            }}
         >
-            Clear Image
-        </Button>
+            <IconButton
+                aria-label="close"
+                onClick={handleClearImage}
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0
+                }}
+            >
+                <CancelIcon style={{fontSize: 35}}/>
+            </IconButton>
+            <ImagePreviewStyled src={imagePreview} alt="Selected" />
+        </Paper>
     </Box>
 );
 
 export default ImagePreviewComponent;
+
