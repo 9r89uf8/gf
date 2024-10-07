@@ -329,6 +329,7 @@ export async function POST(req) {
                     role: 'user',
                     content: userMessage,
                     image: fileUrl,
+                    liked: Math.random() < 1/3, // This will be true 1/3 of the time
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
                 await displayMessageRef.add({
@@ -364,6 +365,7 @@ export async function POST(req) {
                     role: 'user',
                     content: userMessage,
                     image: fileUrl,
+                    liked: Math.random() < 1/3, // This will be true 1/3 of the time
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
                 await displayMessageRef.add({
@@ -386,6 +388,7 @@ export async function POST(req) {
                 role: 'user',
                 content: userMessage,
                 image: fileUrl,
+                liked: Math.random() < 1/3, // This will be true 1/3 of the time
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
             });
 

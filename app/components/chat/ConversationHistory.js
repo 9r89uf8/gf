@@ -1,7 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Typography, Badge, styled, Avatar, Modal, Button, Paper } from '@mui/material';
+import { Box, Typography, Badge, Avatar, Modal, Button, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import LikesIcon from "@mui/icons-material/Favorite";
+import { keyframes, styled } from '@mui/material/styles';
+
+const pop = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(3.4); }
+  100% { transform: scale(1); }
+`;
+
+const AnimatedLikesIcon = styled(LikesIcon)(({ theme }) => ({
+    color: 'red',
+    animation: `${pop} 0.3s ease-in-out`,
+}));
+
+const BlueGradientHeartIcon = styled(LikesIcon)(({ theme }) => ({
+    fontSize: 28,
+    color: 'white',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    animation: `${pop} 0.3s ease-in-out`,
+}));
+
 
 const UserMessage = styled(Typography)(({ theme }) => ({
     background: 'linear-gradient(to right, #2c3e50, #4a5568)',
@@ -132,14 +153,38 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                 }}
                                                 onClick={() => handleOpenModal(message.image)} // Open modal on click
                                             />
-                                            <UserMessage style={{fontSize: 24}}>
-                                                {message.content}
-                                            </UserMessage>
+                                            <Badge
+                                                badgeContent={
+                                                    message.liked ? (
+                                                        <BlueGradientHeartIcon key={message.likeTimestamp} />
+                                                    ) : null
+                                                }
+                                                anchorOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'right',
+                                                }}
+                                            >
+                                                <UserMessage style={{ fontSize: 24 }}>
+                                                    {message.content}
+                                                </UserMessage>
+                                            </Badge>
                                         </>
                                     ) : (
-                                        <UserMessage style={{fontSize: 24}}>
-                                            {message.content}
-                                        </UserMessage>
+                                        <Badge
+                                            badgeContent={
+                                                message.liked ? (
+                                                    <BlueGradientHeartIcon key={message.likeTimestamp} />
+                                                ) : null
+                                            }
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right',
+                                            }}
+                                        >
+                                            <UserMessage style={{ fontSize: 24 }}>
+                                                {message.content}
+                                            </UserMessage>
+                                        </Badge>
                                     )}
                                 </Box>
                             );
@@ -221,15 +266,15 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                         <Badge
                                             badgeContent={
                                                 message.liked ? (
-                                                    <LikesIcon style={{ color: 'red' }} />
+                                                    <AnimatedLikesIcon key={message.likeTimestamp} />
                                                 ) : null
                                             }
                                             anchorOrigin={{
                                                 vertical: 'bottom',
-                                                horizontal: 'right',
+                                                horizontal: 'left',
                                             }}
                                         >
-                                            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleLike({id: message.id, image: message.image}); }}>
+                                            <div onClick={(e) => { message.likeTimestamp = Date.now(); e.preventDefault(); e.stopPropagation(); handleLike({id: message.id, image: message.image}); }}>
                                                 {message.image ? (
                                                     <Box
                                                         sx={{
