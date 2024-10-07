@@ -274,7 +274,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                 horizontal: 'left',
                                             }}
                                         >
-                                            <div onClick={(e) => { message.likeTimestamp = Date.now(); e.preventDefault(); e.stopPropagation(); handleLike({id: message.id, image: message.image}); }}>
+                                            <>
                                                 {message.image ? (
                                                     <Box
                                                         sx={{
@@ -297,13 +297,22 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                             }}
                                                             onClick={() => handleOpenModal(message.image)} // Open modal on click
                                                         />
-                                                        <AssistantMessage style={{ fontSize: 24 }}>
-                                                            {message.content}
-                                                        </AssistantMessage>
+                                                        <div onClick={(e) => {
+                                                            message.likeTimestamp = Date.now();
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleLike({id: message.id});
+                                                        }}
+                                                             style={{marginTop: 2, marginBottom: -5}}
+                                                        >
+                                                            <AssistantMessage style={{fontSize: 24, marginLeft: -3,}}>
+                                                                {message.content}
+                                                            </AssistantMessage>
+                                                        </div>
                                                     </Box>
-                                                ) : audioMessage ? (
+                                                    ) : audioMessage ? (
                                                     <Box
-                                                        sx={{
+                                                    sx={{
                                                             display: 'flex',
                                                             flexDirection: 'column',
                                                             alignItems: 'flex-start',
@@ -319,9 +328,16 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                         </audio>
                                                     </Box>
                                                 ) : (
-                                                    <AssistantMessage style={{ fontSize: 24 }}>
-                                                        {message.content}
-                                                    </AssistantMessage>
+                                                    <div onClick={(e) => {
+                                                        message.likeTimestamp = Date.now();
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        handleLike({id: message.id});
+                                                    }}>
+                                                        <AssistantMessage style={{ fontSize: 24 }}>
+                                                            {message.content}
+                                                        </AssistantMessage>
+                                                    </div>
                                                 )}
 
                                                 {/* Display the Buy Premium button if displayLink is true */}
@@ -355,7 +371,7 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
                                                         </Button>
                                                     </Paper>
                                                 )}
-                                            </div>
+                                            </>
                                         </Badge>
                                     </Box>
                                 </Box>

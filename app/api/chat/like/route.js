@@ -15,6 +15,7 @@ export async function POST(req) {
 
         const userId = authResult.user.uid;
         const { messageUid } = await req.json();
+        console.log(messageUid)
 
         // Reference to the specific message in the 'displayMessages' subcollection
         let messageRef = adminDb.firestore()
