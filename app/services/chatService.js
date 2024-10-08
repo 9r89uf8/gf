@@ -76,6 +76,7 @@ export const likeMessage = async (formData) => {
 
 export const sendChatPrompt = async (formData) => {
     const setConversationHistory = useStore.getState().setConversationHistory;
+    const addNotification = useStore.getState().addNotification;
     const setMessageSent = useStore.getState().setMessageSent;
     const updateUser = useStore.getState().updateUser;
     try {
@@ -92,6 +93,14 @@ export const sendChatPrompt = async (formData) => {
                 freeAudio: data.updatedUserData.freeAudio,
                 freeMessages: data.updatedUserData.freeMessages
             })
+            if(data.sendNotification){
+                addNotification({
+                    id: Date.now(),
+                    type: 'success',
+                    message: 'a Arely le gustó tu mensaje.',
+                });
+
+            }
             return data.assistantMessage;
         } else {
             setMessageSent(false);

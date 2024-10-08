@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Box } from '@mui/material';
 import { useRouter } from 'next/navigation';

@@ -3,6 +3,7 @@ import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
 import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingNavbar";
 import ServiceWorkerRegister from "@/app/components/sw/ServiceWorkerRegister";
+import Notifications from "@/app/components/notifications/Notifications";
 import './styles/globals.css';
 
 function generateSchemaMarkup() {
@@ -65,6 +66,7 @@ const Layout = ({ children }) => {
         <body>
         <ServiceWorkerRegister />
         <Navbar/>
+        <Notifications />
         <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
         <ConditionalFloatingNavbar/>
         </body>
