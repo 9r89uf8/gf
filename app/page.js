@@ -59,14 +59,6 @@ const Home = () => {
                 <GlassCard>
                     <Grid container spacing={4} alignItems="center">
                         {/* Header Section */}
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="h3" gutterBottom>
-                                Conoce a tu compañera ideal
-                            </Typography>
-                            <Typography variant="h5" paragraph>
-                                Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
-                            </Typography>
-                        </Grid>
 
                         {/* Image Section */}
                         <Grid item xs={12} md={6}>
@@ -96,6 +88,7 @@ const Home = () => {
                             </Box>
                         </Grid>
 
+
                         {/* Profile Info Section */}
                         <Grid item xs={12} md={6}>
                             <Box>
@@ -113,6 +106,7 @@ const Home = () => {
                                 </Box>
                             </Box>
                         </Grid>
+
 
                         {/* Action Buttons Section */}
                         <Grid item xs={12} md={6}>
@@ -160,6 +154,15 @@ const Home = () => {
                                     </Button>
                                 </Link>
                             </Box>
+                        </Grid>
+
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h4" gutterBottom>
+                                Mensajes, Fotos y Audios
+                            </Typography>
+                            <Typography variant="h5" paragraph>
+                                Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
+                            </Typography>
                         </Grid>
                     </Grid>
                 </GlassCard>

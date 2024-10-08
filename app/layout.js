@@ -29,9 +29,9 @@ const Layout = ({ children }) => {
     return (
         <html lang="es">
         <head>
-            <title>NoviaChat - Tu Compañera Virtual Siempre Contigo. Novia Virtual.</title>
+            <title>NoviaChat - Conexión Instantánea en Texto, Foto y Voz.</title>
             <meta name="description"
-                  content="Conecta y comparte momentos inolvidables con NoviaChat, tu compañera virtual impulsada por IA. Disponible en cualquier momento y lugar."/>
+                  content="Conecta y comparte momentos inolvidables con NoviaChat, la aplicación 1 en latinoamérica para chatear. Disponible en cualquier momento y lugar. Novia virtual impulsada por IA"/>
             <meta name="keywords"
                   content="NoviaChat, compañera virtual, novia virtual, chat IA, inteligencia artificial, compañía virtual"/>
             <link rel="canonical" href="https://www.noviachat.com/"/>
