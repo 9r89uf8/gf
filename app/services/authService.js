@@ -17,11 +17,11 @@ export const loginUser = async (email, password) => {
         if (response.ok) {
             const data = await response.json();
             setUser(data.user);
-            addNotification({
-                id: Date.now(),
-                type: 'success',
-                message: 'Inicio de sesión exitosa',
-            });
+            // addNotification({
+            //     id: Date.now(),
+            //     type: 'success',
+            //     message: 'Inicio de sesión exitosa',
+            // });
             return { user: data.user, error: null };
         } else {
             addNotification({
