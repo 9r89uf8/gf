@@ -45,6 +45,11 @@ const Navbar = () => {
         router.push('/register');
     };
 
+    const handleImages = () => {
+        handleMenuClose();
+        router.push('/novia-virtual');
+    };
+
     const handleSignOut = async () => {
         await logoutUser();
         handleMenuClose();
@@ -113,14 +118,15 @@ const Navbar = () => {
                                         <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
                                     </>
                                 )}
-                                <MenuItem onClick={handleSignOut}>Salir</MenuItem>
+                                <MenuItem onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</MenuItem>
+                                <MenuItem onClick={handleSignOut} sx={{ fontSize: 24 }}>Salir</MenuItem>
                             </>
                         ) : (
                             [
-                                <MenuItem key="login" onClick={handleLogin}>
+                                <MenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
                                     Entrar a mi cuenta
                                 </MenuItem>,
-                                <MenuItem key="register" onClick={handleRegister}>
+                                <MenuItem key="register" onClick={handleRegister} sx={{ fontSize: 24 }}>
                                     Crear Cuenta
                                 </MenuItem>,
                             ]
