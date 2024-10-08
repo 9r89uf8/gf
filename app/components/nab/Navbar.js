@@ -6,6 +6,22 @@ import DehazeIcon from '@mui/icons-material/Dehaze';
 import { AccountCircle } from '@mui/icons-material';
 import { useStore } from '@/app/store/store';
 import { logoutUser } from "@/app/services/authService";
+import { styled } from '@mui/material/styles';
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+    background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.9) 100%)',
+    color: theme.palette.common.white,
+    borderRadius: '4px',
+    margin: '10px',
+    padding: '8px 16px',
+    width: 'auto',
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    '&:hover': {
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,1) 100%)',
+    },
+}));
+
 
 const Navbar = () => {
     const router = useRouter();
@@ -67,7 +83,7 @@ const Navbar = () => {
                 boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.16)',
                 width: 'calc(100% - 32px)',
                 maxWidth: '1200px',
-                overflow: 'visible', // Allow content to overflow
+                overflow: 'visible',
             }}
         >
             <Toolbar sx={{ minHeight: '64px', position: 'relative' }}> {/* Adjust minHeight as needed */}
@@ -104,11 +120,19 @@ const Navbar = () => {
                         <DehazeIcon sx={{ fontSize: 40 }}/>
                     </IconButton>
                     <Menu
+                        style={{maxWidth: 300}}
                         id="menu-appbar"
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
+                        PaperProps={{
+                            style: {
+                                background: 'white',
+                                boxShadow: 'none',
+                            },
+                        }}
                     >
+
                         {user ? (
                             <>
                                 {user && user.uid === 'hRZgS7woczXIruLyLjWu9axjPbo2' && (
@@ -118,17 +142,17 @@ const Navbar = () => {
                                         <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
                                     </>
                                 )}
-                                <MenuItem onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</MenuItem>
-                                <MenuItem onClick={handleSignOut} sx={{ fontSize: 24 }}>Salir</MenuItem>
+                                <StyledMenuItem key="fotos" onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</StyledMenuItem>
+                                <StyledMenuItem key="salir" onClick={handleSignOut} sx={{ fontSize: 24 }}>cerrar sesión</StyledMenuItem>
                             </>
                         ) : (
                             [
-                                <MenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
+                                <StyledMenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
                                     Entrar a mi cuenta
-                                </MenuItem>,
-                                <MenuItem key="register" onClick={handleRegister} sx={{ fontSize: 24 }}>
+                                </StyledMenuItem>,
+                                <StyledMenuItem key="register" onClick={handleRegister} sx={{ fontSize: 24 }}>
                                     Crear Cuenta
-                                </MenuItem>,
+                                </StyledMenuItem>,
                             ]
                         )}
                     </Menu>
