@@ -18,7 +18,7 @@ export const revalidate = 0;
 function generateSystemPrompt(user) {
     let userPicInstructions
     if(user.premium){
-        userPicInstructions = `If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send. Also don't forget to respond to the user query.`
+        userPicInstructions = `Puede enviar fotos. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send. Also don't forget to respond to the user query.`
     }else {
         userPicInstructions = `El User no compró premium. Cosas que puedes decir cuando el User no tiene premium y pide fotos o images o videos. If the User requested ann image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image. Also don't forget to respond to the user query.:
                                  1. para obtener fotos tuyas tiene que comprar premium.

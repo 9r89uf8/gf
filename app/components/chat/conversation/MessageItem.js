@@ -201,7 +201,7 @@ function MessageItem({
                                     }}
                                 >
                                     <img
-                                        src={message.image}
+                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${message.image}`}
                                         alt="assistant message"
                                         style={{
                                             maxWidth: '100%',
