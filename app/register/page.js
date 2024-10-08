@@ -11,6 +11,36 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { alpha, styled } from '@mui/material/styles';
 import { People, Lock, Bolt, TrendingUp } from '@mui/icons-material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
+const AnonymousButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #ffffff 30%, #f8f9fa 90%)',
+    border: 0,
+    borderRadius: 25,
+    fontSize: 16,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: 'black',
+    height: 48,
+    padding: '0 20px',
+    margin: '10px 0',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #5a5a5a 30%, #3b3b3b 90%)',
+    },
+}));
+
+const StyledMenu = styled(Menu)(({ theme }) => ({
+    '& .MuiPaper-root': {
+        width: '300px', // Set a fixed width for the menu
+        maxWidth: '100%'
+    },
+}));
+
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+    whiteSpace: 'normal', // Allow text to wrap
+    wordBreak: 'break-word', // Break long words if necessary
+}));
 
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
@@ -109,6 +139,14 @@ const RegisterPage = () => {
         }
     };
 
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleAnonymousClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <Box
             sx={{
@@ -153,6 +191,38 @@ const RegisterPage = () => {
                                 </Typography>
                             </FeatureBox>
                         </Box>
+
+                        <AnonymousButton
+                            onClick={handleAnonymousClick}
+                            endIcon={<ArrowDropDownIcon style={{fontSize: 50}}/>}
+                        >
+                            ¿Cuenta Anónima?
+                        </AnonymousButton>
+
+                        <StyledMenu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <StyledMenuItem onClick={handleClose}>
+                                <Typography variant="h5">
+                                    1. Use un correo electrónico falso
+                                </Typography>
+                            </StyledMenuItem>
+                            <StyledMenuItem onClick={handleClose}>
+                                <Typography variant="h5">
+                                    2. Cree una contraseña única y segura
+                                </Typography>
+                            </StyledMenuItem>
+                        </StyledMenu>
 
                         <form onSubmit={handleRegister}>
                             <StyledTextField
