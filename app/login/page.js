@@ -126,7 +126,7 @@ const LoginPage = () => {
                             <FeatureBox>
                                 <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
                                 <Typography variant="h6">
-                                    ¡Ya somos {userCount.toLocaleString()} usuarios!
+                                    2M+ usuarios
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
@@ -139,12 +139,6 @@ const LoginPage = () => {
                                 <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
                                 <Typography variant="h6">
                                     Mensajes encriptados
-                                </Typography>
-                            </FeatureBox>
-                            <FeatureBox>
-                                <TrendingUp sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    ¡La app de más rápido crecimiento en LATAM!
                                 </Typography>
                             </FeatureBox>
                         </Box>

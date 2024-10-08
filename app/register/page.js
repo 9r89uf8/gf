@@ -169,7 +169,7 @@ const RegisterPage = () => {
                             <FeatureBox>
                                 <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
                                 <Typography variant="h6">
-                                    ¡Ya somos {userCount.toLocaleString()} usuarios!
+                                    2M+ usuarios
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
