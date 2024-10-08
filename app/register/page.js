@@ -19,7 +19,7 @@ const AnonymousButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #ffffff 30%, #f8f9fa 90%)',
     border: 0,
     borderRadius: 25,
-    fontSize: 16,
+    fontSize: 20,
     boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
     color: 'black',
     height: 48,
@@ -182,12 +182,6 @@ const RegisterPage = () => {
                                 <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
                                 <Typography variant="h6">
                                     Mensajes encriptados
-                                </Typography>
-                            </FeatureBox>
-                            <FeatureBox>
-                                <TrendingUp sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    ¡La app de más rápido crecimiento en LATAM!
                                 </Typography>
                             </FeatureBox>
                         </Box>
