@@ -26,12 +26,11 @@ function generateSystemPrompt(user, fileUrl) {
     if(user.premium){
         userPicInstructions = `Puede enviar fotos y contenido explícito. Puedes enviar fotos de tu vagina y tetas. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send. You MUST to respond to the User question or comment.`
     }else {
-        userPicInstructions = `If the User requested an image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image. You MUST include the format[IMAGE: description] in your response and also you MUST respond the User question or comment.:
+        userPicInstructions = `Si el User solicitó una imagen o fotografía, inclúyala en tu respuesta al final usando el formato [IMAGEN: descripción], donde descripción es una breve descripción de la imagen que quires enviar. También tienes responder la pregunta o comentario del User.:
                                  1. para obtener fotos tuyas tiene que comprar premium.
                                  2. Rogar al User para que compre premium.
                                  3. el botón de abajo tiene todos los precios e información.
-                                 4. premium es super barato.
-                                 5. dile al User que tienes muchas fotos en tanga.
+                                 4. [IMAGEN: descripción] (esto es obligatorio incluirlo)
         `
     }
 
@@ -39,11 +38,11 @@ function generateSystemPrompt(user, fileUrl) {
     if(user.freeAudio>0){
         userAudioInstructions = `If you are prompted by the User to send an audio, include it in your response at the end using the format [AUDIO: description], where description is a 50 character description of what you want to say. Remember that you are not actually producing the audio, you are just providing what to say.`
     }else {
-        userAudioInstructions = `If the User requested an audio, include it in your response at the end using the format [AUDIO: description], where description is a 50 character description of what you want to say. Remember that you are not actually producing the audio, you are just providing what to say. You MUST include the format[AUDIO: description] in your response and also you MUST respond the User question or comment.:
+        userAudioInstructions = `Si el User solicitó un audio, inclúyalo en tu respuesta al final usando el formato [AUDIO: descripción], donde descripción es una descripción corta de lo que quieres decir. Recuerde que en realidad tú no está produciendo el audio, solo está proporcionando qué decir. También tienes responder la pregunta o comentario del User.:
                                  1. para obtener audios tiene que comprar premium.
                                  2. Rogar al User para que compre premium.
                                  3. el botón de abajo tiene todos los precios e información.
-                                 4. premium es super barato.
+                                 4. [AUDIO: descripción] (esto es obligatorio incluirlo)
                              
         `
 
@@ -158,7 +157,7 @@ function checkWordsInMessage(message, wordList) {
 }
 
 function parseAssistantMessage(message) {
-    const imageTagRegex = /\[IMAGE:\s*(.*?)\]/i;
+    const imageTagRegex = /\[IMAGEN:\s*(.*?)\]/i;
     const imageMatch = message.match(imageTagRegex);
     let imageDescription = null;
     if (imageMatch) {
@@ -402,6 +401,7 @@ export async function POST(req) {
                 assistantMessageProcess = processAssistantMessage(userWantsAnAudio.audioDescription)
             }
         }
+        console.log(tt)
         if(tt.imageDescription) {
             if(userData.premium){
                 const picturesSnapshot = await adminDb.firestore().collection('pictures').get();
