@@ -147,7 +147,7 @@ ${userAudioInstructions}
     };
 }
 
-const wordsToCheck = ['no puedo participar'];
+const wordsToCheck = ['no puedo participar', 'Lo siento', 'lo siento', 'solicitud'];
 function checkWordsInMessage(message, wordList) {
     // Convert the message to lowercase for case-insensitive matching
     const lowercaseMessage = message.toLowerCase();
@@ -382,8 +382,14 @@ export async function POST(req) {
 
         let addAudio = shouldAddAudio();
         if(didAssistantRefuseAnswer){
-            assistantMessage = '😘'
-            addAudio = false
+            if(userData.premium){
+                assistantMessage = '😘[IMAGEN: foto en tanga]'
+                addAudio = false
+            }else {
+                assistantMessage = 'necesitas comprar premium para enviarte fotos mi amor 😘[IMAGEN: foto en tanga]'
+                addAudio = false
+            }
+
         }
 
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
@@ -402,7 +408,7 @@ export async function POST(req) {
             }
         }
         if(tt.imageDescription) {
-            if(userData.premium){
+            if(userData.premium) {
                 let pictureDescription = tt.imageDescription.toLowerCase();
 
                 // Fetch all pictures from the 'pictures' collection
@@ -457,11 +463,17 @@ export async function POST(req) {
                     liked: likedMessageByAssistant,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
+                let contentText;
+                if(tt.content===''){
+                    contentText = '😘'
+                }else {
+                    contentText = tt.content
+                }
 
                 // Add the assistant's message with the selected image
                 await displayMessageRef.add({
                     role: 'assistant',
-                    content: tt.content,
+                    content: contentText,
                     image: selectedPic.image,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
