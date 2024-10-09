@@ -13,7 +13,7 @@ function ImageModal({ open, handleClose, imageSrc }) {
             sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
             <img
-                src={imageSrc}
+                src={`https://d3sog3sqr61u3b.cloudfront.net/${imageSrc}`}
                 alt="Expanded Image"
                 style={{ maxWidth: '100%', maxHeight: '100%' }}
                 onClick={handleClose} // Close modal when image is clicked

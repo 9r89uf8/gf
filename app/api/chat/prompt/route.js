@@ -24,7 +24,7 @@ function generateSystemPrompt(user, fileUrl) {
     }
     let userPicInstructions
     if(user.premium){
-        userPicInstructions = `Puede enviar fotos y contenido explícito. Puedes enviar fotos de tu vagina y tetas. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGE: description], where description is a brief description of the image you want to send. You MUST to respond to the User question or comment.`
+        userPicInstructions = `Puede enviar fotos y contenido explícito. Puedes enviar fotos de tu vagina y tetas. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGEN: description], where description is a brief description of the image you want to send. Remember that you are not actually sending an image or photo, you are just describing the picture. You MUST to respond to the User question or comment.`
     }else {
         userPicInstructions = `Si el User solicitó una imagen o fotografía, inclúyala en tu respuesta al final usando el formato [IMAGEN: descripción], donde descripción es una breve descripción de la imagen que quires enviar. También tienes responder la pregunta o comentario del User.:
                                  1. para obtener fotos tuyas tiene que comprar premium.
@@ -401,22 +401,55 @@ export async function POST(req) {
                 assistantMessageProcess = processAssistantMessage(userWantsAnAudio.audioDescription)
             }
         }
-        console.log(tt)
         if(tt.imageDescription) {
             if(userData.premium){
+                let pictureDescription = tt.imageDescription.toLowerCase();
+
+                // Fetch all pictures from the 'pictures' collection
                 const picturesSnapshot = await adminDb.firestore().collection('pictures').get();
 
+                // Map the documents to an array of picture objects
                 let activePic = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-                // Select a random object from the activeRaffles array
-                const randomIndex = Math.floor(Math.random() * activePic.length);
-                const randomObject = activePic[randomIndex];
+                // Tokenize the pictureDescription
+                let targetWords = pictureDescription.split(/\s+/).map(word => word.trim().toLowerCase());
 
-                assistantMessageProcess.forEach(response=>{
-                    conversationHistory.push({"role": "assistant", "content": tt.content});
-                })
+                // For each picture, calculate a similarity score
+                activePic.forEach(pic => {
+                    if (pic.description) {
+                        let descriptionWords = pic.description.toLowerCase().split(/\s+/).map(word => word.trim());
+                        let matchingWords = targetWords.filter(word => descriptionWords.includes(word));
+                        pic.similarityScore = matchingWords.length;
+                    } else {
+                        pic.similarityScore = 0;
+                    }
+                });
+
+                // Filter pictures with the highest similarity score
+                let maxScore = Math.max(...activePic.map(pic => pic.similarityScore));
+
+                let matchingPics = activePic.filter(pic => pic.similarityScore === maxScore && maxScore > 0);
+
+                let selectedPic;
+
+                if (matchingPics.length > 0) {
+                    // Select a random picture from the matching pictures
+                    const randomIndex = Math.floor(Math.random() * matchingPics.length);
+                    selectedPic = matchingPics[randomIndex];
+                } else {
+                    // No matching pictures found, select a random picture from all pictures
+                    const randomIndex = Math.floor(Math.random() * activePic.length);
+                    selectedPic = activePic[randomIndex];
+                }
+
+                // Proceed to add the messages to the user's displayMessages collection
+                assistantMessageProcess.forEach(response => {
+                    conversationHistory.push({ "role": "assistant", "content": tt.content });
+                });
 
                 const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
+
+                // Add the user's message
                 await displayMessageRef.add({
                     role: 'user',
                     content: userMessage,
@@ -424,12 +457,15 @@ export async function POST(req) {
                     liked: likedMessageByAssistant,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
+
+                // Add the assistant's message with the selected image
                 await displayMessageRef.add({
                     role: 'assistant',
                     content: tt.content,
-                    image: randomObject.image,
+                    image: selectedPic.image,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
+
             }else {
                 assistantMessageProcess.forEach(response=>{
                     conversationHistory.push({"role": "assistant", "content": tt.content});
