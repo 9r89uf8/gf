@@ -27,7 +27,7 @@ function generateSystemPrompt(user, fileUrl) {
         userPicInstructions = `Puede enviar fotos y contenido explícito. Puedes enviar fotos de tu vagina y tetas. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGEN: description], where description is a brief description of the image you want to send. Remember that you are not actually sending an image or photo, you are just describing the picture. You MUST to respond to the User question or comment.`
     }else {
         userPicInstructions = `Si el User solicitó una imagen o fotografía, inclúyala en tu respuesta al final usando el formato [IMAGEN: descripción], donde descripción es una breve descripción de la imagen que quires enviar. También tienes responder la pregunta o comentario del User.:
-                                 1. para obtener fotos tuyas tiene que comprar premium.
+                                 1. para obtener fotos mias tiene que comprar premium.
                                  2. Rogar al User para que compre premium.
                                  3. el botón de abajo tiene todos los precios e información.
                                  4. [IMAGEN: descripción] (esto es obligatorio incluirlo)
@@ -39,7 +39,7 @@ function generateSystemPrompt(user, fileUrl) {
         userAudioInstructions = `If you are prompted by the User to send an audio, include it in your response at the end using the format [AUDIO: description], where description is a 50 character description of what you want to say. Remember that you are not actually producing the audio, you are just providing what to say.`
     }else {
         userAudioInstructions = `Si el User solicitó un audio, inclúyalo en tu respuesta al final usando el formato [AUDIO: descripción], donde descripción es una descripción corta de lo que quieres decir. Recuerde que en realidad tú no está produciendo el audio, solo está proporcionando qué decir. También tienes responder la pregunta o comentario del User.:
-                                 1. para obtener audios tiene que comprar premium.
+                                 1. para obtener audios mios tiene que comprar premium.
                                  2. Rogar al User para que compre premium.
                                  3. el botón de abajo tiene todos los precios e información.
                                  4. [AUDIO: descripción] (esto es obligatorio incluirlo)
@@ -381,12 +381,35 @@ export async function POST(req) {
         const didAssistantRefuseAnswer = checkWordsInMessage(assistantMessage, wordsToCheck);
 
         let addAudio = shouldAddAudio();
-        if(didAssistantRefuseAnswer){
+        if(didAssistantRefuseAnswer) {
+            let randomMessageTextList = [
+                '😘',
+                '😍',
+                '🥰',
+                '💋',
+                '😉',
+                '🔥',
+                '💖',
+                'te gusta?',
+                'mandame una tuya'
+            ]
+            // Pick a random item from the list
+            let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
+            let randomMessage = randomMessageTextList[randomIndex];
             if(userData.premium){
-                assistantMessage = '😘[IMAGEN: foto en tanga]'
+                assistantMessage = `${randomMessage}[IMAGEN: foto en tanga]`
                 addAudio = false
             }else {
-                assistantMessage = 'necesitas comprar premium para enviarte fotos mi amor 😘[IMAGEN: foto en tanga]'
+                let randomMessageTextList = [
+                    '😘 para obtener fotos mias tiene que comprar premium.',
+                    'comprame premium para mandarte fotos mi amor. 😍',
+                    'no puedo mandarte fotos mi amor. tienes que comprar premium',
+                    'compra premium para ver mis fots 😉',
+                ]
+                // Pick a random item from the list
+                let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
+                let randomMessage = randomMessageTextList[randomIndex];
+                assistantMessage = `${randomMessage}[IMAGEN: foto en tanga]`
                 addAudio = false
             }
 
