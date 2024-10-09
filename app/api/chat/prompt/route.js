@@ -24,7 +24,15 @@ function generateSystemPrompt(user, fileUrl) {
     }
     let userPicInstructions
     if(user.premium){
-        userPicInstructions = `Puede enviar fotos y contenido explícito. Puedes enviar fotos de tu vagina y tetas. If you are prompted by the User to send an image or photo, include it in your response at the end using the format [IMAGEN: description], where description is a brief description of the image you want to send. Remember that you are not actually sending an image or photo, you are just describing the picture. You MUST to respond to the User question or comment.`
+        userPicInstructions = `
+If the User prompts you to send an image or photo, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
+ 3. Do not ask what type of picture they want.
+ 3. Remember, you're not actually sending an image; you're just providing a description of the image to send.
+ For example:
+ User: mandame una foto en tanga?
+ Assistant: si mi amor, te envié la foto [IMAGE: foto en tanga].`
     }else {
         userPicInstructions = `Si el User solicitó una imagen o fotografía, inclúyala en tu respuesta al final usando el formato [IMAGEN: descripción], donde descripción es una breve descripción de la imagen que quires enviar. También tienes responder la pregunta o comentario del User.:
                                  1. para obtener fotos mias tiene que comprar premium.
@@ -157,12 +165,30 @@ function checkWordsInMessage(message, wordList) {
 }
 
 function parseAssistantMessage(message) {
-    const imageTagRegex = /\[IMAGEN:\s*(.*?)\]/i;
+    const imageTagRegex = /\[(IMAGEN|IMAGE):\s*(.*?)\]/i;
     const imageMatch = message.match(imageTagRegex);
     let imageDescription = null;
     if (imageMatch) {
         imageDescription = imageMatch[1].trim();
         message = message.replace(imageTagRegex, '').trim();
+    }
+
+    if(message===''){
+        let randomMessageTextList = [
+            '\u{1F618}',
+            '\u{1F60D}',
+            '\u{1F970}',
+            '\u{1F48B}',
+            '\u{1F609}',
+            '\u{1F525}',
+            '\u{1F496}',
+            'te gusta?',
+            'mandame una tuya'
+        ]
+        // Pick a random item from the list
+        let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
+        console.log(randomMessageTextList[randomIndex])
+        message = randomMessageTextList[randomIndex];
     }
     return { content: message, imageDescription };
 }
@@ -377,19 +403,20 @@ export async function POST(req) {
         });
 
         let assistantMessage = response.choices[0].message.content
+        console.log(assistantMessage)
 
         const didAssistantRefuseAnswer = checkWordsInMessage(assistantMessage, wordsToCheck);
 
         let addAudio = shouldAddAudio();
         if(didAssistantRefuseAnswer) {
             let randomMessageTextList = [
-                '😘',
-                '😍',
-                '🥰',
-                '💋',
-                '😉',
-                '🔥',
-                '💖',
+                '\u{1F618}',
+                '\u{1F60D}',
+                '\u{1F970}',
+                '\u{1F48B}',
+                '\u{1F609}',
+                '\u{1F525}',
+                '\u{1F496}',
                 'te gusta?',
                 'mandame una tuya'
             ]
@@ -472,9 +499,9 @@ export async function POST(req) {
                 }
 
                 // Proceed to add the messages to the user's displayMessages collection
-                assistantMessageProcess.forEach(response => {
-                    conversationHistory.push({ "role": "assistant", "content": tt.content });
-                });
+
+                conversationHistory.push({ "role": "assistant", "content": tt.content });
+
 
                 const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
 
@@ -488,6 +515,7 @@ export async function POST(req) {
                 });
                 let contentText;
                 if(tt.content===''){
+                    console.log('no content!!!!!!!!!!!!!!!!')
                     contentText = '😘'
                 }else {
                     contentText = tt.content
@@ -502,9 +530,9 @@ export async function POST(req) {
                 });
 
             }else {
-                assistantMessageProcess.forEach(response=>{
-                    conversationHistory.push({"role": "assistant", "content": tt.content});
-                })
+
+                conversationHistory.push({"role": "assistant", "content": tt.content});
+
 
                 const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
                 await displayMessageRef.add({
