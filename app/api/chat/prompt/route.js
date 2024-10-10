@@ -391,12 +391,6 @@ export async function POST(req) {
             fileUrl = await uploadToFirebaseStorage(buffer, filePath, file.mimetype);
         }
 
-        // if(fileUrl){
-        //     conversationHistory.push({ "role": "user", "content": userMessage });
-        // }else {
-        //     conversationHistory.push({ "role": "user", "content": userMessage });
-        // }
-
         // Add user's message to the conversation history
         conversationHistory.push({ role: 'user', content: userMessage });
         // Generate the dynamic system prompt using the function

@@ -33,7 +33,7 @@ const GlassCard = ({ children }) => (
             borderRadius: 5,
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
-            padding: 3,
+            padding: 1,
             marginBottom: 4,
             userSelect: 'none',
             WebkitUserSelect: 'none',
@@ -45,6 +45,39 @@ const GlassCard = ({ children }) => (
 );
 
 const Home = () => {
+    const users = [
+        {
+            name: 'ArelyDiaz3',
+            profilePicture: '/profileTwo.jpg',
+            profileLink: '/novia-virtual',
+        },
+        {
+            name: 'MariaLopez',
+            profilePicture: '/user2.jpg',
+            profileLink: '/maria-lopez',
+        },
+        {
+            name: 'SofiaGarcia',
+            profilePicture: '/user3.jpg',
+            profileLink: '/sofia-garcia',
+        },
+        {
+            name: 'LuciaMartinez',
+            profilePicture: '/user4.jpg',
+            profileLink: '/lucia-martinez',
+        },
+        {
+            name: 'CamilaRodriguez',
+            profilePicture: '/user5.jpg',
+            profileLink: '/camila-rodriguez',
+        },
+        {
+            name: 'ValentinaHernandez',
+            profilePicture: '/user6.jpg',
+            profileLink: '/valentina-hernandez',
+        },
+    ];
+
     return (
         <Box
             sx={{
@@ -55,28 +88,72 @@ const Home = () => {
             }}
         >
             <Container maxWidth="lg">
-                {/* Introduction and Value Proposition */}
-                <GlassCard>
-                    <Grid container spacing={4} alignItems="center">
-                        {/* Header Section */}
-
-                        {/* Image Section */}
-                        <Grid item xs={12} md={6}>
-                            <Box display="flex" justifyContent="center">
+                {/* Top Creators Section */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 4,
+                    }}
+                >
+                    <TextField
+                        placeholder="Buscar creadores..."
+                        variant="outlined"
+                        sx={{
+                            width: '100%',
+                            maxWidth: '500px',
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '25px',
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                },
+                                '& fieldset': {
+                                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                                },
+                            },
+                            '& .MuiOutlinedInput-input': {
+                                color: 'white',
+                            },
+                            '& .MuiInputLabel-root': {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                            },
+                        }}
+                    />
+                </Box>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', textAlign: 'center', color: 'white' }}>
+                    Creadores Populares
+                </Typography>
+                <Grid container spacing={4}>
+                    {users.map((user, index) => (
+                        <Grid item xs={12} sm={6} md={4} key={index}>
+                            <Card
+                                sx={{
+                                    textAlign: 'center',
+                                    color: 'white',
+                                    background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)',
+                                    backdropFilter: 'blur(10px)',
+                                    borderRadius: 5,
+                                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                                    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.10)',
+                                    padding: 3,
+                                }}
+                            >
                                 <Box
                                     sx={{
                                         borderRadius: '50%',
-                                        width: { xs: 250, md: 350 },
-                                        height: { xs: 250, md: 350 },
+                                        width: { xs: 150, md: 200 },
+                                        height: { xs: 150, md: 200 },
                                         overflow: 'hidden',
                                         border: '4px solid rgba(255, 255, 255, 0.5)',
                                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                                        margin: '0 auto',
                                     }}
                                 >
-                                    <Link href="/novia-virtual" passHref legacyBehavior>
+                                    <Link href={user.profileLink} passHref legacyBehavior>
                                         <img
-                                            src="/profileTwo.jpg" // Replace with your AI girlfriend image
-                                            alt="AI Girlfriend"
+                                            src={user.profilePicture}
+                                            alt={user.name}
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
@@ -85,16 +162,9 @@ const Home = () => {
                                         />
                                     </Link>
                                 </Box>
-                            </Box>
-                        </Grid>
-
-
-                        {/* Profile Info Section */}
-                        <Grid item xs={12} md={6}>
-                            <Box>
                                 <Box display="flex" justifyContent="center">
-                                    <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
-                                        ArelyDiaz3
+                                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white', marginTop: 1 }}>
+                                        {user.name}
                                         <VerifiedIcon
                                             sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7', fontSize: 36 }}
                                         />
@@ -104,69 +174,35 @@ const Home = () => {
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
                                     <Typography variant="h5">22 años</Typography>
                                 </Box>
-                            </Box>
+                                <Box display="flex" justifyContent="center" mt={2}>
+                                    <Link href={user.profileLink} passHref legacyBehavior>
+                                        <Button
+                                            sx={{
+                                                background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                                border: 0,
+                                                fontSize: 18,
+                                                borderRadius: 25,
+                                                boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
+                                                color: 'white',
+                                                height: 48,
+                                                padding: '0 15px',
+                                                fontWeight: 'bold',
+                                                textTransform: 'none',
+                                                '&:hover': {
+                                                    background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                                },
+                                            }}
+                                        >
+                                            Ver Perfil
+                                        </Button>
+                                    </Link>
+                                </Box>
+                            </Card>
                         </Grid>
+                    ))}
+                </Grid>
 
-
-                        {/* Action Buttons Section */}
-                        <Grid item xs={12} md={6}>
-                            <Box display="flex" justifyContent="center" gap={2}>
-                                <Link href="/novia-virtual" passHref legacyBehavior>
-                                    <Button
-                                        sx={{
-                                            background: 'linear-gradient(45deg, #06d6a0 30%, #118ab2 90%)',
-                                            border: 0,
-                                            borderRadius: 25,
-                                            fontSize:30,
-                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
-                                            color: 'white',
-                                            height: 48,
-                                            padding: '0 15px',
-                                            fontWeight: 'bold',
-                                            textTransform: 'none',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
-                                            },
-                                        }}
-                                    >
-                                        Fotos
-                                    </Button>
-                                </Link>
-                                <Link href="/chat" passHref legacyBehavior>
-                                    <Button
-                                        sx={{
-                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-                                            border: 0,
-                                            fontSize:30,
-                                            borderRadius: 25,
-                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
-                                            color: 'white',
-                                            height: 48,
-                                            padding: '0 15px',
-                                            fontWeight: 'bold',
-                                            textTransform: 'none',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
-                                            },
-                                        }}
-                                    >
-                                        Mensaje
-                                    </Button>
-                                </Link>
-                            </Box>
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="h4" gutterBottom>
-                                Mensajes, Fotos y Audios
-                            </Typography>
-                            <Typography variant="h5" paragraph>
-                                Experimenta una compañía como nunca antes. NoviaChat está aquí para chatear, entretenerte y acompañarte en cualquier momento y lugar.
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </GlassCard>
-
+                {/* Download App Section */}
                 <GlassCard>
                     <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
                         Descarga la Aplicación
@@ -216,10 +252,10 @@ const Home = () => {
                     </Grid>
                 </GlassCard>
 
+                {/* Enhanced AI Features Section */}
+                <EnhancedAIFeaturesCard />
 
-                <EnhancedAIFeaturesCard/>
-
-                {/* Brief Demo or Preview */}
+                {/* Chat Preview Section */}
                 <GlassCard>
                     <Typography variant="h4" gutterBottom align="center">
                         Ejemplo de Conversación
@@ -280,10 +316,15 @@ const Home = () => {
                     </Box>
                 </GlassCard>
 
+                {/* Footer Section */}
                 <GlassCard>
-                    <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" alt="logo" style={{width: 45, height: "auto", marginBottom: 1}}/>
-                    <Typography sx={{ color: 'white', fontSize:'20px' }}>
-                        © 2024 - Todos los Derechos Reservados NoviaChat. NoviaChat 2025.
+                    <img
+                        src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
+                        alt="logo"
+                        style={{ width: 45, height: 'auto', marginBottom: 1 }}
+                    />
+                    <Typography sx={{ color: 'white', fontSize: '20px' }}>
+                        © 2024 - Todos los Derechos Reservados NoviaChat.
                     </Typography>
                 </GlassCard>
             </Container>
@@ -292,6 +333,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
