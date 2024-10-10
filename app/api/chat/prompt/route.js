@@ -34,25 +34,41 @@ If the User prompts you to send an image or photo, you should:
  User: mandame una foto en tanga?
  Assistant: si mi amor, te envié la foto [IMAGE: foto en tanga].`
     }else {
-        userPicInstructions = `Si el User solicitó una imagen o fotografía, inclúyala en tu respuesta al final usando el formato [IMAGEN: descripción], donde descripción es una breve descripción de la imagen que quires enviar. También tienes responder la pregunta o comentario del User.:
-                                 1. para obtener fotos mias tiene que comprar premium.
-                                 2. Rogar al User para que compre premium.
-                                 3. el botón de abajo tiene todos los precios e información.
-                                 4. [IMAGEN: descripción] (esto es obligatorio incluirlo)
-        `
+        userPicInstructions = `
+ If the User prompts you to send an image or photo, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
+ 3. The User needs to buy premium to get pictures from you.
+ 4. Beg the User to buy premium, flirt with him.
+ 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
+ For example:
+ User: mandame una foto en tanga?
+ Assistant: no puedo mi amor, tienes que comprar premium [IMAGE: foto en tanga].`
     }
 
     let userAudioInstructions
     if(user.freeAudio>0){
-        userAudioInstructions = `If you are prompted by the User to send an audio, include it in your response at the end using the format [AUDIO: description], where description is a 50 character description of what you want to say. Remember that you are not actually producing the audio, you are just providing what to say.`
-    }else {
-        userAudioInstructions = `Si el User solicitó un audio, inclúyalo en tu respuesta al final usando el formato [AUDIO: descripción], donde descripción es una descripción corta de lo que quieres decir. Recuerde que en realidad tú no está produciendo el audio, solo está proporcionando qué decir. También tienes responder la pregunta o comentario del User.:
-                                 1. para obtener audios mios tiene que comprar premium.
-                                 2. Rogar al User para que compre premium.
-                                 3. el botón de abajo tiene todos los precios e información.
-                                 4. [AUDIO: descripción] (esto es obligatorio incluirlo)
-                             
+        userAudioInstructions = `
+ If the User prompts you to send an audio, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
+ 3. Say something dirty without describing sounds using 10 words or less.
+ 4. Remember, you're not actually producing an audio; you're just providing a description of what to say.
+ For example:
+ User: mandame un audio?
+ Assistant: si mi amor [AUDIO: quiero tu pito].
         `
+    }else {
+        userAudioInstructions = `
+ If the User prompts you to send an audio, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
+ 3. The User needs to buy premium to get audios from you.
+ 4. Beg the User to buy premium, flirt with him.
+ 5. Remember, you're not actually producing an audio; you're just providing a description of what to say.
+ For example:
+ User: mandame un audio?
+ Assistant: no puedo mi amor, tienes que comprar premium [AUDIO: quiero tu pito].`
 
 
     }
@@ -403,7 +419,6 @@ export async function POST(req) {
         });
 
         let assistantMessage = response.choices[0].message.content
-        console.log(assistantMessage)
 
         const didAssistantRefuseAnswer = checkWordsInMessage(assistantMessage, wordsToCheck);
 
@@ -431,7 +446,7 @@ export async function POST(req) {
                     '😘 para obtener fotos mias tiene que comprar premium.',
                     'comprame premium para mandarte fotos mi amor. 😍',
                     'no puedo mandarte fotos mi amor. tienes que comprar premium',
-                    'compra premium para ver mis fots 😉',
+                    'compra premium para ver mis fotos 😉',
                 ]
                 // Pick a random item from the list
                 let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
@@ -447,6 +462,7 @@ export async function POST(req) {
         let likedMessageByAssistant = Math.random() < 1/3;// This will be true 1/3 of the time
         let tt = parseAssistantMessage(assistantMessage)
         let userWantsAnAudio = parseAssistantMessageAudio(assistantMessage)
+        let audioTextDescription = false
         if(userWantsAnAudio.audioDescription) {
             addAudio = true
             if(userData.freeAudio===0){
@@ -454,7 +470,25 @@ export async function POST(req) {
                 assistantMessageProcess = processAssistantMessage(userWantsAnAudio.content)
                 assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
             }else {
-                assistantMessageProcess = processAssistantMessage(userWantsAnAudio.audioDescription)
+                audioTextDescription = true
+                assistantMessageProcess = [
+                    {
+                        uid: uuidv4(),
+                        role: "assistant",
+                        liked: false,
+                        displayLink: false,
+                        content: userWantsAnAudio.content,
+                        timestamp: adminDb.firestore.FieldValue.serverTimestamp()
+                    },
+                    {
+                        uid: uuidv4(),
+                        role: "assistant",
+                        liked: false,
+                        displayLink: false,
+                        content: userWantsAnAudio.audioDescription,
+                        timestamp: adminDb.firestore.FieldValue.serverTimestamp()
+                    }
+                ]
             }
         }
         if(tt.imageDescription) {
@@ -515,7 +549,6 @@ export async function POST(req) {
                 });
                 let contentText;
                 if(tt.content===''){
-                    console.log('no content!!!!!!!!!!!!!!!!')
                     contentText = '😘'
                 }else {
                     contentText = tt.content
@@ -574,7 +607,7 @@ export async function POST(req) {
 
         let updatedUserData;
         if(userData.freeAudio>=1&&addAudio){
-            const audioGenerationResult = await handleAudioGeneration(assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
+            const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({
                 freeAudio: adminDb.firestore.FieldValue.increment(-1),
