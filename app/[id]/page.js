@@ -69,6 +69,23 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const GradientButtonTwo = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #ffb703 30%, #fb8500 90%)',
+    border: 0,
+    borderRadius: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: 'white',
+    fontSize: 24,
+    height: 48,
+    padding: '0 30px',
+    margin: '10px 0',
+    fontWeight: 'bold',
+    textTransform: 'none',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
+}));
+
 const GradientButtonBuy = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
     border: 0,
@@ -146,13 +163,22 @@ const GirlProfile = ({params}) => {
                                 <Typography variant="h6" paragraph>
                                     {girl ? girl.bio : 'No sean chismosos 😂😏'}
                                 </Typography>
-                                <GradientButton
-                                    onClick={handleChat}
-                                >
-                                    Enviar Mensaje
-                                </GradientButton>
+                                {girl && !girl.private?
+                                    <GradientButton
+                                        disabled={girl ?girl.private:false}
+                                        onClick={handleChat}
+                                    >
+                                        Enviar Mensaje
+                                    </GradientButton>
+                                    :
+                                    <GradientButtonTwo
+                                    >
+                                        Cuenta Privada
+                                    </GradientButtonTwo>
+                                }
 
-                                {showPremiumButton && (
+
+                                {showPremiumButton && girl && !girl.private && (
                                     <GradientButtonBuy onClick={handlePremium}>
                                         Comprar Premium
                                     </GradientButtonBuy>

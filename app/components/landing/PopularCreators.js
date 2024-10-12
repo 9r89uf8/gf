@@ -148,7 +148,7 @@ const PopularCreators = () => {
                                             },
                                         }}
                                     >
-                                        Ver Perfil
+                                        Fotos
                                     </Button>
                                 </Link>
                             </Box>

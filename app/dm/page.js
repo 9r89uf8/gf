@@ -132,7 +132,7 @@ const DMList = () => {
                                     }}
                                     onClick={() => setOpenSnackbar(true)} // Open Snackbar on click
                                 >
-                                    Privado
+                                    Privada
                                 </Button>
                             ) : (
                                 <Link href='/chat' passHref legacyBehavior>
