@@ -107,9 +107,12 @@ const DMList = () => {
                             </ListItemAvatar>
                             <ListItemText
                                 primary={user.username}
-                                sx={{ color: 'white', padding: 1 }}
-                                primaryTypographyProps={{ fontSize: '1.5rem' }} // Increased font size
+                                sx={{ color: '#dee2e6', padding: 1,userSelect: 'none',
+                                    WebkitUserSelect: 'none',
+                                    msUserSelect: 'none', }}
+                                primaryTypographyProps={{ fontSize: '1.3rem' }} // Increased font size
                             />
+
                             {user.private ? (
                                 <Button
                                     sx={{
