@@ -5,16 +5,17 @@ import { authMiddleware } from '@/app/middleware/authMiddleware';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function POST(req) {
     try {
-        const girlDoc = await adminDb.firestore().collection('girls').doc('01uIfxE3VRIbrIygbr2Q').get();
-
+        const { id } = await req.json();
+        const girlDoc = await adminDb.firestore().collection('girls').doc(id).get();
+//01uIfxE3VRIbrIygbr2Q
 
         const girlData = girlDoc.data();
 
         // Fetching posts from the 'posts' collection where 'postId' matches 'girlId'
         const postsSnapshot = await adminDb.firestore().collection('posts')
-            .where('girlId', '==', '01uIfxE3VRIbrIygbr2Q') // Assuming 'postId' is the field you want to match with 'girlId'
+            .where('girlId', '==', id) // Assuming 'postId' is the field you want to match with 'girlId'
             .orderBy('timestamp', "desc") // Order by timestamp
             .get();
 
@@ -36,6 +37,7 @@ export async function GET() {
             },
         });
     } catch (error) {
+        console.log(error.message)
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },

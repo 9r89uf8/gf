@@ -42,7 +42,7 @@ const Chat = () => {
 
     useEffect(() => {
         checkIfCookie();
-        getGirl();
+        getGirl({id: '01uIfxE3VRIbrIygbr2Q'});
     }, []);
 
 
@@ -63,7 +63,7 @@ const Chat = () => {
     }, [conversationHistory]);
 
     const handleProfileClick = () => {
-        router.push('/novia-virtual');
+        router.push('/01uIfxE3VRIbrIygbr2Q');
     };
 
     const handleLoginRedirect = () => {

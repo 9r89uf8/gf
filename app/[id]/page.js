@@ -86,14 +86,14 @@ const GradientButtonBuy = styled(Button)(({ theme }) => ({
     },
 }));
 
-const GirlProfile = () => {
+const GirlProfile = ({params}) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
     const showPremiumButton = !user || (user && !user.premium);
 
     useEffect(() => {
-        getGirl();
+        getGirl({id: params.id});
     }, []);
 
     const handleChat = () => {

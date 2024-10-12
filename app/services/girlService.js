@@ -5,7 +5,13 @@ export const getGirl = async (formData) => {
     const setGirl = useStore.getState().setGirl;
 
     try {
-        const response = await fetch(`/api/girl`);
+        const response = await fetch('/api/girl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
         if (response.ok) {
             const data = await response.json();
             setGirl(data);
