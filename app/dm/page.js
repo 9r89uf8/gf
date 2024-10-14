@@ -18,6 +18,7 @@ const GlassCard = ({ children }) => (
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             borderRadius: 5,
+            marginTop: 4,
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
             padding: 1,
@@ -82,8 +83,7 @@ const DMList = () => {
             sx={{
                 minHeight: '100vh',
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                padding: 2,
+                backgroundPosition: 'center'
             }}
         >
             <Container maxWidth="lg">

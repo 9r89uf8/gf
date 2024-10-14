@@ -133,7 +133,7 @@ const RegisterPage = () => {
         const { user, error } = await registerUser(data);
         setDisableRegister(false);
         if (user) {
-            router.push('/');
+            router.push('/dm');
         } else {
             console.error(error);
         }

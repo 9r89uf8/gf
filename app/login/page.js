@@ -98,7 +98,7 @@ const LoginPage = () => {
         const { user, error } = await loginUser(email, password, setUser);
         setDisableLogin(false);
         if (user) {
-            router.push('/chat');
+            router.push('/dm');
         } else {
             console.error(error);
         }

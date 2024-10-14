@@ -63,7 +63,7 @@ const Navbar = () => {
 
     const handleImages = () => {
         handleMenuClose();
-        router.push('/novia-virtual');
+        router.push('/posts');
     };
 
     const handleSignOut = async () => {
