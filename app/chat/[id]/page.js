@@ -27,7 +27,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
     paddingBottom: theme.spacing(12),
 }));
 
-const Chat = () => {
+const Chat = ({params}) => {
     const router = useRouter();
     const [prompt, setPrompt] = useState('');
     const [image, setImage] = useState(null);
@@ -36,28 +36,35 @@ const Chat = () => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const audios = useStore((state) => state.audios);
+    const shouldGetAudios = useStore((state) => state.audioBoolean);
     const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
-        checkIfCookie();
-        getGirl({id: '01uIfxE3VRIbrIygbr2Q'});
-    }, []);
+        const initializeData = async () => {
+            await checkIfCookie(); // Ensure the user data is available
+            await getGirl({ id: params.id }); // Ensure the girl data is available
+        };
+
+        initializeData();
+    }, [params.id]);
+
 
 
     useEffect(() => {
-        if (user&&conversationHistory&&conversationHistory.length===0) {
-            fetchMessages({ userId: user.uid });
-            fetchAudios();
+        if (user && girl) {
+            fetchMessages({ userId: user.uid, girlId: girl.id });
+            fetchAudios({ girlId: girl.id });
         }
-    }, [user]);
+    }, [user, girl]);
+
 
     useEffect(() => {
         if (conversationHistory?.length > 0 && user) {
             const assistantMessage = conversationHistory[conversationHistory.length - 1];
-            if (assistantMessage.role === 'assistant') {
-                fetchAudios();
+            if (assistantMessage.role === 'assistant'&&shouldGetAudios) {
+                fetchAudios({girlId: params.id });
             }
         }
     }, [conversationHistory]);
@@ -88,6 +95,7 @@ const Chat = () => {
         const formData = new FormData();
         formData.append('userId', user.uid);
         formData.append('jornada', jornada);
+        formData.append('girlId', girl.id);
         formData.append('audio', true);
 
         if (image) {
@@ -122,7 +130,7 @@ const Chat = () => {
     };
 
     const handleLike = async ({id}) => {
-        await likeMessage({ messageUid: id });
+        await likeMessage({ messageUid: id, girlId: girl.id});
 
     };
 

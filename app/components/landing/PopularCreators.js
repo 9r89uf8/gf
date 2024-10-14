@@ -34,6 +34,9 @@ const PopularCreators = () => {
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Limit to first 5 creators
+    const limitedUsers = filteredUsers.slice(0, 5);
+
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -47,7 +50,7 @@ const PopularCreators = () => {
             {/* Search Bar */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
                 <TextField
-                    placeholder="Buscar creadores..."
+                    placeholder="Buscar creadoras..."
                     variant="outlined"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -79,7 +82,7 @@ const PopularCreators = () => {
                 Creadoras Populares
             </Typography>
             <Grid container spacing={4}>
-                {filteredUsers.map((user, index) => (
+                {limitedUsers.map((user, index) => (
                     <Grid item xs={12} sm={6} md={4} key={index}>
                         <Card
                             sx={{
@@ -105,7 +108,7 @@ const PopularCreators = () => {
                                     margin: '0 auto',
                                 }}
                             >
-                                <Link href={user.id} passHref legacyBehavior>
+                                <Link href={`/creators/${user.id}`} passHref legacyBehavior>
                                     <img
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${user.picture}`}
                                         alt={user.name}
@@ -130,7 +133,7 @@ const PopularCreators = () => {
                                 <Typography variant="h5">{user.age}</Typography>
                             </Box>
                             <Box display="flex" justifyContent="center" mt={2}>
-                                <Link href={user.id} passHref legacyBehavior>
+                                <Link href={`/creators/${user.id}`} passHref legacyBehavior>
                                     <Button
                                         sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
@@ -156,9 +159,38 @@ const PopularCreators = () => {
                     </Grid>
                 ))}
             </Grid>
+
+            {/* "View All Creators" Button */}
+            {filteredUsers.length > 5 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <Link href="/creators" passHref legacyBehavior>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                background: 'linear-gradient(45deg, #f8f9fa 30%, #e9ecef 90%)',
+                                marginTop: -2,
+                                borderRadius: 25,
+                                marginBottom: 10,
+                                padding: '10px 30px',
+                                fontSize: 16,
+                                fontWeight: 'bold',
+                                color: 'black',
+                                textTransform: 'none',
+                                boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+                                '&:hover': {
+                                    background: 'linear-gradient(45deg, #FFAE53 30%, #FE8B8B 90%)',
+                                },
+                            }}
+                        >
+                            Ver Todas las Creadoras
+                        </Button>
+                    </Link>
+                </Box>
+            )}
         </>
     );
 };
 
 export default PopularCreators;
+
 

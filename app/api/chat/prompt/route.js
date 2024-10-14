@@ -291,7 +291,7 @@ function processAssistantMessage(assistantMessage) {
     return response;
 }
 
-async function handleAudioGeneration(response, girlAudioId, userId, audioAmount) {
+async function handleAudioGeneration(response, girlAudioId, userId, audioAmount, girlId) {
     let audioRemaining = audioAmount;
     let audioGeneratedCount = 0;  // Counter for generated audios
     const removeEmojisAndHash = (str) => {
@@ -304,7 +304,12 @@ async function handleAudioGeneration(response, girlAudioId, userId, audioAmount)
     if (finalText.length < 62 && audioRemaining > 0) {
         const audioBase64 = await generateAudio(axios, finalText, girlAudioId, elevenK);
 
-        let audioRef = await adminDb.firestore().collection('users').doc(userId).collection('displayAudios');
+        let audioRef = await adminDb.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('conversations')
+            .doc(girlId)
+            .collection('displayAudios');
         await audioRef.add({
             uid: response.uid,
             audioData: audioBase64,
@@ -363,6 +368,7 @@ export async function POST(req) {
     try {
         const formData = await req.formData();
         const userId = formData.get('userId');
+        const girlId = formData.get('girlId');
         let userMessage = formData.get('userMessage');
         const file = formData.get('image');
 
@@ -373,10 +379,20 @@ export async function POST(req) {
             .get();
         const userData = userDocF.data();
 
+        const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
+        const girlData = girlDoc.data();
+
+
         // Get the conversation history from Firestore
-        const conversationRef = adminDb.firestore().collection('users').doc(userId).collection('conversations').doc('conversationID1');
+        const conversationRef = adminDb.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('conversations')
+            .doc(girlId);
+
         let doc = await conversationRef.get();
-        let conversationHistory = doc.exists ? doc.data().messages : await getOrCreateConversationHistory(doc, userData);
+        let conversationHistory = doc.exists ? doc.data().messages : await getOrCreateConversationHistory(doc, userData, girlData);
+
 
 
         let fileUrl = null;
@@ -531,7 +547,12 @@ export async function POST(req) {
                 conversationHistory.push({ "role": "assistant", "content": tt.content });
 
 
-                const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
+                const displayMessageRef = adminDb.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .collection('conversations')
+                    .doc(girlId)
+                    .collection('displayMessages');
 
                 // Add the user's message
                 await displayMessageRef.add({
@@ -561,7 +582,12 @@ export async function POST(req) {
                 conversationHistory.push({"role": "assistant", "content": tt.content});
 
 
-                const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
+                const displayMessageRef = adminDb.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .collection('conversations')
+                    .doc(girlId)
+                    .collection('displayMessages');
                 await displayMessageRef.add({
                     role: 'user',
                     content: userMessage,
@@ -584,7 +610,12 @@ export async function POST(req) {
                 conversationHistory.push({"role": "assistant", "content": response.content});
             })
 
-            const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
+            const displayMessageRef = adminDb.firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('conversations')
+                .doc(girlId)
+                .collection('displayMessages');
             await displayMessageRef.add({
                 role: 'user',
                 content: userMessage,
@@ -601,7 +632,7 @@ export async function POST(req) {
 
         let updatedUserData;
         if(userData.freeAudio>=1&&addAudio){
-            const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1);
+            const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1, girlId);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({
                 freeAudio: adminDb.firestore.FieldValue.increment(-1),
@@ -622,16 +653,32 @@ export async function POST(req) {
 
 
         // Save the updated conversation history back to Firestore
-        await conversationRef.set({ messages: conversationHistory });
+        // After adding the message to 'displayMessages'
+        await conversationRef.set({
+            messages: conversationHistory,
+            lastMessage: {
+                content: 'Arely te respondio', // Content of the last message
+                timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
+                sender: 'assistant' // 'user' or 'assistant'
+            }
+        }, { merge: true });
 
-        const displayMessageRef = adminDb.firestore().collection('users').doc(userId).collection('displayMessages');
+
+        // Retrieve display messages
+        const displayMessageRef = adminDb.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('conversations')
+            .doc(girlId)
+            .collection('displayMessages');
+
         const displayMessagesSnapshot = await displayMessageRef.orderBy('timestamp', 'asc').get();
         const displayMessages = displayMessagesSnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
 
-        return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages, updatedUserData, sendNotification: likedMessageByAssistant }), {
+        return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages, updatedUserData, sendNotification: likedMessageByAssistant, audio: addAudio }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',

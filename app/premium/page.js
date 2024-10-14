@@ -1,7 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from '@/app/store/store';
-import CheckoutButton from "@/app/components/payment/CheckoutButton";
+import { getMembership } from '@/app/services/membershipService';
+import CheckoutButton from '@/app/components/payment/CheckoutButton';
 import {
     Container,
     Box,
@@ -9,7 +10,6 @@ import {
     Typography,
     Card,
     Avatar,
-    Divider,
     List,
     ListItem,
     ListItemIcon,
@@ -17,16 +17,14 @@ import {
     Collapse,
     Grid,
 } from '@mui/material';
-import { styled, alpha } from "@mui/material/styles";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { styled, alpha } from '@mui/material/styles';
 import LockIcon from '@mui/icons-material/Lock';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import SpatialAudioOffIcon from '@mui/icons-material/SpatialAudioOff';
 import MessageIcon from '@mui/icons-material/Message';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import {useRouter} from "next/navigation";
-import VerifiedIcon from "@mui/icons-material/Verified";
+import { useRouter } from 'next/navigation';
 
 const GlassCard = styled(Card)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -36,9 +34,8 @@ const GlassCard = styled(Card)(({ theme }) => ({
     borderRadius: 15,
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
     boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
-    marginTop: 15
+    marginTop: 15,
 }));
-
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
     color: '#212529',
@@ -49,13 +46,6 @@ const FeatureList = styled(List)(({ theme }) => ({
     width: '100%',
     marginTop: theme.spacing(2),
 }));
-
-const CenteredBox = styled(Box)({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-});
 
 const SafetyBox = styled(Box)(({ theme }) => ({
     background: alpha(theme.palette.background.paper, 0.1),
@@ -99,12 +89,20 @@ const PriceCard = styled(Card)(({ theme }) => ({
 const PrivateMember = () => {
     const router = useRouter();
     const user = useStore((state) => state.user);
-    const girl = useStore((state) => state.girl);
+    const membership = useStore((state) => state.membership);
     const [showPaymentInfo, setShowPaymentInfo] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
 
-    const allowedCountries = ['US', 'MX', 'AR'];
+    // Define a default 'girl' object to prevent undefined errors
+    const girl = {
+        uid: 'girl123',
+        memberPrice: 9.99,
+        name: 'Emely',
+    };
 
+    useEffect(() => {
+        getMembership();
+    }, []);
 
     const handleLoginRedirect = () => {
         router.push('/register'); // Adjust the path to your login or register page
@@ -113,176 +111,167 @@ const PrivateMember = () => {
     const pricingOptions = [
         {
             country: 'US',
-            price: girl ? girl.memberPrice : 4,
+            price: membership?.priceUSD ?? 4,
+            duration: membership?.duration??10,
             currency: 'USD',
             name: 'dólares',
             flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(7).png',
-            gradient: 'linear-gradient(45deg, #3f51b5 30%, #2196f3 90%)'
+            gradient: 'linear-gradient(45deg, #3f51b5 30%, #2196f3 90%)',
         },
         {
             country: 'MX',
-            price: girl ? girl.memberPrice * 17 : 70,
+            price: membership?.priceMXN ?? 70,
+            duration: membership?.duration??10,
             currency: 'MXN',
             name: 'pesos',
             flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(5).png',
-            gradient: 'linear-gradient(45deg, #7ae582 30%, #25a18e 90%)'
+            gradient: 'linear-gradient(45deg, #7ae582 30%, #25a18e 90%)',
         },
         {
             country: 'AR',
-            price: girl ? girl.memberPrice * 800 : 3200,
+            price: membership?.priceARN ?? 3200,
+            duration: membership?.duration??10,
             currency: 'ARS',
             name: 'pesos',
             flag: 'https://chicagocarhelp.s3.us-east-2.amazonaws.com/EMELY+(6).png',
-            gradient: 'linear-gradient(45deg, #00afb9 30%, #0081a7 90%)'
+            gradient: 'linear-gradient(45deg, #00afb9 30%, #0081a7 90%)',
         },
     ];
+
+    // Determine which pricing options to display
+    let displayedPricingOptions;
+    if (!user) {
+        displayedPricingOptions = pricingOptions;
+    } else {
+        displayedPricingOptions = pricingOptions.filter(
+            (option) => option.country === user.country
+        );
+    }
 
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                minHeight: '100vh',
                 background: 'linear-gradient(45deg, #343a40 0%, #212529 100%)',
-                padding: 2
+                padding: 2,
             }}
         >
             <Container maxWidth="sm">
                 <GlassCard elevation={4}>
-                    <CenteredBox mb={2}>
-                        <Avatar
-                            src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : ''}
-                            sx={{ width: 160, height: 160, mb: 2 }}
-                        />
-                        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
-                            {girl ? girl.username : 'Username'}
-                            <VerifiedIcon
-                                sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
-                            />
-                        </Typography>
-                        {/*<Typography variant="h6" color="text.primary">*/}
-                        {/*    Miembro Privado*/}
-                        {/*</Typography>*/}
-                    </CenteredBox>
-
-                    <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)', marginBottom: 4 }} />
-
-
                     <Typography variant="h4" align="center" gutterBottom>
-                        Elige Tu País
+                        Cuenta Premium
                     </Typography>
 
                     <Grid container spacing={3} justifyContent="center">
-                        {pricingOptions.map((option) => (
-                            <Grid item xs={12} sm={4} key={option.country}>
-                                <PriceCard
-                                    onClick={() => setSelectedCountry(option.country)}
-                                    sx={{
-                                        background: selectedCountry === option.country
-                                            ? 'linear-gradient(45deg, #f48c06 30%, #dc2f02 90%)'
-                                            : option.gradient,
-                                    }}
-                                >
-                                    <Avatar src={option.flag} sx={{ mb: 2, width: 56, height: 56 }} variant="rounded" />
-                                    <Typography variant="h3" fontWeight="bold">
-                                        ${option.price.toFixed(0)}
-                                    </Typography>
-                                    <Typography variant="h6">
-                                        {option.name}
-                                    </Typography>
+                        {displayedPricingOptions.length > 0 && (
+                            displayedPricingOptions.map((option) => (
+                                <Grid item xs={12} sm={4} key={option.country}>
+                                    <PriceCard
+                                        onClick={() => setSelectedCountry(option.country)}
+                                        sx={{
+                                            background:
+                                                selectedCountry === option.country
+                                                    ? 'linear-gradient(45deg, #f48c06 30%, #dc2f02 90%)'
+                                                    : option.gradient,
+                                        }}
+                                    >
+                                        <Avatar
+                                            src={option.flag}
+                                            sx={{ mb: 2, width: 56, height: 56 }}
+                                            variant="rounded"
+                                        />
+                                        <Typography variant="h3" fontWeight="bold">
+                                            ${Number(option.price).toFixed(0)}
+                                        </Typography>
+                                        <Typography variant="h6">{option.name}</Typography>
 
-
-                                    <Box display="flex" justifyContent="center">
-                                        {user ? (
-                                            allowedCountries.includes(user.country) ? (
-                                                <CheckoutButton
-                                                    girlId={girl.uid}
-                                                    price={girl.memberPrice}
-                                                    user={user.uid}
-                                                    country={user.country}
-                                                />
+                                        <Box display="flex" justifyContent="center">
+                                            {user ? (
+                                                <CheckoutButton/>
                                             ) : (
-                                                <Typography variant="body1" color="error" align="center">
-                                                    Este servicio solo está disponible para usuarios de EE. UU., México o Argentina.
-                                                </Typography>
-                                            )
-                                        ) : (
-                                            <GradientButton
-                                                variant="contained"
-                                                sx={{ mt: 2, fontSize: 17 }}
-                                                onClick={handleLoginRedirect}
-                                            >
-                                                Crear Cuenta
-                                            </GradientButton>
-                                        )}
-                                    </Box>
+                                                <GradientButton
+                                                    variant="contained"
+                                                    sx={{ mt: 2, fontSize: 17 }}
+                                                    onClick={handleLoginRedirect}
+                                                >
+                                                    Crear Cuenta
+                                                </GradientButton>
+                                            )}
+                                        </Box>
 
-                                    <PriceTypography variant="h5" mt={2} fontWeight="bold">
-                                        Acceso por 15 días
-                                    </PriceTypography>
-                                    <Typography variant="h6" mt={2}>
-                                        para personas de
-                                    </Typography>
-                                    <Typography variant="h5" mt={2} style={{marginTop: -3, color: 'white'}}>
-                                        {option.country === 'US' ? 'Estados Unidos' : option.country === 'MX' ? 'México' : 'Argentina'}
-                                    </Typography>
-                                </PriceCard>
-                            </Grid>
-                        ))}
+                                        <PriceTypography
+                                            variant="h5"
+                                            mt={2}
+                                            fontWeight="bold"
+                                        >
+                                            Acceso por {option.duration} días
+                                        </PriceTypography>
+                                        <Typography variant="h6" mt={2}>
+                                            para personas que viven en
+                                        </Typography>
+                                        <Typography
+                                            variant="h5"
+                                            style={{ marginTop: -3, color: 'white' }}
+                                        >
+                                            {option.country === 'US'
+                                                ? 'Estados Unidos'
+                                                : option.country === 'MX'
+                                                    ? 'México'
+                                                    : 'Argentina'}
+                                        </Typography>
+                                    </PriceCard>
+                                </Grid>
+                            ))
+                        )}
                     </Grid>
-
-
 
                     <SafetyBox>
                         <Typography variant="h5" fontWeight="bold">
                             Pago Seguro Garantizado
                         </Typography>
                         <Typography variant="h6">
-                            Tu transacción es 100% segura. Stripe.com, líder en pagos en línea, procesa tu pago de forma segura y confiable.
+                            Tu transacción es 100% segura. Stripe.com, líder en pagos en
+                            línea, procesa tu pago de forma segura y confiable.
                         </Typography>
                     </SafetyBox>
 
-                    {/*<Box display="flex" justifyContent="center">*/}
-                    {/*    {user ? (*/}
-                    {/*        allowedCountries.includes(user.country) ? (*/}
-                    {/*            <CheckoutButton*/}
-                    {/*                girlId={girl.uid}*/}
-                    {/*                price={girl.memberPrice}*/}
-                    {/*                user={user.uid}*/}
-                    {/*                country={user.country}*/}
-                    {/*            />*/}
-                    {/*        ) : (*/}
-                    {/*            <Typography variant="body1" color="error" align="center">*/}
-                    {/*                Este servicio solo está disponible para usuarios de EE. UU., México o Argentina.*/}
-                    {/*            </Typography>*/}
-                    {/*        )*/}
-                    {/*    ) : (*/}
-                    {/*        <GradientButton*/}
-                    {/*            variant="contained"*/}
-                    {/*            sx={{ mt: 2, fontSize: 17 }}*/}
-                    {/*            onClick={handleLoginRedirect}*/}
-                    {/*        >*/}
-                    {/*            Crear Cuenta*/}
-                    {/*        </GradientButton>*/}
-                    {/*    )}*/}
-                    {/*</Box>*/}
-
                     <FeatureList>
                         <ListItem>
-                            <ListItemIcon><CameraAltIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
-                            <ListItemText primary="Fotos Privadas" primaryTypographyProps={{ fontSize: '1.4rem' }} />
+                            <ListItemIcon>
+                                <CameraAltIcon sx={{ fontSize: 40, color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Fotos Privadas"
+                                primaryTypographyProps={{ fontSize: '1.4rem' }}
+                            />
                         </ListItem>
                         <ListItem>
-                            <ListItemIcon><SpatialAudioOffIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
-                            <ListItemText primary={`Audios de ${girl ? girl.name : 'la chica'}`} primaryTypographyProps={{ fontSize: '1.4rem' }} />
+                            <ListItemIcon>
+                                <SpatialAudioOffIcon
+                                    sx={{ fontSize: 40, color: 'white' }}
+                                />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={`Audios ilimitados`}
+                                primaryTypographyProps={{ fontSize: '1.4rem' }}
+                            />
                         </ListItem>
                         <ListItem>
-                            <ListItemIcon><MessageIcon sx={{ fontSize: 40, color: 'white' }}/></ListItemIcon>
-                            <ListItemText primary="Mensajes ilimitados" primaryTypographyProps={{ fontSize: '1.4rem' }} />
+                            <ListItemIcon>
+                                <MessageIcon sx={{ fontSize: 40, color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Mensajes ilimitados"
+                                primaryTypographyProps={{ fontSize: '1.4rem' }}
+                            />
                         </ListItem>
                     </FeatureList>
 
                     <GradientButton
                         onClick={() => setShowPaymentInfo(!showPaymentInfo)}
-                        startIcon={showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        startIcon={
+                            showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />
+                        }
                         fullWidth
                         sx={{ mt: 2 }}
                         variant="contained"
@@ -291,15 +280,23 @@ const PrivateMember = () => {
                     </GradientButton>
 
                     <Collapse in={showPaymentInfo}>
-                        <Box mt={2} p={2} bgcolor="rgba(255,255,255,0.1)" borderRadius={2}>
+                        <Box
+                            mt={2}
+                            p={2}
+                            bgcolor="rgba(255,255,255,0.1)"
+                            borderRadius={2}
+                        >
                             <Typography variant="h6" gutterBottom>
                                 Seguridad en el Pago
                             </Typography>
                             <Typography variant="h6" paragraph>
-                                Tu seguridad es nuestra prioridad. Todos los pagos son procesados de manera segura por Stripe.
+                                Tu seguridad es nuestra prioridad. Todos los pagos son
+                                procesados de manera segura por Stripe.
                             </Typography>
                             <Typography variant="h6" paragraph>
-                                No almacenamos ningún dato de tarjetas de crédito en nuestros servidores. Stripe se encarga de todo, garantizando la seguridad y confidencialidad de tu información.
+                                No almacenamos ningún dato de tarjetas de crédito en
+                                nuestros servidores. Stripe se encarga de todo, garantizando
+                                la seguridad y confidencialidad de tu información.
                             </Typography>
                             <Button
                                 variant="outlined"
@@ -317,6 +314,7 @@ const PrivateMember = () => {
             </Container>
         </Box>
     );
-}
+};
 
 export default PrivateMember;
+

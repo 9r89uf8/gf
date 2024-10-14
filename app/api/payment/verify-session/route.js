@@ -21,10 +21,15 @@ export async function POST(req) {
             const userRef = adminDb.firestore().collection('users').doc(userId);
             // Update user's quinielas amount to the length of the updated quinielas
 
+            const membershipDoc = await adminDb.firestore().collection('membership').doc('aux7IacA81ktapWe1hrr').get();
+
+
+            const membershipData = membershipDoc.data();
+
             const timestamp = adminDb.firestore.Timestamp;
             // Generate a timestamp with an additional two days
             const currentTimestamp = new Date();
-            const expirationTimestamp = addDays(currentTimestamp, 15);
+            const expirationTimestamp = addDays(currentTimestamp, membershipData.duration);
 
             await userRef.update({
                 freeMessages: 1000,

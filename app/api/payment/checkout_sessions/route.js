@@ -1,37 +1,53 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { adminDb } from '@/app/utils/firebaseAdmin';
+import {authMiddleware} from "@/app/middleware/authMiddleware";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2020-08-27',
 });
 
 export async function POST(req) {
-    const { userId, country} = await req.json();
+    const authResult = await authMiddleware(req);
+    if (!authResult.authenticated) {
+        return NextResponse.json({ error: authResult.error }, { status: 401 });
+    }
+
+    const userId = authResult.user.uid;
+    const userDoc = await adminDb.firestore().collection('users').doc(userId).get();
+
+
+    const userData = userDoc.data();
+
     const origin = process.env.NODE_ENV==='production'?'https://www.noviachat.com':'http://localhost:3000'; // Default to localhost for development
 
 
-    const girlDoc = await adminDb.firestore().collection('girls').doc('01uIfxE3VRIbrIygbr2Q').get();
+    const membershipDoc = await adminDb.firestore().collection('membership').doc('aux7IacA81ktapWe1hrr').get();
 
 
-    const girlData = girlDoc.data();
+    const membershipData = membershipDoc.data();
 
 
     let currency, fPrice, locale;
-    switch (country) {
+    switch (userData.country) {
         case 'US':
             currency = 'usd';
-            fPrice = girlData.memberPrice;
+            fPrice = membershipData.priceUSD;
             locale = 'en'; // Locale for the United States
             break;
         case 'MX':
             currency = 'mxn';
-            fPrice = girlData.memberPrice * 15;
+            fPrice = membershipData.priceMXN;
+            locale = 'es-419'; // Locale for Mexico
+            break;
+        case 'AR':
+            currency = 'ars';
+            fPrice = membershipData.priceARN;
             locale = 'es-419'; // Locale for Mexico
             break;
         default:
             currency = 'usd';
-            fPrice = girlData.memberPrice;
+            fPrice = membershipData.priceUSD;
             locale = 'en'; // Default locale
     }
 
@@ -43,7 +59,7 @@ export async function POST(req) {
                     price_data: {
                         currency: currency,
                         product_data: {
-                            name: 'novia virtual',
+                            name: 'Noviachat',
                         },
                         unit_amount: fPrice*100,
                     },

@@ -14,13 +14,14 @@ export async function POST(req) {
         }
 
         const userId = authResult.user.uid;
-        const { messageUid } = await req.json();
-        console.log(messageUid)
+        const { messageUid, girlId } = await req.json();
 
         // Reference to the specific message in the 'displayMessages' subcollection
         let messageRef = adminDb.firestore()
             .collection('users')
             .doc(userId)
+            .collection('conversations')
+            .doc(girlId)
             .collection('displayMessages')
             .doc(messageUid)
 

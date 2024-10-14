@@ -7,6 +7,8 @@ import { createGirlSlice } from './girlSlice';
 import { createStripeSlice } from './stripeSlice';
 import { createClipsSlice } from './clipsSlice';
 import { createGirlsSlice } from './girlsSlice';
+import { createPostsSlice } from './postsSlice';
+import { createMembershipSlice } from './membershipSlice';
 import { createNotificationsSlice } from './notificationsSlice';
 
 export const useStore = create(
@@ -17,6 +19,8 @@ export const useStore = create(
             ...createGirlSlice(set, get),
             ...createStripeSlice(set, get),
             ...createGirlsSlice(set, get),
+            ...createPostsSlice(set, get),
+            ...createMembershipSlice(set, get),
             ...createClipsSlice(set, get),
             ...createNotificationsSlice(set, get),
             hasHydrated: false,

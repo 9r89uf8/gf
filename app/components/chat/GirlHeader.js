@@ -119,7 +119,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
     };
 
     const handleConfirmDelete = async () => {
-        await deleteMessages();
+        await deleteMessages({girlId: girl.id});
         handleCloseDeleteDialog();
     };
 

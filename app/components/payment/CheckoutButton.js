@@ -22,13 +22,12 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 
-const CheckoutButton = ({user, country, price, girlId}) => {
+const CheckoutButton = () => {
     const loading = useStore((state) => state.loading);
     const setLoading = useStore((state) => state.setLoading);
-    const paymentData = { userId: user, country: country, price: price, girlId: girlId};
 
     const handleCheckout = () => {
-        createCheckoutSession(paymentData); // example amount
+        createCheckoutSession(); // example amount
     };
 
     useEffect(() => {

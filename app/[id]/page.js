@@ -113,8 +113,8 @@ const GirlProfile = ({params}) => {
         getGirl({id: params.id});
     }, []);
 
-    const handleChat = () => {
-        router.push('/chat');
+    const handleMessageClick = (girlId) => {
+        router.push(`/chat/${girlId}`);
     };
 
     const handlePremium = () => {
@@ -147,9 +147,9 @@ const GirlProfile = ({params}) => {
                                 </Typography>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">
-                                        <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores
-                                    </Typography>
+                                    {/*<Typography variant="h6">*/}
+                                    {/*    <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores*/}
+                                    {/*</Typography>*/}
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
@@ -166,7 +166,7 @@ const GirlProfile = ({params}) => {
                                 {girl && !girl.private?
                                     <GradientButton
                                         disabled={girl ?girl.private:false}
-                                        onClick={handleChat}
+                                        onClick={() => handleMessageClick(girl.id)}
                                     >
                                         Enviar Mensaje
                                     </GradientButton>

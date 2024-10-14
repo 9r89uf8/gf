@@ -8,7 +8,7 @@ export const fetchMessages = async (formData) => {
 
     try {
         setMessageSent(true)
-        const response = await fetch(`/api/chat/user`, {
+        const response = await fetch(`/api/chat/userDisplayMessages`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,20 +32,30 @@ export const fetchMessages = async (formData) => {
 };
 
 
-export const fetchAudios = async () => {
+export const fetchAudios = async (formData) => {
     const setAudios = useStore.getState().setAudios;
+    const audioFlag = useStore.getState().setAudioBoolean;
 
     try {
-        const response = await fetch(`/api/audio`);
+        const response = await fetch(`/api/audio`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
         if (response.ok) {
+            audioFlag(false)
             const data = await response.json();
             setAudios(data);
             return data;
         } else {
+            audioFlag(false)
             console.log('errror')
             throw new Error('Failed to fetch audios');
         }
     } catch (error) {
+        audioFlag(false)
         console.error(error.message);
         return null;
     }
@@ -54,7 +64,7 @@ export const fetchAudios = async () => {
 export const likeMessage = async (formData) => {
     const updateMessage = useStore.getState().updateMessage;
     try {
-        const response = await fetch('/api/chat/like', {
+        const response = await fetch('/api/chat/likeMessage', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -74,11 +84,13 @@ export const likeMessage = async (formData) => {
     }
 };
 
+
 export const sendChatPrompt = async (formData) => {
     const setConversationHistory = useStore.getState().setConversationHistory;
     const addNotification = useStore.getState().addNotification;
     const setMessageSent = useStore.getState().setMessageSent;
     const updateUser = useStore.getState().updateUser;
+    const audioFlag = useStore.getState().setAudioBoolean;
     try {
         setMessageSent(true);
         const response = await fetch('/api/chat/prompt', {
@@ -93,6 +105,11 @@ export const sendChatPrompt = async (formData) => {
                 freeAudio: data.updatedUserData.freeAudio,
                 freeMessages: data.updatedUserData.freeMessages
             })
+            if(data.audio){
+                audioFlag(true)
+            }else {
+                audioFlag(false)
+            }
             if(data.sendNotification){
                 addNotification({
                     id: Date.now(),
@@ -103,27 +120,53 @@ export const sendChatPrompt = async (formData) => {
             }
             return data.assistantMessage;
         } else {
+            audioFlag(false)
             setMessageSent(false);
             throw new Error('Failed to send chat prompt');
         }
     } catch (error) {
         setMessageSent(false);
+        audioFlag(false)
         console.error('Error sending chat prompt:', error);
         return null;
     }
 };
 
 
-export const deleteMessages = async () => {
+export const deleteMessages = async (formData) => {
     const deleteAll = useStore.getState().clearAll;
 
     try {
-        const response = await fetch(`/api/chat/delete`, {
-            method: 'GET'
+        const response = await fetch('/api/chat/deleteAllGirlMessages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
         });
         if (response.ok) {
             const data = await response.json();
             deleteAll()
+            return data;
+        } else {
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
+
+export const getChatList = async () => {
+    const chats = useStore.getState().setChats;
+
+    try {
+        const response = await fetch(`/api/chat/userChatList`, {
+            method: 'GET'
+        });
+        if (response.ok) {
+            const data = await response.json();
+            chats(data)
             return data;
         } else {
             throw new Error('Failed to fetch the latest jornada');

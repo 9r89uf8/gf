@@ -105,3 +105,22 @@ export const updateGirl = async (formData) => {
         return null;
     }
 };
+
+export const addGirl = async (formData) => {
+    const updatePost = useStore.getState().updatePost;
+    try {
+        const response = await fetch('/api/girl/add', {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } else {
+            throw new Error('Failed to update');
+        }
+    } catch (error) {
+        console.error('Error updating:', error);
+        return null;
+    }
+};

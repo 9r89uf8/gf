@@ -1,186 +1,198 @@
-// PopularCreators.js
+// DMList.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/app/store/store';
-import { getGirls } from '@/app/services/girlsService';
+import { getChatList } from '@/app/services/chatService';
 import Link from 'next/link';
-import {
-    Box,
-    TextField,
-    CircularProgress,
-    List,
-    ListItem,
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    Button,
-    Snackbar,
-    Alert,
-} from '@mui/material';
-import MessageIcon from '@mui/icons-material/Message';
+import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from "next/navigation";
+import { es } from 'date-fns/locale';
+import {List, ListItem, Avatar, Button, Box, Typography, Grid, Container, Card} from '@mui/material';
+
+const GlassCard = ({ children }) => (
+    <Card
+        sx={{
+            textAlign: 'center',
+            color: 'white',
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: 5,
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+            padding: 1,
+            marginBottom: 4,
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            msUserSelect: 'none',
+        }}
+    >
+        {children}
+    </Card>
+);
 
 const DMList = () => {
-    const girls = useStore((state) => state.girls);
-    const [searchTerm, setSearchTerm] = useState('');
+    const router = useRouter();
+    const chats = useStore((state) => state.chats);
+    const user = useStore((state) => state.user);
     const [loading, setLoading] = useState(true);
-    const [openSnackbar, setOpenSnackbar] = useState(false); // State for Snackbar
 
     useEffect(() => {
-        async function fetchGirls() {
-            await getGirls(); // Fetch and update the store
+        async function fetchChats() {
+            await getChatList(); // Fetch and update the store
             setLoading(false);
         }
-        fetchGirls();
+        fetchChats();
     }, []);
 
-    const filteredUsers = girls.filter(user =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Helper function to convert Firestore timestamp
+    function convertFirestoreTimestampToDate(timestamp) {
+        if (!timestamp) return null;
+
+        if (timestamp._seconds !== undefined && timestamp._nanoseconds !== undefined) {
+            return new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1e6);
+        }
+
+        if (timestamp.seconds !== undefined && timestamp.nanoseconds !== undefined) {
+            return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
+        }
+
+        return new Date(timestamp);
+    }
+
+    const handleMessageClick = (girlId) => {
+        router.push(`/chat/${girlId}`);
+    };
+
+    // Helper function to truncate text and add ellipsis
+    function truncateWithEllipsis(text, maxLength) {
+        return text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    }
 
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
+            <Box sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
+                <Typography variant="subtitle1">Cargando chats...</Typography>
             </Box>
         );
     }
 
     return (
-        <>
-            {/* Search Bar */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-                    <TextField
-                        placeholder="Buscar creadores..."
-                        variant="outlined"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{
-                            width: '100%',
-                            maxWidth: '300px',
-                            '& .MuiOutlinedInput-root': {
-                                borderRadius: '25px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                                },
-                                '& fieldset': {
-                                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                                },
-                            },
-                            '& .MuiOutlinedInput-input': {
-                                color: 'white',
-                            },
-                            '& .MuiInputLabel-root': {
-                                color: 'rgba(255, 255, 255, 0.7)',
-                            },
-                        }}
-                    />
-                </Box>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                padding: 2,
+            }}
+        >
+            <Container maxWidth="lg">
+                <GlassCard>
+            <Typography
+                variant="h6"
+                sx={{
+                    mb: 2,
+                    color: 'white',
+                    textAlign: 'center',
+                    fontFamily: 'Anton, sans-serif',
+                }}
+            >
+                Tus Chats
+            </Typography>
 
-            {/* Users List */}
-                <List>
-                    {filteredUsers.map((user, index) => (
-                        <ListItem
-                            key={index}
-                            sx={{
-                                backgroundColor: 'transparent',
-                                color: 'white',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                },
-                                mb: 2,
-                            }}
-                        >
-                            <ListItemAvatar>
-                                <Link href={`/${user.id}`} passHref legacyBehavior>
-                                    <Avatar
-                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${user.picture}`}
-                                        alt={user.username}
-                                        sx={{
-                                            width: 100,
-                                            height: 100,
-                                            cursor: 'pointer',
-                                        }}
-                                    />
-                                </Link>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={user.username}
-                                sx={{ color: '#dee2e6', padding: 1,userSelect: 'none',
-                                    WebkitUserSelect: 'none',
-                                    msUserSelect: 'none', }}
-                                primaryTypographyProps={{ fontSize: '1.3rem' }} // Increased font size
-                            />
-
-                            {user.private ? (
-                                <Button
+            {user ? (
+                <>
+                    <List>
+                        {chats && chats.length > 0 ? (
+                            chats.map((chat, index) => {
+                                const date = convertFirestoreTimestampToDate(chat.lastMessage?.timestamp);
+                                return (
+                                <ListItem
+                                    key={index}
                                     sx={{
-                                        background: 'linear-gradient(45deg, #212529 30%, #343a40 90%)',
-                                        border: 0,
-                                        fontSize: 18,
-                                        borderRadius: 25,
-                                        boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
-                                        color: 'white',
-                                        height: 48,
-                                        padding: '0 15px',
-                                        fontWeight: 'bold',
-                                        textTransform: 'none',
-                                        '&:hover': {
-                                            background: 'linear-gradient(45deg, #adb5bd 30%, #343a40 90%)',
-                                        },
+                                        borderBottom: index !== chats.length - 1 ? '1px solid grey' : 'none',
+                                        mb: 2,
+                                        alignItems: 'flex-start',
+                                        paddingBottom: '25px',
                                     }}
-                                    onClick={() => setOpenSnackbar(true)} // Open Snackbar on click
                                 >
-                                    Privada
-                                </Button>
-                            ) : (
-                                <Link href='/chat' passHref legacyBehavior>
-                                    <Button
-                                        sx={{
-                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-                                            border: 0,
-                                            fontSize: 18,
-                                            borderRadius: 25,
-                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
-                                            color: 'white',
-                                            height: 48,
-                                            padding: '0 15px',
-                                            fontWeight: 'bold',
-                                            textTransform: 'none',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
-                                            },
-                                        }}
-                                    >
-                                        Mensaje
-                                    </Button>
-                                </Link>
-                            )}
-                        </ListItem>
-                    ))}
-                </List>
+                                    <Grid container spacing={2} alignItems="center">
+                                        <Grid item xs={4}>
+                                            <Link href={`/girl/${chat.girlId}`} passHref>
+                                                <Avatar
+                                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${chat.picture}`}
+                                                    alt={`Foto de ${chat.girlName}`}
+                                                    sx={{ width: 70, height: 70, borderRadius: '10%' }}
+                                                />
+                                            </Link>
+                                        </Grid>
 
-                {/* Snackbar to display the message */}
-                <Snackbar
-                    open={openSnackbar}
-                    autoHideDuration={6000}
-                    onClose={() => setOpenSnackbar(false)}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                >
-                    <Alert
-                        onClose={() => setOpenSnackbar(false)}
-                        severity="info"
-                        sx={{ width: '100%' }}
-                    >
-                        La chica ha configurado su cuenta como privada y no puede recibir mensajes.
-                    </Alert>
-                </Snackbar>
-        </>
+                                        <Grid item xs={8}>
+                                            <Typography
+                                                variant="subtitle1"
+                                                sx={{ fontFamily: 'Pacifico, cursive', marginBottom: 1 }}
+                                            >
+                                                {chat.girlName}
+                                            </Typography>
+                                            <Button
+                                                variant="contained"
+                                                fullWidth
+                                                onClick={() => handleMessageClick(chat.girlId)}
+                                                sx={{
+                                                    alignSelf: 'center',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(45deg, #FFFFFF 30%, #E0E0E0 90%)',
+                                                    },
+                                                    backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
+                                                    color: 'black',
+                                                    padding: '10px 20px',
+                                                    borderRadius: '5px',
+                                                    fontWeight: 'bold',
+                                                    fontSize: 12,
+                                                    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                                    textOverflow: 'ellipsis',
+                                                    overflow: 'hidden',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {truncateWithEllipsis(chat.lastMessage?.content || 'Sin mensajes', 22)}
+                                            </Button>
+
+                                            <Typography variant="body2" style={{ marginTop: 6, color: 'gray' }}>
+                                                {date
+                                                    ? formatDistanceToNow(date, {
+                                                        addSuffix: true,
+                                                        locale: es,
+                                                    })
+                                                    : 'Tiempo desconocido'}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </ListItem>
+                            )})
+                        ) : (
+                            <Typography
+                                variant="subtitle1"
+                                sx={{ textAlign: 'center', color: 'white', mt: 3 }}
+                            >
+                                No hay chats recientes
+                            </Typography>
+                        )}
+                    </List>
+                </>
+            ) : (
+                <Typography variant="subtitle1" sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
+                    Regístrate para ver los chats
+                </Typography>
+            )}
+                </GlassCard>
+            </Container>
+        </Box>
     );
 };
 
 export default DMList;
+
 
 
 
