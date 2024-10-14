@@ -1,5 +1,7 @@
 // src/components/Philosophy/CreatePhilosophy.js
+'use client'
 import React from 'react';
+import { useStore } from '@/app/store/store';
 import { Box, TextField, Button, FormControl, FormLabel, Switch, FormControlLabel, MenuItem, Select, Avatar } from '@mui/material';
 import {addGirl} from "@/app/services/girlService";
 
@@ -19,7 +21,7 @@ const AddGirl = () => {
     const [country, setCountry] = React.useState('');
     const [education, setEducation] = React.useState('');
     const [age, setAge] = React.useState(8);
-    const user = useSelector((state) => state.user.currentUser);
+    const user = useStore((state) => state.user);
     const onFinish = async (event) => {
         event.preventDefault(); // Prevent the default form submission behavior
 
