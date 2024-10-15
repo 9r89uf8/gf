@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
 import PostsFilter from "@/app/components/posts/PostsFilter";
+import {followGirl} from "@/app/services/girlService";
 
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
@@ -103,12 +104,15 @@ const GradientButtonBuy = styled(Button)(({ theme }) => ({
     },
 }));
 
+
 const GirlProfile = ({ params }) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
     const showPremiumButton = !user || (user && !user.premium);
     const [loading, setLoading] = React.useState(true);
+
+    const isFollowing = user && girl && girl.followers.some(member => member === user.uid);
 
     useEffect(() => {
         const fetchGirl = async () => {
@@ -124,6 +128,21 @@ const GirlProfile = ({ params }) => {
 
     const handlePremium = () => {
         router.push('/premium');
+    };
+
+    // Handle follow/unfollow click
+    const handleFollowClick = async () => {
+        await followGirl({ girlId: girl.id });
+    };
+
+    const formatNumber = (num) => {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        } else {
+            return num.toString();
+        }
     };
 
     if (loading) {
@@ -145,7 +164,7 @@ const GirlProfile = ({ params }) => {
         <Box
             sx={{
                 minHeight: "100vh",
-                padding: 2
+                padding: 2,
             }}
         >
             <Container maxWidth="md">
@@ -154,47 +173,84 @@ const GirlProfile = ({ params }) => {
                         <Grid item xs={12} md={4}>
                             <Box display="flex" justifyContent="center">
                                 <StyledAvatar
-                                    src={girl ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}` : '/profileTwo.jpg'}
-                                    alt='novia virtual foto'
+                                    src={
+                                        girl
+                                            ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
+                                            : "/profileTwo.jpg"
+                                    }
+                                    alt="novia virtual foto"
                                 />
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box>
                                 <Typography variant="h4" gutterBottom>
-                                    {girl ? girl.username : 'arely4diaz'}
-                                    <VerifiedIcon sx={{ color: '#3498db', verticalAlign: 'middle', ml: 1, fontSize: 36 }} />
+                                    {girl ? girl.username : "arely4diaz"}
+                                    <VerifiedIcon
+                                        sx={{
+                                            color: "#3498db",
+                                            verticalAlign: "middle",
+                                            ml: 1,
+                                            fontSize: 36,
+                                        }}
+                                    />
                                 </Typography>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    {/*<Typography variant="h6">
-                                        <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores
-                                    </Typography>*/}
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    mb={2}
+                                >
+                                    <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                        alignItems="center"
+                                        mr={2}
+                                    >
+                                        <Typography variant="h5">
+                                            {girl ? formatNumber(girl.followersCount) : 0}
+                                        </Typography>
+                                        <Typography variant="subtitle1">Seguidores</Typography>
+                                    </Box>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleFollowClick}
+                                        disabled={!user}
+                                    >
+                                        {isFollowing ? "Dejar de seguir" : "Seguir"}
+                                    </Button>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">{girl ? girl.age : '16'} años</Typography>
+                                    <Typography variant="h6">
+                                        {girl ? girl.age : "16"} años
+                                    </Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">{girl ? girl.country : 'Monterrey, México'}</Typography>
+                                    <Typography variant="h6">
+                                        {girl ? girl.country : "Monterrey, México"}
+                                    </Typography>
                                 </Box>
-                                <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
+                                <Divider
+                                    sx={{
+                                        my: 2,
+                                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                                    }}
+                                />
                                 <Typography variant="h6" paragraph>
-                                    {girl ? girl.bio : 'No sean chismosos 😂😏'}
+                                    {girl ? girl.bio : "No sean chismosos 😂😏"}
                                 </Typography>
-                                {girl && !girl.private ?
+                                {girl && !girl.private ? (
                                     <GradientButton
                                         disabled={girl ? girl.private : false}
                                         onClick={() => handleMessageClick(girl.id)}
                                     >
                                         Enviar Mensaje
                                     </GradientButton>
-                                    :
-                                    <GradientButtonTwo>
-                                        Cuenta Privada
-                                    </GradientButtonTwo>
-                                }
+                                ) : (
+                                    <GradientButtonTwo>Cuenta Privada</GradientButtonTwo>
+                                )}
 
                                 {showPremiumButton && girl && !girl.private && (
                                     <GradientButtonBuy onClick={handlePremium}>
@@ -207,19 +263,16 @@ const GirlProfile = ({ params }) => {
                 </GlassCard>
 
                 <GlassCard>
-                    <PostsFilter postsCount={girl ? girl.posts.length : '9'} />
+                    <PostsFilter postsCount={girl ? girl.posts.length : "9"} />
                 </GlassCard>
 
                 <Grid container spacing={3}>
-                    {girl && girl.posts.map((post) => (
-                        <Grid item xs={12} sm={6} md={4} key={post.id}>
-                            <GirlPostsComp
-                                girl={post.girlId}
-                                user={user}
-                                post={post}
-                            />
-                        </Grid>
-                    ))}
+                    {girl &&
+                        girl.posts.map((post) => (
+                            <Grid item xs={12} sm={6} md={4} key={post.id}>
+                                <GirlPostsComp girl={post.girlId} user={user} post={post} />
+                            </Grid>
+                        ))}
                 </Grid>
             </Container>
         </Box>
@@ -227,4 +280,5 @@ const GirlProfile = ({ params }) => {
 };
 
 export default GirlProfile;
+
 

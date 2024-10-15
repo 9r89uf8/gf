@@ -129,3 +129,38 @@ export const deleteGirl = async (formData) => {
         return null;
     }
 };
+
+export const followGirl = async (formData) => {
+    const updateFollowers = useStore.getState().updateFollowers;
+    const removeFollower = useStore.getState().removeFollower;
+
+    try {
+        const response = await fetch('/api/girl/follow', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.isFollowing) {
+                // User is now following the girl
+                updateFollowers(data.followers, data.followersCount);
+            } else {
+                // User has unfollowed the girl
+                removeFollower(data.followers, data.followersCount);
+            }
+
+            return data;
+        } else {
+            console.log('error');
+            throw new Error('Failed to update follow status');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
