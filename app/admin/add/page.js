@@ -109,7 +109,7 @@ const AddPost = () => {
         const formData = new FormData();
         formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('description', description);
-        formData.append('girlId', selectedGirl);
+        formData.append('girlId', selectedGirl.id);
         if (image) {
             formData.append('image', image);
         }
@@ -122,10 +122,8 @@ const AddPost = () => {
             setImage(null);
             setImagePreview(null);
             setSelectedGirl('');
-            alert('Post creado exitosamente.');
         } catch (error) {
             console.error('Error creating post:', error);
-            alert('Hubo un error al crear el post.');
         }
     };
 

@@ -73,7 +73,7 @@ export async function POST(req) {
             username,
             age,
             followers: [],
-            followersCount:1000,
+            followersCount: Math.floor(Math.random() * (90000 - 60000 + 1)) + 60000,
             country,
             bio
         };

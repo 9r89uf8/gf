@@ -114,10 +114,8 @@ const AddPicture = () => {
             setImage(null);
             setImagePreview(null);
             setSelectedGirl('');
-            alert('Picture uploaded successfully!');
         } catch (error) {
             console.error('Error uploading picture:', error);
-            alert('Failed to upload picture. Please try again.');
         }
     };
 

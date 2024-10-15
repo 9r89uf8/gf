@@ -108,7 +108,7 @@ const PopularCreators = () => {
                                     margin: '0 auto',
                                 }}
                             >
-                                <Link href={`/creators/${user.id}`} passHref legacyBehavior>
+                                <Link href={`/${user.id}`} passHref legacyBehavior>
                                     <img
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${user.picture}`}
                                         alt={user.name}
