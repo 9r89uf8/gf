@@ -4,7 +4,6 @@ import { authMiddleware } from '@/app/middleware/authMiddleware';
 import {NextResponse} from "next/server";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
 export async function GET(req) {
     try {
         const authResult = await authMiddleware(req);
@@ -23,16 +22,19 @@ export async function GET(req) {
             girlIds.push(doc.id);
         });
 
-        // Fetch all girl documents in a single query (batch if more than 10)
-        const girlsQuery = adminDb.firestore().collection('girls')
-            .where(adminDb.firestore.FieldPath.documentId(), 'in', girlIds.slice(0, 10)); // Adjust for batches
-        const girlsSnapshot = await girlsQuery.get();
+        // Check if girlIds is not empty before querying
+        let girlsData = {};
+        if (girlIds.length > 0) {
+            // Fetch all girl documents in a single query (batch if more than 10)
+            const girlsQuery = adminDb.firestore().collection('girls')
+                .where(adminDb.firestore.FieldPath.documentId(), 'in', girlIds.slice(0, 10)); // Adjust for batches
+            const girlsSnapshot = await girlsQuery.get();
 
-        // Map girl data by girlId
-        const girlsData = {};
-        girlsSnapshot.forEach(doc => {
-            girlsData[doc.id] = doc.data();
-        });
+            // Map girl data by girlId
+            girlsSnapshot.forEach(doc => {
+                girlsData[doc.id] = doc.data();
+            });
+        }
 
         // Build the chat data array
         chatsDocs.docs.forEach(doc => {
@@ -64,3 +66,4 @@ export async function GET(req) {
         });
     }
 }
+

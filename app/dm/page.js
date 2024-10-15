@@ -36,11 +36,13 @@ const DMList = () => {
     const router = useRouter();
     const chats = useStore((state) => state.chats);
     const user = useStore((state) => state.user);
+    const girls = useStore((state) => state.girls); // Assuming girls is an array of girl objects
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchChats() {
             await getChatList(); // Fetch and update the store
+            // If you need to fetch girls list, do it here
             setLoading(false);
         }
         fetchChats();
@@ -87,104 +89,142 @@ const DMList = () => {
             }}
         >
             <Container maxWidth="lg">
+
+                {/* Girls List Component */}
+                {girls && girls.length > 0 && (
+                    <Box
+                        sx={{
+                            overflowX: 'auto',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            padding: '10px 0',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {girls.filter(girl => !girl.private).map((girl) => (
+                            <Box
+                                key={girl.id}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    marginRight: '10px',
+                                }}
+                            >
+                                <Link href={`/chat/${girl.id}`} passHref>
+                                    <Avatar
+                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                        alt={girl.name}
+                                        sx={{ width: 70, height: 70, borderRadius: '10%', cursor: 'pointer' }}
+                                    />
+                                </Link>
+                                <Typography variant="caption" sx={{ color: 'white' }}>
+                                    {girl.name}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                )}
+
                 <GlassCard>
-            <Typography
-                variant="h6"
-                sx={{
-                    mb: 2,
-                    color: 'white',
-                    textAlign: 'center',
-                    fontFamily: 'Anton, sans-serif',
-                }}
-            >
-                Tus Chats
-            </Typography>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            mb: 2,
+                            color: 'white',
+                            textAlign: 'center',
+                            fontFamily: 'Anton, sans-serif',
+                        }}
+                    >
+                        Tus Chats
+                    </Typography>
 
-            {user ? (
-                <>
-                    <List>
-                        {chats && chats.length > 0 ? (
-                            chats.map((chat, index) => {
-                                const date = convertFirestoreTimestampToDate(chat.lastMessage?.timestamp);
-                                return (
-                                <ListItem
-                                    key={index}
-                                    sx={{
-                                        borderBottom: index !== chats.length - 1 ? '1px solid grey' : 'none',
-                                        mb: 2,
-                                        alignItems: 'flex-start',
-                                        paddingBottom: '25px',
-                                    }}
-                                >
-                                    <Grid container spacing={2} alignItems="center">
-                                        <Grid item xs={4}>
-                                            <Link href={`/${chat.girlId}`} passHref>
-                                                <Avatar
-                                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${chat.picture}`}
-                                                    alt={`Foto de ${chat.girlName}`}
-                                                    sx={{ width: 70, height: 70, borderRadius: '10%' }}
-                                                />
-                                            </Link>
-                                        </Grid>
-
-                                        <Grid item xs={8}>
-                                            <Typography
-                                                variant="subtitle1"
-                                                sx={{ fontFamily: 'Pacifico, cursive', marginBottom: 1 }}
-                                            >
-                                                {chat.girlName}
-                                            </Typography>
-                                            <Button
-                                                variant="contained"
-                                                fullWidth
-                                                onClick={() => handleMessageClick(chat.girlId)}
+                    {user ? (
+                        <>
+                            <List>
+                                {chats && chats.length > 0 ? (
+                                    chats.map((chat, index) => {
+                                        const date = convertFirestoreTimestampToDate(chat.lastMessage?.timestamp);
+                                        return (
+                                            <ListItem
+                                                key={index}
                                                 sx={{
-                                                    alignSelf: 'center',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(45deg, #FFFFFF 30%, #E0E0E0 90%)',
-                                                    },
-                                                    backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
-                                                    color: 'black',
-                                                    padding: '10px 20px',
-                                                    borderRadius: '5px',
-                                                    fontWeight: 'bold',
-                                                    fontSize: 12,
-                                                    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-                                                    textOverflow: 'ellipsis',
-                                                    overflow: 'hidden',
-                                                    whiteSpace: 'nowrap',
+                                                    borderBottom: index !== chats.length - 1 ? '1px solid grey' : 'none',
+                                                    mb: 2,
+                                                    alignItems: 'flex-start',
+                                                    paddingBottom: '25px',
                                                 }}
                                             >
-                                                {truncateWithEllipsis(chat.lastMessage?.content || 'Sin mensajes', 22)}
-                                            </Button>
+                                                <Grid container spacing={2} alignItems="center">
+                                                    <Grid item xs={4}>
+                                                        <Link href={`/${chat.girlId}`} passHref>
+                                                            <Avatar
+                                                                src={`https://d3sog3sqr61u3b.cloudfront.net/${chat.picture}`}
+                                                                alt={`Foto de ${chat.girlName}`}
+                                                                sx={{ width: 70, height: 70, borderRadius: '10%' }}
+                                                            />
+                                                        </Link>
+                                                    </Grid>
 
-                                            <Typography variant="body2" style={{ marginTop: 6, color: 'gray' }}>
-                                                {date
-                                                    ? formatDistanceToNow(date, {
-                                                        addSuffix: true,
-                                                        locale: es,
-                                                    })
-                                                    : 'Tiempo desconocido'}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </ListItem>
-                            )})
-                        ) : (
-                            <Typography
-                                variant="subtitle1"
-                                sx={{ textAlign: 'center', color: 'white', mt: 3 }}
-                            >
-                                No hay chats recientes
-                            </Typography>
-                        )}
-                    </List>
-                </>
-            ) : (
-                <Typography variant="subtitle1" sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
-                    Regístrate para ver los chats
-                </Typography>
-            )}
+                                                    <Grid item xs={8}>
+                                                        <Typography
+                                                            variant="subtitle1"
+                                                            sx={{ fontFamily: 'Pacifico, cursive', marginBottom: 1 }}
+                                                        >
+                                                            {chat.girlName}
+                                                        </Typography>
+                                                        <Button
+                                                            variant="contained"
+                                                            fullWidth
+                                                            onClick={() => handleMessageClick(chat.girlId)}
+                                                            sx={{
+                                                                alignSelf: 'center',
+                                                                '&:hover': {
+                                                                    background: 'linear-gradient(45deg, #FFFFFF 30%, #E0E0E0 90%)',
+                                                                },
+                                                                backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
+                                                                color: 'black',
+                                                                padding: '10px 20px',
+                                                                borderRadius: '5px',
+                                                                fontWeight: 'bold',
+                                                                fontSize: 12,
+                                                                boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+                                                                textOverflow: 'ellipsis',
+                                                                overflow: 'hidden',
+                                                                whiteSpace: 'nowrap',
+                                                            }}
+                                                        >
+                                                            {truncateWithEllipsis(chat.lastMessage?.content || 'Sin mensajes', 22)}
+                                                        </Button>
+
+                                                        <Typography variant="body2" style={{ marginTop: 6, color: 'gray' }}>
+                                                            {date
+                                                                ? formatDistanceToNow(date, {
+                                                                    addSuffix: true,
+                                                                    locale: es,
+                                                                })
+                                                                : 'Tiempo desconocido'}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </ListItem>
+                                        );
+                                    })
+                                ) : (
+                                    <Typography
+                                        variant="subtitle1"
+                                        sx={{ textAlign: 'center', color: 'white', mt: 3 }}
+                                    >
+                                        No hay chats recientes
+                                    </Typography>
+                                )}
+                            </List>
+                        </>
+                    ) : (
+                        <Typography variant="subtitle1" sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
+                            Regístrate para ver los chats
+                        </Typography>
+                    )}
                 </GlassCard>
             </Container>
         </Box>
@@ -192,6 +232,7 @@ const DMList = () => {
 };
 
 export default DMList;
+
 
 
 
