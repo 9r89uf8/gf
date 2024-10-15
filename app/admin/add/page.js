@@ -109,7 +109,7 @@ const AddPost = () => {
         const formData = new FormData();
         formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('description', description);
-        formData.append('girlId', selectedGirl.id);
+        formData.append('girlId', selectedGirl);
         if (image) {
             formData.append('image', image);
         }

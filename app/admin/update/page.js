@@ -95,7 +95,6 @@ const UpdateGirlInfo = () => {
     const router = useRouter();
     const girls = useStore((state) => state.girls); // List of girls
     const selectedGirl = useStore((state) => state.girl); // Currently selected girl
-    const setSelectedGirl = useStore((state) => state.setGirl); // Function to set the selected girl
 
     const [formData, setFormData] = useState({
         username: '',

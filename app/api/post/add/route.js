@@ -67,6 +67,7 @@ export async function POST(req) {
         const girlId = formData.get('girlId');
 
 
+
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -77,6 +78,7 @@ export async function POST(req) {
 
         const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
+
 
         const postRecord = {
             girlName:girlData.name,
