@@ -57,7 +57,7 @@ export async function POST(req) {
         const country = formData.get('country');
         const bio = formData.get('bio');
         const file = formData.get('picture');
-        let userId = req.user.uid
+        let userId = authResult.user.uid;
         const girlId = formData.get('girlId');
 
         // Check if the user is admin
