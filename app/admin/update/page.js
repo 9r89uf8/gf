@@ -167,7 +167,7 @@ const UpdateGirlInfo = () => {
             updateData.append(key, formData[key]);
         });
         if (picture) {
-            updateData.append('picture', picture);
+            updateData.append('image', picture);
         }
         updateData.append('girlId', selectedGirl.id)
 
