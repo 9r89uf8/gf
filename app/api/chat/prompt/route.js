@@ -372,7 +372,6 @@ export async function POST(req) {
         let userMessage = formData.get('userMessage');
         const file = formData.get('image');
 
-
         const userDocF = await adminDb.firestore()
             .collection('users')
             .doc(userId)
@@ -505,8 +504,11 @@ export async function POST(req) {
             if(userData.premium) {
                 let pictureDescription = tt.imageDescription.toLowerCase();
 
-                // Fetch all pictures from the 'pictures' collection
-                const picturesSnapshot = await adminDb.firestore().collection('pictures').get();
+                // Fetch pictures where girlId matches
+                const picturesSnapshot = await adminDb.firestore()
+                    .collection('pictures')
+                    .where('girlId', '==', girlId)
+                    .get();
 
                 // Map the documents to an array of picture objects
                 let activePic = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

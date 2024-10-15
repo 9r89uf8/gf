@@ -7,6 +7,13 @@ export const revalidate = 0;
 
 export async function POST(req) {
     try {
+        const authResult = await authMiddleware(req);
+        // Check if the user is admin
+        let userId;
+        if(authResult.authenticated) {
+            userId = authResult.user.uid;
+        }
+
         const { id } = await req.json();
         const girlDoc = await adminDb.firestore().collection('girls').doc(id).get();
 //01uIfxE3VRIbrIygbr2Q
@@ -21,11 +28,20 @@ export async function POST(req) {
 
         let posts = postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+        // Fetching pictures from the 'posts' collection where 'girlId' matches 'girlId'
+        const picturesSnapshot = await adminDb.firestore().collection('pictures')
+            .where('girlId', '==', id) // Assuming 'postId' is the field you want to match with 'girlId'
+            .orderBy('timestamp', "desc") // Order by timestamp
+            .get();
+
+        let pictures = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         // Combining girl data and posts
         const responseData = {
             id: girlDoc.id,
             ...girlData,
-            posts: posts
+            posts: posts,
+            pictures: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?pictures:[]
         };
 
 

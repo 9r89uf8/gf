@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl, deleteGirl } from "@/app/services/girlService";
-import {deleteGirlPost} from "@/app/services/postsService";
+import {deleteGirlPost, deleteGirlPicture} from "@/app/services/postsService";
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
     Container,
@@ -22,6 +22,8 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { alpha, styled } from "@mui/material/styles";
+import LockIcon from "@mui/icons-material/Lock";
+import VideoPlayer from "@/app/components/videoPlayer/VideoPlayer";
 
 // Styled Components
 const GlassCard = styled(Card)(({ theme }) => ({
@@ -60,6 +62,23 @@ const GradientButton = styled(Button)(({ theme }) => ({
         background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
     },
 }));
+
+const MediaWrapper = styled(Box)({
+    position: 'relative',
+    width: '100%',
+    maxHeight: '500px',
+    overflow: 'hidden',
+});
+
+const PostImage = styled('img')({
+    width: '100%',
+    height: 'auto',
+    display: 'block',
+    transition: 'transform 0.3s',
+    '&:hover': {
+        transform: 'scale(1.05)',
+    },
+});
 
 const ManageGirlPosts = () => {
     const router = useRouter();
@@ -112,6 +131,24 @@ const ManageGirlPosts = () => {
         } catch (error) {
             console.error('Error deleting post:', error);
             alert('Failed to delete the post.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle picture deletion
+    const handleDeletePicture = async (pictureId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this picture?');
+        if (!confirmDelete) return;
+
+        setLoading(true);
+        try {
+            await deleteGirlPicture({ pictureId: pictureId });
+            // Update the girl's posts in the store
+            alert('Picture deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting picture:', error);
+            alert('Failed to delete the picture.');
         } finally {
             setLoading(false);
         }
@@ -215,6 +252,62 @@ const ManageGirlPosts = () => {
                                                 <Typography variant="body1" sx={{ color: 'white' }}>
                                                     No posts available.
                                                 </Typography>
+                                            )}
+                                        </Grid>
+
+                                        {/* Posts List */}
+                                        <Typography variant="h5" gutterBottom sx={{ color: 'white', marginBottom: 2, marginTop:5 }}>
+                                            Pictures for Chat
+                                        </Typography>
+                                        <Grid container spacing={2}>
+                                            {selectedGirl.pictures && selectedGirl.pictures.length > 0 ? (
+                                                selectedGirl.pictures.map(post => (
+                                                    <Grid item xs={12} key={post.id}>
+                                                        <Card sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+                                                            {/* Assuming you have a Post component */}
+                                                            {/* <Post data={post} /> */}
+                                                            <MediaWrapper>
+                                                                {post.image ? (
+                                                                    <>
+                                                                        <PostImage
+                                                                            src={`https://d3sog3sqr61u3b.cloudfront.net/${post.image}`}
+                                                                            alt={`Post ${post.id}`}
+                                                                            style={{ cursor: 'pointer' }}
+                                                                        />
+                                                                    </>
+                                                                ) : post.video ? (
+                                                                    <VideoPlayer
+                                                                        options={{
+                                                                            controls: true,
+                                                                            sources: [{
+                                                                                src: `https://d3sog3sqr61u3b.cloudfront.net/${post.video}`,
+                                                                                type: 'video/mp4'
+                                                                            }],
+                                                                            controlBar: {
+                                                                                volumePanel: true,
+                                                                                fullscreenToggle: false,
+                                                                            },
+                                                                        }}
+                                                                    />
+                                                                ) : null}
+                                                            </MediaWrapper>
+                                                            <Button
+                                                                variant="contained"
+                                                                color="secondary"
+                                                                onClick={() => handleDeletePicture(post.id)}
+                                                                sx={{ marginTop: 1 }}
+                                                            >
+                                                                Delete Picture
+                                                            </Button>
+                                                        </Card>
+                                                    </Grid>
+                                                ))
+                                            ) : (
+                                                <Grid item xs={12} key='9879'>
+                                                    <Typography variant="body1" sx={{ color: 'white', textAlign: 'center' }}>
+                                                        No pictures available.
+                                                    </Typography>
+                                                </Grid>
                                             )}
                                         </Grid>
                                     </>

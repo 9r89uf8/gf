@@ -9,5 +9,13 @@ export const createGirlSlice = (set) => ({
                 posts: state.girl.posts.filter(post => post.id !== postId)
             }
             : null
+    })),
+    removePicture: (postId) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                pictures: state.girl.pictures.filter(post => post.id !== postId)
+            }
+            : null
     }))
 });
