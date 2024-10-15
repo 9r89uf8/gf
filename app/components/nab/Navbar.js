@@ -56,6 +56,11 @@ const Navbar = () => {
         router.push('/admin/update');
     };
 
+    const handleCreate = () => {
+        handleMenuClose();
+        router.push('/admin/girl');
+    };
+
     const handleRegister = () => {
         handleMenuClose();
         router.push('/register');
@@ -135,11 +140,12 @@ const Navbar = () => {
 
                         {user ? (
                             <>
-                                {user && user.uid === 'hRZgS7woczXIruLyLjWu9axjPbo2' && (
+                                {user && user.uid === '3UaQ4dtkNthHMq9VKqDCGA0uPix2' && (
                                     <>
                                         <MenuItem onClick={handlePicture}>Add Pictures</MenuItem>
                                         <MenuItem onClick={handlePosts}>Add Posts</MenuItem>
                                         <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
+                                        <MenuItem onClick={handleCreate}>Create Girl</MenuItem>
                                     </>
                                 )}
                                 <StyledMenuItem key="fotos" onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</StyledMenuItem>
