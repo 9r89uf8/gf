@@ -53,6 +53,32 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     },
 }));
 
+const UnfollowButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B9B 30%, #FFA873 90%)',
+    },
+}));
+
+const FollowButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #41A6F3 30%, #41DBF3 90%)',
+    },
+}));
+
 const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     border: 0,
@@ -111,8 +137,10 @@ const GirlProfile = ({ params }) => {
     const router = useRouter();
     const showPremiumButton = !user || (user && !user.premium);
     const [loading, setLoading] = React.useState(true);
+    // Add state for follow status
+    const [isFollowing, setIsFollowing] = React.useState(false);
+    const [isFollowLoading, setIsFollowLoading] = React.useState(false);
 
-    const isFollowing = user && girl && girl.followers.some(member => member === user.uid);
 
     useEffect(() => {
         const fetchGirl = async () => {
@@ -121,6 +149,13 @@ const GirlProfile = ({ params }) => {
         };
         fetchGirl();
     }, [params.id]);
+
+    useEffect(() => {
+        // Check if the user is following the girl
+        if (user && girl && girl.followers) {
+            setIsFollowing(girl.followers.includes(user.uid));
+        }
+    }, [user, girl]);
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
@@ -132,7 +167,12 @@ const GirlProfile = ({ params }) => {
 
     // Handle follow/unfollow click
     const handleFollowClick = async () => {
-        await followGirl({ girlId: girl.id });
+        if(user){
+            setIsFollowLoading(true);
+            await followGirl({ girlId: girl.id });
+            setIsFollowLoading(false);
+        }
+
     };
 
     const formatNumber = (num) => {
@@ -212,13 +252,21 @@ const GirlProfile = ({ params }) => {
                                         </Typography>
                                         <Typography variant="subtitle1">Seguidores</Typography>
                                     </Box>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleFollowClick}
-                                        disabled={!user}
-                                    >
-                                        {isFollowing ? "Dejar de seguir" : "Seguir"}
-                                    </Button>
+                                    {isFollowing ? (
+                                        <UnfollowButton
+                                            onClick={handleFollowClick}
+                                            disabled={!user || isFollowLoading}
+                                        >
+                                            Dejar de seguir
+                                        </UnfollowButton>
+                                    ) : (
+                                        <FollowButton
+                                            onClick={handleFollowClick}
+                                            disabled={!user || isFollowLoading}
+                                        >
+                                            Seguir
+                                        </FollowButton>
+                                    )}
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />

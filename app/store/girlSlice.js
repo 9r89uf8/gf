@@ -18,28 +18,23 @@ export const createGirlSlice = (set) => ({
             }
             : null
     })),
-    updateFollowers: (userId) => set((state) => {
+    updateFollowers: (newFollowers, newCount) => set((state) => {
         if (!state.girl) return state;
-        const newFollowers = state.girl.followers ? [...state.girl.followers] : [];
-        if (!newFollowers.includes(userId)) {
-            newFollowers.push(userId);
-        }
         return {
             girl: {
                 ...state.girl,
                 followers: newFollowers,
-                followersCount: (state.girl.followersCount || 0) + 1
+                followersCount: newCount
             }
         };
     }),
-    removeFollower: (userId) => set((state) => {
+    removeFollower: (newFollowers, newCount) => set((state) => {
         if (!state.girl) return state;
-        const newFollowers = state.girl.followers ? state.girl.followers.filter(id => id !== userId) : [];
         return {
             girl: {
                 ...state.girl,
                 followers: newFollowers,
-                followersCount: Math.max((state.girl.followersCount || 0) - 1, 0)
+                followersCount: newCount
             }
         };
     })
