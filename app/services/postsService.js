@@ -42,3 +42,28 @@ export const likeGirlPost = async (formData) => {
         return null;
     }
 };
+
+export const deleteGirlPost = async (formData) => {
+    const removePost = useStore.getState().removePost;
+
+    try {
+        const response = await fetch('/api/post/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            removePost(data.deletedPostId);
+            return data;
+        } else {
+            console.log('errror')
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};

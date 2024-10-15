@@ -102,3 +102,30 @@ export const addGirl = async (formData) => {
         return null;
     }
 };
+
+export const deleteGirl = async (formData) => {
+    const removeGirl = useStore.getState().removeGirl;
+    const clearGirl = useStore.getState().clearGirl;
+
+    try {
+        const response = await fetch('/api/girl/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            clearGirl()
+            removeGirl(data.deletedGirlId);
+            return data;
+        } else {
+            console.log('errror')
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};

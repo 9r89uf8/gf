@@ -61,6 +61,11 @@ const Navbar = () => {
         router.push('/admin/girl');
     };
 
+    const handleManage = () => {
+        handleMenuClose();
+        router.push('/admin/manage');
+    };
+
     const handleRegister = () => {
         handleMenuClose();
         router.push('/register');
@@ -146,6 +151,7 @@ const Navbar = () => {
                                         <MenuItem onClick={handlePosts}>Add Posts</MenuItem>
                                         <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
                                         <MenuItem onClick={handleCreate}>Create Girl</MenuItem>
+                                        <MenuItem onClick={handleManage}>Manage Girls</MenuItem>
                                     </>
                                 )}
                                 <StyledMenuItem key="fotos" onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</StyledMenuItem>
