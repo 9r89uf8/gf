@@ -66,6 +66,7 @@ export async function POST(req) {
         const file = formData.get('image');
         const girlId = formData.get('girlId');
 
+        let isPremium = premium === 'true'
 
 
         // Check if the user is admin
@@ -87,7 +88,7 @@ export async function POST(req) {
             description,
             likes: [],
             likesAmount: Math.floor(Math.random() * (30000 - 14000 + 1)) + 14000,
-            isPremium: premium,
+            isPremium: isPremium,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
 
