@@ -115,10 +115,10 @@ const DMList = () => {
                                     <Avatar
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                         alt={girl.name}
-                                        sx={{ width: 70, height: 70, borderRadius: '10%', cursor: 'pointer' }}
+                                        sx={{ width: 85, height: 85, borderRadius: '10%', cursor: 'pointer' }}
                                     />
                                 </Link>
-                                <Typography variant="caption" sx={{ color: 'white' }}>
+                                <Typography variant="h6" sx={{ color: 'white' }}>
                                     {girl.name}
                                 </Typography>
                             </Box>
