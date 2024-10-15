@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@/app/store/store';
 import { getMembership } from '@/app/services/membershipService';
+import UserProfile from "@/app/user/page";
 import CheckoutButton from '@/app/components/payment/CheckoutButton';
 import {
     Container,
@@ -35,6 +36,7 @@ const GlassCard = styled(Card)(({ theme }) => ({
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
     boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
     marginTop: 15,
+    marginBottom: 40
 }));
 
 const PriceTypography = styled(Typography)(({ theme }) => ({
@@ -148,6 +150,9 @@ const PrivateMember = () => {
         );
     }
 
+    // Determine whether to show the GlassCard
+    const showGlassCard = !user || (user && !user.premium);
+
     return (
         <Box
             sx={{
@@ -157,160 +162,158 @@ const PrivateMember = () => {
             }}
         >
             <Container maxWidth="sm">
-                <GlassCard elevation={4}>
-                    <Typography variant="h4" align="center" gutterBottom>
-                        Cuenta Premium
-                    </Typography>
+                {showGlassCard && (
+                    <GlassCard elevation={4}>
+                        <Typography variant="h4" align="center" gutterBottom>
+                            Cuenta Premium
+                        </Typography>
 
-                    <Grid container spacing={3} justifyContent="center">
-                        {displayedPricingOptions.length > 0 && (
-                            displayedPricingOptions.map((option) => (
-                                <Grid item xs={12} sm={4} key={option.country}>
-                                    <PriceCard
-                                        onClick={() => setSelectedCountry(option.country)}
-                                        sx={{
-                                            background:
-                                                selectedCountry === option.country
-                                                    ? 'linear-gradient(45deg, #f48c06 30%, #dc2f02 90%)'
-                                                    : option.gradient,
-                                        }}
-                                    >
-                                        <Avatar
-                                            src={option.flag}
-                                            sx={{ mb: 2, width: 56, height: 56 }}
-                                            variant="rounded"
-                                        />
-                                        <Typography variant="h3" fontWeight="bold">
-                                            ${Number(option.price).toFixed(0)}
-                                        </Typography>
-                                        <Typography variant="h6">{option.name}</Typography>
-
-                                        <Box display="flex" justifyContent="center">
-                                            {user ? (
-                                                <CheckoutButton/>
-                                            ) : (
-                                                <GradientButton
-                                                    variant="contained"
-                                                    sx={{ mt: 2, fontSize: 17 }}
-                                                    onClick={handleLoginRedirect}
-                                                >
-                                                    Crear Cuenta
-                                                </GradientButton>
-                                            )}
-                                        </Box>
-
-                                        <PriceTypography
-                                            variant="h5"
-                                            mt={2}
-                                            fontWeight="bold"
+                        <Grid container spacing={3} justifyContent="center">
+                            {displayedPricingOptions.length > 0 && (
+                                displayedPricingOptions.map((option) => (
+                                    <Grid item xs={12} sm={4} key={option.country}>
+                                        <PriceCard
+                                            onClick={() => setSelectedCountry(option.country)}
+                                            sx={{
+                                                background:
+                                                    selectedCountry === option.country
+                                                        ? 'linear-gradient(45deg, #f48c06 30%, #dc2f02 90%)'
+                                                        : option.gradient,
+                                            }}
                                         >
-                                            Acceso por {option.duration} días
-                                        </PriceTypography>
-                                        <Typography variant="h6" mt={2}>
-                                            para personas que viven en
-                                        </Typography>
-                                        <Typography
-                                            variant="h5"
-                                            style={{ marginTop: -3, color: 'white' }}
-                                        >
-                                            {option.country === 'US'
+                                            <Avatar
+                                                src={option.flag}
+                                                sx={{ mb: 2, width: 56, height: 56 }}
+                                                variant="rounded"
+                                            />
+                                            <Typography variant="h3" fontWeight="bold">
+                                                ${Number(option.price).toFixed(0)}
+                                            </Typography>
+                                            <Typography variant="h6">{option.name}</Typography>
+
+                                            <Box display="flex" justifyContent="center">
+                                                {user ? (
+                                                    <CheckoutButton/>
+                                                ) : (
+                                                    <GradientButton
+                                                        variant="contained"
+                                                        sx={{ mt: 2, fontSize: 17 }}
+                                                        onClick={handleLoginRedirect}
+                                                    >
+                                                        Crear Cuenta
+                                                    </GradientButton>
+                                                )}
+                                            </Box>
+
+                                            <PriceTypography
+                                                variant="h5"
+                                                mt={2}
+                                                fontWeight="bold"
+                                            >
+                                                Acceso por {option.duration} días
+                                            </PriceTypography>
+                                            <Typography variant="h6" mt={2} style={{textAlign: 'center'}}>
+                                                para personas que viven en                                             {option.country === 'US'
                                                 ? 'Estados Unidos'
                                                 : option.country === 'MX'
                                                     ? 'México'
                                                     : 'Argentina'}
-                                        </Typography>
-                                    </PriceCard>
-                                </Grid>
-                            ))
-                        )}
-                    </Grid>
+                                            </Typography>
+                                        </PriceCard>
+                                    </Grid>
+                                ))
+                            )}
+                        </Grid>
 
-                    <SafetyBox>
-                        <Typography variant="h5" fontWeight="bold">
-                            Pago Seguro Garantizado
-                        </Typography>
-                        <Typography variant="h6">
-                            Tu transacción es 100% segura. Stripe.com, líder en pagos en
-                            línea, procesa tu pago de forma segura y confiable.
-                        </Typography>
-                    </SafetyBox>
+                        <SafetyBox>
+                            <Typography variant="h5" fontWeight="bold">
+                                Pago Seguro Garantizado
+                            </Typography>
+                            <Typography variant="h6">
+                                Tu transacción es 100% segura. Stripe.com, líder en pagos en
+                                línea, procesa tu pago de forma segura y confiable.
+                            </Typography>
+                        </SafetyBox>
 
-                    <FeatureList>
-                        <ListItem>
-                            <ListItemIcon>
-                                <CameraAltIcon sx={{ fontSize: 40, color: 'white' }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Fotos Privadas"
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemIcon>
-                                <SpatialAudioOffIcon
-                                    sx={{ fontSize: 40, color: 'white' }}
+                        <FeatureList>
+                            <ListItem>
+                                <ListItemIcon>
+                                    <CameraAltIcon sx={{ fontSize: 40, color: 'white' }} />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Fotos Privadas"
+                                    primaryTypographyProps={{ fontSize: '1.4rem' }}
                                 />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={`Audios ilimitados`}
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemIcon>
-                                <MessageIcon sx={{ fontSize: 40, color: 'white' }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Mensajes ilimitados"
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                    </FeatureList>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon>
+                                    <SpatialAudioOffIcon
+                                        sx={{ fontSize: 40, color: 'white' }}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={`Audios ilimitados`}
+                                    primaryTypographyProps={{ fontSize: '1.4rem' }}
+                                />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon>
+                                    <MessageIcon sx={{ fontSize: 40, color: 'white' }} />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Mensajes ilimitados"
+                                    primaryTypographyProps={{ fontSize: '1.4rem' }}
+                                />
+                            </ListItem>
+                        </FeatureList>
 
-                    <GradientButton
-                        onClick={() => setShowPaymentInfo(!showPaymentInfo)}
-                        startIcon={
-                            showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />
-                        }
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        variant="contained"
-                    >
-                        {showPaymentInfo ? 'Ocultar' : 'Mostrar'} Seguridad de Pago
-                    </GradientButton>
-
-                    <Collapse in={showPaymentInfo}>
-                        <Box
-                            mt={2}
-                            p={2}
-                            bgcolor="rgba(255,255,255,0.1)"
-                            borderRadius={2}
+                        <GradientButton
+                            onClick={() => setShowPaymentInfo(!showPaymentInfo)}
+                            startIcon={
+                                showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />
+                            }
+                            fullWidth
+                            sx={{ mt: 2 }}
+                            variant="contained"
                         >
-                            <Typography variant="h6" gutterBottom>
-                                Seguridad en el Pago
-                            </Typography>
-                            <Typography variant="h6" paragraph>
-                                Tu seguridad es nuestra prioridad. Todos los pagos son
-                                procesados de manera segura por Stripe.
-                            </Typography>
-                            <Typography variant="h6" paragraph>
-                                No almacenamos ningún dato de tarjetas de crédito en
-                                nuestros servidores. Stripe se encarga de todo, garantizando
-                                la seguridad y confidencialidad de tu información.
-                            </Typography>
-                            <Button
-                                variant="outlined"
-                                startIcon={<LockIcon />}
-                                href="https://stripe.com"
-                                target="_blank"
-                                fullWidth
-                                sx={{ color: 'white', borderColor: 'white' }}
+                            {showPaymentInfo ? 'Ocultar' : 'Mostrar'} Seguridad de Pago
+                        </GradientButton>
+
+                        <Collapse in={showPaymentInfo}>
+                            <Box
+                                mt={2}
+                                p={2}
+                                bgcolor="rgba(255,255,255,0.1)"
+                                borderRadius={2}
                             >
-                                Más información en stripe.com
-                            </Button>
-                        </Box>
-                    </Collapse>
-                </GlassCard>
+                                <Typography variant="h6" gutterBottom>
+                                    Seguridad en el Pago
+                                </Typography>
+                                <Typography variant="h6" paragraph>
+                                    Tu seguridad es nuestra prioridad. Todos los pagos son
+                                    procesados de manera segura por Stripe.
+                                </Typography>
+                                <Typography variant="h6" paragraph>
+                                    No almacenamos ningún dato de tarjetas de crédito en
+                                    nuestros servidores. Stripe se encarga de todo, garantizando
+                                    la seguridad y confidencialidad de tu información.
+                                </Typography>
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<LockIcon />}
+                                    href="https://stripe.com"
+                                    target="_blank"
+                                    fullWidth
+                                    sx={{ color: 'white', borderColor: 'white' }}
+                                >
+                                    Más información en stripe.com
+                                </Button>
+                            </Box>
+                        </Collapse>
+                    </GlassCard>
+                )}
+
+                {user&&<UserProfile/>}
             </Container>
         </Box>
     );

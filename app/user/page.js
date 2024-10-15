@@ -30,7 +30,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     borderRadius: 15,
     marginBottom: 40,
     border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.10)',
     userSelect: 'none',
     WebkitUserSelect: 'none',
     msUserSelect: 'none',
@@ -132,9 +132,6 @@ const UserProfile = () => {
         }
     };
 
-    const handleRegister = () => {
-        router.push('/register');
-    };
 
     // Calculate the days and hours remaining until the membership expires
     let daysRemaining = null;
@@ -146,33 +143,8 @@ const UserProfile = () => {
         hoursRemaining = differenceInHours(expirationDate, new Date()) % 24; // To get the remainder hours after days
     }
 
-    if (!user) {
-        return (
-            <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2, width: '100%' }}>
-                <StyledCard>
-                    <Typography variant="h3" gutterBottom>Bienvenido</Typography>
-                    <Typography variant="h5" paragraph>
-                        Puedes registrarte de forma anónima con un correo electrónico falso.
-                        Tu privacidad es importante para nosotros.
-                    </Typography>
-                    <ActionButton
-                        variant="contained"
-                        startIcon={<PersonAdd />}
-                        onClick={handleRegister}
-                    >
-                        Registrarse Anónimamente
-                    </ActionButton>
-                    <Divider sx={{ my: 2 }} />
-                    <Typography variant="h6">
-                        Puedes eliminar todos tus datos en cualquier momento si lo deseas.
-                    </Typography>
-                </StyledCard>
-            </Box>
-        );
-    }
-
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" sx={{ mt: 4, px: 2, width: '100%' }}>
+        <>
             <StyledCard>
                 <Avatar
                     src={newUserInfo.profilePic}
@@ -222,13 +194,20 @@ const UserProfile = () => {
                     </>
                 ) : (
                     <>
-                        <Typography variant="h5" gutterBottom>Perfil de Usuario</Typography>
-                        <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Nombre</Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>{newUserInfo.name}</Typography>
-                        <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>Correo electrónico</Typography>
                         <Typography variant="body1" sx={{ mb: 2 }}>{newUserInfo.email}</Typography>
                         <ActionButton variant="contained" startIcon={<Edit />} onClick={() => setIsEditing(true)}>
                             Editar
+                        </ActionButton>
+                        <ActionButton
+                            style={{marginBottom: 20}}
+                            variant="contained"
+                            color="error"
+                            startIcon={<DeleteForever />}
+                            onClick={() => setOpenDeleteDialog(true)}
+                            sx={{ mt: 2 }}
+                        >
+                            Eliminar cuenta
                         </ActionButton>
                     </>
                 )}
@@ -266,17 +245,6 @@ const UserProfile = () => {
 
             </StyledCard>
 
-            <ActionButton
-                style={{marginBottom: 20}}
-                variant="contained"
-                color="error"
-                startIcon={<DeleteForever />}
-                onClick={() => setOpenDeleteDialog(true)}
-                sx={{ mt: 2 }}
-            >
-                Eliminar cuenta
-            </ActionButton>
-
             <Dialog
                 open={openDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}
@@ -298,7 +266,7 @@ const UserProfile = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Box>
+        </>
     );
 };
 
