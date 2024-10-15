@@ -103,15 +103,20 @@ const GradientButtonBuy = styled(Button)(({ theme }) => ({
     },
 }));
 
-const GirlProfile = ({params}) => {
+const GirlProfile = ({ params }) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
     const showPremiumButton = !user || (user && !user.premium);
+    const [loading, setLoading] = React.useState(true);
 
     useEffect(() => {
-        getGirl({id: params.id});
-    }, []);
+        const fetchGirl = async () => {
+            await getGirl({ id: params.id });
+            setLoading(false);
+        };
+        fetchGirl();
+    }, [params.id]);
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
@@ -120,6 +125,21 @@ const GirlProfile = ({params}) => {
     const handlePremium = () => {
         router.push('/premium');
     };
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <Typography variant="h4">Loading...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -147,9 +167,9 @@ const GirlProfile = ({params}) => {
                                 </Typography>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <SentimentVerySatisfiedRoundedIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    {/*<Typography variant="h6">*/}
-                                    {/*    <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores*/}
-                                    {/*</Typography>*/}
+                                    {/*<Typography variant="h6">
+                                        <strong>{girl ? girl.followers.toLocaleString() : '89,485'}</strong> Seguidores
+                                    </Typography>*/}
                                 </Box>
                                 <Box display="flex" alignItems="center" mb={2}>
                                     <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
@@ -163,20 +183,18 @@ const GirlProfile = ({params}) => {
                                 <Typography variant="h6" paragraph>
                                     {girl ? girl.bio : 'No sean chismosos 😂😏'}
                                 </Typography>
-                                {girl && !girl.private?
+                                {girl && !girl.private ?
                                     <GradientButton
-                                        disabled={girl ?girl.private:false}
+                                        disabled={girl ? girl.private : false}
                                         onClick={() => handleMessageClick(girl.id)}
                                     >
                                         Enviar Mensaje
                                     </GradientButton>
                                     :
-                                    <GradientButtonTwo
-                                    >
+                                    <GradientButtonTwo>
                                         Cuenta Privada
                                     </GradientButtonTwo>
                                 }
-
 
                                 {showPremiumButton && girl && !girl.private && (
                                     <GradientButtonBuy onClick={handlePremium}>
@@ -193,14 +211,13 @@ const GirlProfile = ({params}) => {
                 </GlassCard>
 
                 <Grid container spacing={3}>
-                    {girl&&girl.posts.map((post, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}>
-                                <GirlPostsComp
-                                    girl={post.girlId}
-                                    user={user}
-                                    post={post}
-                                    index={index}
-                                />
+                    {girl && girl.posts.map((post) => (
+                        <Grid item xs={12} sm={6} md={4} key={post.id}>
+                            <GirlPostsComp
+                                girl={post.girlId}
+                                user={user}
+                                post={post}
+                            />
                         </Grid>
                     ))}
                 </Grid>
@@ -210,3 +227,4 @@ const GirlProfile = ({params}) => {
 };
 
 export default GirlProfile;
+

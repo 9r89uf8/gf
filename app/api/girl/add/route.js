@@ -60,7 +60,7 @@ export async function POST(req) {
         let userId = req.user.uid
 
         // Check if the user is admin
-        if (userId !== 'hRZgS7woczXIruLyLjWu9axjPbo2') {
+        if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), {
                 status: 403,
                 headers: { 'Content-Type': 'application/json' },
@@ -72,6 +72,8 @@ export async function POST(req) {
         let girlRecord = {
             username,
             age,
+            followers: [],
+            followersCount:1000,
             country,
             bio
         };

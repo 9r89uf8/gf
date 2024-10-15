@@ -64,22 +64,23 @@ export async function POST(req) {
         const premium = formData.get('premium');
         const description = formData.get('description');
         const file = formData.get('image');
+        const girlId = formData.get('girlId');
 
 
         // Check if the user is admin
-        if (userId !== 'hRZgS7woczXIruLyLjWu9axjPbo2') {
+        if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
 
-        const girlDoc = await adminDb.firestore().collection('girls').doc('01uIfxE3VRIbrIygbr2Q').get();
+        const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
 
         const postRecord = {
             girlName:girlData.name,
-            girlId: '01uIfxE3VRIbrIygbr2Q',
+            girlId: girlId,
             girlPicUrl: girlData.picture,
             description,
             likes: [],

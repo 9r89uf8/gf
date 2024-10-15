@@ -12,10 +12,15 @@ import {
     Grid,
     Typography,
     Avatar,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
 import { addPost } from '@/app/services/girlService';
+import { useStore } from '@/app/store/store';
 
 // Styled components
 const GlassCard = styled(Card)(({ theme }) => ({
@@ -82,10 +87,12 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const AddPost = () => {
+    const girls = useStore((state) => state.girls);
     const [isPremium, setIsPremium] = useState(false);
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [selectedGirl, setSelectedGirl] = useState('');
 
     const handlePremiumChange = (event) => {
         setIsPremium(event.target.checked);
@@ -94,21 +101,31 @@ const AddPost = () => {
     const onFinish = async (event) => {
         event.preventDefault();
 
+        if (!selectedGirl) {
+            alert('Por favor, selecciona una chica.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('description', description);
+        formData.append('girlId', selectedGirl);
         if (image) {
             formData.append('image', image);
         }
 
         try {
             await addPost(formData);
+            // Reset form fields
             setIsPremium(false);
             setDescription('');
             setImage(null);
             setImagePreview(null);
+            setSelectedGirl('');
+            alert('Post creado exitosamente.');
         } catch (error) {
             console.error('Error creating post:', error);
+            alert('Hubo un error al crear el post.');
         }
     };
 
@@ -143,6 +160,44 @@ const AddPost = () => {
                     </Typography>
                     <form onSubmit={onFinish}>
                         <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth required sx={{ marginBottom: 2 }}>
+                                    <InputLabel id="select-girl-label" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Seleccionar Chica</InputLabel>
+                                    <Select
+                                        labelId="select-girl-label"
+                                        id="select-girl"
+                                        value={selectedGirl}
+                                        label="Seleccionar Chica"
+                                        onChange={(e) => setSelectedGirl(e.target.value)}
+                                        sx={{
+                                            color: 'white',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.5)',
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'white',
+                                            },
+                                            '& .MuiSvgIcon-root': {
+                                                color: 'white',
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: 'rgba(255, 255, 255, 0.7)',
+                                            },
+                                        }}
+                                    >
+                                        {girls.map((girl) => (
+                                            <MenuItem key={girl.id} value={girl.id}>
+                                                <Avatar
+                                                    src={'https://d3sog3sqr61u3b.cloudfront.net/'+girl.picture}
+                                                    alt={girl.username}
+                                                    sx={{ width: 64, height: 64, marginRight: 2 }}
+                                                />
+                                                {girl.username}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
                             <Grid item xs={12}>
                                 <StyledTextField
                                     label="Descripción"

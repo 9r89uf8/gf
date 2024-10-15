@@ -118,7 +118,7 @@ const DMList = () => {
                                 >
                                     <Grid container spacing={2} alignItems="center">
                                         <Grid item xs={4}>
-                                            <Link href={`/girl/${chat.girlId}`} passHref>
+                                            <Link href={`/${chat.girlId}`} passHref>
                                                 <Avatar
                                                     src={`https://d3sog3sqr61u3b.cloudfront.net/${chat.picture}`}
                                                     alt={`Foto de ${chat.girlName}`}

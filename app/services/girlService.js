@@ -26,28 +26,6 @@ export const getGirl = async (formData) => {
     }
 };
 
-export const likeGirlPost = async (formData) => {
-    const updatePost = useStore.getState().updatePost;
-    try {
-        const response = await fetch('/api/post/like', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        });
-        if (response.ok) {
-            const updatedMessage = await response.json();
-            updatePost(updatedMessage);
-            return updatedMessage;
-        } else {
-            throw new Error('Failed to update');
-        }
-    } catch (error) {
-        console.error('Error updating:', error.message);
-        return null;
-    }
-};
 
 export const addPost = async (formData) => {
     const updatePost = useStore.getState().updatePost;

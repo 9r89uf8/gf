@@ -12,12 +12,17 @@ import {
     Grid,
     Typography,
     Avatar,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
 import { addPicture } from '@/app/services/girlService';
+import { useStore } from '@/app/store/store';
 
-// Styled components
+// Styled components (unchanged)
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
     color: 'white',
@@ -82,16 +87,23 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const AddPicture = () => {
+    const girls = useStore((state) => state.girls);
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-
+    const [selectedGirl, setSelectedGirl] = useState('');
 
     const onFinish = async (event) => {
         event.preventDefault();
 
+        if (!selectedGirl) {
+            alert('Please select a girl to associate the picture with.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('description', description);
+        formData.append('girlId', selectedGirl); // Add the selected girl's ID
         if (image) {
             formData.append('image', image);
         }
@@ -101,8 +113,11 @@ const AddPicture = () => {
             setDescription('');
             setImage(null);
             setImagePreview(null);
+            setSelectedGirl('');
+            alert('Picture uploaded successfully!');
         } catch (error) {
-            console.error('Error creating post:', error);
+            console.error('Error uploading picture:', error);
+            alert('Failed to upload picture. Please try again.');
         }
     };
 
@@ -116,6 +131,10 @@ const AddPicture = () => {
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleGirlChange = (event) => {
+        setSelectedGirl(event.target.value);
     };
 
     return (
@@ -137,6 +156,52 @@ const AddPicture = () => {
                     </Typography>
                     <form onSubmit={onFinish}>
                         <Grid container spacing={2}>
+                            {/* Select Girl Dropdown */}
+                            <Grid item xs={12}>
+                                <FormControl fullWidth required>
+                                    <InputLabel id="select-girl-label" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                                        Select Girl
+                                    </InputLabel>
+                                    <Select
+                                        labelId="select-girl-label"
+                                        id="select-girl"
+                                        value={selectedGirl}
+                                        label="Select Girl"
+                                        onChange={handleGirlChange}
+                                        sx={{
+                                            color: 'white',
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'rgba(255, 255, 255, 0.5)',
+                                            },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'white',
+                                            },
+                                            '& .MuiSvgIcon-root': {
+                                                color: 'white',
+                                            },
+                                        }}
+                                    >
+                                        {girls && girls.length > 0 ? (
+                                            girls.map((girl) => (
+                                                <MenuItem key={girl.id} value={girl.id}>
+                                                    <Avatar
+                                                        src={'https://d3sog3sqr61u3b.cloudfront.net/'+girl.picture}
+                                                        alt={girl.username}
+                                                        sx={{ width: 64, height: 64, marginRight: 2 }}
+                                                    />
+                                                    {girl.username}
+                                                </MenuItem>
+                                            ))
+                                        ) : (
+                                            <MenuItem value="" disabled>
+                                                No girls available
+                                            </MenuItem>
+                                        )}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+
+                            {/* Description Field */}
                             <Grid item xs={12}>
                                 <StyledTextField
                                     label="Descripción"
@@ -148,6 +213,8 @@ const AddPicture = () => {
                                     fullWidth
                                 />
                             </Grid>
+
+                            {/* Image Upload Button */}
                             <Grid item xs={12}>
                                 <GradientButton
                                     variant="contained"
@@ -156,9 +223,11 @@ const AddPicture = () => {
                                     fullWidth
                                 >
                                     Subir Imagen
-                                    <input type="file" hidden onChange={handleFileChange} />
+                                    <input type="file" hidden onChange={handleFileChange} accept="image/*" />
                                 </GradientButton>
                             </Grid>
+
+                            {/* Image Preview */}
                             <Grid item xs={12}>
                                 {imagePreview && (
                                     <Avatar
@@ -168,6 +237,8 @@ const AddPicture = () => {
                                     />
                                 )}
                             </Grid>
+
+                            {/* Submit Button */}
                             <Grid item xs={12}>
                                 <GradientButton type="submit" variant="contained" fullWidth>
                                     Upload
