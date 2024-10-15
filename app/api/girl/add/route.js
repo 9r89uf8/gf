@@ -54,10 +54,15 @@ export async function POST(req) {
         const formData = await req.formData();
         const username = formData.get('username');
         const age = formData.get('age');
+        const name = formData.get('name');
         const country = formData.get('country');
+        const isPrivate = formData.get('private');
+        const audioId = formData.get('audioId');
         const bio = formData.get('bio');
         const file = formData.get('image');
         let userId = authResult.user.uid;
+
+        let isPrivateF = isPrivate === 'true'
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
@@ -70,7 +75,10 @@ export async function POST(req) {
         const girlsCollection = adminDb.firestore().collection('girls');
 
         let girlRecord = {
-            username,
+            username: username.toLowerCase(),
+            name: name.toLowerCase(),
+            private: isPrivateF,
+            audioId,
             age,
             followers: [],
             followersCount: Math.floor(Math.random() * (90000 - 60000 + 1)) + 60000,

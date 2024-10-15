@@ -133,7 +133,7 @@ const PopularCreators = () => {
                                 <Typography variant="h5">{user.age}</Typography>
                             </Box>
                             <Box display="flex" justifyContent="center" mt={2}>
-                                <Link href={`/creators/${user.id}`} passHref legacyBehavior>
+                                <Link href={`/${user.id}`} passHref legacyBehavior>
                                     <Button
                                         sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
