@@ -136,6 +136,28 @@ const PopularCreators = () => {
                                 <Link href={`/${user.id}`} passHref legacyBehavior>
                                     <Button
                                         sx={{
+                                            background: 'linear-gradient(45deg, #023e8a 30%, #03045e 90%)',
+                                            border: 0,
+                                            fontSize: 18,
+                                            borderRadius: 25,
+                                            marginRight: 4,
+                                            boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
+                                            color: 'white',
+                                            height: 48,
+                                            padding: '0 15px',
+                                            fontWeight: 'bold',
+                                            textTransform: 'none',
+                                            '&:hover': {
+                                                background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+                                            },
+                                        }}
+                                    >
+                                        Fotos
+                                    </Button>
+                                </Link>
+                                <Link href={`/chat/${user.id}`} passHref legacyBehavior>
+                                    <Button
+                                        sx={{
                                             background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
                                             border: 0,
                                             fontSize: 18,
@@ -151,7 +173,7 @@ const PopularCreators = () => {
                                             },
                                         }}
                                     >
-                                        Fotos
+                                        Mensaje
                                     </Button>
                                 </Link>
                             </Box>

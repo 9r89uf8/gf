@@ -3,7 +3,7 @@ import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
 import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
@@ -19,16 +19,22 @@ const s3Client = new S3Client({
     }
 });
 
+// Updated uploadToS3 function to support audio files
 const uploadToS3 = async (file, fileName) => {
     const supportedTypes = {
         'video/mp4': '.mp4',
         'image/jpeg': '.jpeg',
-        'image/png': '.png'
+        'image/png': '.png',
+        'audio/mpeg': '.mp3',
+        'audio/mp3': '.mp3',
+        'audio/wav': '.wav',
+        'audio/ogg': '.ogg',
+        'audio/m4a': '.m4a',
     };
 
     const extension = supportedTypes[file.type];
     if (!extension) {
-        throw new Error('File type not supported');
+        throw new Error(`File type not supported: ${file.type}`);
     }
 
     const buffer = await file.arrayBuffer();
@@ -36,7 +42,7 @@ const uploadToS3 = async (file, fileName) => {
         Bucket: 'finaltw',
         Key: `${fileName}${extension}`,
         Body: Buffer.from(buffer),
-        ACL: 'private',
+        ACL: 'private', // Set to 'public-read' to allow public access
         ContentType: file.type,
     };
 
@@ -60,20 +66,20 @@ export async function POST(req) {
         const audioId = formData.get('audioId');
         const bio = formData.get('bio');
         const file = formData.get('image');
-        let userId = authResult.user.uid;
+        const priority = formData.get('priority'); // Get priority from formData
+        const audioFiles = formData.getAll('audios[]'); // Get all uploaded audio files
 
-        let isPrivateF = isPrivate === 'true'
+        let userId = authResult.user.uid;
+        let isPrivateF = isPrivate === 'true';
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
-            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-                status: 403,
-                headers: { 'Content-Type': 'application/json' },
-            });
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
         }
 
         const girlsCollection = adminDb.firestore().collection('girls');
 
+        // Create the girl record with added 'priority' field
         let girlRecord = {
             username: username.toLowerCase(),
             name: name.toLowerCase(),
@@ -83,32 +89,37 @@ export async function POST(req) {
             followers: [],
             followersCount: Math.floor(Math.random() * (90000 - 60000 + 1)) + 60000,
             country,
-            bio
+            bio,
+            priority: parseInt(priority, 10),
         };
 
+        // Handle image upload
         if (file) {
             const fileName = uuidv4();
-            await uploadToS3(file, fileName);
-            const fileType = file.type.split('/')[1]; // Assuming the mimetype is something like 'image/jpeg'
+            const fileType = file.type.split('/')[1]
+            const imageUrl = await uploadToS3(file, fileName);
             girlRecord.picture = `${fileName}.${fileType}`;
+        }
+
+        // Handle multiple audio file uploads
+        if (audioFiles && audioFiles.length > 0) {
+            let audioFileUrls = [];
+            for (const audioFile of audioFiles) {
+                const fileName = uuidv4();
+                const audioUrl = await uploadToS3(audioFile, fileName);
+                audioFileUrls.push(`${fileName}.mp3`);
+            }
+            girlRecord.audioFiles = audioFileUrls; // Add audio URLs to the record
         }
 
         const newGirlRef = await girlsCollection.add(girlRecord);
 
-        return new Response(JSON.stringify({
+        return NextResponse.json({
             id: newGirlRef.id,
             ...girlRecord,
-        }), {
-            status: 201,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        }, { status: 201 });
     } catch (error) {
         console.error('Error adding new girl:', error);
-        return new Response(JSON.stringify({ error: error.message }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }

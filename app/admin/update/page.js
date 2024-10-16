@@ -1,3 +1,4 @@
+// src/components/Girls/UpdateGirlInfo.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -18,9 +19,14 @@ import {
     ListItemAvatar,
     ListItemText,
     Divider,
+    FormControl,
+    FormLabel,
+    IconButton,
+    ListItemSecondaryAction,
 } from '@mui/material';
 import { alpha, styled } from "@mui/material/styles";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // Styled Components
 const GlassCard = styled(Card)(({ theme }) => ({
@@ -93,15 +99,20 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 const UpdateGirlInfo = () => {
     const router = useRouter();
-    const girls = useStore((state) => state.girls); // List of girls
-    const selectedGirl = useStore((state) => state.girl); // Currently selected girl
+    const girls = useStore((state) => state.girls);
+    const selectedGirl = useStore((state) => state.girl);
 
+    // Updated formData state with 'priority' and 'audios'
     const [formData, setFormData] = useState({
         username: '',
         age: '',
         country: '',
         bio: '',
+        priority: 1,  // Default priority value
+        audios: [],   // Array to hold new audio files
     });
+    const [existingAudioFiles, setExistingAudioFiles] = useState([]); // Existing audio files
+    const [audioFilesToRemove, setAudioFilesToRemove] = useState([]); // Audio files marked for removal
     const [picture, setPicture] = useState(null);
     const [picturePreview, setPicturePreview] = useState('');
     const [loading, setLoading] = useState(false);
@@ -114,8 +125,12 @@ const UpdateGirlInfo = () => {
                 age: selectedGirl.age,
                 country: selectedGirl.country,
                 bio: selectedGirl.bio,
+                priority: selectedGirl.priority || 1,
+                audios: [], // Start with an empty array for new uploads
             });
             setPicturePreview(`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.picture}`);
+            setExistingAudioFiles(selectedGirl.audioFiles || []); // Set existing audio files
+            setAudioFilesToRemove([]); // Reset the list of audio files to remove
         }
     }, [selectedGirl]);
 
@@ -131,12 +146,12 @@ const UpdateGirlInfo = () => {
         }
     };
 
-    // Handle input changes
+    // Handle input changes with parsing for 'priority'
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: name === 'priority' ? parseInt(value, 10) : value
         }));
     };
 
@@ -153,6 +168,22 @@ const UpdateGirlInfo = () => {
         }
     };
 
+    // Handle audio files input changes
+    const handleAudioFilesChange = (e) => {
+        const files = Array.from(e.target.files);
+        setFormData(prevState => ({
+            ...prevState,
+            audios: files
+        }));
+    };
+
+    // Handle removal of existing audio files
+    const handleRemoveAudioFile = (index) => {
+        const fileToRemove = existingAudioFiles[index];
+        setAudioFilesToRemove(prev => [...prev, fileToRemove]);
+        setExistingAudioFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -162,17 +193,33 @@ const UpdateGirlInfo = () => {
         }
 
         const updateData = new FormData();
+        // Append formData fields except 'audios'
         Object.keys(formData).forEach(key => {
-            updateData.append(key, formData[key]);
+            if (key !== 'audios') {
+                updateData.append(key, formData[key]);
+            }
         });
+        // Append new audio files
+        if (formData.audios && formData.audios.length > 0) {
+            formData.audios.forEach((audioFile) => {
+                updateData.append('audios[]', audioFile);
+            });
+        }
         if (picture) {
             updateData.append('image', picture);
         }
-        updateData.append('girlId', selectedGirl.id)
+        updateData.append('girlId', selectedGirl.id);
+
+        // Append audio files to remove
+        if (audioFilesToRemove.length > 0) {
+            audioFilesToRemove.forEach((audioUrl) => {
+                updateData.append('audioFilesToRemove[]', audioUrl);
+            });
+        }
 
         try {
             await updateGirl(updateData); // Pass the girl ID and data
-            router.push('/novia-virtual'); // Redirect after successful update
+            router.push('/'); // Redirect after successful update
         } catch (error) {
             console.error('Error updating girl info:', error);
         }
@@ -286,6 +333,65 @@ const UpdateGirlInfo = () => {
                                                 value={formData.bio}
                                                 onChange={handleInputChange}
                                             />
+                                            {/* Priority Field */}
+                                            <StyledTextField
+                                                fullWidth
+                                                label="Priority"
+                                                name="priority"
+                                                type="number"
+                                                value={formData.priority}
+                                                onChange={handleInputChange}
+                                                InputProps={{ inputProps: { min: 1, max: 9 } }}
+                                            />
+
+                                            {/* Audio Files Upload */}
+                                            <FormControl fullWidth sx={{ marginTop: 2 }}>
+                                                <FormLabel sx={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: 1 }}>Upload New Audios</FormLabel>
+                                                <Button
+                                                    variant="contained"
+                                                    component="label"
+                                                    sx={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white' }}
+                                                >
+                                                    Select Audio Files
+                                                    <input
+                                                        type="file"
+                                                        accept="audio/*"
+                                                        multiple
+                                                        hidden
+                                                        onChange={handleAudioFilesChange}
+                                                    />
+                                                </Button>
+                                                {/* Display selected audio file names */}
+                                                {formData.audios.length > 0 && (
+                                                    <Box sx={{ marginTop: 2 }}>
+                                                        {formData.audios.map((file, index) => (
+                                                            <Typography key={index} sx={{ color: 'white' }}>
+                                                                {file.name}
+                                                            </Typography>
+                                                        ))}
+                                                    </Box>
+                                                )}
+                                            </FormControl>
+
+                                            {/* Display existing audio files with remove option */}
+                                            {existingAudioFiles.length > 0 && (
+                                                <Box sx={{ marginTop: 2 }}>
+                                                    <Typography sx={{ color: 'white' }}>Existing Audio Files:</Typography>
+                                                    <List>
+                                                        {existingAudioFiles.map((url, index) => (
+                                                            <ListItem key={index} sx={{ color: 'white' }}>
+                                                                <ListItemText primary={url} />
+                                                                <ListItemSecondaryAction>
+                                                                    <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveAudioFile(index)}>
+                                                                        <DeleteIcon sx={{ color: 'white' }} />
+                                                                    </IconButton>
+                                                                </ListItemSecondaryAction>
+                                                            </ListItem>
+                                                        ))}
+                                                    </List>
+                                                </Box>
+                                            )}
+
                                             <GradientButton type="submit" fullWidth>
                                                 Update Profile
                                             </GradientButton>

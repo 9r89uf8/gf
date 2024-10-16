@@ -96,10 +96,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
-    const audios = girl.audios || [
-        'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_34_25_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
-        'https://chicagocarhelp.s3.us-east-2.amazonaws.com/ElevenLabs_2024-09-15T01_33_30_Fresa_ivc_s68_sb75_se46_b_m2.mp3',
-    ];
+    const audios = girl.audioFiles || [];
 
     const handleImageClick = () => {
         setIsImageEnlarged(true);
@@ -122,6 +119,7 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
         await deleteMessages({girlId: girl.id});
         handleCloseDeleteDialog();
     };
+
 
     return (
         <>
@@ -149,8 +147,8 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                             Fotos
                         </ViewProfileButton>
                         <Stack spacing={2} width="100%">
-                            {audios.slice(0, 2).map((audioSrc, index) => (
-                                <AudioPlayer key={index} src={audioSrc} />
+                            {girl&&girl.audioFiles&&girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
+                                <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />
                             ))}
                         </Stack>
 

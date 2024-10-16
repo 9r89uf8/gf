@@ -11,7 +11,7 @@ import {
     fetchAudios,
     likeMessage,
 } from '@/app/services/chatService';
-import { Container, styled } from '@mui/material';
+import {Box, CircularProgress, Container, styled} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import GirlHeader from '@/app/components/chat/GirlHeader';
@@ -40,11 +40,13 @@ const Chat = ({params}) => {
     const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const [isSending, setIsSending] = useState(false);
+    const [gettingGirl, setGettingGirl] = useState(true);
 
     useEffect(() => {
         const initializeData = async () => {
             await checkIfCookie(); // Ensure the user data is available
             await getGirl({ id: params.id }); // Ensure the girl data is available
+            setGettingGirl(false);
         };
 
         initializeData();
@@ -136,6 +138,14 @@ const Chat = ({params}) => {
 
     const isPromptEntered = prompt.trim().length > 0;
     const canSendMessage = (user && user.freeMessages > 0) || !user;
+
+    if (gettingGirl) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <StyledContainer maxWidth="sm">

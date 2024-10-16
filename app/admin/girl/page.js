@@ -13,8 +13,6 @@ import {
     FormLabel,
     Switch,
     FormControlLabel,
-    MenuItem,
-    Select,
     Avatar,
     Typography,
     Box,
@@ -99,8 +97,7 @@ const AddGirl = () => {
     const router = useRouter();
     const user = useStore((state) => state.user);
 
-
-    // Consolidated form state
+    // Consolidated form state with added 'priority' and 'audios'
     const [formData, setFormData] = useState({
         name: '',
         username: '',
@@ -111,6 +108,8 @@ const AddGirl = () => {
         country: '',
         education: '',
         age: 15,
+        priority: 1,  // Added priority field
+        audios: [],   // Added audios array to hold multiple audio files
     });
 
     // Additional states for image preview and form feedback
@@ -137,6 +136,12 @@ const AddGirl = () => {
         }
     };
 
+    // Handle audio files input changes
+    const handleAudioFilesChange = (e) => {
+        const files = Array.from(e.target.files);
+        setFormData((prev) => ({ ...prev, audios: files }));
+    };
+
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -154,6 +159,13 @@ const AddGirl = () => {
         data.append('audioId', formData.audioId);
         data.append('user', user ? user.uid : '');
         data.append('bio', formData.bio);
+        data.append('priority', formData.priority); // Append priority to FormData
+
+        // Append multiple audio files
+        formData.audios.forEach((audioFile, index) => {
+            data.append('audios[]', audioFile);
+        });
+
         if (formData.image) {
             data.append('image', formData.image);
         }
@@ -172,6 +184,8 @@ const AddGirl = () => {
                 country: '',
                 education: '',
                 age: 15,
+                priority: 1, // Reset priority
+                audios: [],  // Reset audios
             });
             setImagePreview(null);
         } catch (error) {
@@ -301,6 +315,47 @@ const AddGirl = () => {
                                     onChange={handleChange}
                                     required
                                 />
+                                {/* Priority Field */}
+                                <StyledTextField
+                                    fullWidth
+                                    label="Priority"
+                                    name="priority"
+                                    type="number"
+                                    value={formData.priority}
+                                    onChange={handleChange}
+                                    required
+                                    InputProps={{ inputProps: { min: 1, max: 9 } }}
+                                />
+
+                                {/* Audio Files Upload */}
+                                <FormControl fullWidth sx={{ marginTop: 2 }}>
+                                    <FormLabel sx={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: 1 }}>Upload Audios</FormLabel>
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white' }}
+                                    >
+                                        Select Audio Files
+                                        <input
+                                            type="file"
+                                            accept="audio/*"
+                                            multiple
+                                            hidden
+                                            onChange={handleAudioFilesChange}
+                                        />
+                                    </Button>
+                                    {/* Display selected audio file names */}
+                                    {formData.audios.length > 0 && (
+                                        <Box sx={{ marginTop: 2 }}>
+                                            {formData.audios.map((file, index) => (
+                                                <Typography key={index} sx={{ color: 'white' }}>
+                                                    {file.name}
+                                                </Typography>
+                                            ))}
+                                        </Box>
+                                    )}
+                                </FormControl>
+
                                 <FormControlLabel
                                     control={
                                         <Switch
@@ -345,4 +400,5 @@ const AddGirl = () => {
 };
 
 export default AddGirl;
+
 
