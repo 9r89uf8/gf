@@ -81,31 +81,25 @@ const DeleteButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const EnlargedImage = styled('img')({
-    height: 280,
-    objectFit: 'contain',
-});
 
-const CloseButton = styled(IconButton)(({ theme }) => ({
-    position: 'absolute',
-    right: 7,
-    top: 5,
-    color: 'white',
-}));
+// Modal Style
+const modalStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    outline: 'none',
+    p: 0, // Remove padding
+};
 
 const GirlHeader = ({ girl }) => {
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
-    const audios = girl.audioFiles || [];
-
-    const handleImageClick = () => {
-        setIsImageEnlarged(true);
-    };
-
-    const handleCloseEnlargedImage = () => {
-        setIsImageEnlarged(false);
-    };
 
 
     const handleOpenDeleteDialog = () => {
@@ -119,6 +113,15 @@ const GirlHeader = ({ girl }) => {
     const handleConfirmDelete = async () => {
         await deleteMessages({girlId: girl.id});
         handleCloseDeleteDialog();
+    };
+
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const handleImageClick = () => {
+        setIsFullscreen(true);
+    };
+
+    const handleCloseFullscreen = () => {
+        setIsFullscreen(false);
     };
 
 
@@ -168,34 +171,25 @@ const GirlHeader = ({ girl }) => {
                 </CardContent>
             </GlassCard>
             <Modal
-                open={isImageEnlarged}
-                onClose={handleCloseEnlargedImage}
-                aria-labelledby="enlarged-image-modal"
-                aria-describedby="enlarged-profile-image"
+                open={isFullscreen}
+                onClose={handleCloseFullscreen}
+                aria-labelledby="fullscreen-image-modal"
+                aria-describedby="modal-to-display-fullscreen-image"
+                disableScrollLock
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'rgba(0, 0, 0, 0.8)',
-                        boxShadow: 24,
-                        p: 4,
-                        outline: 'none',
-                        borderRadius: 2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <EnlargedImage
+                <Box sx={modalStyle}>
+                    <img
                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                        alt={girl.username}
+                        alt={`Post ${girl.id} Fullscreen`}
+                        style={{
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            objectFit: 'contain', // Maintain aspect ratio
+                            borderRadius: '0', // Remove border radius for a cleaner look
+                            cursor: 'pointer',
+                        }}
+                        onClick={handleCloseFullscreen}
                     />
-                    <CloseButton onClick={handleCloseEnlargedImage} aria-label="close">
-                        <CancelTwoToneIcon sx={{ fontSize: 36 }}/>
-                    </CloseButton>
                 </Box>
             </Modal>
 

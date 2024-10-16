@@ -1,10 +1,10 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
 import PostsFilter from "@/app/components/posts/PostsFilter";
-import {followGirl} from "@/app/services/girlService";
+import { followGirl } from "@/app/services/girlService";
 
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
@@ -16,7 +16,9 @@ import {
     Avatar,
     Grid,
     Divider,
-    Chip
+    Chip,
+    Skeleton,
+    Modal,
 } from '@mui/material';
 import { alpha, styled } from "@mui/material/styles";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -48,6 +50,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     border: `4px solid ${alpha('#ffffff', 0.5)}`,
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
     transition: 'transform 0.3s',
+    cursor: 'pointer',
     '&:hover': {
         transform: 'scale(1.35)',
     },
@@ -130,17 +133,27 @@ const GradientButtonBuy = styled(Button)(({ theme }) => ({
     },
 }));
 
+// Modal Style
+const modalStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    outline: 'none',
+    p: 0, // Remove padding
+};
 
 const GirlProfile = ({ params }) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
-    const showPremiumButton = !user || (user && !user.premium);
     const [loading, setLoading] = React.useState(true);
-    // Add state for follow status
     const [isFollowing, setIsFollowing] = React.useState(false);
     const [isFollowLoading, setIsFollowLoading] = React.useState(false);
-
 
     useEffect(() => {
         const fetchGirl = async () => {
@@ -151,7 +164,6 @@ const GirlProfile = ({ params }) => {
     }, [params.id]);
 
     useEffect(() => {
-        // Check if the user is following the girl
         if (user && girl && girl.followers) {
             setIsFollowing(girl.followers.includes(user.uid));
         }
@@ -165,14 +177,12 @@ const GirlProfile = ({ params }) => {
         router.push('/premium');
     };
 
-    // Handle follow/unfollow click
     const handleFollowClick = async () => {
-        if(user){
+        if (user) {
             setIsFollowLoading(true);
             await followGirl({ girlId: girl.id });
             setIsFollowLoading(false);
         }
-
     };
 
     const formatNumber = (num) => {
@@ -184,21 +194,14 @@ const GirlProfile = ({ params }) => {
             return num.toString();
         }
     };
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const handleImageClick = () => {
+        setIsFullscreen(true);
+    };
 
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    minHeight: "100vh",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <Typography variant="h4">Loading...</Typography>
-            </Box>
-        );
-    }
+    const handleCloseFullscreen = () => {
+        setIsFullscreen(false);
+    };
 
     return (
         <Box
@@ -212,84 +215,124 @@ const GirlProfile = ({ params }) => {
                     <Grid container spacing={4} alignItems="center">
                         <Grid item xs={12} md={4}>
                             <Box display="flex" justifyContent="center">
-                                <StyledAvatar
-                                    src={
-                                        girl
-                                            ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
-                                            : "/profileTwo.jpg"
-                                    }
-                                    alt="novia virtual foto"
-                                />
+                                {loading ? (
+                                    <Skeleton variant="circular" width={150} height={150} />
+                                ) : (
+                                    <StyledAvatar
+                                        src={
+                                            girl
+                                                ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
+                                                : "/profileTwo.jpg"
+                                        }
+                                        alt="novia virtual foto"
+                                        onClick={handleImageClick}
+                                    />
+                                )}
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box>
-                                <Typography variant="h4" gutterBottom>
-                                    {girl ? girl.username : "arely4diaz"}
-                                    <VerifiedIcon
-                                        sx={{
-                                            color: "#3498db",
-                                            verticalAlign: "middle",
-                                            ml: 1,
-                                            fontSize: 36,
-                                        }}
-                                    />
-                                </Typography>
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    mb={2}
-                                >
+                                {loading ? (
+                                    <Skeleton variant="text" width={200} height={40} />
+                                ) : (
+                                    <Typography variant="h4" gutterBottom>
+                                        {girl ? girl.username : "arely4diaz"}
+                                        <VerifiedIcon
+                                            sx={{
+                                                color: "#3498db",
+                                                verticalAlign: "middle",
+                                                ml: 1,
+                                                fontSize: 36,
+                                            }}
+                                        />
+                                    </Typography>
+                                )}
+                                {loading ? (
                                     <Box
                                         display="flex"
-                                        flexDirection="column"
                                         alignItems="center"
-                                        mr={2}
+                                        justifyContent="center"
+                                        mb={2}
                                     >
-                                        <Typography variant="h5">
-                                            {girl ? formatNumber(girl.followersCount) : 0}
-                                        </Typography>
-                                        <Typography variant="subtitle1">Seguidores</Typography>
+                                        <Skeleton variant="text" width={50} height={30} />
+                                        <Skeleton
+                                            variant="rectangular"
+                                            width={100}
+                                            height={48}
+                                            sx={{ ml: 2 }}
+                                        />
                                     </Box>
-                                    {isFollowing ? (
-                                        <UnfollowButton
-                                            onClick={handleFollowClick}
-                                            disabled={!user || isFollowLoading}
+                                ) : (
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        mb={2}
+                                    >
+                                        <Box
+                                            display="flex"
+                                            flexDirection="column"
+                                            alignItems="center"
+                                            mr={2}
                                         >
-                                            Dejar de seguir
-                                        </UnfollowButton>
-                                    ) : (
-                                        <FollowButton
-                                            onClick={handleFollowClick}
-                                            disabled={!user || isFollowLoading}
-                                        >
-                                            Seguir
-                                        </FollowButton>
-                                    )}
-                                </Box>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">
-                                        {girl ? girl.age : "16"} años
-                                    </Typography>
-                                </Box>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
-                                    <Typography variant="h6">
-                                        {girl ? girl.country : "Monterrey, México"}
-                                    </Typography>
-                                </Box>
+                                            <Typography variant="h5">
+                                                {girl ? formatNumber(girl.followersCount) : 0}
+                                            </Typography>
+                                            <Typography variant="subtitle1">Seguidores</Typography>
+                                        </Box>
+                                        {isFollowing ? (
+                                            <UnfollowButton
+                                                onClick={handleFollowClick}
+                                                disabled={!user || isFollowLoading}
+                                            >
+                                                Dejar de seguir
+                                            </UnfollowButton>
+                                        ) : (
+                                            <FollowButton
+                                                onClick={handleFollowClick}
+                                                disabled={!user || isFollowLoading}
+                                            >
+                                                Seguir
+                                            </FollowButton>
+                                        )}
+                                    </Box>
+                                )}
+                                {loading ? (
+                                    <Skeleton variant="text" width={150} height={30} />
+                                ) : (
+                                    <Box display="flex" alignItems="center" mb={2}>
+                                        <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
+                                        <Typography variant="h6">
+                                            {girl ? girl.age : "16"} años
+                                        </Typography>
+                                    </Box>
+                                )}
+                                {loading ? (
+                                    <Skeleton variant="text" width={200} height={30} />
+                                ) : (
+                                    <Box display="flex" alignItems="center" mb={2}>
+                                        <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
+                                        <Typography variant="h6">
+                                            {girl ? girl.country : "Monterrey, México"}
+                                        </Typography>
+                                    </Box>
+                                )}
                                 <Divider
                                     sx={{
                                         my: 2,
                                         backgroundColor: "rgba(255, 255, 255, 0.2)",
                                     }}
                                 />
-                                <Typography variant="h6" paragraph>
-                                    {girl ? girl.bio : "No sean chismosos 😂😏"}
-                                </Typography>
-                                {girl && !girl.private ? (
+                                {loading ? (
+                                    <Skeleton variant="text" width="100%" height={30} />
+                                ) : (
+                                    <Typography variant="h6" paragraph>
+                                        {girl ? girl.bio : "No sean chismosos 😂😏"}
+                                    </Typography>
+                                )}
+                                {loading ? (
+                                    <Skeleton variant="rectangular" width={200} height={48} />
+                                ) : girl && !girl.private ? (
                                     <GradientButton
                                         disabled={girl ? girl.private : false}
                                         onClick={() => handleMessageClick(girl.id)}
@@ -299,34 +342,63 @@ const GirlProfile = ({ params }) => {
                                 ) : (
                                     <GradientButtonTwo>Cuenta Privada</GradientButtonTwo>
                                 )}
-
-                                {showPremiumButton && girl && !girl.private && (
-                                    <GradientButtonBuy onClick={handlePremium}>
-                                        Comprar Premium
-                                    </GradientButtonBuy>
-                                )}
                             </Box>
                         </Grid>
                     </Grid>
                 </GlassCard>
 
+                <Modal
+                    open={isFullscreen}
+                    onClose={handleCloseFullscreen}
+                    aria-labelledby="fullscreen-image-modal"
+                    aria-describedby="modal-to-display-fullscreen-image"
+                    disableScrollLock
+                >
+                    <Box sx={modalStyle}>
+                        <img
+                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                            alt={`Post ${girl.id} Fullscreen`}
+                            style={{
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                objectFit: 'contain', // Maintain aspect ratio
+                                borderRadius: '0', // Remove border radius for a cleaner look
+                                cursor: 'pointer',
+                            }}
+                            onClick={handleCloseFullscreen}
+                        />
+                    </Box>
+                </Modal>
+
                 <GlassCard>
-                    <PostsFilter postsCount={girl ? girl.posts.length : "9"} />
+                    {loading ? (
+                        <Skeleton variant="text" width={150} height={30} />
+                    ) : (
+                        <PostsFilter postsCount={girl ? girl.posts.length : "9"} />
+                    )}
                 </GlassCard>
 
-                <Grid container spacing={3}>
-                    {girl &&
-                        girl.posts.map((post) => (
-                            <Grid item xs={12} sm={6} md={4} key={post.id}>
-                                <GirlPostsComp girl={post.girlId} user={user} post={post} />
+                {loading ? (
+                    <Grid container spacing={3}>
+                        {[...Array(9)].map((_, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Skeleton variant="rectangular" width="100%" height={200} />
                             </Grid>
                         ))}
-                </Grid>
+                    </Grid>
+                ) : (
+                    <Grid container spacing={3}>
+                        {girl &&
+                            girl.posts.map((post) => (
+                                <Grid item xs={12} sm={6} md={4} key={post.id}>
+                                    <GirlPostsComp girl={post.girlId} user={user} post={post} />
+                                </Grid>
+                            ))}
+                    </Grid>
+                )}
             </Container>
         </Box>
     );
 };
 
 export default GirlProfile;
-
-

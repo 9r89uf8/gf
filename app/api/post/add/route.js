@@ -83,6 +83,7 @@ export async function POST(req) {
 
         const postRecord = {
             girlName:girlData.name,
+            girlUsername: girlData.username,
             girlId: girlId,
             girlPicUrl: girlData.picture,
             description,

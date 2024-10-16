@@ -156,7 +156,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                     </Link>
                     <Box sx={{ marginLeft: 2 }}>
                         <Typography variant="h6" fontWeight="bold">
-                            {post.girlName}
+                            {post.girlUsername}
                         </Typography>
                     </Box>
                 </Header>
