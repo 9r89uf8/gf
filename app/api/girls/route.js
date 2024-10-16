@@ -10,6 +10,7 @@ export async function GET() {
         const girlsCollection = await adminDb
             .firestore()
             .collection('girls')
+            .orderBy('priority', 'desc')  // Add this line to sort by priority in descending order
             .get();
 
         const girls = [];
@@ -19,9 +20,6 @@ export async function GET() {
                 ...doc.data()
             });
         });
-
-
-
 
         return new Response(JSON.stringify(girls), {
             status: 200,

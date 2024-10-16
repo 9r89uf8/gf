@@ -24,6 +24,7 @@ import ActiveIndicator from './ActiveIndicator';
 import AudioPlayer from './AudioPlayer';
 import { DeleteForever } from "@mui/icons-material";
 import { deleteMessages } from "@/app/services/chatService";
+import Link from 'next/link';
 
 const GlassCard = styled(Card)(({ theme }) => ({
     maxWidth: 350,
@@ -92,7 +93,7 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
     color: 'white',
 }));
 
-const GirlHeader = ({ girl, handleProfileClick }) => {
+const GirlHeader = ({ girl }) => {
     const [isImageEnlarged, setIsImageEnlarged] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
@@ -139,13 +140,14 @@ const GirlHeader = ({ girl, handleProfileClick }) => {
                                 sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
                             />
                         </Typography>
-                        <ViewProfileButton
-                            variant="contained"
-                            onClick={handleProfileClick}
-                            sx={{ mb: 3 }}
-                        >
-                            Fotos
-                        </ViewProfileButton>
+                        <Link href={`/${girl.id}`} passHref legacyBehavior>
+                            <ViewProfileButton
+                                variant="contained"
+                                sx={{ mb: 3 }}
+                            >
+                                Fotos
+                            </ViewProfileButton>
+                        </Link>
                         <Stack spacing={2} width="100%">
                             {girl&&girl.audioFiles&&girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
                                 <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />

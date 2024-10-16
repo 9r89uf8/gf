@@ -71,9 +71,6 @@ const Chat = ({params}) => {
         }
     }, [conversationHistory]);
 
-    const handleProfileClick = () => {
-        router.push('/01uIfxE3VRIbrIygbr2Q');
-    };
 
     const handleLoginRedirect = () => {
         router.push('/login'); // Adjust the path to your login or register page
@@ -149,7 +146,7 @@ const Chat = ({params}) => {
 
     return (
         <StyledContainer maxWidth="sm">
-            {girl && <GirlHeader girl={girl} handleProfileClick={handleProfileClick} />}
+            {girl && <GirlHeader girl={girl} />}
 
             {girl&&
                 <ConversationHistory
