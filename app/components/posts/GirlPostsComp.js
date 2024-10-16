@@ -204,7 +204,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                 <Actions>
                     <IconButton onClick={handleLike} color="inherit">
                         {user && post.likes.includes(user.uid) ? (
-                            <FavoriteIcon color="error" />
+                            <FavoriteIcon color="error" style={{ fontSize: 36, marginBottom: -12, marginTop: -10 }}/>
                         ) : (
                             <FavoriteBorderIcon style={{ fontSize: 36, marginBottom: -12, marginTop: -10 }} />
                         )}

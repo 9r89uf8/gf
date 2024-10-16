@@ -16,6 +16,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Skeleton, // Import Skeleton
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -81,7 +82,6 @@ const DeleteButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-
 // Modal Style
 const modalStyle = {
     position: 'fixed',
@@ -96,11 +96,9 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
-const GirlHeader = ({ girl }) => {
-    const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+const GirlHeader = ({ girl, loadingGirl }) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
-
 
     const handleOpenDeleteDialog = () => {
         setOpenDeleteDialog(true);
@@ -111,7 +109,7 @@ const GirlHeader = ({ girl }) => {
     };
 
     const handleConfirmDelete = async () => {
-        await deleteMessages({girlId: girl.id});
+        await deleteMessages({ girlId: girl.id });
         handleCloseDeleteDialog();
     };
 
@@ -124,6 +122,30 @@ const GirlHeader = ({ girl }) => {
         setIsFullscreen(false);
     };
 
+    if (loadingGirl) {
+        // Display Skeleton components while loading
+        return (
+            <GlassCard>
+                <CardContent>
+                    <Box display="flex" flexDirection="column" alignItems="center">
+                        <Box position="relative" mb={2}>
+                            <Skeleton variant="circular" width={120} height={120} />
+                        </Box>
+                        <Skeleton variant="text" width={200} height={40} sx={{ mb: 2 }} />
+                        <Skeleton variant="rectangular" width={250} height={50} sx={{ mb: 3, borderRadius: 2 }} />
+                        <Stack spacing={2} width="100%">
+                            {Array.from(new Array(5)).map((_, index) => (
+                                <Skeleton key={index} variant="rectangular" width="100%" height={50} />
+                            ))}
+                        </Stack>
+                        {conversationHistory && conversationHistory.length > 0 && (
+                            <Skeleton variant="rectangular" width={200} height={48} sx={{ mt: 2, borderRadius: 2 }} />
+                        )}
+                    </Box>
+                </CardContent>
+            </GlassCard>
+        );
+    }
 
     return (
         <>
@@ -152,7 +174,7 @@ const GirlHeader = ({ girl }) => {
                             </ViewProfileButton>
                         </Link>
                         <Stack spacing={2} width="100%">
-                            {girl&&girl.audioFiles&&girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
+                            {girl && girl.audioFiles && girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
                                 <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />
                             ))}
                         </Stack>
@@ -221,3 +243,4 @@ const GirlHeader = ({ girl }) => {
 };
 
 export default GirlHeader;
+

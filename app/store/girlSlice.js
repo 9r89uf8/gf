@@ -1,7 +1,9 @@
 export const createGirlSlice = (set) => ({
     girl: null,
+    loadingGirl: false,
     setGirl: (girl) => set({ girl }),
     clearGirl: () => set({ girl: null }),
+    setLoadingGirl: (loadingGirl) => set({ loadingGirl }),
     removePost: (postId) => set((state) => ({
         girl: state.girl
             ? {
@@ -35,6 +37,17 @@ export const createGirlSlice = (set) => ({
                 ...state.girl,
                 followers: newFollowers,
                 followersCount: newCount
+            }
+        };
+    }),
+    updateGirlPost: (updatedPost) => set((state) => {
+        if (!state.girl) return state;
+        return {
+            girl: {
+                ...state.girl,
+                posts: state.girl.posts.map(post =>
+                    post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+                )
             }
         };
     })

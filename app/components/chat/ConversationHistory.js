@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MessageList from "@/app/components/chat/conversation/MessageList";
 import ImageModal from "@/app/components/chat/conversation/ImageModal";
+import {Box, CircularProgress, Container, styled} from '@mui/material';
 
-function ConversationHistory({ conversationHistory, user, audios, handleLike, girl }) {
+function ConversationHistory({ conversationHistory, loading, audios, handleLike, girl }) {
     const messagesEndRef = useRef(null);
 
     // State variables for modal
@@ -36,6 +37,14 @@ function ConversationHistory({ conversationHistory, user, audios, handleLike, gi
         setOpenModal(false);
         setModalImageSrc('');
     };
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <>

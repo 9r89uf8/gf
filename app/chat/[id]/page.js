@@ -40,13 +40,14 @@ const Chat = ({params}) => {
     const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const [isSending, setIsSending] = useState(false);
-    const [gettingGirl, setGettingGirl] = useState(true);
+    const loadingGirl = useStore((state) => state.loadingGirl);
+    const setLoadingGirl = useStore((state) => state.setLoadingGirl);
 
     useEffect(() => {
         const initializeData = async () => {
+            setLoadingGirl(true);
             await checkIfCookie(); // Ensure the user data is available
             await getGirl({ id: params.id }); // Ensure the girl data is available
-            setGettingGirl(false);
         };
 
         initializeData();
@@ -136,17 +137,17 @@ const Chat = ({params}) => {
     const isPromptEntered = prompt.trim().length > 0;
     const canSendMessage = (user && user.freeMessages > 0) || !user;
 
-    if (gettingGirl) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+    // if (gettingGirl) {
+    //     return (
+    //         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    //             <CircularProgress />
+    //         </Box>
+    //     );
+    // }
 
     return (
         <StyledContainer maxWidth="sm">
-            {girl && <GirlHeader girl={girl} />}
+            {girl && <GirlHeader girl={girl} loadingGirl={loadingGirl}/>}
 
             {girl&&
                 <ConversationHistory
@@ -155,6 +156,7 @@ const Chat = ({params}) => {
                     audios={audios}
                     handleLike={handleLike}
                     girl={girl}
+                    loading={loadingGirl}
                 />
             }
 

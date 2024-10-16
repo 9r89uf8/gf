@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { useRouter } from "next/navigation";
 import { es } from 'date-fns/locale';
-import {List, ListItem, Avatar, Button, Box, Typography, Grid, Container, Card} from '@mui/material';
+import { List, ListItem, Avatar, Button, Box, Typography, Grid, Container, Card, Skeleton } from '@mui/material';
 
 const GlassCard = ({ children }) => (
     <Card
@@ -72,14 +72,6 @@ const DMList = () => {
         return text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
 
-    if (loading) {
-        return (
-            <Box sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
-                <Typography variant="subtitle1">Cargando chats...</Typography>
-            </Box>
-        );
-    }
-
     return (
         <Box
             sx={{
@@ -91,7 +83,32 @@ const DMList = () => {
             <Container maxWidth="lg">
 
                 {/* Girls List Component */}
-                {girls && girls.length > 0 && (
+                {loading ? (
+                    <Box
+                        sx={{
+                            overflowX: 'auto',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            padding: '10px 0',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {[1, 2, 3, 4, 5].map((item) => (
+                            <Box
+                                key={item}
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    marginRight: '10px',
+                                }}
+                            >
+                                <Skeleton variant="rectangular" width={85} height={85} sx={{ borderRadius: '10%' }} />
+                                <Skeleton variant="text" width={60} height={30} sx={{ mt: 1 }} />
+                            </Box>
+                        ))}
+                    </Box>
+                ) : girls && girls.length > 0 && (
                     <Box
                         sx={{
                             overflowX: 'auto',
@@ -142,7 +159,31 @@ const DMList = () => {
                     {user ? (
                         <>
                             <List>
-                                {chats && chats.length > 0 ? (
+                                {loading ? (
+                                    [1, 2, 3, 4].map((item) => (
+                                        <ListItem
+                                            key={item}
+                                            sx={{
+                                                borderBottom: item !== 4 ? '1px solid grey' : 'none',
+                                                mb: 2,
+                                                alignItems: 'flex-start',
+                                                paddingBottom: '25px',
+                                            }}
+                                        >
+                                            <Grid container spacing={2} alignItems="center">
+                                                <Grid item xs={4}>
+                                                    <Skeleton variant="rectangular" width={70} height={70} sx={{ borderRadius: '10%' }} />
+                                                </Grid>
+
+                                                <Grid item xs={8}>
+                                                    <Skeleton variant="text" width="80%" height={30} sx={{ marginBottom: 1 }} />
+                                                    <Skeleton variant="rectangular" width="100%" height={36} />
+                                                    <Skeleton variant="text" width="60%" height={20} sx={{ marginTop: 1 }} />
+                                                </Grid>
+                                            </Grid>
+                                        </ListItem>
+                                    ))
+                                ) : chats && chats.length > 0 ? (
                                     chats.map((chat, index) => {
                                         const date = convertFirestoreTimestampToDate(chat.lastMessage?.timestamp);
                                         return (
@@ -232,6 +273,7 @@ const DMList = () => {
 };
 
 export default DMList;
+
 
 
 

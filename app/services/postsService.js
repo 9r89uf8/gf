@@ -22,6 +22,7 @@ export const getPosts = async () => {
 
 export const likeGirlPost = async (formData) => {
     const updatePost = useStore.getState().updatePost;
+    const updateGirlPost = useStore.getState().updateGirlPost;
     try {
         const response = await fetch('/api/post/like', {
             method: 'POST',
@@ -33,6 +34,7 @@ export const likeGirlPost = async (formData) => {
         if (response.ok) {
             const updatedMessage = await response.json();
             updatePost(updatedMessage);
+            updateGirlPost(updatedMessage);
             return updatedMessage;
         } else {
             throw new Error('Failed to update');

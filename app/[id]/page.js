@@ -356,8 +356,8 @@ const GirlProfile = ({ params }) => {
                 >
                     <Box sx={modalStyle}>
                         <img
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            alt={`Post ${girl.id} Fullscreen`}
+                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl ? girl.picture:null}`}
+                            alt={`Post ${girl ? girl.id:null} Fullscreen`}
                             style={{
                                 maxWidth: '100%',
                                 maxHeight: '100%',
