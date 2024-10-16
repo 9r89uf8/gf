@@ -69,6 +69,17 @@ export async function POST(req) {
         const priority = formData.get('priority'); // Get priority from formData
         const audioFiles = formData.getAll('audios[]'); // Get all uploaded audio files
 
+        const fullName = formData.get('fullName');
+        const birthDate = formData.get('birthDate');
+        const brothers = formData.get('brothers');
+        const instagram = formData.get('instagram');
+        const mom = formData.get('mom');
+        const dad = formData.get('dad');
+        const sexActivity = formData.get('sexActivity');
+        const sexHistory = formData.get('sexHistory');
+        const sexStory = formData.get('sexStory');
+
+
         let userId = authResult.user.uid;
         let isPrivateF = isPrivate === 'true';
 
@@ -84,6 +95,15 @@ export async function POST(req) {
             username: username.toLowerCase(),
             name: name.toLowerCase(),
             private: isPrivateF,
+            fullName,
+            birthDate,
+            instagram,
+            brothers,
+            mom,
+            dad,
+            sexActivity,
+            sexHistory,
+            sexStory,
             audioId,
             age,
             followers: [],

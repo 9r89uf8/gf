@@ -107,6 +107,15 @@ const AddGirl = () => {
         isPrivate: false,
         country: '',
         education: '',
+        fullName: '',
+        birthDate: '',
+        brothers: '',
+        instagram: '',
+        mom: '',
+        dad: '',
+        sexActivity: '',
+        sexHistory: '',
+        sexStory: '',
         age: 15,
         priority: 1,  // Added priority field
         audios: [],   // Added audios array to hold multiple audio files
@@ -151,6 +160,16 @@ const AddGirl = () => {
 
         const data = new FormData();
         data.append('name', formData.name);
+        data.append('instagram', formData.instagram);
+        data.append('fullName', formData.fullName);
+        data.append('birthDate', formData.birthDate);
+        data.append('brothers', formData.brothers);
+        data.append('mom', formData.mom);
+        data.append('dad', formData.dad);
+        data.append('sexActivity', formData.sexActivity);
+        data.append('sexHistory', formData.sexHistory);
+        data.append('sexStory', formData.sexStory);
+
         data.append('username', formData.username);
         data.append('age', formData.age);
         data.append('private', formData.isPrivate.toString());
@@ -296,9 +315,92 @@ const AddGirl = () => {
                                     label="Country"
                                     name="country"
                                     value={formData.country}
+                                    helperText="monterrey, Mexico"
                                     onChange={handleChange}
                                     required
                                 />
+
+                                <StyledTextField
+                                    fullWidth
+                                    label="fullName"
+                                    name="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="birthDate"
+                                    name="birthDate"
+                                    value={formData.birthDate}
+                                    onChange={handleChange}
+                                    helperText="4 de agosto"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="brothers"
+                                    name="brothers"
+                                    value={formData.brothers}
+                                    onChange={handleChange}
+                                    helperText="Tengo ... de hermanos...nombres"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="instagram"
+                                    name="instagram"
+                                    value={formData.instagram}
+                                    onChange={handleChange}
+                                    helperText="mi instagram es.."
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="mom"
+                                    name="mom"
+                                    value={formData.mom}
+                                    onChange={handleChange}
+                                    helperText="solo nombre"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="dad"
+                                    name="dad"
+                                    value={formData.dad}
+                                    onChange={handleChange}
+                                    helperText="solo nombre"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="sexActivity"
+                                    name="sexActivity"
+                                    value={formData.sexActivity}
+                                    onChange={handleChange}
+                                    helperText="soy pura"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="sexHistory"
+                                    name="sexHistory"
+                                    value={formData.sexHistory}
+                                    onChange={handleChange}
+                                    helperText="chupe 2 pitos"
+                                    required
+                                />
+                                <StyledTextField
+                                    fullWidth
+                                    label="sexStory"
+                                    name="sexStory"
+                                    value={formData.sexStory}
+                                    onChange={handleChange}
+                                    helperText="un dia un amigo..."
+                                    required
+                                />
+
+
                                 <StyledTextField
                                     fullWidth
                                     label="Education"
