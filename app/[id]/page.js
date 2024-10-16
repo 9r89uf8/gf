@@ -252,7 +252,7 @@ const GirlProfile = ({ params }) => {
                             )}
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <Box>
+                            <Box style={{marginTop: 50}}>
                                 {loading ? (
                                     <Skeleton variant="text" width={200} height={40} />
                                 ) : (
