@@ -104,6 +104,7 @@ const AddGirl = () => {
         audioId: '',
         bio: '',
         image: null,
+        background: null,
         isPrivate: false,
         country: '',
         education: '',
@@ -123,6 +124,7 @@ const AddGirl = () => {
 
     // Additional states for image preview and form feedback
     const [imagePreview, setImagePreview] = useState(null);
+    const [imagePreviewBackground, setImagePreviewBackground] = useState(null);
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -142,6 +144,15 @@ const AddGirl = () => {
         if (file) {
             setFormData((prev) => ({ ...prev, image: file }));
             setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    // Handle background file input changes and set image preview
+    const handleFileChangeBackground = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData((prev) => ({ ...prev, background: file }));
+            setImagePreviewBackground(URL.createObjectURL(file));
         }
     };
 
@@ -189,6 +200,10 @@ const AddGirl = () => {
             data.append('image', formData.image);
         }
 
+        if (formData.background) {
+            data.append('background', formData.background);
+        }
+
         try {
             await addGirl(data);
             setSuccessMessage('Girl created successfully!');
@@ -200,6 +215,7 @@ const AddGirl = () => {
                 bio: '',
                 image: null,
                 isPrivate: false,
+                background: null,
                 country: '',
                 education: '',
                 age: 15,
@@ -207,6 +223,7 @@ const AddGirl = () => {
                 audios: [],  // Reset audios
             });
             setImagePreview(null);
+            setImagePreviewBackground(null)
         } catch (error) {
             console.error('Error creating girl:', error);
             setErrorMessage('Failed to create girl. Please try again.');
@@ -223,6 +240,15 @@ const AddGirl = () => {
             }
         };
     }, [imagePreview]);
+
+    // Clean up background preview URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (imagePreviewBackground) {
+                URL.revokeObjectURL(imagePreviewBackground);
+            }
+        };
+    }, [imagePreviewBackground]);
 
     return (
         <Box
@@ -276,6 +302,33 @@ const AddGirl = () => {
                                             type="file"
                                             hidden
                                             onChange={handleFileChange}
+                                            accept="image/*"
+                                        />
+                                    </Button>
+                                </Box>
+                            </Grid>
+
+                            {/* background image Upload */}
+                            <Grid item xs={12} md={4}>
+                                <Box position="relative" display="inline-block">
+                                    <img src={imagePreviewBackground} alt="" style={{width: 200}}/>
+                                    <Button
+                                        component="label"
+                                        sx={{
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            right: 0,
+                                            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                            borderRadius: '50%',
+                                            minWidth: 'auto',
+                                            padding: 1,
+                                        }}
+                                    >
+                                        <CameraAltIcon />
+                                        <input
+                                            type="file"
+                                            hidden
+                                            onChange={handleFileChangeBackground}
                                             accept="image/*"
                                         />
                                     </Button>

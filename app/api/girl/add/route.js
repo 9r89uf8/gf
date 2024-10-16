@@ -66,6 +66,7 @@ export async function POST(req) {
         const audioId = formData.get('audioId');
         const bio = formData.get('bio');
         const file = formData.get('image');
+        const fileBackground = formData.get('background');
         const priority = formData.get('priority'); // Get priority from formData
         const audioFiles = formData.getAll('audios[]'); // Get all uploaded audio files
 
@@ -110,7 +111,7 @@ export async function POST(req) {
             followersCount: Math.floor(Math.random() * (90000 - 60000 + 1)) + 60000,
             country,
             bio,
-            priority: parseInt(priority, 10),
+            priority: parseInt(priority),
         };
 
         // Handle image upload
@@ -119,6 +120,14 @@ export async function POST(req) {
             const fileType = file.type.split('/')[1]
             const imageUrl = await uploadToS3(file, fileName);
             girlRecord.picture = `${fileName}.${fileType}`;
+        }
+
+        // Handle background image upload
+        if (fileBackground) {
+            const fileName = uuidv4();
+            const fileType = fileBackground.type.split('/')[1]
+            const imageUrl = await uploadToS3(fileBackground, fileName);
+            girlRecord.background = `${fileName}.${fileType}`;
         }
 
         // Handle multiple audio file uploads

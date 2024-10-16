@@ -214,21 +214,42 @@ const GirlProfile = ({ params }) => {
                 <GlassCard elevation={4}>
                     <Grid container spacing={4} alignItems="center">
                         <Grid item xs={12} md={4}>
-                            <Box display="flex" justifyContent="center">
-                                {loading ? (
-                                    <Skeleton variant="circular" width={150} height={150} />
-                                ) : (
-                                    <StyledAvatar
-                                        src={
-                                            girl
-                                                ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
-                                                : "/profileTwo.jpg"
-                                        }
-                                        alt="novia virtual foto"
-                                        onClick={handleImageClick}
-                                    />
-                                )}
-                            </Box>
+                            {/* Background Image Box */}
+                            {loading ? (
+                                <Skeleton variant="rectangular" width="100%" height={200} />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        height: 170,
+                                        backgroundImage: girl
+                                            ? `url(https://d3sog3sqr61u3b.cloudfront.net/${girl.background})`
+                                            : `url(/defaultBackground.jpg)`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        position: 'relative',
+                                    }}
+                                >
+                                    {/* Avatar Positioned Over the Background */}
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            bottom: -75,
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                        }}
+                                    >
+                                        <StyledAvatar
+                                            src={
+                                                girl
+                                                    ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
+                                                    : '/profileTwo.jpg'
+                                            }
+                                            alt="novia virtual foto"
+                                            onClick={handleImageClick}
+                                        />
+                                    </Box>
+                                </Box>
+                            )}
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box>
