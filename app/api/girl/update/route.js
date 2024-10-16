@@ -79,6 +79,18 @@ export async function POST(req) {
         const audios = formData.getAll('audios[]'); // Get all uploaded audio files
         const audioFilesToRemove = formData.getAll('audioFilesToRemove[]'); // Get audio files to remove
 
+        const fullName = formData.get('fullName');
+        const birthDate = formData.get('birthDate');
+        const brothers = formData.get('brothers');
+        const instagram = formData.get('instagram');
+        const mom = formData.get('mom');
+        const dad = formData.get('dad');
+        const sexActivity = formData.get('sexActivity');
+        const sexHistory = formData.get('sexHistory');
+        const sexStory = formData.get('sexStory');
+        const name = formData.get('name');
+        const fileBackground = formData.get('background');
+
         let userId = authResult.user.uid;
 
         // Check if the user is admin
@@ -103,7 +115,19 @@ export async function POST(req) {
             country: country || girlData.country,
             bio: bio || girlData.bio,
             priority: parseInt(priority, 10) || girlData.priority || 1,
+            fullName: fullName || girlData.fullName,
+            background: fileBackground || girlData.background,
+            birthDate: birthDate || girlData.birthDate,
+            instagram: instagram || girlData.instagram,
+            brothers: brothers || girlData.brothers,
+            mom: mom || girlData.mom,
+            dad: dad || girlData.dad,
+            sexActivity: sexActivity || girlData.sexActivity,
+            sexHistory: sexHistory || girlData.sexHistory,
+            sexStory: sexStory || girlData.sexStory,
+            name: name || girlData.name
         };
+
 
         // Handle new audio files
         if (audios && audios.length > 0) {
@@ -132,6 +156,14 @@ export async function POST(req) {
             const fileType = file.type.split('/')[1];
             const imageUrl = await uploadToS3(file, fileName);
             girlRecord.picture = `${fileName}.${fileType}`;
+        }
+
+        // Handle background image upload
+        if (fileBackground) {
+            const fileName = uuidv4();
+            const fileType = fileBackground.type.split('/')[1];
+            const imageUrl = await uploadToS3(fileBackground, fileName);
+            girlRecord.background = `${fileName}.${fileType}`;
         }
 
         // Update the girl record in the database

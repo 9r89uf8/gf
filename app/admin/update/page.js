@@ -110,11 +110,23 @@ const UpdateGirlInfo = () => {
         bio: '',
         priority: 1,  // Default priority value
         audios: [],   // Array to hold new audio files
+        fullName: '',
+        birthDate: '',
+        brothers: '',
+        instagram: '',
+        mom: '',
+        dad: '',
+        sexActivity: '',
+        sexHistory: '',
+        sexStory: '',
+        name: ''
     });
     const [existingAudioFiles, setExistingAudioFiles] = useState([]); // Existing audio files
     const [audioFilesToRemove, setAudioFilesToRemove] = useState([]); // Audio files marked for removal
     const [picture, setPicture] = useState(null);
+    const [background, setBackground] = useState(null);
     const [picturePreview, setPicturePreview] = useState('');
+    const [backgroundPreview, setBackgroundPreview] = useState('');
     const [loading, setLoading] = useState(false);
 
     // Populate form when a girl is selected
@@ -127,8 +139,19 @@ const UpdateGirlInfo = () => {
                 bio: selectedGirl.bio,
                 priority: selectedGirl.priority || 1,
                 audios: [], // Start with an empty array for new uploads
+                fullName: selectedGirl.fullName,
+                birthDate: selectedGirl.birthDate,
+                brothers: selectedGirl.brothers,
+                instagram: selectedGirl.instagram,
+                mom: selectedGirl.mom,
+                dad: selectedGirl.dad,
+                sexActivity: selectedGirl.sexActivity,
+                sexHistory: selectedGirl.sexHistory,
+                sexStory: selectedGirl.sexStory,
+                name: selectedGirl.name
             });
             setPicturePreview(`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.picture}`);
+            setBackgroundPreview(`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.background}`);
             setExistingAudioFiles(selectedGirl.audioFiles || []); // Set existing audio files
             setAudioFilesToRemove([]); // Reset the list of audio files to remove
         }
@@ -151,7 +174,7 @@ const UpdateGirlInfo = () => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'priority' ? parseInt(value, 10) : value
+            [name]: name === 'priority' ? parseInt(value) : value
         }));
     };
 
@@ -163,6 +186,19 @@ const UpdateGirlInfo = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPicturePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // Handle background picture changes
+    const handleBackgroundChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setBackground(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setBackgroundPreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
@@ -207,6 +243,9 @@ const UpdateGirlInfo = () => {
         }
         if (picture) {
             updateData.append('image', picture);
+        }
+        if (background) {
+            updateData.append('background', background);
         }
         updateData.append('girlId', selectedGirl.id);
 
@@ -279,6 +318,7 @@ const UpdateGirlInfo = () => {
                                                     src={picturePreview}
                                                     alt={formData.username}
                                                 />
+                                                <img src={backgroundPreview} alt="foto" style={{width: 150, marginTop:10}}/>
                                                 <Button
                                                     component="label"
                                                     sx={{
@@ -309,6 +349,85 @@ const UpdateGirlInfo = () => {
                                                 value={formData.username}
                                                 onChange={handleInputChange}
                                             />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="fullName"
+                                                name="fullname"
+                                                value={formData.fullName}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="birthDate"
+                                                name="birthDate"
+                                                value={formData.birthDate}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="brothers"
+                                                name="brothers"
+                                                multiline
+                                                rows={4}
+                                                value={formData.brothers}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="instagram"
+                                                name="instagram"
+                                                value={formData.instagram}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="mom"
+                                                name="mom"
+                                                value={formData.mom}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="dad"
+                                                name="dad"
+                                                value={formData.dad}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="sexActivity"
+                                                name="sexActivity"
+                                                multiline
+                                                rows={8}
+                                                value={formData.sexActivity}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="sexHistory"
+                                                name="sexHistory"
+                                                multiline
+                                                rows={8}
+                                                value={formData.sexHistory}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="sexStory"
+                                                name="sexStory"
+                                                multiline
+                                                rows={8}
+                                                value={formData.sexStory}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="name"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                            />
+
                                             <StyledTextField
                                                 fullWidth
                                                 label="Age"

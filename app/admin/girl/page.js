@@ -429,6 +429,8 @@ const AddGirl = () => {
                                     fullWidth
                                     label="sexActivity"
                                     name="sexActivity"
+                                    multiline
+                                    rows={8}
                                     value={formData.sexActivity}
                                     onChange={handleChange}
                                     helperText="soy pura"
@@ -440,6 +442,8 @@ const AddGirl = () => {
                                     name="sexHistory"
                                     value={formData.sexHistory}
                                     onChange={handleChange}
+                                    multiline
+                                    rows={8}
                                     helperText="chupe 2 pitos"
                                     required
                                 />
@@ -448,6 +452,8 @@ const AddGirl = () => {
                                     label="sexStory"
                                     name="sexStory"
                                     value={formData.sexStory}
+                                    multiline
+                                    rows={8}
                                     onChange={handleChange}
                                     helperText="un dia un amigo..."
                                     required
