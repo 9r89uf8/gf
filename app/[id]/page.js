@@ -1,5 +1,5 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
@@ -16,7 +16,6 @@ import {
     Avatar,
     Grid,
     Divider,
-    Chip,
     Skeleton,
     Modal,
 } from '@mui/material';
@@ -194,8 +193,22 @@ const GirlProfile = ({ params }) => {
             return num.toString();
         }
     };
+
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const handleImageClick = () => {
+    const [fullscreenImageSrc, setFullscreenImageSrc] = useState(null);
+
+    const handleImageClick = (event) => {
+        event.stopPropagation(); // Prevent the event from bubbling up
+        setFullscreenImageSrc(
+            `https://d3sog3sqr61u3b.cloudfront.net/${girl ? girl.picture : null}`
+        );
+        setIsFullscreen(true);
+    };
+
+    const handleBackgroundImageClick = () => {
+        setFullscreenImageSrc(
+            `https://d3sog3sqr61u3b.cloudfront.net/${girl ? girl.background : null}`
+        );
         setIsFullscreen(true);
     };
 
@@ -206,13 +219,13 @@ const GirlProfile = ({ params }) => {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
+                minHeight: '100vh',
                 padding: 2,
             }}
         >
             <Container maxWidth="md">
                 <GlassCard elevation={4}>
-                    <Grid container spacing={4} alignItems="center">
+                    <Grid container spacing={4} alignItems="flex-start">
                         <Grid item xs={12} md={4}>
                             {/* Background Image Box */}
                             {loading ? (
@@ -220,14 +233,16 @@ const GirlProfile = ({ params }) => {
                             ) : (
                                 <Box
                                     sx={{
-                                        height: 170,
+                                        height: { xs: 170, sm: 200, md: 250 },
                                         backgroundImage: girl
                                             ? `url(https://d3sog3sqr61u3b.cloudfront.net/${girl.background})`
                                             : `url(/defaultBackground.jpg)`,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
                                         position: 'relative',
+                                        cursor: 'pointer', // Make it look clickable
                                     }}
+                                    onClick={handleBackgroundImageClick}
                                 >
                                     {/* Avatar Positioned Over the Background */}
                                     <Box
@@ -252,16 +267,16 @@ const GirlProfile = ({ params }) => {
                             )}
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <Box style={{marginTop: 50}}>
+                            <Box sx={{ marginTop: { xs: 10, md: 5 } }}>
                                 {loading ? (
                                     <Skeleton variant="text" width={200} height={40} />
                                 ) : (
                                     <Typography variant="h4" gutterBottom>
-                                        {girl ? girl.username : "arely4diaz"}
+                                        {girl ? girl.username : 'arely4diaz'}
                                         <VerifiedIcon
                                             sx={{
-                                                color: "#3498db",
-                                                verticalAlign: "middle",
+                                                color: '#3498db',
+                                                verticalAlign: 'middle',
                                                 ml: 1,
                                                 fontSize: 36,
                                             }}
@@ -299,7 +314,9 @@ const GirlProfile = ({ params }) => {
                                             <Typography variant="h5">
                                                 {girl ? formatNumber(girl.followersCount) : 0}
                                             </Typography>
-                                            <Typography variant="subtitle1">Seguidores</Typography>
+                                            <Typography variant="subtitle1">
+                                                Seguidores
+                                            </Typography>
                                         </Box>
                                         {isFollowing ? (
                                             <UnfollowButton
@@ -324,7 +341,7 @@ const GirlProfile = ({ params }) => {
                                     <Box display="flex" alignItems="center" mb={2}>
                                         <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
                                         <Typography variant="h6">
-                                            {girl ? girl.age : "16"} años
+                                            {girl ? girl.age : '16'} años
                                         </Typography>
                                     </Box>
                                 )}
@@ -334,21 +351,21 @@ const GirlProfile = ({ params }) => {
                                     <Box display="flex" alignItems="center" mb={2}>
                                         <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
                                         <Typography variant="h6">
-                                            {girl ? girl.country : "Monterrey, México"}
+                                            {girl ? girl.country : 'Monterrey, México'}
                                         </Typography>
                                     </Box>
                                 )}
                                 <Divider
                                     sx={{
                                         my: 2,
-                                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                     }}
                                 />
                                 {loading ? (
                                     <Skeleton variant="text" width="100%" height={30} />
                                 ) : (
                                     <Typography variant="h6" paragraph>
-                                        {girl ? girl.bio : "No sean chismosos 😂😏"}
+                                        {girl ? girl.bio : 'No sean chismosos 😂😏'}
                                     </Typography>
                                 )}
                                 {loading ? (
@@ -368,6 +385,7 @@ const GirlProfile = ({ params }) => {
                     </Grid>
                 </GlassCard>
 
+                {/* Modal for Fullscreen Image */}
                 <Modal
                     open={isFullscreen}
                     onClose={handleCloseFullscreen}
@@ -377,13 +395,13 @@ const GirlProfile = ({ params }) => {
                 >
                     <Box sx={modalStyle}>
                         <img
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl ? girl.picture:null}`}
-                            alt={`Post ${girl ? girl.id:null} Fullscreen`}
+                            src={fullscreenImageSrc}
+                            alt="Fullscreen Image"
                             style={{
                                 maxWidth: '100%',
                                 maxHeight: '100%',
-                                objectFit: 'contain', // Maintain aspect ratio
-                                borderRadius: '0', // Remove border radius for a cleaner look
+                                objectFit: 'contain',
+                                borderRadius: '0',
                                 cursor: 'pointer',
                             }}
                             onClick={handleCloseFullscreen}
@@ -391,12 +409,11 @@ const GirlProfile = ({ params }) => {
                     </Box>
                 </Modal>
 
-
                 <GlassCard>
                     {loading ? (
                         <Skeleton variant="text" width={150} height={30} />
                     ) : (
-                        <PostsFilter postsCount={girl ? girl.posts.length : "9"} />
+                        <PostsFilter postsCount={girl ? girl.posts.length : '9'} />
                     )}
                 </GlassCard>
 
@@ -424,3 +441,4 @@ const GirlProfile = ({ params }) => {
 };
 
 export default GirlProfile;
+
