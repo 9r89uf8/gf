@@ -410,7 +410,7 @@ export async function POST(req) {
         // Add user's message to the conversation history
         conversationHistory.push({ role: 'user', content: userMessage });
         // Generate the dynamic system prompt using the function
-        const systemPrompt = generateSystemPrompt(userData, fileUrl);
+        const systemPrompt = generateSystemPrompt(userData, fileUrl, girlData);
 
         // Prepare messages for LLM processing
         const messagesForLLM = [systemPrompt, ...conversationHistory];
