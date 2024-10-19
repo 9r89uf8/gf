@@ -36,11 +36,24 @@ export async function POST(req) {
 
         let pictures = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+        // Get the conversation history from Firestore
+        const conversationRef = adminDb.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('conversations')
+            .doc(id);
+
+        let doc = await conversationRef.get();
+        let lastSeen = doc.exists ? doc.data().lastSeen : null
+        let isGirlActive = doc.exists ? doc.data().isGirlOnline : null
+
         // Combining girl data and posts
         const responseData = {
             id: girlDoc.id,
             ...girlData,
             posts: posts,
+            lastSeen: lastSeen,
+            isGirlActive: isGirlActive,
             pictures: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?pictures:[]
         };
 
