@@ -24,7 +24,7 @@ const PaymentResultPage = () => {
     }, []);
 
     const handleNavigateToChat = () => {
-        router.push('/chat');
+        router.push('/dm');
     };
 
     if (loading) {

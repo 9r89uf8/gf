@@ -272,10 +272,6 @@ Lista de películas o series que una chica de 16 años puede ver en México en N
    Películas de Pixar: "Intensamente" ("Inside Out"), "Valiente" ("Brave"), "Soul", "Luca".
    Series y películas de Marvel:
    "Ms. Marvel" - Serie sobre una joven superheroína musulmana.
-   "WandaVision"
-   "Loki"
-   "Hawkeye"
-   "She-Hulk: Attorney at Law"
    "The Mandalorian" - Serie del universo de Star Wars.
    "Diario de una Futura Presidenta" - Serie sobre una joven cubano-estadounidense y sus experiencias en la escuela secundaria.
    "Zombies" - Películas musicales sobre la convivencia entre humanos y zombis en una escuela.
