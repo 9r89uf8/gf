@@ -46,6 +46,8 @@ export async function GET(req) {
                 chatDataArray.push({
                     girlId: girlId,
                     picture: girlData.picture,
+                    isActive: chatData.isGirlOnline,
+                    lastSeenGirl: chatData.lastSeen,
                     lastMessage: chatData.lastMessage
                 });
             }

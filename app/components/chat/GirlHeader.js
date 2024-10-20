@@ -26,6 +26,14 @@ import AudioPlayer from './AudioPlayer';
 import { DeleteForever } from "@mui/icons-material";
 import { deleteMessages } from "@/app/services/chatService";
 import Link from 'next/link';
+import {keyframes} from "@mui/system";
+import {formatDistanceToNow} from "date-fns";
+import {es} from "date-fns/locale";
+const flash = keyframes`
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+`;
 
 const GlassCard = styled(Card)(({ theme }) => ({
     maxWidth: 350,
@@ -122,6 +130,17 @@ const GirlHeader = ({ girl, loadingGirl }) => {
         setIsFullscreen(false);
     };
 
+    function convertFirestoreTimestampToDate(timestamp) {
+        if (!timestamp) return null;
+        if (timestamp._seconds !== undefined && timestamp._nanoseconds !== undefined) {
+            return new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1e6);
+        }
+        if (timestamp.seconds !== undefined && timestamp.nanoseconds !== undefined) {
+            return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
+        }
+        return new Date(timestamp);
+    }
+
     if (loadingGirl) {
         // Display Skeleton components while loading
         return (
@@ -159,6 +178,27 @@ const GirlHeader = ({ girl, loadingGirl }) => {
                                 onClick={handleImageClick}
                             />
                         </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                        <Box
+                            sx={{
+                                width: 10,
+                                height: 10,
+                                borderRadius: '50%',
+                                backgroundColor: girl.isActive ? 'green' : 'red',
+                                marginRight: 1,
+                                animation: `${flash} ${girl.isActive ? '2s' : '2s'} infinite`,
+                            }}
+                        />
+                        <Typography variant="body2" style={{ color: 'gray' }}>
+                            {girl.isActive ? 'Activa' : 'Inactiva'}
+                        </Typography>
+                        </Box>
+                        {!girl.isActive && convertFirestoreTimestampToDate(girl.lastSeenGirl) && (
+                            <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
+                                Activa{' '}
+                                {formatDistanceToNow(convertFirestoreTimestampToDate(girl.lastSeenGirl), { addSuffix: true, locale: es })}
+                            </Typography>
+                        )}
                         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                             {girl.username}
                             <VerifiedIcon

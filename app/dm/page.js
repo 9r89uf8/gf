@@ -6,60 +6,65 @@ import { useStore } from '@/app/store/store';
 import { getChatList } from '@/app/services/chatService';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 import { es } from 'date-fns/locale';
-import { List, ListItem, Avatar, Button, Box, Typography, Grid, Container, Card, Skeleton } from '@mui/material';
+import {
+    List,
+    ListItem,
+    Avatar,
+    Button,
+    Box,
+    Typography,
+    Grid,
+    Container,
+    Card,
+    Skeleton,
+} from '@mui/material';
+import { styled, keyframes } from '@mui/system';
 
-const GlassCard = ({ children }) => (
-    <Card
-        sx={{
-            textAlign: 'center',
-            color: 'white',
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 5,
-            marginTop: 4,
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
-            padding: 1,
-            marginBottom: 4,
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            msUserSelect: 'none',
-        }}
-    >
-        {children}
-    </Card>
-);
+const flash = keyframes`
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+`;
+
+const GlassCard = styled(Card)(({ theme }) => ({
+    textAlign: 'center',
+    color: 'white',
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: theme.shape.borderRadius * 2,
+    marginTop: theme.spacing(4),
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.2)',
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(4),
+    userSelect: 'none',
+}));
 
 const DMList = () => {
     const router = useRouter();
     const chats = useStore((state) => state.chats);
     const user = useStore((state) => state.user);
-    const girls = useStore((state) => state.girls); // Assuming girls is an array of girl objects
+    const girls = useStore((state) => state.girls);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchChats() {
-            await getChatList(); // Fetch and update the store
-            // If you need to fetch girls list, do it here
+            await getChatList();
             setLoading(false);
         }
         fetchChats();
     }, []);
 
-    // Helper function to convert Firestore timestamp
     function convertFirestoreTimestampToDate(timestamp) {
         if (!timestamp) return null;
-
         if (timestamp._seconds !== undefined && timestamp._nanoseconds !== undefined) {
             return new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1e6);
         }
-
         if (timestamp.seconds !== undefined && timestamp.nanoseconds !== undefined) {
             return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
         }
-
         return new Date(timestamp);
     }
 
@@ -67,7 +72,6 @@ const DMList = () => {
         router.push(`/chat/${girlId}`);
     };
 
-    // Helper function to truncate text and add ellipsis
     function truncateWithEllipsis(text, maxLength) {
         return text && text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     }
@@ -77,11 +81,10 @@ const DMList = () => {
             sx={{
                 minHeight: '100vh',
                 backgroundSize: 'cover',
-                backgroundPosition: 'center'
+                backgroundPosition: 'center',
             }}
         >
             <Container maxWidth="lg">
-
                 {/* Girls List Component */}
                 {loading ? (
                     <Box
@@ -93,9 +96,9 @@ const DMList = () => {
                             marginBottom: '20px',
                         }}
                     >
-                        {[1, 2, 3, 4, 5].map((item) => (
+                        {[...Array(5)].map((_, index) => (
                             <Box
-                                key={item}
+                                key={index}
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -103,7 +106,7 @@ const DMList = () => {
                                     marginRight: '10px',
                                 }}
                             >
-                                <Skeleton variant="rectangular" width={85} height={85} sx={{ borderRadius: '10%' }} />
+                                <Skeleton variant="circular" width={85} height={85} />
                                 <Skeleton variant="text" width={60} height={30} sx={{ mt: 1 }} />
                             </Box>
                         ))}
@@ -118,7 +121,7 @@ const DMList = () => {
                             marginBottom: '20px',
                         }}
                     >
-                        {girls.filter(girl => !girl.private).map((girl) => (
+                        {girls.filter((girl) => !girl.private).map((girl) => (
                             <Box
                                 key={girl.id}
                                 sx={{
@@ -132,10 +135,14 @@ const DMList = () => {
                                     <Avatar
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                         alt={girl.name}
-                                        sx={{ width: 85, height: 85, borderRadius: '10%', cursor: 'pointer' }}
+                                        sx={{
+                                            width: 85,
+                                            height: 85,
+                                            cursor: 'pointer',
+                                        }}
                                     />
                                 </Link>
-                                <Typography variant="h6" sx={{ color: 'white' }}>
+                                <Typography variant="subtitle1" sx={{ color: 'white', mt: 1 }}>
                                     {girl.name}
                                 </Typography>
                             </Box>
@@ -160,11 +167,11 @@ const DMList = () => {
                         <>
                             <List>
                                 {loading ? (
-                                    [1, 2, 3, 4].map((item) => (
+                                    [...Array(4)].map((_, index) => (
                                         <ListItem
-                                            key={item}
+                                            key={index}
                                             sx={{
-                                                borderBottom: item !== 4 ? '1px solid grey' : 'none',
+                                                borderBottom: index !== 3 ? '1px solid grey' : 'none',
                                                 mb: 2,
                                                 alignItems: 'flex-start',
                                                 paddingBottom: '25px',
@@ -186,6 +193,7 @@ const DMList = () => {
                                 ) : chats && chats.length > 0 ? (
                                     chats.map((chat, index) => {
                                         const date = convertFirestoreTimestampToDate(chat.lastMessage?.timestamp);
+                                        const dateLastSeenGirl = convertFirestoreTimestampToDate(chat.lastSeenGirl);
                                         return (
                                             <ListItem
                                                 key={index}
@@ -205,6 +213,27 @@ const DMList = () => {
                                                                 sx={{ width: 70, height: 70, borderRadius: '10%' }}
                                                             />
                                                         </Link>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                                            <Box
+                                                                sx={{
+                                                                    width: 10,
+                                                                    height: 10,
+                                                                    borderRadius: '50%',
+                                                                    backgroundColor: chat.isActive ? 'green' : 'red',
+                                                                    marginRight: 1,
+                                                                    animation: `${flash} ${chat.isActive ? '2s' : '2s'} infinite`,
+                                                                }}
+                                                            />
+                                                            <Typography variant="body2" style={{ color: 'gray' }}>
+                                                                {chat.isActive ? 'Activa' : 'Inactiva'}
+                                                            </Typography>
+                                                        </Box>
+                                                        {!chat.isActive && dateLastSeenGirl && (
+                                                            <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
+                                                                Activa{' '}
+                                                                {formatDistanceToNow(dateLastSeenGirl, { addSuffix: true, locale: es })}
+                                                            </Typography>
+                                                        )}
                                                     </Grid>
 
                                                     <Grid item xs={8}>
@@ -219,10 +248,6 @@ const DMList = () => {
                                                             fullWidth
                                                             onClick={() => handleMessageClick(chat.girlId)}
                                                             sx={{
-                                                                alignSelf: 'center',
-                                                                '&:hover': {
-                                                                    background: 'linear-gradient(45deg, #FFFFFF 30%, #E0E0E0 90%)',
-                                                                },
                                                                 backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
                                                                 color: 'black',
                                                                 padding: '10px 20px',
@@ -233,12 +258,15 @@ const DMList = () => {
                                                                 textOverflow: 'ellipsis',
                                                                 overflow: 'hidden',
                                                                 whiteSpace: 'nowrap',
+                                                                '&:hover': {
+                                                                    background: 'linear-gradient(45deg, #E0E0E0 30%, #FFFFFF 90%)',
+                                                                },
                                                             }}
                                                         >
                                                             {truncateWithEllipsis(chat.lastMessage?.content || 'Sin mensajes', 22)}
                                                         </Button>
 
-                                                        <Typography variant="body2" style={{ marginTop: 6, color: 'gray' }}>
+                                                        <Typography variant="body2" sx={{ marginTop: 1, color: 'gray' }}>
                                                             {date
                                                                 ? formatDistanceToNow(date, {
                                                                     addSuffix: true,
@@ -273,9 +301,3 @@ const DMList = () => {
 };
 
 export default DMList;
-
-
-
-
-
-

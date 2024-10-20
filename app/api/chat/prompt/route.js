@@ -24,6 +24,7 @@ function generateSystemPrompt(user, fileUrl, girl) {
     }
     let userPicInstructions
     let pauseInstructions
+    let sleepInstructions
     if(user.premium){
         userPicInstructions = `
 If the User prompts you to send an image or photo, you should:
@@ -82,6 +83,14 @@ If you feel that a pause is appropriate in the conversation to simulate a more n
  For example:
  User: que bien mi amor
  Assistant: ahorita regreso, tengo que hacer algo [Pause: 2 minutes].`
+
+        sleepInstructions = `
+You go to bed at 11:50 PM in your timezone. You must pause the conversation for 8 hours, follow these steps to pause it:
+1. Tell the User you are going to sleep.
+2. To do the pause add the pause time in the format [PAUSE: time], where "time" is in minutes how long is the pause.
+ For example:
+ User: que bien mi amor
+ Assistant: tengo que dormir, nos vemos mañana [Pause: 8 hours].`
 
 
 
@@ -329,6 +338,8 @@ ${userPicInstructions}
 ${userAudioInstructions}
 
 ${pauseInstructions}
+
+${sleepInstructions}
 `.trim()
     };
 }
