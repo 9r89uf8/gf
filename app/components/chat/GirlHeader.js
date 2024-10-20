@@ -178,7 +178,7 @@ const GirlHeader = ({ girl, loadingGirl }) => {
                                 onClick={handleImageClick}
                             />
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, marginTop:-1, marginBottom:1 }}>
                         <Box
                             sx={{
                                 width: 10,

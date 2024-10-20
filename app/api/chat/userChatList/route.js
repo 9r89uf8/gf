@@ -11,6 +11,12 @@ export async function GET(req) {
             return NextResponse.json({ error: authResult.error }, { status: 401 });
         }
 
+        const girlsCollection = await adminDb
+            .firestore()
+            .collection('girls')
+            .orderBy('priority', 'desc')
+            .get();
+
         const userId = authResult.user.uid;
         const chatsRef = adminDb.firestore().collection('users').doc(userId).collection('conversations');
         const chatsDocs = await chatsRef.get();
@@ -41,13 +47,23 @@ export async function GET(req) {
             const girlId = doc.id;
             const chatData = doc.data();
             const girlData = girlsData[girlId];
+            let finalIsActive;
+            let finalLastSeen;
+            if(!girlData.isActive){
+                finalIsActive = false;
+                finalLastSeen = girlData.lastSeenGirl
+            }
+            if(girlData.isActive&&chatData.isGirlOnline){
+                finalIsActive = chatData.isGirlOnline
+                finalLastSeen = chatData.lastSeen
+            }
 
             if (girlData) {
                 chatDataArray.push({
                     girlId: girlId,
                     picture: girlData.picture,
-                    isActive: chatData.isGirlOnline,
-                    lastSeenGirl: chatData.lastSeen,
+                    isActive: finalIsActive,
+                    lastSeenGirl: finalLastSeen,
                     lastMessage: chatData.lastMessage
                 });
             }
