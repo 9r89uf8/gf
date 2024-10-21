@@ -104,7 +104,7 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
-const GirlHeader = ({ girl, loadingGirl }) => {
+const GirlHeader = ({ girl, loadingGirl, chat }) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
 
@@ -140,6 +140,10 @@ const GirlHeader = ({ girl, loadingGirl }) => {
         }
         return new Date(timestamp);
     }
+
+    // Define variables based on the presence of 'chat'
+    const isActive = chat ? chat.isActive : girl.isActive;
+    const lastSeenGirl = chat ? chat.lastSeenGirl : girl.lastSeenGirl;
 
     if (loadingGirl) {
         // Display Skeleton components while loading
@@ -184,19 +188,19 @@ const GirlHeader = ({ girl, loadingGirl }) => {
                                 width: 10,
                                 height: 10,
                                 borderRadius: '50%',
-                                backgroundColor: girl.isActive ? 'green' : 'red',
+                                backgroundColor: isActive ? 'green' : 'red',
                                 marginRight: 1,
-                                animation: `${flash} ${girl.isActive ? '2s' : '2s'} infinite`,
+                                animation: `${flash} ${isActive ? '2s' : '2s'} infinite`,
                             }}
                         />
                         <Typography variant="body2" style={{ color: 'gray' }}>
-                            {girl.isActive ? 'Activa' : 'Inactiva'}
+                            {isActive ? 'Activa' : 'Inactiva'}
                         </Typography>
                         </Box>
-                        {!girl.isActive && convertFirestoreTimestampToDate(girl.lastSeenGirl) && (
+                        {!isActive && convertFirestoreTimestampToDate(lastSeenGirl) && (
                             <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
                                 Activa{' '}
-                                {formatDistanceToNow(convertFirestoreTimestampToDate(girl.lastSeenGirl), { addSuffix: true, locale: es })}
+                                {formatDistanceToNow(convertFirestoreTimestampToDate(lastSeenGirl), { addSuffix: true, locale: es })}
                             </Typography>
                         )}
                         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>

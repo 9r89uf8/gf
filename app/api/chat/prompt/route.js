@@ -650,11 +650,17 @@ export async function POST(req) {
                     transactionIsGirlOnline = true;
                     transactionGirlOfflineUntil = null;
                 }
-                if(!transactionIsGirlOnline &&!transactionGirlOfflineUntilMillis &&girlData.isActive){
+                if(!transactionIsGirlOnline &&!transactionGirlOfflineUntilMillis&&girlData.isActive){
                     isGirlOnline = true
                     girlOfflineUntil = null
                     transactionIsGirlOnline = true;
                     transactionGirlOfflineUntil = null;
+                }
+                if(!girlData.isActive){
+                    isGirlOnline = false
+                    girlOfflineUntil = girlData.girlOfflineUntil;
+                    transactionIsGirlOnline = false;
+                    transactionGirlOfflineUntil = girlData.girlOfflineUntil
                 }
 
                 // [Your logic to update transactionIsGirlOnline and transactionGirlOfflineUntil]

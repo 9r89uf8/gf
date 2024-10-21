@@ -24,11 +24,15 @@ export async function GET() {
             const randomMinutes = Math.floor(Math.random() * (20 - 5 + 1)) + 5;
             const lastSeenTimestamp = new Date(now.getTime() - randomMinutes * 60000);
 
+            // Set girlOfflineUntil to 8 hours from now
+            const girlOfflineUntil = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+
             // Update the girl's data
             const updatedGirlData = {
                 ...girlData,
                 isActive: false,
-                lastSeenGirl: lastSeenTimestamp
+                lastSeenGirl: lastSeenTimestamp,
+                girlOfflineUntil: girlOfflineUntil
             };
 
             // Add the update operation to the batch

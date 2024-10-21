@@ -11,11 +11,6 @@ export async function GET(req) {
             return NextResponse.json({ error: authResult.error }, { status: 401 });
         }
 
-        const girlsCollection = await adminDb
-            .firestore()
-            .collection('girls')
-            .orderBy('priority', 'desc')
-            .get();
 
         const userId = authResult.user.uid;
         const chatsRef = adminDb.firestore().collection('users').doc(userId).collection('conversations');
@@ -57,7 +52,24 @@ export async function GET(req) {
                 finalIsActive = chatData.isGirlOnline
                 finalLastSeen = chatData.lastSeen
             }
+            if(girlData.isActive&&!chatData.isGirlOnline){
+                finalIsActive = chatData.isGirlOnline
+                finalLastSeen = chatData.lastSeen
+            }
 
+            let girlOfflineUntilMillis = null;
+            // Get current time in milliseconds since epoch
+            const currentMillis = Date.now();
+
+
+            if(chatData.girlOfflineUntil){
+                girlOfflineUntilMillis = chatData.girlOfflineUntil._seconds * 1000 +
+                    chatData.girlOfflineUntil._nanoseconds / 1e6;
+            }
+            if(girlOfflineUntilMillis&&currentMillis&&currentMillis >= girlOfflineUntilMillis){
+                finalIsActive = true
+                finalLastSeen = null
+            }
             if (girlData) {
                 chatDataArray.push({
                     girlId: girlId,

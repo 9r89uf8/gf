@@ -42,6 +42,8 @@ const Chat = ({params}) => {
     const [isSending, setIsSending] = useState(false);
     const loadingGirl = useStore((state) => state.loadingGirl);
     const setLoadingGirl = useStore((state) => state.setLoadingGirl);
+    const chats = useStore((state) => state.chats);
+    const [chat, setChat] = useState(null);
 
     useEffect(() => {
         const initializeData = async () => {
@@ -53,7 +55,13 @@ const Chat = ({params}) => {
         initializeData();
     }, [params.id]);
 
-
+    // Update chat when chats or girl changes
+    useEffect(() => {
+        if (chats && girl) {
+            const foundChat = chats.find((chat) => chat.id === girl.id);
+            setChat(foundChat);
+        }
+    }, [chats, girl]);
 
     useEffect(() => {
         if (user && girl) {
@@ -147,7 +155,7 @@ const Chat = ({params}) => {
 
     return (
         <StyledContainer maxWidth="sm">
-            {girl && <GirlHeader girl={girl} loadingGirl={loadingGirl}/>}
+            {girl && <GirlHeader girl={girl} chat={chat} loadingGirl={loadingGirl}/>}
 
             {girl&&
                 <ConversationHistory
