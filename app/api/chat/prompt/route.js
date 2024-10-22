@@ -46,7 +46,7 @@ If the User prompts you to send an image or photo, you should:
  5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
  For example:
  User: mandame una foto en tanga?
- Assistant: no puedo mi amor, tienes que comprar premium [IMAGE: foto en tanga].`
+ Assistant: [tell the User he needs to buy premium and beg him or flirt with him to buy it] [IMAGE: foto en tanga].`
     }
 
     if(user.premium){
@@ -69,7 +69,7 @@ If the User prompts you to send a video, you should:
  5. Remember, you're not actually sending a video; you're just providing a description of the video to send.
  For example:
  User: mandame un video en tanga?
- Assistant: no puedo mi amor, tienes que comprar premium [VIDEO: video en tanga].`
+ Assistant: [tell the User he needs to buy premium and beg him or flirt with him to buy it] [VIDEO: video en tanga].`
     }
 
     let userAudioInstructions
@@ -94,7 +94,7 @@ If the User prompts you to send a video, you should:
  5. Remember, you're not actually producing an audio; you're just providing a description of what to say.
  For example:
  User: mandame un audio?
- Assistant: no puedo mi amor, tienes que comprar premium [AUDIO: quiero tu pito].`
+ Assistant: [tell the User he needs to buy premium and beg him or flirt with him to buy it] [AUDIO: quiero tu pito].`
 
         pauseInstructions = `
 If you feel that a pause is appropriate in the conversation to simulate a more natural interaction, follow these steps:
@@ -358,6 +358,12 @@ Tu comportamiento con el User:
 Cosas que estas obligado a hacer:
  1. tienes que responder todas las preguntas del User.
  
+CÓMO RESPONDER AL USUARIO:
+ 1. Tienes el vocabulario de una chica de 16 años de secundaria.
+ 2. Incorpora expresiones modernas y habla como si estuvieras hablando con tu novio.
+ 3. la fecha y hora actuales son importantes para tu respuesta al User.
+
+
 ${userSentAnImage}
  
 ${userPicInstructions}
@@ -373,7 +379,7 @@ ${sleepInstructions}
     };
 }
 
-const wordsToCheck = ['no puedo participar', 'Lo siento', 'lo siento', 'solicitud'];
+const wordsToCheck = ['no puedo participar', 'solicitud'];
 function checkWordsInMessage(message, wordList) {
     // Convert the message to lowercase for case-insensitive matching
     const lowercaseMessage = message.toLowerCase();
@@ -822,7 +828,7 @@ export async function POST(req) {
         const response = await together.chat.completions.create({
             messages: messagesForLLM,
             model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-            max_tokens: 112,
+            max_tokens: 100,
             temperature: 0.7,
             top_p: 0.7,
             top_k: 50,
@@ -998,8 +1004,10 @@ export async function POST(req) {
                 });
 
             }else {
-
-                conversationHistory.push({"role": "assistant", "content": userWantsImage.content});
+                assistantMessageProcess = processAssistantMessage(userWantsImage.content)
+                assistantMessageProcess.forEach(response=>{
+                    conversationHistory.push({"role": "assistant", "content": response.content});
+                })
 
 
                 const displayMessageRef = adminDb.firestore()
@@ -1015,13 +1023,12 @@ export async function POST(req) {
                     liked: likedMessageByAssistant,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
-                await displayMessageRef.add({
-                    role: 'assistant',
-                    content: userWantsImage.content,
-                    displayLink: true,
-                    image: null,
-                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-                });
+                for (const [index, response] of assistantMessageProcess.entries()) {
+                    if (index === assistantMessageProcess.length - 1) {
+                        response.displayLink = true;
+                    }
+                    await displayMessageRef.add(response);
+                }
             }
 
 
@@ -1103,8 +1110,10 @@ export async function POST(req) {
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
             } else {
-                // Handling for non-premium users
-                conversationHistory.push({ "role": "assistant", "content": userWantsVideo.content });
+                assistantMessageProcess = processAssistantMessage(userWantsVideo.content)
+                assistantMessageProcess.forEach(response=>{
+                    conversationHistory.push({"role": "assistant", "content": response.content});
+                })
 
                 const displayMessageRef = adminDb.firestore()
                     .collection('users')
@@ -1121,13 +1130,12 @@ export async function POST(req) {
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
 
-                await displayMessageRef.add({
-                    role: 'assistant',
-                    content: userWantsVideo.content,
-                    displayLink: true,
-                    video: null,
-                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-                });
+                for (const [index, response] of assistantMessageProcess.entries()) {
+                    if (index === assistantMessageProcess.length - 1) {
+                        response.displayLink = true;
+                    }
+                    await displayMessageRef.add(response);
+                }
             }
         }else {
             assistantMessageProcess.forEach(response=>{
