@@ -10,25 +10,26 @@ import {
     styled,
     Stack,
     Modal,
-    IconButton,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Skeleton, // Import Skeleton
+    Skeleton,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
-import ActiveIndicator from './ActiveIndicator';
 import AudioPlayer from './AudioPlayer';
 import { DeleteForever } from "@mui/icons-material";
 import { deleteMessages } from "@/app/services/chatService";
 import Link from 'next/link';
-import {keyframes} from "@mui/system";
-import {formatDistanceToNow} from "date-fns";
-import {es} from "date-fns/locale";
+import { keyframes } from "@mui/system";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import VideocamIcon from '@mui/icons-material/Videocam';
+
 const flash = keyframes`
     0% { opacity: 1; }
     50% { opacity: 0.2; }
@@ -90,6 +91,25 @@ const DeleteButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const InfoBox = styled(Box)(({ theme }) => ({
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+    padding: theme.spacing(2),
+    marginBottom: 25,
+    textAlign: 'center',
+    color: 'white',
+}));
+
+const GradientIcon = styled(Box)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #ff6ec4 30%, #7873f5 90%)',
+    borderRadius: '50%',
+    padding: theme.spacing(1.5),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(1),
+}));
+
 // Modal Style
 const modalStyle = {
     position: 'fixed',
@@ -141,7 +161,7 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
         return new Date(timestamp);
     }
 
-// Define variables based on the presence of 'chat'
+    // Define variables based on the presence of 'chat'
     let isActive;
 
     if (chat) {
@@ -199,20 +219,20 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                                 onClick={handleImageClick}
                             />
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, marginTop:-1, marginBottom:1 }}>
-                        <Box
-                            sx={{
-                                width: 10,
-                                height: 10,
-                                borderRadius: '50%',
-                                backgroundColor: isActive ? 'green' : 'red',
-                                marginRight: 1,
-                                animation: `${flash} ${isActive ? '2s' : '2s'} infinite`,
-                            }}
-                        />
-                        <Typography variant="body2" style={{ color: 'gray' }}>
-                            {isActive ? 'Activa' : 'Inactiva'}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, marginTop: -1, marginBottom: 1 }}>
+                            <Box
+                                sx={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '50%',
+                                    backgroundColor: isActive ? 'green' : 'red',
+                                    marginRight: 1,
+                                    animation: `${flash} ${isActive ? '2s' : '2s'} infinite`,
+                                }}
+                            />
+                            <Typography variant="body2" style={{ color: 'gray' }}>
+                                {isActive ? 'Activa' : 'Inactiva'}
+                            </Typography>
                         </Box>
                         {!isActive && convertFirestoreTimestampToDate(lastSeenGirl) && (
                             <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
@@ -222,25 +242,47 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                         )}
                         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
                             {girl.username}
-                            <VerifiedIcon
-                                sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }}
-                            />
+                            <VerifiedIcon sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }} />
                         </Typography>
                         <Link href={`/${girl.id}`} passHref legacyBehavior>
-                            <ViewProfileButton
-                                variant="contained"
-                                sx={{ mb: 3 }}
-                            >
+                            <ViewProfileButton variant="contained" sx={{ mb: 3 }}>
                                 Fotos
                             </ViewProfileButton>
                         </Link>
+
+                        <InfoBox>
+                            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                                ¡Puedes recibir de {girl.name}!
+                            </Typography>
+                            <Stack direction="row" spacing={4} justifyContent="center">
+                                <Box display="flex" flexDirection="column" alignItems="center">
+                                    <GradientIcon>
+                                        <AudiotrackIcon fontSize="large" sx={{ color: 'white' }} />
+                                    </GradientIcon>
+                                    <Typography variant="body1">Audios</Typography>
+                                </Box>
+                                <Box display="flex" flexDirection="column" alignItems="center">
+                                    <GradientIcon>
+                                        <PhotoCameraIcon fontSize="large" sx={{ color: 'white' }} />
+                                    </GradientIcon>
+                                    <Typography variant="body1">Imágenes</Typography>
+                                </Box>
+                                <Box display="flex" flexDirection="column" alignItems="center">
+                                    <GradientIcon>
+                                        <VideocamIcon fontSize="large" sx={{ color: 'white' }} />
+                                    </GradientIcon>
+                                    <Typography variant="body1">Videos</Typography>
+                                </Box>
+                            </Stack>
+                        </InfoBox>
+
                         <Stack spacing={2} width="100%">
                             {girl && girl.audioFiles && girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
                                 <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />
                             ))}
                         </Stack>
 
-                        {conversationHistory && conversationHistory.length > 0 &&
+                        {conversationHistory && conversationHistory.length > 0 && (
                             <DeleteButton
                                 variant="contained"
                                 startIcon={<DeleteForever />}
@@ -249,7 +291,7 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                             >
                                 Borrar Mensajes
                             </DeleteButton>
-                        }
+                        )}
                     </Box>
                 </CardContent>
             </GlassCard>
@@ -267,8 +309,8 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                         style={{
                             maxWidth: '100%',
                             maxHeight: '100%',
-                            objectFit: 'contain', // Maintain aspect ratio
-                            borderRadius: '0', // Remove border radius for a cleaner look
+                            objectFit: 'contain',
+                            borderRadius: '0',
                             cursor: 'pointer',
                         }}
                         onClick={handleCloseFullscreen}
@@ -304,4 +346,6 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
 };
 
 export default GirlHeader;
+
+
 
