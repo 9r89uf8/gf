@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl, deleteGirl } from "@/app/services/girlService";
-import {deleteGirlPost, deleteGirlPicture} from "@/app/services/postsService";
+import {deleteGirlPost, deleteGirlPicture, deleteGirlVideo} from "@/app/services/postsService";
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
     Container,
@@ -154,6 +154,24 @@ const ManageGirlPosts = () => {
         }
     };
 
+    // Handle video deletion
+    const handleDeleteVideo = async (videoId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this video?');
+        if (!confirmDelete) return;
+
+        setLoading(true);
+        try {
+            await deleteGirlVideo({ videoId: videoId });
+            // Update the girl's posts in the store
+            alert('Video deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting Video:', error);
+            alert('Failed to delete the Video.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -295,6 +313,63 @@ const ManageGirlPosts = () => {
                                                                 variant="contained"
                                                                 color="secondary"
                                                                 onClick={() => handleDeletePicture(post.id)}
+                                                                sx={{ marginTop: 1 }}
+                                                            >
+                                                                Delete Picture
+                                                            </Button>
+                                                        </Card>
+                                                    </Grid>
+                                                ))
+                                            ) : (
+                                                <Grid item xs={12} key='9879'>
+                                                    <Typography variant="body1" sx={{ color: 'white', textAlign: 'center' }}>
+                                                        No pictures available.
+                                                    </Typography>
+                                                </Grid>
+                                            )}
+                                        </Grid>
+
+
+                                        {/* Posts List */}
+                                        <Typography variant="h5" gutterBottom sx={{ color: 'white', marginBottom: 2, marginTop:5 }}>
+                                            Videos for Chat
+                                        </Typography>
+                                        <Grid container spacing={2}>
+                                            {selectedGirl.videos && selectedGirl.videos.length > 0 ? (
+                                                selectedGirl.videos.map(post => (
+                                                    <Grid item xs={12} key={post.id}>
+                                                        <Card sx={{ padding: 2, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+                                                            {/* Assuming you have a Post component */}
+                                                            {/* <Post data={post} /> */}
+                                                            <MediaWrapper>
+                                                                {post.image ? (
+                                                                    <>
+                                                                        <PostImage
+                                                                            src={`https://d3sog3sqr61u3b.cloudfront.net/${post.image}`}
+                                                                            alt={`Post ${post.id}`}
+                                                                            style={{ cursor: 'pointer' }}
+                                                                        />
+                                                                    </>
+                                                                ) : post.video ? (
+                                                                    <VideoPlayer
+                                                                        options={{
+                                                                            controls: true,
+                                                                            sources: [{
+                                                                                src: `https://d3sog3sqr61u3b.cloudfront.net/${post.video}`,
+                                                                                type: 'video/mp4'
+                                                                            }],
+                                                                            controlBar: {
+                                                                                volumePanel: true,
+                                                                                fullscreenToggle: false,
+                                                                            },
+                                                                        }}
+                                                                    />
+                                                                ) : null}
+                                                            </MediaWrapper>
+                                                            <Button
+                                                                variant="contained"
+                                                                color="secondary"
+                                                                onClick={() => handleDeleteVideo(post.id)}
                                                                 sx={{ marginTop: 1 }}
                                                             >
                                                                 Delete Picture

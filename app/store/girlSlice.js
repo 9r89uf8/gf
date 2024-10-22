@@ -20,6 +20,14 @@ export const createGirlSlice = (set) => ({
             }
             : null
     })),
+    removeVideo: (postId) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                videos: state.girl.videos.filter(post => post.id !== postId)
+            }
+            : null
+    })),
     updateFollowers: (newFollowers, newCount) => set((state) => {
         if (!state.girl) return state;
         return {

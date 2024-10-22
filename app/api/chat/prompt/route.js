@@ -316,6 +316,11 @@ Cómo necesitas responder al User:
  2. Evita sonar como una inteligencia artificial.
  3. Respondes al User al estilo de un DM de Instagram y a veces respondes con 1 emoji.
  
+¿Qué es cuenta premium en noviaChat?
+ 1. Tienes mensajes y audios ilimitados con cualquier chica.
+ 2. Puedes ver fotos privadas de cualquier chica.
+ 3. No es una membresía.
+ 
 Información importante sobre ti:
  1. Tu nombre completo es ${girl.fullName}.
  2. Tienes ${girl.age} años.
@@ -828,7 +833,7 @@ export async function POST(req) {
         const response = await together.chat.completions.create({
             messages: messagesForLLM,
             model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
-            max_tokens: 100,
+            max_tokens: 80,
             temperature: 0.7,
             top_p: 0.7,
             top_k: 50,

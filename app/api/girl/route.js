@@ -36,12 +36,21 @@ export async function POST(req) {
 
         let pictures = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+        // Fetching videos from the 'posts' collection where 'girlId' matches 'girlId'
+        const videosSnapshot = await adminDb.firestore().collection('videos')
+            .where('girlId', '==', id) // Assuming 'postId' is the field you want to match with 'girlId'
+            .orderBy('timestamp', "desc") // Order by timestamp
+            .get();
+
+        let videos = videosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         // Combining girl data and posts
         const responseData = {
             id: girlDoc.id,
             ...girlData,
             posts: posts,
-            pictures: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?pictures:[]
+            pictures: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?pictures:[],
+            videos: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?videos:[]
         };
 
 
