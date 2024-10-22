@@ -11,7 +11,7 @@ import { verifySession } from '@/app/services/stripeService';
 
 const PaymentResultPage = () => {
     const router = useRouter();
-    const loading = useStore((state) => state.loading);
+    const verifying = useStore((state) => state.verifying);
     const status = useStore((state) => state.status);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const PaymentResultPage = () => {
         router.push('/dm');
     };
 
-    if (loading) {
+    if (verifying) {
         return (
             <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <CircularProgress />
@@ -45,7 +45,7 @@ const PaymentResultPage = () => {
                                 Pago Exitoso!
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 3 }}>
-                                ¡Felicidades! Ahora eres un miembro premium. Puedes comenzar a chatear con tu chica favorita de inmediato.
+                                ¡Felicidades! Ahora eres un miembro premium. Puedes comenzar a chatear con tus chicas favoritas de inmediato.
                             </Typography>
                             <Button
                                 variant="contained"

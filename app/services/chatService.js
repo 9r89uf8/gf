@@ -118,7 +118,7 @@ export const sendChatPrompt = async (formData) => {
                 addNotification({
                     id: Date.now(),
                     type: 'success',
-                    message: 'a Arely le gustó tu mensaje.',
+                    message: `a ${data.girlName} le gustó tu mensaje.`,
                 });
 
             }
