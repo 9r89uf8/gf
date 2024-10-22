@@ -65,7 +65,7 @@ const Layout = ({ children }) => {
             />
         </head>
         <body>
-        <ServiceWorkerRegister />
+        {/*<ServiceWorkerRegister />*/}
         <Navbar/>
         <Notifications />
         <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
