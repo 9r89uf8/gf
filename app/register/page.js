@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { registerUser } from "@/app/services/authService";
-
+import { track } from '@vercel/analytics';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -123,6 +123,7 @@ const RegisterPage = () => {
             alert("Por favor, acepta los términos y condiciones.");
             return;
         }
+        track('Register');
         setDisableRegister(true);
         const { user, error } = await registerUser(data);
         setDisableRegister(false);

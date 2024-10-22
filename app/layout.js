@@ -5,6 +5,7 @@ import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingN
 import ServiceWorkerRegister from "@/app/components/sw/ServiceWorkerRegister";
 import Notifications from "@/app/components/notifications/Notifications";
 import './styles/globals.css';
+import { Analytics } from "@vercel/analytics/react"
 
 function generateSchemaMarkup() {
     const schemaData = {
@@ -69,6 +70,7 @@ const Layout = ({ children }) => {
         <Notifications />
         <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
         <ConditionalFloatingNavbar/>
+        <Analytics />
         </body>
         </html>
     );

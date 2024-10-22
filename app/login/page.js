@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser } from "@/app/services/authService";
 import { useStore } from '@/app/store/store';
-
+import { track } from '@vercel/analytics';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -94,6 +94,7 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        track('Login');
         setDisableLogin(true);
         const { user, error } = await loginUser(email, password, setUser);
         setDisableLogin(false);

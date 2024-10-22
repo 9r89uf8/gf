@@ -79,6 +79,7 @@ const PopularCreators = () => {
                         <Card
                             sx={{
                                 textAlign: 'center',
+                                marginBottom: 4,
                                 color: 'white',
                                 background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)',
                                 backdropFilter: 'blur(10px)',

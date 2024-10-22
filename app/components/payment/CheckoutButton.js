@@ -6,7 +6,7 @@ import { Button } from '@mui/material';
 import {createCheckoutSession} from "@/app/services/stripeService";
 import { useStore } from '@/app/store/store';
 import {styled} from "@mui/material/styles";
-
+import { track } from '@vercel/analytics';
 const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #343a40 30%, #212529 90%)',
     border: 0,
@@ -27,6 +27,7 @@ const CheckoutButton = () => {
     const setLoading = useStore((state) => state.setLoading);
 
     const handleCheckout = () => {
+        track('Purchase');
         createCheckoutSession(); // example amount
     };
 
