@@ -93,12 +93,12 @@ const Home = () => {
                 <PopularCreators />
 
                 {/* Download App Section */}
-                <GlassCard>
-                    <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
-                        Descarga la Aplicación
-                    </Typography>
-                    <InstallAppButton />
-                </GlassCard>
+                {/*<GlassCard>*/}
+                {/*    <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>*/}
+                {/*        Descarga la Aplicación*/}
+                {/*    </Typography>*/}
+                {/*    <InstallAppButton />*/}
+                {/*</GlassCard>*/}
 
                 {/* Company Stats Section */}
                 <GlassCard>
