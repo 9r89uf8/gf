@@ -3,6 +3,7 @@
 import React from 'react';
 import { Box, Typography, Badge, Avatar, Button, Paper } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useStore } from '@/app/store/store';
 import {
     AnimatedLikesIcon,
     BlueGradientHeartIcon,
@@ -22,7 +23,7 @@ function MessageItem({
                          getLastUserMessage,
                      }) {
     const router = useRouter();
-
+    const user = useStore((state) => state.user);
     const handleProfileClick = () => {
         router.push('/novia-virtual');
     };
@@ -190,7 +191,45 @@ function MessageItem({
                         }}
                     >
                         <>
-                            {message.image ? (
+                            {message.video ? (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'flex-start',
+                                        margin: 1,
+                                        maxWidth: '200px',
+                                    }}
+                                >
+                                    <video
+                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
+                                        controls
+                                        style={{
+                                            maxWidth: '100%',
+                                            maxHeight: '300px',
+                                            borderRadius: '8px',
+                                            marginTop: 9,
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => handleOpenModal(message.video)} // Open modal on click
+                                    />
+                                    <div
+                                        onClick={(e) => {
+                                            message.likeTimestamp = Date.now();
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleLike({ id: message.id });
+                                        }}
+                                        style={{ marginTop: 2, marginBottom: -5 }}
+                                    >
+                                        <AssistantMessage
+                                            style={{ fontSize: 24, marginLeft: -3 }}
+                                        >
+                                            {message.content}
+                                        </AssistantMessage>
+                                    </div>
+                                </Box>
+                            ) : message.image ? (
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -212,15 +251,18 @@ function MessageItem({
                                         }}
                                         onClick={() => handleOpenModal(message.image)} // Open modal on click
                                     />
-                                    <div onClick={(e) => {
-                                        message.likeTimestamp = Date.now();
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleLike({id: message.id});
-                                    }}
-                                         style={{marginTop: 2, marginBottom: -5}}
+                                    <div
+                                        onClick={(e) => {
+                                            message.likeTimestamp = Date.now();
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleLike({ id: message.id });
+                                        }}
+                                        style={{ marginTop: 2, marginBottom: -5 }}
                                     >
-                                        <AssistantMessage style={{fontSize: 24, marginLeft: -3,}}>
+                                        <AssistantMessage
+                                            style={{ fontSize: 24, marginLeft: -3 }}
+                                        >
                                             {message.content}
                                         </AssistantMessage>
                                     </div>
@@ -243,12 +285,14 @@ function MessageItem({
                                     </audio>
                                 </Box>
                             ) : (
-                                <div onClick={(e) => {
-                                    message.likeTimestamp = Date.now();
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleLike({id: message.id});
-                                }}>
+                                <div
+                                    onClick={(e) => {
+                                        message.likeTimestamp = Date.now();
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleLike({ id: message.id });
+                                    }}
+                                >
                                     <AssistantMessage style={{ fontSize: 24 }}>
                                         {message.content}
                                     </AssistantMessage>
@@ -258,7 +302,7 @@ function MessageItem({
                     </Badge>
                 </Box>
                 {/* Display the Buy Premium button if displayLink is true */}
-                {message.displayLink && (
+                {message.displayLink && !user.premium && (
                     <Paper
                         elevation={4}
                         sx={{
@@ -293,3 +337,4 @@ function MessageItem({
 }
 
 export default MessageItem;
+

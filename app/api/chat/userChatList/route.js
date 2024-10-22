@@ -76,6 +76,7 @@ export async function GET(req) {
                     picture: girlData.picture,
                     isActive: finalIsActive,
                     lastSeenGirl: finalLastSeen,
+                    girlOfflineUntil: null,
                     lastMessage: chatData.lastMessage
                 });
             }

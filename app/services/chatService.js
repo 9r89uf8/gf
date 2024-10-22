@@ -91,6 +91,7 @@ export const sendChatPrompt = async (formData) => {
     const setMessageSent = useStore.getState().setMessageSent;
     const updateUser = useStore.getState().updateUser;
     const audioFlag = useStore.getState().setAudioBoolean;
+    const updateChatList = useStore.getState().updateChatList;
     try {
         setMessageSent(true);
         const response = await fetch('/api/chat/prompt', {
@@ -110,6 +111,9 @@ export const sendChatPrompt = async (formData) => {
             }else {
                 audioFlag(false)
             }
+            if(data.finalGirlActiveData){
+                updateChatList(data.finalGirlActiveData)
+            }
             if(data.sendNotification){
                 addNotification({
                     id: Date.now(),
@@ -127,7 +131,7 @@ export const sendChatPrompt = async (formData) => {
     } catch (error) {
         setMessageSent(false);
         audioFlag(false)
-        console.error('Error sending chat prompt:', error);
+        console.error('Error sending chat prompt:', error.message);
         return null;
     }
 };

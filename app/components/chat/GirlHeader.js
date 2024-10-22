@@ -141,9 +141,26 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
         return new Date(timestamp);
     }
 
-    // Define variables based on the presence of 'chat'
-    const isActive = chat ? chat.isActive : girl.isActive;
-    const lastSeenGirl = chat ? chat.lastSeenGirl : girl.lastSeenGirl;
+// Define variables based on the presence of 'chat'
+    let isActive;
+
+    if (chat) {
+        // Convert 'girlOfflineUntil' timestamp to Date object
+        const girlOfflineUntilDate = convertFirestoreTimestampToDate(chat.girlOfflineUntil);
+        const currentTime = new Date();
+
+        if (chat.isActive) {
+            isActive = true;
+        } else if (girlOfflineUntilDate && girlOfflineUntilDate < currentTime) {
+            // If 'girlOfflineUntil' is less than current time, set 'isActive' to true
+            isActive = true;
+        } else {
+            isActive = false;
+        }
+    } else {
+        isActive = girl.isActive ? true : false;
+    }
+    let lastSeenGirl = chat ? chat.lastSeenGirl : girl.lastSeenGirl;
 
     if (loadingGirl) {
         // Display Skeleton components while loading

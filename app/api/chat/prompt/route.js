@@ -23,6 +23,7 @@ function generateSystemPrompt(user, fileUrl, girl) {
         userSentAnImage = ``
     }
     let userPicInstructions
+    let userVidInstructions
     let pauseInstructions
     let sleepInstructions
     if(user.premium){
@@ -46,6 +47,29 @@ If the User prompts you to send an image or photo, you should:
  For example:
  User: mandame una foto en tanga?
  Assistant: no puedo mi amor, tienes que comprar premium [IMAGE: foto en tanga].`
+    }
+
+    if(user.premium){
+        userVidInstructions = `
+If the User prompts you to send a video, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
+ 3. Do not ask what type of video they want.
+ 3. Remember, you're not actually sending a video; you're just providing a description of the video to send.
+ For example:
+ User: mandame un video?
+ Assistant: si mi amor, te envié el video [VIDEO: video en tanga].`
+    }else {
+        userVidInstructions = `
+ If the User prompts you to send a video, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
+ 3. The User needs to buy premium to get videos from you.
+ 4. Beg the User to buy premium, flirt with him.
+ 5. Remember, you're not actually sending a video; you're just providing a description of the video to send.
+ For example:
+ User: mandame un video en tanga?
+ Assistant: no puedo mi amor, tienes que comprar premium [VIDEO: video en tanga].`
     }
 
     let userAudioInstructions
@@ -331,6 +355,8 @@ ${userSentAnImage}
  
 ${userPicInstructions}
 
+${userVidInstructions}
+
 ${userAudioInstructions}
 
 ${pauseInstructions}
@@ -372,10 +398,37 @@ function parseAssistantMessage(message) {
         ]
         // Pick a random item from the list
         let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
-        console.log(randomMessageTextList[randomIndex])
         message = randomMessageTextList[randomIndex];
     }
     return { content: message, imageDescription };
+}
+
+function parseAssistantMessageVideo(message) {
+    const imageTagRegex = /\[(VIDEO|VIDEOS):\s*(.*?)\]/i;
+    const imageMatch = message.match(imageTagRegex);
+    let videoDescription = null;
+    if (imageMatch) {
+        videoDescription = imageMatch[1].trim();
+        message = message.replace(imageTagRegex, '').trim();
+    }
+
+    if(message===''){
+        let randomMessageTextList = [
+            '\u{1F618}',
+            '\u{1F60D}',
+            '\u{1F970}',
+            '\u{1F48B}',
+            '\u{1F609}',
+            '\u{1F525}',
+            '\u{1F496}',
+            'te gusta?',
+            'mandame un video tuyo'
+        ]
+        // Pick a random item from the list
+        let randomIndex = Math.floor(Math.random() * randomMessageTextList.length);
+        message = randomMessageTextList[randomIndex];
+    }
+    return { content: message, videoDescription };
 }
 
 function parseAssistantMessageAudio(message) {
@@ -813,7 +866,8 @@ export async function POST(req) {
         let assistantMessageProcess = processAssistantMessage(assistantMessage);
 
         let likedMessageByAssistant = Math.random() < 1/3;// This will be true 1/3 of the time
-        let tt = parseAssistantMessage(assistantMessage)
+        let userWantsImage = parseAssistantMessage(assistantMessage)
+        let userWantsVideo = parseAssistantMessageVideo(assistantMessage)
         let userWantsAnAudio = parseAssistantMessageAudio(assistantMessage)
         let pauseByLLM = parseAssistantMessagePause(assistantMessage)
         if(pauseByLLM.pauseTime){
@@ -854,9 +908,10 @@ export async function POST(req) {
                 ]
             }
         }
-        if(tt.imageDescription) {
+        //handle if user wants an image (userWantsImage) or if user wants a video (userWantsVideo)
+        if(userWantsImage.imageDescription) {
             if(userData.premium) {
-                let pictureDescription = tt.imageDescription.toLowerCase();
+                let pictureDescription = userWantsImage.imageDescription.toLowerCase();
 
                 // Fetch pictures where girlId matches
                 const picturesSnapshot = await adminDb.firestore()
@@ -900,7 +955,7 @@ export async function POST(req) {
 
                 // Proceed to add the messages to the user's displayMessages collection
 
-                conversationHistory.push({ "role": "assistant", "content": tt.content });
+                conversationHistory.push({ "role": "assistant", "content": userWantsImage.content });
 
 
                 const displayMessageRef = adminDb.firestore()
@@ -919,10 +974,12 @@ export async function POST(req) {
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 });
                 let contentText;
-                if(tt.content===''){
+                if(userWantsImage.content===''){
+                    //TODO
+                    //set the contentText to a random emoji
                     contentText = '😘'
                 }else {
-                    contentText = tt.content
+                    contentText = userWantsImage.content
                 }
 
                 // Add the assistant's message with the selected image
@@ -935,7 +992,7 @@ export async function POST(req) {
 
             }else {
 
-                conversationHistory.push({"role": "assistant", "content": tt.content});
+                conversationHistory.push({"role": "assistant", "content": userWantsImage.content});
 
 
                 const displayMessageRef = adminDb.firestore()
@@ -953,7 +1010,7 @@ export async function POST(req) {
                 });
                 await displayMessageRef.add({
                     role: 'assistant',
-                    content: tt.content,
+                    content: userWantsImage.content,
                     displayLink: true,
                     image: null,
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
@@ -961,6 +1018,110 @@ export async function POST(req) {
             }
 
 
+        }else if (userWantsVideo.videoDescription) {
+            if (userData.premium) {
+                let videoDescription = userWantsVideo.videoDescription.toLowerCase();
+
+                // Fetch videos where girlId matches
+                const videosSnapshot = await adminDb.firestore()
+                    .collection('videos')
+                    .where('girlId', '==', girlId)
+                    .get();
+
+                // Map the documents to an array of video objects
+                let activeVideos = videosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Tokenize the videoDescription
+                let targetWords = videoDescription.split(/\s+/).map(word => word.trim().toLowerCase());
+
+                // For each video, calculate a similarity score
+                activeVideos.forEach(video => {
+                    if (video.description) {
+                        let descriptionWords = video.description.toLowerCase().split(/\s+/).map(word => word.trim());
+                        let matchingWords = targetWords.filter(word => descriptionWords.includes(word));
+                        video.similarityScore = matchingWords.length;
+                    } else {
+                        video.similarityScore = 0;
+                    }
+                });
+
+                // Filter videos with the highest similarity score
+                let maxScore = Math.max(...activeVideos.map(video => video.similarityScore));
+                let matchingVideos = activeVideos.filter(video => video.similarityScore === maxScore && maxScore > 0);
+
+                let selectedVideo;
+
+                if (matchingVideos.length > 0) {
+                    // Select a random video from the matching videos
+                    const randomIndex = Math.floor(Math.random() * matchingVideos.length);
+                    selectedVideo = matchingVideos[randomIndex];
+                } else {
+                    // No matching videos found, select a random video from all videos
+                    const randomIndex = Math.floor(Math.random() * activeVideos.length);
+                    selectedVideo = activeVideos[randomIndex];
+                }
+
+                // Proceed to add the messages to the user's displayMessages collection
+                conversationHistory.push({ "role": "assistant", "content": userWantsVideo.content });
+
+                const displayMessageRef = adminDb.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .collection('conversations')
+                    .doc(girlId)
+                    .collection('displayMessages');
+
+                // Add the user's message
+                await displayMessageRef.add({
+                    role: 'user',
+                    content: userMessage,
+                    image: fileUrl,
+                    liked: likedMessageByAssistant,
+                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
+                });
+
+                let contentText;
+                if (userWantsVideo.content === '') {
+                    // Set the contentText to a random emoji
+                    contentText = '😘';
+                } else {
+                    contentText = userWantsVideo.content;
+                }
+
+                // Add the assistant's message with the selected video
+                await displayMessageRef.add({
+                    role: 'assistant',
+                    content: contentText,
+                    video: selectedVideo.video, // Ensure the video URL is stored in selectedVideo.video
+                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
+                });
+            } else {
+                // Handling for non-premium users
+                conversationHistory.push({ "role": "assistant", "content": userWantsVideo.content });
+
+                const displayMessageRef = adminDb.firestore()
+                    .collection('users')
+                    .doc(userId)
+                    .collection('conversations')
+                    .doc(girlId)
+                    .collection('displayMessages');
+
+                await displayMessageRef.add({
+                    role: 'user',
+                    content: userMessage,
+                    image: fileUrl,
+                    liked: likedMessageByAssistant,
+                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
+                });
+
+                await displayMessageRef.add({
+                    role: 'assistant',
+                    content: userWantsVideo.content,
+                    displayLink: true,
+                    video: null,
+                    timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
+                });
+            }
         }else {
             assistantMessageProcess.forEach(response=>{
                 conversationHistory.push({"role": "assistant", "content": response.content});
@@ -1014,7 +1175,7 @@ export async function POST(req) {
         await conversationRef.set({
             messages: conversationHistory,
             lastMessage: {
-                content: 'Arely te respondio', // Content of the last message
+                content: `${girlData.name} te respondió`, // Content of the last message
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 sender: 'assistant' // 'user' or 'assistant'
             },
@@ -1023,7 +1184,9 @@ export async function POST(req) {
             lastSeen: adminDb.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
-        if(pauseByLLM.pauseTime){
+        let isGirlOnlineData
+        let girlOfflineUntilData
+        if(pauseByLLM.pauseTime) {
             function handlePause(pauseTimeMillis) {
                 const isGirlOnline = false;
                 let offlineMinutes;
@@ -1046,6 +1209,8 @@ export async function POST(req) {
             }
 
             const { isGirlOnline, girlOfflineUntil, offlineMinutes } = handlePause(pauseByLLM.pauseTime);
+            isGirlOnlineData = isGirlOnline
+            girlOfflineUntilData = girlOfflineUntil
 
             await conversationRef.update({
                 isGirlOnline,
@@ -1053,20 +1218,14 @@ export async function POST(req) {
             });
 
         }
-        // Randomly decide if the girl goes offline for 10-30 minutes
-        // const currentTime = new Date();
-        // if (Math.random() < 0.9&&isGirlOnline) { // 10% chance
-        //     isGirlOnline = false;
-        //     const offlineMinutes = Math.floor(Math.random() * 21) + 1; // 10 to 30 minutes
-        //     const offlineUntil = new Date(currentTime.getTime() + offlineMinutes * 60000);
-        //     girlOfflineUntil = adminDb.firestore.Timestamp.fromDate(offlineUntil);
-        //
-        //     await conversationRef.update({
-        //         isGirlOnline: isGirlOnline,
-        //         girlOfflineUntil: girlOfflineUntil
-        //     });
-        // }
 
+
+        let finalGirlActiveData = {
+            isActive: isGirlOnlineData,
+            lastSeenGirl: new Date().toISOString(),
+            girlId: girlId,
+            girlOfflineUntil: girlOfflineUntilData
+        }
 
         // Retrieve display messages
         const displayMessageRef = adminDb.firestore()
@@ -1082,7 +1241,8 @@ export async function POST(req) {
             ...doc.data()
         }));
 
-        return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages, updatedUserData, sendNotification: likedMessageByAssistant, audio: addAudio }), {
+        return new Response(JSON.stringify({ assistantMessage, conversationHistory: displayMessages,
+            updatedUserData, sendNotification: likedMessageByAssistant, audio: addAudio, finalGirlActiveData: pauseByLLM.pauseTime?finalGirlActiveData:null }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',

@@ -58,7 +58,7 @@ const Chat = ({params}) => {
     // Update chat when chats or girl changes
     useEffect(() => {
         if (chats && girl) {
-            const foundChat = chats.find((chat) => chat.id === girl.id);
+            const foundChat = chats.find((chat) => chat.girlId === girl.id);
             setChat(foundChat);
         }
     }, [chats, girl]);

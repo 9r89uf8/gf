@@ -20,4 +20,11 @@ export const createChatSlice = (set) => ({
         messageSent: false,
         audios: []
     }),
+    updateChatList: (payload) => set((state) => ({
+        chats: state.chats.map((chat) =>
+            chat.girlId === payload.girlId
+                ? { ...chat, isActive: payload.isActive, lastSeenGirl: payload.lastSeenGirl, girlOfflineUntil: payload.girlOfflineUntil }
+                : chat
+        ),
+    })),
 });

@@ -97,9 +97,15 @@ export async function POST(req) {
             }
         }
 
+        let postRef
+        if(postRecord.image){
+            // Save the post to Firestore
+            postRef = await adminDb.firestore().collection('pictures').add(postRecord);
+        }else {
+            // Save the post to Firestore
+            postRef = await adminDb.firestore().collection('videos').add(postRecord);
+        }
 
-        // Save the post to Firestore
-        const postRef = await adminDb.firestore().collection('pictures').add(postRecord);
 
         return new Response(JSON.stringify({
             id: postRef.id,

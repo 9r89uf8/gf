@@ -221,7 +221,7 @@ const AddPicture = () => {
                                     fullWidth
                                 >
                                     Subir Imagen
-                                    <input type="file" hidden onChange={handleFileChange} accept="image/*" />
+                                    <input type="file" hidden onChange={handleFileChange} />
                                 </GradientButton>
                             </Grid>
 
