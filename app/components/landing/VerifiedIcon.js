@@ -22,7 +22,7 @@ const VerifiedIcon = () => {
                     cx="50"
                     cy="50"
                     r="40"
-                    fill="#48cae4"  // Blue fill color
+                    fill="#ffd670"  // Blue fill color
                 />
 
                 {/* Checkmark path */}
@@ -41,7 +41,7 @@ const VerifiedIcon = () => {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="#90e0ef"
+                    stroke="#fcbf49"
                     strokeWidth="2"
                 >
                     <animate
