@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import HomeIcon from '@mui/icons-material/Home';
+import MessageIcon from "@/app/components/nab/MessageIcon";
 import ChatIcon from '@mui/icons-material/Chat';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
@@ -59,7 +60,7 @@ export default function FloatingNavbar() {
 
     const routes = [
         { name: 'HOME', path: '/posts', icon: <VideoLibraryIcon fontSize='large' /> },
-        { name: 'TOP', path: '/dm', icon: <ChatIcon fontSize='large' /> },
+        { name: 'TOP', path: '/dm', icon: <MessageIcon /> },
         { name: 'USER', path: '/premium', icon: <AccountCircleIcon fontSize='large' /> }
     ];
 

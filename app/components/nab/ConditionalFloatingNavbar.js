@@ -6,8 +6,9 @@ import FloatingNavbar from "./FloatingNavbar";
 
 const ConditionalFloatingNavbar = () => {
     const pathname = usePathname();
-    const hiddenPaths = ['/chat', '/clips'];
-    const showFloatingNavbar = !hiddenPaths.includes(pathname);
+
+    // Check if pathname starts with '/chat/' or equals '/clips'
+    const showFloatingNavbar = !(pathname.startsWith('/chat/') || pathname === '/chat' || pathname === '/clips');
 
     if (!showFloatingNavbar) {
         return null;
