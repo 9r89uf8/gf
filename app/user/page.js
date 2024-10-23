@@ -218,12 +218,12 @@ const UserProfile = () => {
                 {user && user.premium ? (
                     <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}>
                         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#ffd700' }}>
-                            Membresía Premium
+                            Cuenta Premium
                         </Typography>
                         {!user.expired ? (
                             <>
                                 <Typography variant="h6" sx={{ mb: 1 }}>
-                                    Tu membresía premium está activa.
+                                    Tu cuenta premium está activa.
                                 </Typography>
                                 {daysRemaining !== null && hoursRemaining !== null ? (
                                     <Typography variant="h6">

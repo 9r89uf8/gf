@@ -19,14 +19,33 @@ export async function POST(request) {
         // Create a session cookie with the specified expiration time
         const sessionCookie = await adminDb.auth().createSessionCookie(token, { expiresIn });
 
-        // Fetch the user document from Firestore
-        const userDoc = await adminDb.firestore().collection('users').doc(userCredential.user.uid).get();
+        // Reference to the user document
+        const userRef = adminDb.firestore().collection('users').doc(userCredential.user.uid);
+        const userDoc = await userRef.get();
 
         if (!userDoc.exists) {
             throw new Error('User not found in Firestore');
         }
 
         const userData = userDoc.data();
+
+        // Check premium status and expiration
+        if (userData.premium && userData.expirationDate) {
+            const now = adminDb.firestore.Timestamp.now();
+
+            if (now.toMillis() > userData.expirationDate.toMillis()) {
+                // Premium has expired, update the user document
+                await userRef.update({
+                    premium: false,
+                    expirationDate: null,
+                    expired: true
+                });
+
+                // Update the local userData object to reflect these changes
+                userData.premium = false;
+                userData.expirationDate = null;
+            }
+        }
         // Set the token in an httpOnly cookie
         const cookieStore = cookies();
         cookieStore.set('token', sessionCookie, {

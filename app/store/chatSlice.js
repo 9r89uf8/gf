@@ -18,7 +18,9 @@ export const createChatSlice = (set) => ({
     clearAll: () => set({
         conversationHistory: [],
         messageSent: false,
-        audios: []
+        audios: [],
+        chats: [],
+        audioBoolean: false
     }),
     updateChatList: (payload) => set((state) => ({
         chats: state.chats.map((chat) =>
