@@ -82,6 +82,7 @@ export async function POST(req) {
         const fullName = formData.get('fullName');
         const birthDate = formData.get('birthDate');
         const brothers = formData.get('brothers');
+        const audioId = formData.get('audioId');
         const instagram = formData.get('instagram');
         const mom = formData.get('mom');
         const dad = formData.get('dad');
@@ -114,6 +115,7 @@ export async function POST(req) {
             age: age || girlData.age,
             country: country || girlData.country,
             bio: bio || girlData.bio,
+            audioId: audioId,
             priority: parseInt(priority, 10) || girlData.priority || 1,
             fullName: fullName || girlData.fullName,
             background: fileBackground || girlData.background,
@@ -143,9 +145,9 @@ export async function POST(req) {
 
         // Handle removal of existing audio files
         if (audioFilesToRemove && audioFilesToRemove.length > 0) {
-            for (const audioUrl of audioFilesToRemove) {
-                await deleteFromS3(audioUrl);
-            }
+            // for (const audioUrl of audioFilesToRemove) {
+            //     await deleteFromS3(audioUrl);
+            // }
             // Remove audio URLs from girlRecord.audioFiles
             girlRecord.audioFiles = (girlRecord.audioFiles || []).filter(url => !audioFilesToRemove.includes(url));
         }
@@ -175,7 +177,7 @@ export async function POST(req) {
         }, { status: 200 });
 
     } catch (error) {
-        console.error('Error updating girl:', error);
+        console.error('Error updating girl:', error.message);
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }

@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/app/store/store';
 import { getGirls } from '@/app/services/girlsService';
+import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
 import Link from 'next/link';
 import {
     Box,
@@ -14,7 +15,6 @@ import {
     Grid,
     Skeleton,
 } from '@mui/material';
-import VerifiedIcon from "@mui/icons-material/Verified";
 import CakeIcon from "@mui/icons-material/Cake";
 
 const PopularCreators = () => {
@@ -125,10 +125,8 @@ const PopularCreators = () => {
                                     <Box display="flex" justifyContent="center">
                                         <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white', marginTop: 1 }}>
                                             {user.username}
-                                            <VerifiedIcon
-                                                sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7', fontSize: 36 }}
-                                            />
                                         </Typography>
+                                        <VerifiedIcon/>
                                     </Box>
                                     <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
                                         <Typography variant="h5">{user.bio}</Typography>

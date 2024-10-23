@@ -118,6 +118,7 @@ const UpdateGirlInfo = () => {
         dad: '',
         sexActivity: '',
         sexHistory: '',
+        audioId: '',
         sexStory: '',
         name: ''
     });
@@ -141,6 +142,7 @@ const UpdateGirlInfo = () => {
                 audios: [], // Start with an empty array for new uploads
                 fullName: selectedGirl.fullName,
                 birthDate: selectedGirl.birthDate,
+                audioId: selectedGirl.audioId,
                 brothers: selectedGirl.brothers,
                 instagram: selectedGirl.instagram,
                 mom: selectedGirl.mom,
@@ -354,6 +356,13 @@ const UpdateGirlInfo = () => {
                                                 label="fullName"
                                                 name="fullname"
                                                 value={formData.fullName}
+                                                onChange={handleInputChange}
+                                            />
+                                            <StyledTextField
+                                                fullWidth
+                                                label="Audio Id"
+                                                name="audioId"
+                                                value={formData.audioId}
                                                 onChange={handleInputChange}
                                             />
                                             <StyledTextField

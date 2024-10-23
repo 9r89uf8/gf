@@ -23,7 +23,7 @@ import { alpha, styled } from "@mui/material/styles";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CakeIcon from '@mui/icons-material/Cake';
-import VerifiedIcon from "@mui/icons-material/Verified";
+import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 
@@ -271,17 +271,12 @@ const GirlProfile = ({ params }) => {
                                 {loading ? (
                                     <Skeleton variant="text" width={200} height={40} />
                                 ) : (
-                                    <Typography variant="h4" gutterBottom>
-                                        {girl ? girl.username : 'arely4diaz'}
-                                        <VerifiedIcon
-                                            sx={{
-                                                color: '#3498db',
-                                                verticalAlign: 'middle',
-                                                ml: 1,
-                                                fontSize: 36,
-                                            }}
-                                        />
-                                    </Typography>
+                                    <Box display="flex" justifyContent="center">
+                                        <Typography variant="h4" gutterBottom>
+                                            {girl ? girl.username : 'arely4diaz'}
+                                        </Typography>
+                                        <VerifiedIcon/>
+                                    </Box>
                                 )}
                                 {loading ? (
                                     <Box

@@ -18,7 +18,7 @@ import {
     Skeleton,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import VerifiedIcon from '@mui/icons-material/Verified';
+import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
 import AudioPlayer from './AudioPlayer';
 import { DeleteForever } from "@mui/icons-material";
 import { deleteMessages } from "@/app/services/chatService";
@@ -240,10 +240,12 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                                 {formatDistanceToNow(convertFirestoreTimestampToDate(lastSeenGirl), { addSuffix: true, locale: es })}
                             </Typography>
                         )}
-                        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white' }}>
-                            {girl.username}
-                            <VerifiedIcon sx={{ ml: 1, verticalAlign: 'middle', color: '#4FC3F7' }} />
-                        </Typography>
+                        <Box display="flex" justifyContent="center">
+                            <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ color: 'white', marginTop: 1 }}>
+                                {girl.username}
+                            </Typography>
+                            <VerifiedIcon/>
+                        </Box>
                         <Link href={`/${girl.id}`} passHref legacyBehavior>
                             <ViewProfileButton variant="contained" sx={{ mb: 3 }}>
                                 Fotos

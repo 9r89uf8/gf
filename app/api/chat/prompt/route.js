@@ -1220,7 +1220,7 @@ export async function POST(req) {
 
         let updatedUserData;
         if(userData.freeAudio>=1&&addAudio){
-            const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], 'wOOiYxPDE0vvikHW7Ggt', userId, 1, girlId);
+            const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], girlData.audioId, userId, 1, girlId);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({
                 freeAudio: adminDb.firestore.FieldValue.increment(-1),
