@@ -131,20 +131,19 @@ const PopularCreators = () => {
                                         </Typography>
                                     </Box>
                                     <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
-                                        <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                                        <Typography variant="h5">{user.age}</Typography>
+                                        <Typography variant="h5">{user.bio}</Typography>
                                     </Box>
                                     <Box display="flex" justifyContent="center" mt={2}>
                                         <Link href={`/${user.id}`} passHref legacyBehavior>
                                             <Button
                                                 sx={{
-                                                    background: 'linear-gradient(45deg, #023e8a 30%, #03045e 90%)',
+                                                    background: 'linear-gradient(45deg, #f8f9fa 30%, #e9ecef 90%)',
                                                     border: 0,
                                                     fontSize: 18,
                                                     borderRadius: 25,
                                                     marginRight: 4,
                                                     boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .1)',
-                                                    color: 'white',
+                                                    color: 'black',
                                                     height: 48,
                                                     padding: '0 15px',
                                                     fontWeight: 'bold',

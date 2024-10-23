@@ -18,9 +18,12 @@ import {
     Grid,
     Container,
     Card,
-    Skeleton,
+    Skeleton, Stack,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/system';
+import AudiotrackIcon from "@mui/icons-material/Audiotrack";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 const flash = keyframes`
     0% { opacity: 1; }
@@ -40,6 +43,25 @@ const GlassCard = styled(Card)(({ theme }) => ({
     padding: theme.spacing(2),
     marginBottom: theme.spacing(4),
     userSelect: 'none',
+}));
+
+const GradientIcon = styled(Box)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    borderRadius: '50%',
+    padding: theme.spacing(1.5),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(1),
+}));
+
+const InfoBox = styled(Box)(({ theme }) => ({
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+    padding: theme.spacing(2),
+    marginBottom: 25,
+    textAlign: 'center',
+    color: 'white',
 }));
 
 const DMList = () => {
@@ -152,7 +174,7 @@ const DMList = () => {
 
                 <GlassCard>
                     <Typography
-                        variant="h6"
+                        variant="h5"
                         sx={{
                             mb: 2,
                             color: 'white',
@@ -281,7 +303,7 @@ const DMList = () => {
                                     })
                                 ) : (
                                     <Typography
-                                        variant="subtitle1"
+                                        variant="h6"
                                         sx={{ textAlign: 'center', color: 'white', mt: 3 }}
                                     >
                                         No hay chats recientes
@@ -290,9 +312,37 @@ const DMList = () => {
                             </List>
                         </>
                     ) : (
-                        <Typography variant="subtitle1" sx={{ textAlign: 'center', color: 'white', mt: 3 }}>
-                            Regístrate para ver los chats
-                        </Typography>
+                        <>
+                            <Typography variant="h6" sx={{ textAlign: 'center', color: 'white', mt: 3, marginBottom: 2 }}>
+                                Regístrate para textear
+                            </Typography>
+
+                            <InfoBox>
+                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
+                                    Puedes recibir:
+                                </Typography>
+                                <Stack direction="row" spacing={4} justifyContent="center">
+                                    <Box display="flex" flexDirection="column" alignItems="center">
+                                        <GradientIcon>
+                                            <AudiotrackIcon fontSize="large" sx={{ color: 'white' }} />
+                                        </GradientIcon>
+                                        <Typography variant="body1">Audios</Typography>
+                                    </Box>
+                                    <Box display="flex" flexDirection="column" alignItems="center">
+                                        <GradientIcon>
+                                            <PhotoCameraIcon fontSize="large" sx={{ color: 'white' }} />
+                                        </GradientIcon>
+                                        <Typography variant="body1">Imágenes</Typography>
+                                    </Box>
+                                    <Box display="flex" flexDirection="column" alignItems="center">
+                                        <GradientIcon>
+                                            <VideocamIcon fontSize="large" sx={{ color: 'white' }} />
+                                        </GradientIcon>
+                                        <Typography variant="body1">Videos</Typography>
+                                    </Box>
+                                </Stack>
+                            </InfoBox>
+                        </>
                     )}
                 </GlassCard>
             </Container>
