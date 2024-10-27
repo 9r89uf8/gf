@@ -7,7 +7,9 @@ import { getGirl } from '@/app/services/girlService';
 import { checkIfCookie } from '@/app/services/authService';
 import {
     fetchMessages,
+    saveUserMessage,
     sendChatPrompt,
+    responseFromLLM,
     fetchAudios,
     likeMessage,
 } from '@/app/services/chatService';
@@ -15,6 +17,8 @@ import {Box, CircularProgress, Container, styled} from '@mui/material';
 import { useRouter } from 'next/navigation';
 import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import GirlHeader from '@/app/components/chat/GirlHeader';
+import {useRealtimeConversation} from "@/app/components/hooks/UseRealtimeChats";
+import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
 
 // Import the new components
 import ChatInputComponent from '@/app/components/chat/ChatInputComponent';
@@ -36,14 +40,10 @@ const Chat = ({params}) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const audios = useStore((state) => state.audios);
-    const shouldGetAudios = useStore((state) => state.audioBoolean);
-    const jornada = useStore((state) => state.jornada);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const [isSending, setIsSending] = useState(false);
     const loadingGirl = useStore((state) => state.loadingGirl);
     const setLoadingGirl = useStore((state) => state.setLoadingGirl);
-    const chats = useStore((state) => state.chats);
-    const [chat, setChat] = useState(null);
 
     useEffect(() => {
         const initializeData = async () => {
@@ -55,35 +55,17 @@ const Chat = ({params}) => {
         initializeData();
     }, [params.id]);
 
-    // Update chat when chats or girl changes
-    useEffect(() => {
-        if (chats && girl) {
-            const foundChat = chats.find((chat) => chat.girlId === girl.id);
-            setChat(foundChat);
-        }
-    }, [chats, girl]);
+    // Add real-time chat subscription
+    useRealtimeConversation({
+        userId: user?.uid,
+        girlId: params.id
+    });
 
-    useEffect(() => {
-        if (user && girl) {
-            fetchMessages({ userId: user.uid, girlId: girl.id });
-            fetchAudios({ girlId: girl.id });
-        }
-    }, [user, girl]);
+    useRealtimeGirlStatus({
+        userId: user?.uid,
+        girlId: params.id
+    });
 
-
-    useEffect(() => {
-        if (conversationHistory?.length > 0 && user) {
-            const assistantMessage = conversationHistory[conversationHistory.length - 1];
-            if (assistantMessage.role === 'assistant'&&shouldGetAudios) {
-                fetchAudios({girlId: params.id });
-            }
-        }
-    }, [conversationHistory]);
-
-
-    const handleLoginRedirect = () => {
-        router.push('/login'); // Adjust the path to your login or register page
-    };
 
     const handleBuy = () => {
         router.push('/premium'); // Adjust the path to your premium page
@@ -102,9 +84,7 @@ const Chat = ({params}) => {
 
         const formData = new FormData();
         formData.append('userId', user.uid);
-        formData.append('jornada', jornada);
         formData.append('girlId', girl.id);
-        formData.append('audio', true);
 
         if (image) {
             formData.append('image', image);
@@ -113,7 +93,8 @@ const Chat = ({params}) => {
             formData.append('userMessage', prompt.trim());
         }
 
-        await sendChatPrompt(formData);
+        await saveUserMessage(formData);
+        await responseFromLLM(formData)
         setPrompt('');
         setImage(null);
         setImagePreview(null);
@@ -145,17 +126,9 @@ const Chat = ({params}) => {
     const isPromptEntered = prompt.trim().length > 0;
     const canSendMessage = (user && user.freeMessages > 0) || !user;
 
-    // if (gettingGirl) {
-    //     return (
-    //         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    //             <CircularProgress />
-    //         </Box>
-    //     );
-    // }
-
     return (
         <StyledContainer maxWidth="sm">
-            {girl && <GirlHeader girl={girl} chat={chat} loadingGirl={loadingGirl}/>}
+            {girl && <GirlHeader girl={girl} loadingGirl={loadingGirl}/>}
 
             {girl&&
                 <ConversationHistory

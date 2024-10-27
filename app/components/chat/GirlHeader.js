@@ -161,27 +161,6 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
         return new Date(timestamp);
     }
 
-    // Define variables based on the presence of 'chat'
-    let isActive;
-
-    if (chat) {
-        // Convert 'girlOfflineUntil' timestamp to Date object
-        const girlOfflineUntilDate = convertFirestoreTimestampToDate(chat.girlOfflineUntil);
-        const currentTime = new Date();
-
-        if (chat.isActive) {
-            isActive = true;
-        } else if (girlOfflineUntilDate && girlOfflineUntilDate < currentTime) {
-            // If 'girlOfflineUntil' is less than current time, set 'isActive' to true
-            isActive = true;
-        } else {
-            isActive = false;
-        }
-    } else {
-        isActive = girl.isActive ? true : false;
-    }
-    let lastSeenGirl = chat ? chat.lastSeenGirl : girl.lastSeenGirl;
-
     if (loadingGirl) {
         // Display Skeleton components while loading
         return (
@@ -225,19 +204,19 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                                     width: 10,
                                     height: 10,
                                     borderRadius: '50%',
-                                    backgroundColor: isActive ? 'green' : 'red',
+                                    backgroundColor: girl.isActive ? 'green' : 'red',
                                     marginRight: 1,
-                                    animation: `${flash} ${isActive ? '2s' : '2s'} infinite`,
+                                    animation: `${flash} ${girl.isActive ? '2s' : '2s'} infinite`,
                                 }}
                             />
                             <Typography variant="body2" style={{ color: 'gray' }}>
-                                {isActive ? 'Activa' : 'Inactiva'}
+                                {girl.isActive ? 'Activa' : 'Inactiva'}
                             </Typography>
                         </Box>
-                        {!isActive && convertFirestoreTimestampToDate(lastSeenGirl) && (
+                        {!girl.isActive && convertFirestoreTimestampToDate(girl.lastSeenGirl) && (
                             <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
                                 Activa{' '}
-                                {formatDistanceToNow(convertFirestoreTimestampToDate(lastSeenGirl), { addSuffix: true, locale: es })}
+                                {formatDistanceToNow(convertFirestoreTimestampToDate(girl.lastSeenGirl), { addSuffix: true, locale: es })}
                             </Typography>
                         )}
                         <Box display="flex" justifyContent="center">

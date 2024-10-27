@@ -1,340 +1,169 @@
-// MessageItem.js
-
 import React from 'react';
-import { Box, Typography, Badge, Avatar, Button, Paper } from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { useStore } from '@/app/store/store';
-import {
-    AnimatedLikesIcon,
-    BlueGradientHeartIcon,
-    UserMessage,
-    AssistantMessage,
-    ResponseMessage,
-} from './styles';
+import { Box, Avatar, Badge, styled, Typography } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import HeartIcon from "@/app/components/chat/conversation/HeartIcon";
 
-function MessageItem({
+// Styled components remain the same
+const MessageBubble = styled(Box)(({ theme, isUser }) => ({
+    maxWidth: 300,
+    padding: theme.spacing(2),
+    borderRadius: 16,
+    fontSize: 22,
+    backgroundColor: isUser ? theme.palette.primary.main : theme.palette.grey[100],
+    color: isUser ? theme.palette.primary.contrastText : theme.palette.text.primary,
+    position: 'relative',
+}));
+
+const MediaContent = styled(Box)({
+    '& img, & video': {
+        maxWidth: '100%',
+        maxHeight: 300,
+        borderRadius: 8,
+        cursor: 'pointer',
+        objectFit: 'cover',
+        marginBottom: 8,
+    },
+});
+
+const MessageFooter = styled(Box)({
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 4,
+    '& svg': {
+        fontSize: 23, // Increased from 16 to 20
+    },
+});
+
+const TimeStamp = styled(Typography)(({ theme, isUser }) => ({
+    fontSize: '0.75rem',
+    color: isUser ? 'rgba(255, 255, 255, 0.7)' : theme.palette.text.secondary,
+}));
+
+// Components remain the same
+const StatusIndicator = ({ sent, seen }) => {
+    if (seen) {
+        return <DoneAllIcon sx={{ color: 'white', fontSize: 20 }} />; // Added explicit fontSize
+    }
+    if (sent) {
+        return <CheckIcon sx={{ color: 'white', fontSize: 20 }} />; // Added explicit fontSize
+    }
+    return null;
+};
+
+const MessageContent = ({ content, image, video, onClick }) => (
+    <Box>
+        <MediaContent>
+            {image && (
+                <img
+                    src={image}
+                    alt="message attachment"
+                    onClick={() => onClick(image)}
+                />
+            )}
+            {video && (
+                <video
+                    src={video}
+                    controls
+                    onClick={() => onClick(video)}
+                />
+            )}
+        </MediaContent>
+        <Box>{content}</Box>
+    </Box>
+);
+
+const MessageItem = ({
                          message,
                          index,
                          conversationHistory,
-                         audios,
-                         handleLike,
                          handleOpenModal,
+                         handleLike,
                          girl,
-                         getLastUserMessage,
-                     }) {
-    const router = useRouter();
-    const user = useStore((state) => state.user);
-    const handleProfileClick = () => {
-        router.push('/novia-virtual');
+                     }) => {
+    const isUser = message.role === 'user';
+    const showAvatar = index === 0 ||
+        conversationHistory[index - 1]?.role !== message.role;
+
+    function convertFirestoreTimestampToDate(timestamp) {
+        if (!timestamp) return null;
+        if (timestamp._seconds !== undefined && timestamp._nanoseconds !== undefined) {
+            return new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1e6);
+        }
+        if (timestamp.seconds !== undefined && timestamp.nanoseconds !== undefined) {
+            return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
+        }
+        return new Date(timestamp);
+    }
+
+    const formattedTime = (timestamp) => {
+        const date = convertFirestoreTimestampToDate(timestamp);
+        if (!date) return '';
+        // Changed format to use 12-hour time with 'a' for am/pm
+        return format(date, 'MMM h:mm a', { locale: es })
+            .replace('.', '')
+            .replace('AM', 'am')
+            .replace('PM', 'pm');
     };
 
-    const isDifferentRole =
-        index === 0 || conversationHistory[index - 1].role !== message.role;
-    const isFirstAssistantMessage =
-        message.role === 'assistant' && (isDifferentRole || index === 0);
-    const lastUserMessage = isFirstAssistantMessage
-        ? getLastUserMessage(index)
-        : null;
-
-    const hasNextTwoMessages = index + 1 < conversationHistory.length;
-    const isNextMessageSameRole =
-        hasNextTwoMessages &&
-        message.role === conversationHistory[index + 1].role;
-
-    const audioMessage = audios.find((audio) => audio.uid === message.uid);
-
-    if (message.role === 'user') {
-        // Render user's message
-        return (
-            <Box
-                key={index}
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    marginTop: 3,
-                }}
-            >
-                {message.image ? (
-                    <>
-                        <img
-                            src={message.image}
-                            alt="user message"
-                            style={{
-                                maxWidth: '100%',
-                                maxHeight: '300px',
-                                borderRadius: '8px',
-                                marginTop: 9,
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => handleOpenModal(message.image)} // Open modal on click
-                        />
-                        <Badge
-                            badgeContent={
-                                message.liked ? (
-                                    <BlueGradientHeartIcon key={message.likeTimestamp} />
-                                ) : null
-                            }
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                            }}
-                        >
-                            <UserMessage style={{ fontSize: 24 }}>
-                                {message.content}
-                            </UserMessage>
-                        </Badge>
-                    </>
-                ) : (
-                    <Badge
-                        badgeContent={
-                            message.liked ? (
-                                <BlueGradientHeartIcon key={message.likeTimestamp} />
-                            ) : null
-                        }
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                    >
-                        <UserMessage style={{ fontSize: 24 }}>
-                            {message.content}
-                        </UserMessage>
-                    </Badge>
-                )}
-            </Box>
-        );
-    } else {
-        // Determine whether to show the avatar
-        const shouldDisplayAvatar =
-            (index === 0 || conversationHistory[index - 1].role !== 'assistant') &&
-            !(lastUserMessage && isNextMessageSameRole);
-
-        return (
-            <Box
-                key={index}
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                }}
-            >
-                {/* Render lastUserMessage as ResponseMessage with avatar on top */}
-                {lastUserMessage && isNextMessageSameRole && (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            marginLeft: 2,
-                        }}
-                    >
-                        {/* Assistant's Avatar */}
-                        <Avatar
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            onClick={handleProfileClick}
-                            sx={{
-                                backgroundImage:
-                                    'linear-gradient(to right, #ff8fab, #fb6f92)',
-                                width: 54,
-                                height: 54,
-                                marginBottom: 1,
-                                marginTop: 3,
-                            }}
-                        />
-                        <Typography
-                            variant="body2"
-                            gutterBottom
-                            style={{ margin: '2px auto -2px 0px', color: 'white' }}
-                        >
-                            te respondió
-                        </Typography>
-                        <ResponseMessage style={{ fontSize: 24 }}>
-                            {lastUserMessage.content}
-                        </ResponseMessage>
-                    </Box>
-                )}
-                {/* Assistant's message */}
-                <Box
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: isUser ? 'flex-end' : 'flex-start',
+                mt: 3,
+                mx: 2,
+            }}
+        >
+            {!isUser && showAvatar && (
+                <Avatar
+                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        margin: 1,
-                        maxWidth: '300px',
+                        width: 48,
+                        height: 48,
+                        mb: 1,
+                        cursor: 'pointer',
+                        backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
                     }}
+                />
+            )}
+
+            <Badge
+                badgeContent={message.liked ? <HeartIcon/> : null}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: isUser ? 'right' : 'left',
+                }}
+            >
+                <MessageBubble
+                    isUser={isUser}
+                    onClick={() => !isUser && handleLike({ id: message.id })}
                 >
-                    {/* Show avatar based on shouldDisplayAvatar */}
-                    {shouldDisplayAvatar && (
-                        <Avatar
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                            onClick={handleProfileClick}
-                            sx={{
-                                backgroundImage:
-                                    'linear-gradient(to right, #ff8fab, #fb6f92)',
-                                width: 54,
-                                height: 54,
-                                marginBottom: 1,
-                                marginTop: 3,
-                            }}
-                        />
-                    )}
-                    <Badge
-                        badgeContent={
-                            message.liked ? (
-                                <AnimatedLikesIcon key={message.likeTimestamp} />
-                            ) : null
-                        }
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                    >
-                        <>
-                            {message.video ? (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'flex-start',
-                                        margin: 1,
-                                        maxWidth: '200px',
-                                    }}
-                                >
-                                    <video
-                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
-                                        controls
-                                        style={{
-                                            maxWidth: '100%',
-                                            maxHeight: '300px',
-                                            borderRadius: '8px',
-                                            marginTop: 9,
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => handleOpenModal(message.video)} // Open modal on click
-                                    />
-                                    <div
-                                        onClick={(e) => {
-                                            message.likeTimestamp = Date.now();
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleLike({ id: message.id });
-                                        }}
-                                        style={{ marginTop: 2, marginBottom: -5 }}
-                                    >
-                                        <AssistantMessage
-                                            style={{ fontSize: 24, marginLeft: -3 }}
-                                        >
-                                            {message.content}
-                                        </AssistantMessage>
-                                    </div>
-                                </Box>
-                            ) : message.image ? (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'flex-start',
-                                        margin: 1,
-                                        maxWidth: '200px',
-                                    }}
-                                >
-                                    <img
-                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${message.image}`}
-                                        alt="assistant message"
-                                        style={{
-                                            maxWidth: '100%',
-                                            maxHeight: '300px',
-                                            borderRadius: '8px',
-                                            marginTop: 9,
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => handleOpenModal(message.image)} // Open modal on click
-                                    />
-                                    <div
-                                        onClick={(e) => {
-                                            message.likeTimestamp = Date.now();
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleLike({ id: message.id });
-                                        }}
-                                        style={{ marginTop: 2, marginBottom: -5 }}
-                                    >
-                                        <AssistantMessage
-                                            style={{ fontSize: 24, marginLeft: -3 }}
-                                        >
-                                            {message.content}
-                                        </AssistantMessage>
-                                    </div>
-                                </Box>
-                            ) : audioMessage ? (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'flex-start',
-                                        margin: 1,
-                                        maxWidth: '200px',
-                                    }}
-                                >
-                                    <audio controls>
-                                        <source
-                                            src={`data:audio/mpeg;base64,${audioMessage.audioData}`}
-                                            type="audio/mpeg"
-                                        />
-                                    </audio>
-                                </Box>
-                            ) : (
-                                <div
-                                    onClick={(e) => {
-                                        message.likeTimestamp = Date.now();
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleLike({ id: message.id });
-                                    }}
-                                >
-                                    <AssistantMessage style={{ fontSize: 24 }}>
-                                        {message.content}
-                                    </AssistantMessage>
-                                </div>
-                            )}
-                        </>
-                    </Badge>
-                </Box>
-                {/* Display the Buy Premium button if displayLink is true */}
-                {message.displayLink && !user.premium && (
-                    <Paper
-                        elevation={4}
-                        sx={{
-                            margin: '0 auto',
-                            padding: 2,
-                            marginTop: 3,
-                            textAlign: 'center',
-                            background: 'linear-gradient(45deg, #495057 30%, #212529 90%)',
-                        }}
-                    >
-                        <Typography variant="h5" sx={{ mb: 1, color: 'white' }}>
-                            Puedes comprar premium aquí
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            href="/premium" // Replace with your premium page URL
-                            sx={{
-                                marginTop: 1,
-                                fontSize: 18,
-                                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                border: 0,
-                                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                            }}
-                        >
-                            Premium
-                        </Button>
-                    </Paper>
-                )}
-            </Box>
-        );
-    }
-}
+                    <MessageContent
+                        content={message.content}
+                        image={isUser && message.image ? message.image : !isUser && message.image ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}` : null}
+                        video={message.video && `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
+                        onClick={handleOpenModal}
+                    />
+
+                    <MessageFooter>
+                        <TimeStamp isUser={isUser}>
+                            {formattedTime(message.timestamp)}
+                        </TimeStamp>
+                        {isUser && (
+                            <StatusIndicator sent={message.sent} seen={message.seen} />
+                        )}
+                    </MessageFooter>
+                </MessageBubble>
+            </Badge>
+        </Box>
+    );
+};
 
 export default MessageItem;
 

@@ -12,6 +12,35 @@ export const createGirlSlice = (set) => ({
             }
             : null
     })),
+    // Method to update girl.isActive
+    setGirlIsActive: (isActive) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                isActive,
+            }
+            : null,
+    })),
+
+    // Method to update girl.girlOfflineUntil
+    setGirlOfflineUntil: (offlineUntil) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                girlOfflineUntil: offlineUntil,
+            }
+            : null,
+    })),
+
+    // Method to update girl.lastSeen
+    setLastSeen: (lastSeen) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                lastSeenGirl: lastSeen,
+            }
+            : null,
+    })),
     removePicture: (postId) => set((state) => ({
         girl: state.girl
             ? {

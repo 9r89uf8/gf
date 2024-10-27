@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../ai-gf/.idea/ai-gf.iml" filepath="$PROJECT_DIR$/../ai-gf/.idea/ai-gf.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../quinielasligamx/.idea/next14quinielas.iml" filepath="$PROJECT_DIR$/../quinielasligamx/.idea/next14quinielas.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/nextaigf.iml" filepath="$PROJECT_DIR$/.idea/nextaigf.iml" />
     </modules>
   </component>

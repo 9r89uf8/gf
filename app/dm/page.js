@@ -6,6 +6,7 @@ import { useStore } from '@/app/store/store';
 import { getChatList } from '@/app/services/chatService';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
+import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
 import { useRouter } from 'next/navigation';
 import { es } from 'date-fns/locale';
 import {
@@ -78,6 +79,7 @@ const DMList = () => {
         }
         fetchChats();
     }, []);
+
 
     function convertFirestoreTimestampToDate(timestamp) {
         if (!timestamp) return null;

@@ -1219,7 +1219,7 @@ export async function POST(req) {
 
 
         let updatedUserData;
-        if(userData.freeAudio>=1&&addAudio){
+        if(userData.freeAudio>=1&&addAudio) {
             const audioGenerationResult = await handleAudioGeneration(audioTextDescription?assistantMessageProcess[1]:assistantMessageProcess[0], girlData.audioId, userId, 1, girlId);
             const userRef = adminDb.firestore().collection('users').doc(userId);
             await userRef.update({
