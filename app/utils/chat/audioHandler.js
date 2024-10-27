@@ -1,4 +1,3 @@
-// app/utils/chat/audioHandler.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
 const { v4: uuidv4 } = require("uuid");
@@ -42,6 +41,7 @@ function splitTextAtPunctuationOrSecondEmoji(text) {
 function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
+
 function processAssistantMessage(assistantMessage) {
     const [firstPart, secondPart] = splitTextAtPunctuationOrSecondEmoji(assistantMessage);
     let response = [{
@@ -147,23 +147,14 @@ export async function handleAudioRequest(
         if (finalText.length < 62) {
             const audioBase64 = await generateAudio(finalText, girlData.audioId, elevenLabsKey);
 
-            const audioRef = adminDb.firestore()
-                .collection('users')
-                .doc(userId)
-                .collection('conversations')
-                .doc(girlId)
-                .collection('displayAudios');
-
-            await audioRef.add({
-                uid: response.uid,
-                audioData: audioBase64,
-                liked: false,
-                timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-            });
-
-            response['type'] = 'audio';
+            // Instead of saving to displayAudios collection, add audioBase64 to the second message
+            if (audioTextDescription) {
+                assistantMessageProcess[1].audioData = audioBase64;
+            } else {
+                assistantMessageProcess[0].audioData = audioBase64;
+            }
         } else {
-            response['type'] = 'text';
+            response.type = 'text';
         }
 
         // Update user's audio count

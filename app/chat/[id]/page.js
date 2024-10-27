@@ -134,7 +134,6 @@ const Chat = ({params}) => {
                 <ConversationHistory
                     conversationHistory={conversationHistory}
                     user={user}
-                    audios={audios}
                     handleLike={handleLike}
                     girl={girl}
                     loading={loadingGirl}

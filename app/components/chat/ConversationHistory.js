@@ -5,7 +5,7 @@ import MessageList from "@/app/components/chat/conversation/MessageList";
 import ImageModal from "@/app/components/chat/conversation/ImageModal";
 import {Box, CircularProgress, Container, styled} from '@mui/material';
 
-function ConversationHistory({ conversationHistory, loading, audios, handleLike, girl }) {
+function ConversationHistory({ conversationHistory, loading, handleLike, girl }) {
     const messagesEndRef = useRef(null);
 
     // State variables for modal
@@ -50,7 +50,6 @@ function ConversationHistory({ conversationHistory, loading, audios, handleLike,
         <>
             <MessageList
                 conversationHistory={conversationHistory}
-                audios={audios}
                 handleLike={handleLike}
                 handleOpenModal={handleOpenModal}
                 girl={girl}

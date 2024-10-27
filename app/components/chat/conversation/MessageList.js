@@ -3,7 +3,7 @@
 import React from 'react';
 import MessageItem from './MessageItem';
 
-function MessageList({ conversationHistory, audios, handleLike, handleOpenModal, girl, getLastUserMessage }) {
+function MessageList({ conversationHistory, handleLike, handleOpenModal, girl, getLastUserMessage }) {
     return (
         <>
             {conversationHistory &&
@@ -15,7 +15,6 @@ function MessageList({ conversationHistory, audios, handleLike, handleOpenModal,
                             message={message}
                             index={index}
                             conversationHistory={conversationHistory}
-                            audios={audios}
                             handleLike={handleLike}
                             handleOpenModal={handleOpenModal}
                             girl={girl}
