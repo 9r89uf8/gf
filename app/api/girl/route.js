@@ -49,6 +49,7 @@ export async function POST(req) {
             id: girlDoc.id,
             ...girlData,
             posts: posts,
+            girlIsTyping: false,
             pictures: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?pictures:[],
             videos: userId&&userId==='3UaQ4dtkNthHMq9VKqDCGA0uPix2'?videos:[]
         };

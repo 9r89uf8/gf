@@ -1,8 +1,10 @@
-// hooks/useRealtimeGirlStatus.js
 import { useEffect, useRef } from 'react';
-import { onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import {onSnapshot, doc, updateDoc, collection, query, orderBy, where, getDocs} from 'firebase/firestore';
 import { db } from "@/app/utils/firebaseClient";
 import { useStore } from '@/app/store/store';
+import {
+    responseFromLLM,
+} from '@/app/services/chatService';
 
 function convertFirestoreTimestampToDate(timestamp) {
     if (!timestamp) return null;
@@ -17,11 +19,34 @@ function convertFirestoreTimestampToDate(timestamp) {
 
 export const useRealtimeGirlStatus = ({ userId, girlId }) => {
     const setGirlIsActive = useStore((state) => state.setGirlIsActive);
+    const girl = useStore((state) => state.girl);
+    const setGirlIsTyping = useStore((state) => state.setGirlIsTyping);
     const setGirlOfflineUntil = useStore((state) => state.setGirlOfflineUntil);
     const setLastSeenGirl = useStore((state) => state.setLastSeen);
     const checkIntervalRef = useRef(null);
     const conversationRefRef = useRef(null);
     const lastOfflineUntilRef = useRef(null);
+    const previousActiveStatusRef = useRef(false);
+
+    // Function to check for unprocessed messages and call LLM
+    const checkUnprocessedMessages = async () => {
+        if (!userId || !girlId) return;
+
+        const messagesRef = collection(db, 'users', userId, 'conversations', girlId, 'displayMessages');
+        const unprocessedQuery = query(messagesRef, where('processed', '==', false));
+
+        try {
+            const querySnapshot = await getDocs(unprocessedQuery);
+            if (!querySnapshot.empty) {
+                const formData = new FormData();
+                formData.append('userId', userId);
+                formData.append('girlId', girlId);
+                await responseFromLLM(formData);
+            }
+        } catch (error) {
+            console.error('Error checking unprocessed messages:', error);
+        }
+    };
 
     // Function to check and update active status
     const checkAndUpdateStatus = async () => {
@@ -31,8 +56,10 @@ export const useRealtimeGirlStatus = ({ userId, girlId }) => {
         const currentTime = new Date();
 
         if (offlineUntilDate && offlineUntilDate < currentTime) {
+            const wasInactive = !previousActiveStatusRef.current;
             setGirlIsActive(true);
             setGirlOfflineUntil(null);
+            previousActiveStatusRef.current = true;
 
             // Update Firestore
             if (conversationRefRef.current) {
@@ -42,6 +69,11 @@ export const useRealtimeGirlStatus = ({ userId, girlId }) => {
                         girlOfflineUntil: null,
                         lastSeen: null
                     });
+
+                    // Only check for unprocessed messages if transitioning from inactive to active
+                    if (wasInactive) {
+                        await checkUnprocessedMessages();
+                    }
                 } catch (error) {
                     console.error('Error updating girl status:', error);
                 }
@@ -63,9 +95,21 @@ export const useRealtimeGirlStatus = ({ userId, girlId }) => {
 
         // Subscribe to global girl status
         const girlRef = doc(db, 'girls', girlId);
-        globalUnsubscribe = onSnapshot(girlRef, (snapshot) => {
+        globalUnsubscribe = onSnapshot(girlRef, async (snapshot) => {
             const girlData = snapshot.data();
-            setGirlIsActive(girlData?.isActive || false);
+            if (girlData) {
+                const wasInactive = !previousActiveStatusRef.current;
+                const isNowActive = girlData.isActive || false;
+
+                setGirlIsActive(isNowActive);
+
+                // Check for unprocessed messages only when transitioning from inactive to active
+                if (wasInactive && isNowActive) {
+                    await checkUnprocessedMessages();
+                }
+
+                previousActiveStatusRef.current = isNowActive;
+            }
         }, (error) => {
             console.error('Error in girl status subscription:', error);
         });
@@ -77,6 +121,11 @@ export const useRealtimeGirlStatus = ({ userId, girlId }) => {
 
             userSpecificUnsubscribe = onSnapshot(conversationRef, (snapshot) => {
                 const conversationData = snapshot.data();
+                if (!conversationData) return;
+
+                if(conversationData){
+                    setGirlIsTyping(conversationData.girlIsTyping || false);
+                }
                 const girlOfflineUntilDate = convertFirestoreTimestampToDate(conversationData.girlOfflineUntil);
                 const currentTime = new Date();
 
@@ -84,13 +133,22 @@ export const useRealtimeGirlStatus = ({ userId, girlId }) => {
                 lastOfflineUntilRef.current = conversationData.girlOfflineUntil;
 
                 if (girlOfflineUntilDate && girlOfflineUntilDate < currentTime) {
+                    const wasInactive = !previousActiveStatusRef.current;
                     setGirlIsActive(true);
                     setGirlOfflineUntil(null);
-                    setLastSeenGirl(null)
+                    setLastSeenGirl(null);
+
+                    // If transitioning from inactive to active, check messages
+                    if (wasInactive) {
+                        checkUnprocessedMessages();
+                    }
+
+                    previousActiveStatusRef.current = true;
                 } else if (girlOfflineUntilDate) {
                     setGirlIsActive(false);
                     setGirlOfflineUntil(conversationData.girlOfflineUntil);
-                    setLastSeenGirl(conversationData.lastSeen)
+                    setLastSeenGirl(conversationData.lastSeen);
+                    previousActiveStatusRef.current = false;
 
                     // Clear any existing interval
                     if (checkIntervalRef.current) {

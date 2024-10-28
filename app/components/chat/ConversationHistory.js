@@ -16,7 +16,7 @@ function ConversationHistory({ conversationHistory, loading, handleLike, girl })
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [conversationHistory]);
+    }, [conversationHistory, girl.girlIsTyping]);
 
     const getLastUserMessage = (currentIndex) => {
         for (let i = currentIndex - 1; i >= 0; i--) {

@@ -79,7 +79,6 @@ const Chat = ({params}) => {
             // User is not logged in; prevent submission
             return;
         }
-
         setIsSending(true);
 
         const formData = new FormData();
@@ -94,11 +93,15 @@ const Chat = ({params}) => {
         }
 
         await saveUserMessage(formData);
-        await responseFromLLM(formData)
         setPrompt('');
         setImage(null);
         setImagePreview(null);
         setIsSending(false);
+
+        if(!girl.girlIsTyping&&girl.isActive){
+            await responseFromLLM(formData)
+        }
+
     };
 
     const handleImageUpload = (event) => {

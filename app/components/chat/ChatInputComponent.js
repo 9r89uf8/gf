@@ -122,7 +122,6 @@ const ChatInputComponent = ({
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             inputProps={{ 'aria-label': 'Escribe un mensaje' }}
-            disabled={isSending}
         />
         <input
             type="file"

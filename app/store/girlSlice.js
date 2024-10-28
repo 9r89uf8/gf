@@ -41,6 +41,18 @@ export const createGirlSlice = (set) => ({
             }
             : null,
     })),
+    // Modified setGirlIsTyping to work independently of girl object
+    setGirlIsTyping: (isTyping) => set((state) => {
+        // Update both the separate status and the girl object if it exists
+        return {
+            girl: state.girl
+                ? {
+                    ...state.girl,
+                    girlIsTyping: isTyping,
+                }
+                : null
+        };
+    }),
     removePicture: (postId) => set((state) => ({
         girl: state.girl
             ? {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Box, Avatar, Badge, styled, Typography, Button, Paper } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -7,7 +7,7 @@ import { es } from 'date-fns/locale';
 import HeartIcon from "@/app/components/chat/conversation/HeartIcon";
 import { useStore } from '@/app/store/store';
 
-// Existing styled components remain the same
+// Existing styled components remain the same...
 const MessageBubble = styled(Box)(({ theme, isUser }) => ({
     maxWidth: 300,
     padding: theme.spacing(2),
@@ -18,13 +18,39 @@ const MessageBubble = styled(Box)(({ theme, isUser }) => ({
     position: 'relative',
 }));
 
-// New styled component for premium message
 const PremiumMessage = styled(Paper)(({ theme }) => ({
     margin: '16px auto',
     padding: theme.spacing(2),
     textAlign: 'center',
     background: 'linear-gradient(45deg, #495057 30%, #212529 90%)',
     color: 'white',
+}));
+
+const TypingIndicator = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    gap: '4px',
+    padding: '8px 16px',
+    borderRadius: 16,
+    backgroundColor: theme.palette.grey[100],
+    width: 'fit-content',
+    marginTop: theme.spacing(1),
+}));
+
+const TypingDot = styled(Box)(({ delay }) => ({
+    width: '8px',
+    height: '8px',
+    backgroundColor: '#6c757d',
+    borderRadius: '50%',
+    animation: 'typingAnimation 1.4s infinite',
+    animationDelay: delay,
+    '@keyframes typingAnimation': {
+        '0%, 100%': {
+            transform: 'translateY(0px)',
+        },
+        '50%': {
+            transform: 'translateY(-4px)',
+        },
+    },
 }));
 
 const MediaContent = styled(Box)({
@@ -54,7 +80,6 @@ const TimeStamp = styled(Typography)(({ theme, isUser }) => ({
     color: isUser ? 'rgba(255, 255, 255, 0.7)' : theme.palette.text.secondary,
 }));
 
-// Status indicator remains the same
 const StatusIndicator = ({ sent, seen }) => {
     if (seen) {
         return <DoneAllIcon sx={{ color: 'white', fontSize: 20 }} />;
@@ -65,7 +90,6 @@ const StatusIndicator = ({ sent, seen }) => {
     return null;
 };
 
-// Updated MessageContent component to handle audio
 const MessageContent = ({ content, image, video, audioData, onClick }) => (
     <Box>
         <MediaContent>
@@ -120,17 +144,29 @@ const MessageItem = ({
         return new Date(timestamp);
     }
 
+    const isLastSeenUserMessage = () => {
+        if (!isUser || !message.seen) return false;
+
+        // Get all messages after this one
+        const laterMessages = conversationHistory.slice(index + 1);
+
+        // Check if there are any seen user messages after this one
+        const hasSeenUserMessagesAfter = laterMessages.some(
+            msg => msg.role === 'user' && msg.seen
+        );
+
+        return !hasSeenUserMessagesAfter;
+    };
+
     const formattedTime = (timestamp) => {
         const date = convertFirestoreTimestampToDate(timestamp);
         if (!date) return '';
 
         if (isToday(date)) {
-            // If message is from today, only show time
             return format(date, 'h:mm a', { locale: es })
                 .replace('AM', 'am')
                 .replace('PM', 'pm');
         } else {
-            // If message is not from today, show date and time
             return format(date, 'd MMM h:mm a', { locale: es })
                 .replace('.', '')
                 .replace('AM', 'am')
@@ -138,82 +174,106 @@ const MessageItem = ({
         }
     };
 
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: isUser ? 'flex-end' : 'flex-start',
-                mt: 3,
-                mx: 2,
-            }}
-        >
-            {!isUser && showAvatar && (
-                <Avatar
-                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                    sx={{
-                        width: 48,
-                        height: 48,
-                        mb: 1,
-                        cursor: 'pointer',
-                        backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
-                    }}
-                />
-            )}
+    const shouldShowTypingIndicator = isLastSeenUserMessage() && girl.girlIsTyping;
 
-            <Badge
-                badgeContent={message.liked ? <HeartIcon/> : null}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: isUser ? 'right' : 'left',
+    return (
+        <Box sx={{ mb: shouldShowTypingIndicator ? 0 : 2 }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: isUser ? 'flex-end' : 'flex-start',
+                    mt: 3,
+                    mx: 2,
                 }}
             >
-                <Box>
-                    <MessageBubble
-                        isUser={isUser}
-                        onClick={() => !isUser && handleLike({ id: message.id })}
-                    >
-                        <MessageContent
-                            content={!message.audioData ? message.content : null}
-                            image={isUser && message.image ? message.image : !isUser && message.image ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}` : null}
-                            video={message.video && `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
-                            audioData={message.audioData}
-                            onClick={handleOpenModal}
-                        />
+                {!isUser && showAvatar && (
+                    <Avatar
+                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                        sx={{
+                            width: 48,
+                            height: 48,
+                            mb: 1,
+                            cursor: 'pointer',
+                            backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
+                        }}
+                    />
+                )}
 
-                        <MessageFooter>
-                            <TimeStamp isUser={isUser}>
-                                {formattedTime(message.timestamp)}
-                            </TimeStamp>
-                            {isUser && (
-                                <StatusIndicator sent={message.sent} seen={message.seen} />
-                            )}
-                        </MessageFooter>
-                    </MessageBubble>
+                <Badge
+                    badgeContent={message.liked ? <HeartIcon/> : null}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: isUser ? 'right' : 'left',
+                    }}
+                >
+                    <Box>
+                        <MessageBubble
+                            isUser={isUser}
+                            onClick={() => !isUser && handleLike({ id: message.id })}
+                        >
+                            <MessageContent
+                                content={!message.audioData ? message.content : null}
+                                image={isUser && message.image ? message.image : !isUser && message.image ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}` : null}
+                                video={message.video && `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
+                                audioData={message.audioData}
+                                onClick={handleOpenModal}
+                            />
 
-                    {message.displayLink && !user.premium && (
-                        <PremiumMessage elevation={4}>
-                            <Typography variant="h6" sx={{ mb: 1 }}>
-                                Puedes comprar premium aquí
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                href="/premium"
-                                sx={{
-                                    fontSize: 18,
-                                    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                                    border: 0,
-                                    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                                    color: 'white',
-                                    padding: '8px 24px',
-                                }}
-                            >
-                                Premium
-                            </Button>
-                        </PremiumMessage>
-                    )}
+                            <MessageFooter>
+                                <TimeStamp isUser={isUser}>
+                                    {formattedTime(message.timestamp)}
+                                </TimeStamp>
+                                {isUser && (
+                                    <StatusIndicator sent={message.sent} seen={message.seen} />
+                                )}
+                            </MessageFooter>
+                        </MessageBubble>
+
+                        {message.displayLink && !user.premium && (
+                            <PremiumMessage elevation={4}>
+                                <Typography variant="h6" sx={{ mb: 1 }}>
+                                    Puedes comprar premium aquí
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    href="/premium"
+                                    sx={{
+                                        fontSize: 18,
+                                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                        border: 0,
+                                        boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                                        color: 'white',
+                                        padding: '8px 24px',
+                                    }}
+                                >
+                                    Premium
+                                </Button>
+                            </PremiumMessage>
+                        )}
+                    </Box>
+                </Badge>
+            </Box>
+
+            {shouldShowTypingIndicator && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mt: 3, mx: 2 }}>
+                    <Avatar
+                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                        sx={{
+                            width: 48,
+                            height: 48,
+                            mb: 1,
+                            marginRight: 1,
+                            backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
+                        }}
+                    />
+                    <TypingIndicator>
+                        <TypingDot delay="0s" />
+                        <TypingDot delay="0.2s" />
+                        <TypingDot delay="0.4s" />
+                    </TypingIndicator>
                 </Box>
-            </Badge>
+            )}
         </Box>
     );
 };

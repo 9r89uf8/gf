@@ -1,4 +1,3 @@
-// app/api/chat/responseFromLLM/route.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { handleImageRequest } from '@/app/utils/chat/imageHandler';
 import { handleVideoRequest } from "@/app/utils/chat/videoHandler";
@@ -37,6 +36,30 @@ const handleRefusedAnswer = (userData) => {
     return `${randomMessages.messages[randomIndex]}[IMAGEN: foto mia]`;
 };
 
+// New function to handle marking messages as seen
+const markMessagesAsSeen = async (userId, girlId) => {
+    const displayMessageRef = adminDb.firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(girlId)
+        .collection('displayMessages');
+
+    const query = displayMessageRef
+        .where('role', '==', 'user')
+        .where('seen', '==', false);
+
+    const messagesSnapshot = await query.get();
+
+    if (!messagesSnapshot.empty) {
+        const batch = adminDb.firestore().batch();
+        messagesSnapshot.forEach((doc) => {
+            batch.update(doc.ref, { seen: true, processed: true });
+        });
+        await batch.commit();
+    }
+};
+
 export async function POST(req) {
     try {
         // Parse request data
@@ -48,41 +71,25 @@ export async function POST(req) {
         // Get user and girl data
         const [userDocF, girlDoc] = await Promise.all([
             adminDb.firestore().collection('users').doc(userId).get(),
-            adminDb.firestore().collection('girls').doc(girlId).get()
+            adminDb.firestore().collection('girls').doc(girlId).get(),
+            // Mark messages as seen at the start
+            markMessagesAsSeen(userId, girlId)
         ]);
 
         const userData = userDocF.data();
         const girlData = girlDoc.data();
 
-        // Update all displayMessages where role='user' and seen=false to seen=true
-        let displayMessageRef = adminDb.firestore()
-            .collection('users')
-            .doc(userId)
-            .collection('conversations')
-            .doc(girlId)
-            .collection('displayMessages');
-
-        const query = displayMessageRef
-            .where('role', '==', 'user')
-            .where('seen', '==', false);
-
-        const messagesSnapshot = await query.get();
-
-        const batch = adminDb.firestore().batch();
-
-        messagesSnapshot.forEach((doc) => {
-            batch.update(doc.ref, { seen: true });
-        });
-
-        await batch.commit();
-
-
-        // Get conversation reference and history
+        // Get conversation reference
         const conversationRef = adminDb.firestore()
             .collection('users')
             .doc(userId)
             .collection('conversations')
             .doc(girlId);
+
+        // Set girlIsTyping to true at the start
+        await conversationRef.update({
+            girlIsTyping: true
+        });
 
         const doc = await conversationRef.get();
         let conversationHistory = doc.data().messages;
@@ -155,7 +162,10 @@ export async function POST(req) {
                 }
         }
 
-        // Update conversation in Firestore
+        // Mark messages as seen again at the end
+        await markMessagesAsSeen(userId, girlId);
+
+        // Update conversation in Firestore and set girlIsTyping back to false
         await conversationRef.set({
             messages: conversationHistory,
             lastMessage: {
@@ -165,7 +175,8 @@ export async function POST(req) {
             },
             isGirlOnline: true,
             girlOfflineUntil: null,
-            lastSeen: adminDb.firestore.FieldValue.serverTimestamp()
+            lastSeen: adminDb.firestore.FieldValue.serverTimestamp(),
+            girlIsTyping: false  // Set typing status back to false
         }, { merge: true });
 
         return new Response(JSON.stringify({
@@ -179,6 +190,25 @@ export async function POST(req) {
             }
         });
     } catch (error) {
+        // Make sure to set girlIsTyping to false even if there's an error
+        try {
+            // Parse request data
+            const formData = await req.formData();
+            const userId = formData.get('userId');
+            const girlId = formData.get('girlId');
+            const conversationRef = adminDb.firestore()
+                .collection('users')
+                .doc(userId)
+                .collection('conversations')
+                .doc(girlId);
+
+            await conversationRef.update({
+                girlIsTyping: false
+            });
+        } catch (err) {
+            console.log('Error resetting typing status:', err.message);
+        }
+
         console.log(error.message);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
