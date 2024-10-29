@@ -1,6 +1,7 @@
 import {adminDb} from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
+import {determineOfflineStatus} from "@/app/utils/chat/girlOfflineHandler";
 const { DateTime } = require('luxon');
 
 const {v4: uuidv4} = require("uuid");
@@ -85,14 +86,29 @@ export async function POST(req) {
         // Save the updated conversation history back to Firestore
         // After adding the message to 'displayMessages'
 
-        await conversationRef.set({
+        const currentDoc = await conversationRef.get();
+        const currentOnlineStatus = currentDoc.exists ? currentDoc.data().isGirlOnline : null;
+
+        // Create base update object
+        const updateData = {
             messages: conversationHistory,
             lastMessage: {
-                content: userMessage, // Content of the last message
+                content: userMessage,
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-                sender: 'user' // 'user' or 'assistant'
-            },
-        }, { merge: true });
+                sender: 'user'
+            }
+        };
+
+        // Only check and update online status if currently online
+        if (currentOnlineStatus) {
+            const offlineStatus = await determineOfflineStatus(currentOnlineStatus, currentDoc.data());
+            if (offlineStatus) {  // Add a null check
+                updateData.isGirlOnline = offlineStatus.isGirlOnline;
+                updateData.girlOfflineUntil = offlineStatus.girlOfflineUntil;
+            }
+        }
+
+        await conversationRef.set(updateData, { merge: true });
 
         let updatedUserData;
 
@@ -103,12 +119,6 @@ export async function POST(req) {
         // Retrieve the updated user data from Firestore
         const updatedUserDoc = await userRef.get();
         updatedUserData = updatedUserDoc.data();
-
-        // const displayMessagesSnapshot = await displayMessageRef.orderBy('timestamp', 'asc').get();
-        // const displayMessages = displayMessagesSnapshot.docs.map(doc => ({
-        //     id: doc.id,
-        //     ...doc.data()
-        // }));
 
 
         return new Response(JSON.stringify({updatedUserData, girlName: girlData.name }), {

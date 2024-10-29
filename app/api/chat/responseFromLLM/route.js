@@ -165,19 +165,39 @@ export async function POST(req) {
         // Mark messages as seen again at the end
         await markMessagesAsSeen(userId, girlId);
 
-        // Update conversation in Firestore and set girlIsTyping back to false
-        await conversationRef.set({
+        const updateData = {
             messages: conversationHistory,
             lastMessage: {
                 content: `${girlData.name} te respondió`,
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
                 sender: 'assistant'
             },
-            isGirlOnline: true,
-            girlOfflineUntil: null,
             lastSeen: adminDb.firestore.FieldValue.serverTimestamp(),
-            girlIsTyping: false  // Set typing status back to false
-        }, { merge: true });
+            girlIsTyping: false
+        };
+
+        if (doc.exists) {
+            const data = doc.data();
+            // Check if isGirlOnline exists and is a boolean
+            if (typeof data.isGirlOnline === 'boolean') {
+                updateData.isGirlOnline = data.isGirlOnline;
+            } else {
+                updateData.isGirlOnline = true;
+            }
+
+            // Check if girlOfflineUntil exists and is a timestamp
+            if (data.girlOfflineUntil instanceof adminDb.firestore.Timestamp) {
+                updateData.girlOfflineUntil = data.girlOfflineUntil;
+            } else {
+                updateData.girlOfflineUntil = null;
+            }
+        } else {
+            updateData.isGirlOnline = true;
+            updateData.girlOfflineUntil = null;
+        }
+
+        await conversationRef.set(updateData, { merge: true });
+
 
         return new Response(JSON.stringify({
             girlName: girlData.name,
