@@ -25,7 +25,7 @@ export async function determineOfflineStatus (currentOnlineStatus, girl) {
     }
 
     // Random duration between 5-20 seconds
-    const offlineSeconds = getRandomNumber(8, 15);
+    const offlineSeconds = getRandomNumber(9, 12);
     const currentTime = new Date();
     const offlineUntil = new Date(currentTime.getTime() + (offlineSeconds * 1000));
 

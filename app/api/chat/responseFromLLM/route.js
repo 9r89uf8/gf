@@ -1,66 +1,25 @@
+// app/api/chat/route.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { handleImageRequest } from '@/app/utils/chat/imageHandler';
 import { handleVideoRequest } from "@/app/utils/chat/videoHandler";
 import { handleAudioRequest } from "@/app/utils/chat/audioHandler";
 import { handleLLMInteraction } from "@/app/utils/chat/llmHandler";
 import { handleMessageType } from "@/app/utils/chat/messageParser";
-const elevenK = process.env.ELEVENLABS_API_KEY
+import {markMessagesAsSeen} from "@/app/utils/chat/messageProcessor";
+import {checkWordsInMessage} from "@/app/utils/chat/responseHandler";
+import {handleRefusedAnswer} from "@/app/utils/chat/responseHandler";
+import {updateConversation} from "@/app/utils/chat/conversationHandler";
+import {updateUserMessages} from "@/app/utils/chat/userHandler";
+
+const elevenK = process.env.ELEVENLABS_API_KEY;
+const wordsToCheck = ['no puedo participar', 'solicitud'];
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const wordsToCheck = ['no puedo participar', 'solicitud'];
-const checkWordsInMessage = (message, wordList) => {
-    const lowercaseMessage = message.toLowerCase();
-    return wordList.some(word => lowercaseMessage.includes(word.toLowerCase()));
-};
-
-const handleRefusedAnswer = (userData) => {
-    const randomMessages = userData.premium ?
-        { message: '😘', type: 'image' } :
-        {
-            messages: [
-                '😘 para obtener fotos mias tiene que comprar premium.',
-                'comprame premium para mandarte fotos mi amor. 😍',
-                'no puedo mandarte fotos mi amor. tienes que comprar premium',
-                'compra premium para ver mis fotos 😉',
-            ],
-            type: 'premium'
-        };
-
-    if (userData.premium) {
-        return `${randomMessages.message}[IMAGEN: foto mia]`;
-    }
-
-    const randomIndex = Math.floor(Math.random() * randomMessages.messages.length);
-    return `${randomMessages.messages[randomIndex]}[IMAGEN: foto mia]`;
-};
-
-// New function to handle marking messages as seen
-const markMessagesAsSeen = async (userId, girlId) => {
-    const displayMessageRef = adminDb.firestore()
-        .collection('users')
-        .doc(userId)
-        .collection('conversations')
-        .doc(girlId)
-        .collection('displayMessages');
-
-    const query = displayMessageRef
-        .where('role', '==', 'user')
-        .where('seen', '==', false);
-
-    const messagesSnapshot = await query.get();
-
-    if (!messagesSnapshot.empty) {
-        const batch = adminDb.firestore().batch();
-        messagesSnapshot.forEach((doc) => {
-            batch.update(doc.ref, { seen: true, processed: true });
-        });
-        await batch.commit();
-    }
-};
-
 export async function POST(req) {
+    let conversationRef;
+
     try {
         // Parse request data
         const formData = await req.formData();
@@ -68,28 +27,26 @@ export async function POST(req) {
         const girlId = formData.get('girlId');
         const file = formData.get('image');
 
+        const likedMessageByAssistant = Math.random() < 1/3;
+
         // Get user and girl data
         const [userDocF, girlDoc] = await Promise.all([
             adminDb.firestore().collection('users').doc(userId).get(),
             adminDb.firestore().collection('girls').doc(girlId).get(),
-            // Mark messages as seen at the start
-            markMessagesAsSeen(userId, girlId)
+            markMessagesAsSeen(userId, girlId, likedMessageByAssistant)
         ]);
 
         const userData = userDocF.data();
         const girlData = girlDoc.data();
 
         // Get conversation reference
-        const conversationRef = adminDb.firestore()
+        conversationRef = adminDb.firestore()
             .collection('users')
             .doc(userId)
             .collection('conversations')
             .doc(girlId);
 
-        // Set girlIsTyping to true at the start
-        await conversationRef.update({
-            girlIsTyping: true
-        });
+        await conversationRef.update({ girlIsTyping: true });
 
         const doc = await conversationRef.get();
         let conversationHistory = doc.data().messages;
@@ -97,111 +54,63 @@ export async function POST(req) {
         // Get and process LLM response
         let assistantMessage = await handleLLMInteraction(userData, file, girlData, conversationHistory);
 
-        // Handle refused answers
         if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
             assistantMessage = handleRefusedAnswer(userData);
         }
 
         // Parse and handle message type
-        let { messageType, assistantMessageProcess, parsedContent } =
+        const { messageType, assistantMessageProcess, parsedContent } =
             await handleMessageType(assistantMessage);
 
         // Handle different message types
         switch(messageType) {
             case 'audio':
                 const audioResult = await handleAudioRequest(
-                    parsedContent.audio,
-                    userData,
-                    girlData,
-                    userId,
-                    girlId,
-                    assistantMessageProcess,
-                    conversationHistory,
-                    elevenK
+                    parsedContent.audio, userData, girlData, userId, girlId,
+                    assistantMessageProcess, conversationHistory, elevenK
                 );
                 conversationHistory = audioResult.updatedHistory;
                 break;
 
             case 'image':
                 const imageResult = await handleImageRequest(
-                    parsedContent.image,
-                    userData,
-                    girlId,
-                    userId,
-                    conversationHistory
+                    parsedContent.image, userData, girlId, userId, conversationHistory
                 );
                 conversationHistory = imageResult.updatedHistory;
                 break;
 
             case 'video':
                 const videoResult = await handleVideoRequest(
-                    parsedContent.video,
-                    userData,
-                    girlId,
-                    userId,
-                    conversationHistory
+                    parsedContent.video, userData, girlId, userId, conversationHistory
                 );
                 conversationHistory = videoResult.updatedHistory;
                 break;
 
             default:
-                // Handle regular text message
-                assistantMessageProcess.forEach(response => {
-                    conversationHistory.push({"role": "assistant", "content": response.content});
-                });
-
-                let displayMessageRef = adminDb.firestore()
+                const displayMessageRef = adminDb.firestore()
                     .collection('users')
                     .doc(userId)
                     .collection('conversations')
                     .doc(girlId)
                     .collection('displayMessages');
 
+                assistantMessageProcess.forEach(response => {
+                    conversationHistory.push({"role": "assistant", "content": response.content});
+                });
+
                 for (const response of assistantMessageProcess) {
                     await displayMessageRef.add(response);
                 }
         }
 
-        // Mark messages as seen again at the end
         await markMessagesAsSeen(userId, girlId);
-
-        const updateData = {
-            messages: conversationHistory,
-            lastMessage: {
-                content: `${girlData.name} te respondió`,
-                timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-                sender: 'assistant'
-            },
-            lastSeen: adminDb.firestore.FieldValue.serverTimestamp(),
-            girlIsTyping: false
-        };
-
-        if (doc.exists) {
-            const data = doc.data();
-            // Check if isGirlOnline exists and is a boolean
-            if (typeof data.isGirlOnline === 'boolean') {
-                updateData.isGirlOnline = data.isGirlOnline;
-            } else {
-                updateData.isGirlOnline = true;
-            }
-
-            // Check if girlOfflineUntil exists and is a timestamp
-            if (data.girlOfflineUntil instanceof adminDb.firestore.Timestamp) {
-                updateData.girlOfflineUntil = data.girlOfflineUntil;
-            } else {
-                updateData.girlOfflineUntil = null;
-            }
-        } else {
-            updateData.isGirlOnline = true;
-            updateData.girlOfflineUntil = null;
-        }
-
-        await conversationRef.set(updateData, { merge: true });
-
+        await updateConversation(conversationRef, conversationHistory, girlData, doc);
+        const updatedUserData = await updateUserMessages(userId);
 
         return new Response(JSON.stringify({
             girlName: girlData.name,
-            sendNotification: Math.random() < 1/3
+            updatedUserData,
+            sendNotification: likedMessageByAssistant
         }), {
             status: 200,
             headers: {
@@ -209,24 +118,14 @@ export async function POST(req) {
                 'Cache-Control': 'no-store, max-age=0'
             }
         });
-    } catch (error) {
-        // Make sure to set girlIsTyping to false even if there's an error
-        try {
-            // Parse request data
-            const formData = await req.formData();
-            const userId = formData.get('userId');
-            const girlId = formData.get('girlId');
-            const conversationRef = adminDb.firestore()
-                .collection('users')
-                .doc(userId)
-                .collection('conversations')
-                .doc(girlId);
 
-            await conversationRef.update({
-                girlIsTyping: false
-            });
-        } catch (err) {
-            console.log('Error resetting typing status:', err.message);
+    } catch (error) {
+        if (conversationRef) {
+            try {
+                await conversationRef.update({ girlIsTyping: false });
+            } catch (err) {
+                console.log('Error resetting typing status:', err.message);
+            }
         }
 
         console.log(error.message);
