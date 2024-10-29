@@ -15,7 +15,7 @@ export async function determineOfflineStatus (currentOnlineStatus, girl) {
     }
 
     // 30% chance of going offline
-    const shouldGoOffline = Math.random() < 0.4;
+    const shouldGoOffline = Math.random() < 0.7;
 
     if (!shouldGoOffline) {
         return {
