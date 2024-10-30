@@ -91,7 +91,12 @@ const AddPicture = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [isPremium, setIsPremium] = useState(false);
     const [selectedGirl, setSelectedGirl] = useState('');
+
+    const handlePremiumChange = (event) => {
+        setIsPremium(event.target.checked);
+    };
 
     const onFinish = async (event) => {
         event.preventDefault();
@@ -103,6 +108,7 @@ const AddPicture = () => {
 
         const formData = new FormData();
         formData.append('description', description);
+        formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('girlId', selectedGirl); // Add the selected girl's ID
         if (image) {
             formData.append('image', image);
@@ -111,6 +117,7 @@ const AddPicture = () => {
         try {
             await addPicture(formData);
             setDescription('');
+            setIsPremium(false);
             setImage(null);
             setImagePreview(null);
             setSelectedGirl('');
@@ -209,6 +216,19 @@ const AddPicture = () => {
                                     onChange={(e) => setDescription(e.target.value)}
                                     required
                                     fullWidth
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    control={
+                                        <StyledSwitch
+                                            checked={isPremium}
+                                            onChange={handlePremiumChange}
+                                        />
+                                    }
+                                    label="Premium"
+                                    sx={{ color: 'white' }}
                                 />
                             </Grid>
 

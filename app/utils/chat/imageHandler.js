@@ -48,18 +48,33 @@ export async function handleImageRequest(
     userId,
     conversationHistory
 ) {
-    // Handle premium users
-    if (userData.premium) {
+// Handle premium users and users with free images
+    if (userData.premium || userData.freeImages > 0) {
         let pictureDescription = userWantsImage.description.toLowerCase();
 
-        // Fetch pictures where girlId matches
-        const picturesSnapshot = await adminDb.firestore()
+        // Create base query
+        let picturesQuery = adminDb.firestore()
             .collection('pictures')
-            .where('girlId', '==', girlId)
-            .get();
+            .where('girlId', '==', girlId);
+
+        // Add premium filter based on user status
+        picturesQuery = picturesQuery.where('premium', '==', userData.premium);
+
+        // Fetch pictures
+        const picturesSnapshot = await picturesQuery.get();
 
         // Map the documents to an array of picture objects
         let activePic = picturesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // If no pictures found in the preferred category (premium/non-premium),
+        // fall back to any pictures for this girlId as a backup
+        if (activePic.length === 0) {
+            const fallbackSnapshot = await adminDb.firestore()
+                .collection('pictures')
+                .where('girlId', '==', girlId)
+                .get();
+            activePic = fallbackSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
 
         // Tokenize the pictureDescription
         let targetWords = pictureDescription.split(/\s+/).map(word => word.trim().toLowerCase());
@@ -101,8 +116,17 @@ export async function handleImageRequest(
             role: 'assistant',
             content: contentText,
             image: selectedPic.image,
+            mediaType: 'image',
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
+
+        // Update user's freeImages count only if they're not premium
+        if (!userData.premium && userData.freeImages > 0) {
+            const userRef = adminDb.firestore().collection('users').doc(userId);
+            await userRef.update({
+                freeImages: adminDb.firestore.FieldValue.increment(-1)
+            });
+        }
 
         return { success: true, updatedHistory: conversationHistory };
     }

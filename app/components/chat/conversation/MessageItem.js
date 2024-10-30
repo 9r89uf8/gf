@@ -90,7 +90,7 @@ const StatusIndicator = ({ sent, seen }) => {
     return null;
 };
 
-const MessageContent = ({ content, image, video, audioData, onClick }) => (
+const MessageContent = ({ content, image, video, audioData, onClick, mediaType }) => (
     <Box>
         <MediaContent>
             {audioData ? (
@@ -99,21 +99,26 @@ const MessageContent = ({ content, image, video, audioData, onClick }) => (
                 </audio>
             ) : (
                 <>
-                    {image && (
+                    {image && mediaType==='image' && (
                         <img
                             src={image}
                             alt="message attachment"
                             onClick={() => onClick(image)}
                         />
                     )}
-                    {video && (
+                    {image && mediaType==='audio' && (
+                        <audio controls>
+                            <source src={image} type="audio/mpeg"/>
+                        </audio>
+                    )}
+                    {video && mediaType === 'video' && (
                         <video
                             src={video}
                             controls
                             onClick={() => onClick(video)}
                         />
                     )}
-                    <Box>{content}</Box>
+                    {content&&mediaType!=='audio' && (<Box>{content}</Box>)}
                 </>
             )}
         </MediaContent>
@@ -215,9 +220,10 @@ const MessageItem = ({
                             <MessageContent
                                 content={!message.audioData ? message.content : null}
                                 image={isUser && message.image ? message.image : !isUser && message.image ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}` : null}
-                                video={message.video && `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`}
+                                video={isUser && message.image ? message.image: !isUser && message.video ? `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`: null}
                                 audioData={message.audioData}
                                 onClick={handleOpenModal}
+                                mediaType={message.mediaType?message.mediaType:null}
                             />
 
                             <MessageFooter>

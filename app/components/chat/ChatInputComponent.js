@@ -6,10 +6,13 @@ import {
     InputBase,
     styled,
     Typography,
+    Box
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
+import VideocamIcon from '@mui/icons-material/Videocam';
 import SendIcon from '@mui/icons-material/Send';
 import { motion } from 'framer-motion';
+import AudioRecorder from "@/app/components/chat/conversation/AudioRecorder";
 
 const ChatInputStyled = styled(Paper)(({ theme }) => ({
     position: 'fixed',
@@ -40,6 +43,23 @@ const TypingDot = styled(motion.span)(({ theme }) => ({
     borderRadius: '50%',
     margin: '0 2px',
 }));
+
+
+const validateFile = (file) => {
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validVideoTypes = ['video/mp4', 'video/quicktime'];
+    const maxVideoSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (validImageTypes.includes(file.type)) {
+        return { valid: true, type: 'image' };
+    } else if (validVideoTypes.includes(file.type)) {
+        if (file.size > maxVideoSize) {
+            return { valid: false, error: 'Video must be smaller than 10MB' };
+        }
+        return { valid: true, type: 'video' };
+    }
+    return { valid: false, error: 'Invalid file type. Please upload an image or video.' };
+};
 
 // Typing Indicator Component
 const TypingIndicatorInline = ({ girl }) => {
@@ -86,71 +106,138 @@ const ChatInputComponent = ({
                                 user,
                                 canSendMessage,
                                 fileInputRef,
-                                handleImageUpload,
+                                handleMediaUpload,
                                 isSending,
                                 prompt,
                                 setPrompt,
                                 isPromptEntered,
                                 girl,
+                                mediaType
                             }) => {
-    const [imageSelected, setImageSelected] = useState(false);
+    const [mediaSelected, setMediaSelected] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const validation = validateFile(file);
+            if (validation.valid) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    handleMediaUpload({
+                        file,
+                        preview: reader.result,
+                        type: validation.type
+                    });
+                };
+                reader.readAsDataURL(file);
+                setMediaSelected(true);
+            } else {
+                alert(validation.error);
+                event.target.value = '';
+                setMediaSelected(false);
+            }
+        }
+    };
+
+    const handleAudioRecorded = (audioBlob) => {
+        const file = new File([audioBlob], 'audio.mp3', { type: 'audio/mp3' });
+        handleMediaUpload({
+            file,
+            preview: URL.createObjectURL(audioBlob),
+            type: 'audio'
+        });
+        setPrompt(''); // Clear any existing text
+    };
+
+    // Determine if the send button should be enabled
+    const canSend = (
+        canSendMessage &&
+        !isRecording &&
+        (
+            isPromptEntered || // Has text
+            (mediaType === 'audio') || // Has audio recording
+            (mediaSelected && isPromptEntered) // Has other media with required text
+        )
+    );
+
+    // Determine if the text input should be shown
+    const showTextInput = !isRecording && mediaType !== 'audio';
 
     return (
-    <ChatInputStyled component="form" onSubmit={handleSubmit} elevation={4}>
-        <IconButton
-            onClick={() => {
-                if (user && canSendMessage) {
-                    fileInputRef.current.click();
-                }
-            }}
-            aria-label="Upload Image"
-            disabled={!user || !canSendMessage}
-        >
-            <ImageIcon fontSize="large" />
-        </IconButton>
-        <InputBase
-            sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
-            placeholder={
-                isSending
-                    ? 'Enviando...'
-                    : canSendMessage
-                        ? 'Escribe un mensaje...'
-                        : 'No more free messages'
-            }
-            multiline
-            maxRows={6}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            inputProps={{ 'aria-label': 'Escribe un mensaje' }}
-        />
-        <input
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={(e) => {
-                handleImageUpload(e);
-                setImageSelected(e.target.files.length > 0);
-            }}
-            disabled={!canSendMessage}
-        />
-        {isSending ? (
-            // Display Typing Indicator when sending
-            <TypingIndicatorInline girl={girl} />
-        ) : (
-            <motion.div whileTap={{ scale: 0.95 }}>
+        <ChatInputStyled component="form" onSubmit={handleSubmit} elevation={4}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
                 <IconButton
-                    type="submit"
-                    color="primary"
-                    disabled={!isPromptEntered || !canSendMessage||(imageSelected&&!isPromptEntered)}
-                    aria-label="Send Message"
+                    onClick={() => {
+                        if (user && canSendMessage) {
+                            fileInputRef.current.click();
+                        }
+                    }}
+                    aria-label="Upload Media"
+                    disabled={!user || !canSendMessage || isRecording}
                 >
-                    <SendIcon sx={{ fontSize: 32 }} />
+                    <ImageIcon fontSize="large" />
                 </IconButton>
-            </motion.div>
-        )}
-    </ChatInputStyled>
-    )
+
+                {!mediaSelected && (
+                    <AudioRecorder
+                        onAudioRecorded={handleAudioRecorded}
+                        isRecording={isRecording}
+                        setIsRecording={setIsRecording}
+                    />
+                )}
+            </Box>
+
+            {showTextInput && (
+                <InputBase
+                    sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
+                    placeholder={
+                        isSending
+                            ? 'Sending...'
+                            : isRecording
+                                ? 'Recording audio...'
+                                : canSendMessage
+                                    ? 'Type a message...'
+                                    : 'No more free messages'
+                    }
+                    multiline
+                    maxRows={6}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    inputProps={{ 'aria-label': 'Type a message' }}
+                    disabled={isRecording}
+                />
+            )}
+
+            {!showTextInput && (
+                <Box sx={{ ml: 1, flex: 1 }} /> // Spacer to maintain layout
+            )}
+
+            <input
+                type="file"
+                accept="image/*,video/mp4,video/quicktime"
+                style={{ display: 'none' }}
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                disabled={!canSendMessage}
+            />
+
+            {isSending ? (
+                <TypingIndicatorInline girl={girl} />
+            ) : (
+                <motion.div whileTap={{ scale: 0.95 }}>
+                    <IconButton
+                        type="submit"
+                        color="primary"
+                        disabled={!canSend}
+                        aria-label="Send Message"
+                    >
+                        <SendIcon sx={{ fontSize: 32 }} />
+                    </IconButton>
+                </motion.div>
+            )}
+        </ChatInputStyled>
+    );
 };
 
 export default ChatInputComponent;

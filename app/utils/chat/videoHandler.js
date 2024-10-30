@@ -114,6 +114,7 @@ export async function handleVideoRequest(
             role: 'assistant',
             content: contentText,
             video: selectedVideo.video, // Ensure the video URL is stored in selectedVideo.video
+            mediaType: 'video',
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
 

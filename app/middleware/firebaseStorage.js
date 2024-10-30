@@ -1,39 +1,39 @@
-// server/firebaseStorage.js
 import {adminDb} from '@/app/utils/firebaseAdmin';
-const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
-const bucket = adminDb.storage().bucket('gs://ai-gf-9913f.appspot.com'); // Your Firebase Storage bucket
+const bucket = adminDb.storage().bucket('gs://ai-gf-9913f.appspot.com');
 
-const uploadToFirebaseStorage = (buffer, fileName, type) => {
-    const fileUpload = bucket.file(fileName);
+const uploadToFirebaseStorage = async (buffer, fileName, contentType) => {
+    try {
+        const file = bucket.file(fileName);
 
-    const blobStream = fileUpload.createWriteStream({
-        metadata: {
-            contentType: type,
-        },
-    });
+        const options = {
+            metadata: {
+                contentType: contentType,
+                metadata: {
+                    firebaseStorageDownloadTokens: uuidv4(),
+                }
+            },
+            resumable: false // Set to false for small files
+        };
 
-    return new Promise((resolve, reject) => {
-        blobStream.on('error', (error) => {
-            console.error('Error uploading file:', error);
-            reject(error);
-        });
+        // Upload the file
+        await file.save(buffer, options);
 
-        blobStream.on('finish', () => {
-            const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileName)}?alt=media`;
-            resolve(publicUrl);
-        });
+        // Generate a download URL
+        const [metadata] = await file.getMetadata();
+        const downloadToken = metadata.metadata.firebaseStorageDownloadTokens;
 
-        blobStream.end(buffer);
-    });
+        // Construct the download URL
+        const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileName)}?alt=media&token=${downloadToken}`;
+
+        return publicUrl;
+    } catch (error) {
+        console.error('Error uploading to Firebase Storage:', error);
+        throw new Error('Failed to upload file to storage');
+    }
 };
 
-
-
-module.exports = {
-    upload,
-    uploadToFirebaseStorage,
+export {
+    uploadToFirebaseStorage
 };

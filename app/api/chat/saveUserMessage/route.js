@@ -2,12 +2,39 @@ import {adminDb} from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import {determineOfflineStatus} from "@/app/utils/chat/girlOfflineHandler";
+import OpenAI from "openai";
+// Initialize OpenAI with the API key from environment variables
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 const { DateTime } = require('luxon');
 
 const {v4: uuidv4} = require("uuid");
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+// Helper function to validate file size and type
+const validateFile = (file) => {
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const validVideoTypes = ['video/mp4', 'video/quicktime'];
+    const maxVideoSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (!file) return { valid: true }; // No file to validate
+
+    const fileType = file.type;
+    const fileSize = file.size;
+
+    if (validImageTypes.includes(fileType)) {
+        return { valid: true, type: 'image' };
+    } else if (validVideoTypes.includes(fileType)) {
+        if (fileSize > maxVideoSize) {
+            return { valid: false, error: 'Video must be smaller than 10MB' };
+        }
+        return { valid: true, type: 'video' };
+    }
+    return { valid: false, error: 'Invalid file type. Please upload an image or video.' };
+};
 
 async function getOrCreateConversationHistory(doc) {
     if (doc.exists) {
@@ -26,7 +53,45 @@ export async function POST(req) {
         const userId = formData.get('userId');
         const girlId = formData.get('girlId');
         let userMessage = formData.get('userMessage');
-        const file = formData.get('image');
+        const media = formData.get('media');
+        const mediaType = formData.get('mediaType');
+
+        // Validate file if present
+        if (media && mediaType !== 'audio') {
+            const validation = validateFile(media);
+            if (!validation.valid) {
+                return new Response(JSON.stringify({ error: validation.error }), {
+                    status: 400,
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            }
+        }
+
+        // Handle audio transcription
+        if (media && mediaType === 'audio') {
+            try {
+                // Create a temporary file path
+                const audioBuffer = Buffer.from(await media.arrayBuffer());
+
+                // Transcribe the audio
+                const transcription = await openai.audio.transcriptions.create({
+                    file: new File([audioBuffer], 'audio.mp3', { type: 'audio/mp3' }),
+                    model: "whisper-1",
+                });
+
+                // Add transcription to user message
+                userMessage = transcription.text;
+            } catch (error) {
+                console.error('Error transcribing audio:', error);
+                return new Response(JSON.stringify({
+                    error: 'Failed to transcribe audio message'
+                }), {
+                    status: 500,
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            }
+        }
+
 
         const userDocF = await adminDb.firestore()
             .collection('users')
@@ -50,16 +115,26 @@ export async function POST(req) {
 
 
 
-        let fileUrl = null;
-        if (file) {
-            const fileExtension = file.type.split('/')[1];
-            const filePath = `users-pictures/${uuidv4()}.${fileExtension}`;
+        // Handle media upload
+        let mediaUrl = null;
+        let mediaThumbnail = null;
+        if (media) {
+            const fileExtension = media.type.split('/')[1];
+            const fileName = `${mediaType}-${uuidv4()}.${fileExtension}`;
+            const filePath = `users-${mediaType}s/${fileName}`;
 
             // Convert the file to a buffer
-            const arrayBuffer = await file.arrayBuffer();
+            const arrayBuffer = await media.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
-            fileUrl = await uploadToFirebaseStorage(buffer, filePath, file.mimetype);
+            mediaUrl = await uploadToFirebaseStorage(buffer, filePath, media.type);
+
+            // If it's a video, you might want to generate a thumbnail
+            if (mediaType === 'video') {
+                // You would need to implement video thumbnail generation here
+                // For now, we'll use a placeholder or skip it
+                mediaThumbnail = null;
+            }
         }
 
         // Add user's message to the conversation history
@@ -75,7 +150,8 @@ export async function POST(req) {
         await displayMessageRef.add({
             role: 'user',
             content: userMessage,
-            image: fileUrl,
+            image: mediaUrl,
+            mediaType: mediaType,
             liked: false,
             sent: true,
             seen: false,
@@ -95,7 +171,9 @@ export async function POST(req) {
             lastMessage: {
                 content: userMessage,
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-                sender: 'user'
+                sender: 'user',
+                mediaUrl: mediaUrl,
+                mediaType: mediaType
             }
         };
 

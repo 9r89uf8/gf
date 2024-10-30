@@ -62,10 +62,11 @@ export async function POST(req) {
         const userId = authResult.user.uid;
         const formData = await req.formData();
         const description = formData.get('description');
+        const premium = formData.get('premium');
         const file = formData.get('image');
         const girlId = formData.get('girlId');
 
-
+        let isPremium = premium === 'true'
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -76,6 +77,7 @@ export async function POST(req) {
 
         const postRecord = {
             description,
+            isPremium: isPremium,
             girlId,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };

@@ -22,7 +22,7 @@ import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatu
 
 // Import the new components
 import ChatInputComponent from '@/app/components/chat/ChatInputComponent';
-import ImagePreviewComponent from '@/app/components/chat/ImagePreviewComponent';
+import MediaPreviewComponent from "@/app/components/chat/MediaPreviewComponent";
 import LoginReminder from '@/app/components/chat/LoginReminder';
 import UpgradeReminder from '@/app/components/chat/UpgradeReminder';
 
@@ -34,12 +34,9 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 const Chat = ({params}) => {
     const router = useRouter();
     const [prompt, setPrompt] = useState('');
-    const [image, setImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef(null);
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
-    const audios = useStore((state) => state.audios);
     const conversationHistory = useStore((state) => state.conversationHistory);
     const [isSending, setIsSending] = useState(false);
     const loadingGirl = useStore((state) => state.loadingGirl);
@@ -71,55 +68,62 @@ const Chat = ({params}) => {
         router.push('/premium'); // Adjust the path to your premium page
     };
 
+    const [media, setMedia] = useState(null);
+    const [mediaPreview, setMediaPreview] = useState(null);
+    const [mediaType, setMediaType] = useState(null);
+
+    const handleMediaUpload = ({ file, preview, type }) => {
+        setMedia(file);
+        setMediaPreview(preview);
+        setMediaType(type);
+    };
+
+    const handleClearMedia = () => {
+        setMedia(null);
+        setMediaPreview(null);
+        setMediaType(null);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!prompt.trim() && !image) return;
 
-        if (!user) {
-            // User is not logged in; prevent submission
-            return;
-        }
+        // Check if we have either text or media to send
+        if (!prompt.trim() && !media) return;
+
+        // If we have media that's not audio, we need text
+        if (media && mediaType !== 'audio' && !prompt.trim()) return;
+
+        if (!user) return;
+
         setIsSending(true);
 
         const formData = new FormData();
         formData.append('userId', user.uid);
         formData.append('girlId', girl.id);
 
-        if (image) {
-            formData.append('image', image);
-            formData.append('userMessage', prompt.trim());
+        if (media) {
+            formData.append('media', media);
+            formData.append('mediaType', mediaType);
+            // For audio, message is optional
+            if (prompt.trim() || mediaType !== 'audio') {
+                formData.append('userMessage', prompt.trim());
+            }
         } else {
             formData.append('userMessage', prompt.trim());
         }
 
         await saveUserMessage(formData);
         setPrompt('');
-        setImage(null);
-        setImagePreview(null);
+        setMedia(null);
+        setMediaPreview(null);
+        setMediaType(null);
         setIsSending(false);
 
-        if(!girl.girlIsTyping&&girl.isActive){
-            await responseFromLLM(formData)
-        }
-
-    };
-
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
+        if (!girl.girlIsTyping && girl.isActive) {
+            await responseFromLLM(formData);
         }
     };
 
-    const handleClearImage = () => {
-        setImage(null);
-        setImagePreview(null);
-    };
 
     const handleLike = async ({id}) => {
         await likeMessage({ messageUid: id, girlId: girl.id});
@@ -155,12 +159,13 @@ const Chat = ({params}) => {
                 user={user}
                 canSendMessage={canSendMessage}
                 fileInputRef={fileInputRef}
-                handleImageUpload={handleImageUpload}
+                handleMediaUpload={handleMediaUpload}
                 isSending={isSending}
                 prompt={prompt}
                 setPrompt={setPrompt}
                 isPromptEntered={isPromptEntered}
-                girl={girl} // Pass the girl prop
+                girl={girl}
+                mediaType={mediaType}
             />
 
             {/* Message about upgrading when user can't send messages */}
@@ -169,10 +174,11 @@ const Chat = ({params}) => {
             )}
 
             {/* Image Preview */}
-            {imagePreview && (
-                <ImagePreviewComponent
-                    imagePreview={imagePreview}
-                    handleClearImage={handleClearImage}
+            {mediaPreview && (
+                <MediaPreviewComponent
+                    mediaPreview={mediaPreview}
+                    mediaType={mediaType}
+                    handleClearMedia={handleClearMedia}
                 />
             )}
         </StyledContainer>

@@ -16,7 +16,7 @@ function generateSystemPrompt(user, fileUrl, girl) {
     let userVidInstructions
     let pauseInstructions
     let sleepInstructions
-    if(user.premium){
+    if(user.premium||user.freeImages>0){
         userPicInstructions = `
 If the User prompts you to send an image or photo, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
