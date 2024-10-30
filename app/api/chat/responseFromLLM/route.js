@@ -5,7 +5,7 @@ import { handleVideoRequest } from "@/app/utils/chat/videoHandler";
 import { handleAudioRequest } from "@/app/utils/chat/audioHandler";
 import { handleLLMInteraction } from "@/app/utils/chat/llmHandler";
 import { handleMessageType } from "@/app/utils/chat/messageParser";
-import {markMessagesAsSeen} from "@/app/utils/chat/messageProcessor";
+import {markMessagesAsSeen, getLastProcessedMessage} from "@/app/utils/chat/messageProcessor";
 import {checkWordsInMessage} from "@/app/utils/chat/responseHandler";
 import {handleRefusedAnswer} from "@/app/utils/chat/responseHandler";
 import {updateConversation} from "@/app/utils/chat/conversationHandler";
@@ -36,6 +36,7 @@ export async function POST(req) {
             markMessagesAsSeen(userId, girlId, likedMessageByAssistant)
         ]);
 
+        let lastUserMessage = await getLastProcessedMessage(userId, girlId);
         const userData = userDocF.data();
         const girlData = girlDoc.data();
 
@@ -52,7 +53,7 @@ export async function POST(req) {
         let conversationHistory = doc.data().messages;
 
         // Get and process LLM response
-        let assistantMessage = await handleLLMInteraction(userData, file, girlData, conversationHistory);
+        let assistantMessage = await handleLLMInteraction(userData, lastUserMessage, girlData, conversationHistory);
 
         if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
             assistantMessage = handleRefusedAnswer(userData);
