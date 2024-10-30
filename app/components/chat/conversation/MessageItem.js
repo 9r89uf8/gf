@@ -16,6 +16,12 @@ const MessageBubble = styled(Box)(({ theme, isUser }) => ({
     backgroundColor: isUser ? theme.palette.primary.main : theme.palette.grey[100],
     color: isUser ? theme.palette.primary.contrastText : theme.palette.text.primary,
     position: 'relative',
+    // Add these properties to prevent text selection
+    WebkitUserSelect: 'none',  // Safari
+    MozUserSelect: 'none',     // Firefox
+    msUserSelect: 'none',      // IE/Edge
+    userSelect: 'none',        // Standard syntax
+    WebkitTouchCallout: 'none', // Disable iOS callout
 }));
 
 const PremiumMessage = styled(Paper)(({ theme }) => ({
