@@ -112,7 +112,7 @@ const AudioRecorder = ({ onAudioRecorded, isRecording, setIsRecording }) => {
                     </IconButton>
                 </>
             ) : (
-                <IconButton onClick={startRecording} color="primary">
+                <IconButton onClick={startRecording}>
                     <MicIcon fontSize="large" />
                 </IconButton>
             )}

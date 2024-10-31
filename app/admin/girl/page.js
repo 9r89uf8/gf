@@ -106,6 +106,9 @@ const AddGirl = () => {
         image: null,
         background: null,
         isPrivate: false,
+        audioEnabled: false,
+        imagesEnabled: false,
+        videosEnabled: false,
         country: '',
         education: '',
         fullName: '',
@@ -180,7 +183,9 @@ const AddGirl = () => {
         data.append('sexActivity', formData.sexActivity);
         data.append('sexHistory', formData.sexHistory);
         data.append('sexStory', formData.sexStory);
-
+        data.append('audioEnabled', formData.audioEnabled.toString());
+        data.append('imagesEnabled', formData.imagesEnabled.toString());
+        data.append('videosEnabled', formData.videosEnabled.toString());
         data.append('username', formData.username);
         data.append('age', formData.age);
         data.append('private', formData.isPrivate.toString());
@@ -215,6 +220,9 @@ const AddGirl = () => {
                 bio: '',
                 image: null,
                 isPrivate: false,
+                audioEnabled: false,
+                imagesEnabled: false,
+                videosEnabled: false,
                 background: null,
                 country: '',
                 education: '',
@@ -523,6 +531,42 @@ const AddGirl = () => {
                                             checked={formData.isPrivate}
                                             onChange={handleChange}
                                             name="isPrivate"
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Private"
+                                    sx={{ marginTop: 2 }}
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formData.audioEnabled}
+                                            onChange={handleChange}
+                                            name="audioEnabled"
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Private"
+                                    sx={{ marginTop: 2 }}
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formData.imagesEnabled}
+                                            onChange={handleChange}
+                                            name="imagesEnabled"
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Private"
+                                    sx={{ marginTop: 2 }}
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={formData.videosEnabled}
+                                            onChange={handleChange}
+                                            name="videosEnabled"
                                             color="primary"
                                         />
                                     }

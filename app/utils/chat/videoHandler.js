@@ -46,10 +46,11 @@ export async function handleVideoRequest(
     userData,
     girlId,
     userId,
-    conversationHistory
+    conversationHistory,
+    girl
 ) {
     // Handle premium users
-    if (userData.premium) {
+    if (userData.premium&&girl.videosEnabled) {
         let videoDescription = userWantsVideo.description.toLowerCase();
 
         // Fetch videos where girlId matches
@@ -161,7 +162,7 @@ export async function handleVideoRequest(
 
         // Add messages with display link for last message
         for (const [index, response] of assistantMessageProcess.entries()) {
-            if (index === assistantMessageProcess.length - 1) {
+            if (index === assistantMessageProcess.length - 1 && girl.videosEnabled) {
                 response.displayLink = true;
             }
             await displayMessageRef.add(response);

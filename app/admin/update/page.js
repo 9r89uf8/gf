@@ -22,7 +22,7 @@ import {
     FormControl,
     FormLabel,
     IconButton,
-    ListItemSecondaryAction,
+    ListItemSecondaryAction, FormControlLabel, Switch,
 } from '@mui/material';
 import { alpha, styled } from "@mui/material/styles";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
@@ -111,6 +111,9 @@ const UpdateGirlInfo = () => {
         priority: 1,  // Default priority value
         audios: [],   // Array to hold new audio files
         fullName: '',
+        audioEnabled: false,
+        imagesEnabled: false,
+        videosEnabled: false,
         birthDate: '',
         brothers: '',
         instagram: '',
@@ -145,6 +148,9 @@ const UpdateGirlInfo = () => {
                 audioId: selectedGirl.audioId,
                 brothers: selectedGirl.brothers,
                 instagram: selectedGirl.instagram,
+                audioEnabled: selectedGirl.audioEnabled,
+                imagesEnabled: selectedGirl.imagesEnabled,
+                videosEnabled: selectedGirl.videosEnabled,
                 mom: selectedGirl.mom,
                 dad: selectedGirl.dad,
                 sexActivity: selectedGirl.sexActivity,
@@ -173,10 +179,11 @@ const UpdateGirlInfo = () => {
 
     // Handle input changes with parsing for 'priority'
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {  name, value, type, checked } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'priority' ? parseInt(value) : value
+            [name]: name === 'priority' ? parseInt(value) : value,
+            [name]: type === 'checkbox' ? checked : value,
         }));
     };
 
@@ -250,6 +257,11 @@ const UpdateGirlInfo = () => {
             updateData.append('background', background);
         }
         updateData.append('girlId', selectedGirl.id);
+
+        updateData.append('audioEnabled', formData.audioEnabled.toString());
+        updateData.append('imagesEnabled', formData.imagesEnabled.toString());
+        updateData.append('videosEnabled', formData.videosEnabled.toString());
+
 
         // Append audio files to remove
         if (audioFilesToRemove.length > 0) {
@@ -471,6 +483,42 @@ const UpdateGirlInfo = () => {
                                                 name="country"
                                                 value={formData.country}
                                                 onChange={handleInputChange}
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={formData.imagesEnabled}
+                                                        onChange={handleInputChange}
+                                                        name="imagesEnabled"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="imagesEnabled"
+                                                sx={{ marginTop: 2 }}
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={formData.audioEnabled}
+                                                        onChange={handleInputChange}
+                                                        name="audioEnabled"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="audioEnabled"
+                                                sx={{ marginTop: 2 }}
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={formData.videosEnabled}
+                                                        onChange={handleInputChange}
+                                                        name="videosEnabled"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="videosEnabled"
+                                                sx={{ marginTop: 2 }}
                                             />
                                             <StyledTextField
                                                 fullWidth

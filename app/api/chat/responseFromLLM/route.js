@@ -75,14 +75,14 @@ export async function POST(req) {
 
             case 'image':
                 const imageResult = await handleImageRequest(
-                    parsedContent.image, userData, girlId, userId, conversationHistory
+                    parsedContent.image, userData, girlId, userId, conversationHistory, girlData
                 );
                 conversationHistory = imageResult.updatedHistory;
                 break;
 
             case 'video':
                 const videoResult = await handleVideoRequest(
-                    parsedContent.video, userData, girlId, userId, conversationHistory
+                    parsedContent.video, userData, girlId, userId, conversationHistory, girlData
                 );
                 conversationHistory = videoResult.updatedHistory;
                 break;

@@ -46,10 +46,11 @@ export async function handleImageRequest(
     userData,
     girlId,
     userId,
-    conversationHistory
+    conversationHistory,
+    girl
 ) {
 // Handle premium users and users with free images
-    if (userData.premium || userData.freeImages > 0) {
+    if ((userData.premium || userData.freeImages > 0)&&girl.imagesEnabled) {
         let pictureDescription = userWantsImage.description.toLowerCase();
 
         // Create base query
@@ -171,7 +172,7 @@ export async function handleImageRequest(
 
         // Add messages with display link for last message
         for (const [index, response] of assistantMessageProcess.entries()) {
-            if (index === assistantMessageProcess.length - 1) {
+            if (index === assistantMessageProcess.length - 1 && girl.imagesEnabled) {
                 response.displayLink = true;
             }
             await displayMessageRef.add(response);

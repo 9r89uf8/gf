@@ -27,7 +27,7 @@ export const loginUser = async (email, password) => {
             addNotification({
                 id: Date.now(),
                 type: 'error',
-                message: 'error de inicio de sesion',
+                message: 'contraseña o correo electrónico incorrecto',
             });
             const errorData = await response.json();
             return { user: null, error: errorData.error };
@@ -54,6 +54,11 @@ export const registerUser = async (data) => {
             setUser(data.user);
             return { user: data.user, error: null };
         } else {
+            addNotification({
+                id: Date.now(),
+                type: 'error',
+                message: 'por favor intenta de nuevo',
+            });
             const errorData = await response.json();
             return { user: null, error: errorData.error };
         }

@@ -78,7 +78,9 @@ export async function POST(req) {
         const priority = formData.get('priority');
         const audios = formData.getAll('audios[]'); // Get all uploaded audio files
         const audioFilesToRemove = formData.getAll('audioFilesToRemove[]'); // Get audio files to remove
-
+        const imagesEnabled = formData.get('imagesEnabled');
+        const videosEnabled = formData.get('videosEnabled');
+        const audioEnabled = formData.get('audioEnabled');
         const fullName = formData.get('fullName');
         const birthDate = formData.get('birthDate');
         const brothers = formData.get('brothers');
@@ -93,6 +95,10 @@ export async function POST(req) {
         const fileBackground = formData.get('background');
 
         let userId = authResult.user.uid;
+
+        let isAudioEnabled = audioEnabled === 'true';
+        let isImagesEnabled = imagesEnabled === 'true';
+        let isVideosEnabled = videosEnabled === 'true';
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
@@ -121,6 +127,9 @@ export async function POST(req) {
             background: fileBackground || girlData.background,
             birthDate: birthDate || girlData.birthDate,
             instagram: instagram || girlData.instagram,
+            audioEnabled: isAudioEnabled,
+            imagesEnabled: isImagesEnabled,
+            videosEnabled: isVideosEnabled,
             brothers: brothers || girlData.brothers,
             mom: mom || girlData.mom,
             dad: dad || girlData.dad,

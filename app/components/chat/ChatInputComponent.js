@@ -54,11 +54,11 @@ const validateFile = (file) => {
         return { valid: true, type: 'image' };
     } else if (validVideoTypes.includes(file.type)) {
         if (file.size > maxVideoSize) {
-            return { valid: false, error: 'Video must be smaller than 10MB' };
+            return { valid: false, error: 'El vídeo debe tener menos de 10 MB.' };
         }
         return { valid: true, type: 'video' };
     }
-    return { valid: false, error: 'Invalid file type. Please upload an image or video.' };
+    return { valid: false, error: 'Tipo de archivo no válido. Por favor sube una imagen o un vídeo.' };
 };
 
 // Typing Indicator Component
@@ -193,18 +193,18 @@ const ChatInputComponent = ({
                     sx={{ ml: 1, flex: 1, fontSize: '1.1rem' }}
                     placeholder={
                         isSending
-                            ? 'Sending...'
+                            ? 'enviando mensaje...'
                             : isRecording
-                                ? 'Recording audio...'
+                                ? 'grabando un audio...'
                                 : canSendMessage
-                                    ? 'Type a message...'
-                                    : 'No more free messages'
+                                    ? 'Escribe un mensaje...'
+                                    : 'No más mensajes gratis'
                     }
                     multiline
                     maxRows={6}
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    inputProps={{ 'aria-label': 'Type a message' }}
+                    inputProps={{ 'aria-label': 'Escribe un mensaje' }}
                     disabled={isRecording}
                 />
             )}

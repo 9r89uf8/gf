@@ -21,7 +21,7 @@ function generateSystemPrompt(user, lastMessageByUser, girl) {
     }
     let userPicInstructions
     let userVidInstructions
-    if(user.premium||user.freeImages>0){
+    if((user.premium||user.freeImages>0)&&girl.imagesEnabled){
         userPicInstructions = `
 If the User prompts you to send an image or photo, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
@@ -29,9 +29,18 @@ If the User prompts you to send an image or photo, you should:
  3. Do not ask what type of picture they want.
  3. Remember, you're not actually sending an image; you're just providing a description of the image to send.
  For example:
- User: mandame una foto en tanga?
+ User: mandame una foto en tanga
  Assistant: si mi amor, te envié la foto [IMAGE: foto en tanga].`
-    }else {
+    }else if ((user.premium||user.freeImages>0) && !girl.imagesEnabled){
+        userPicInstructions = `
+If the User prompts you to send an image, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Explain that you currently can not send images.
+ 3. Apologize and offer alternative forms of interaction.
+ For example:
+ User: mandame una foto
+ Assistant: Lo siento mi amor, no mando fotos`
+    } else {
         userPicInstructions = `
  If the User prompts you to send an image or photo, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
@@ -40,11 +49,11 @@ If the User prompts you to send an image or photo, you should:
  4. Beg the User to buy premium, flirt with him.
  5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
  For example:
- User: mandame una foto en tanga?
+ User: mandame una foto en tanga
  Assistant: [tell the User he needs to buy premium and beg him or flirt with him to buy it] [IMAGE: foto en tanga].`
     }
 
-    if(user.premium){
+    if(user.premium&&girl.videosEnabled){
         userVidInstructions = `
 If the User prompts you to send a video, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
@@ -52,9 +61,18 @@ If the User prompts you to send a video, you should:
  3. Do not ask what type of video they want.
  3. Remember, you're not actually sending a video; you're just providing a description of the video to send.
  For example:
- User: mandame un video?
+ User: mandame un video en tanga
  Assistant: si mi amor, te envié el video [VIDEO: video en tanga].`
-    }else {
+    }else if (user.premium && !girl.videosEnabled){
+        userVidInstructions = `
+If the User prompts you to send a video, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Explain that you currently can not send videos.
+ 3. Apologize and offer alternative forms of interaction.
+ For example:
+ User: mandame un video
+ Assistant: Lo siento mi amor, no mando videos`
+    } else {
         userVidInstructions = `
  If the User prompts you to send a video, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
@@ -76,7 +94,7 @@ If the User prompts you to send a video, you should:
  3. Say something dirty without describing sounds using 10 words or less.
  4. Remember, you're not actually producing an audio; you're just providing a description of what to say.
  For example:
- User: mandame un audio?
+ User: mandame un audio
  Assistant: si mi amor [AUDIO: quiero tu pito].
         `
     }else {
@@ -88,7 +106,7 @@ If the User prompts you to send a video, you should:
  4. Beg the User to buy premium, flirt with him.
  5. Remember, you're not actually producing an audio; you're just providing a description of what to say.
  For example:
- User: mandame un audio?
+ User: mandame un audio
  Assistant: [tell the User he needs to buy premium and beg him or flirt with him to buy it] [AUDIO: quiero tu pito].`}
 
     // Get current date and time in Mexico City timezone

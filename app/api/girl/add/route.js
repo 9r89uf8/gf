@@ -70,6 +70,10 @@ export async function POST(req) {
         const priority = formData.get('priority'); // Get priority from formData
         const audioFiles = formData.getAll('audios[]'); // Get all uploaded audio files
 
+        const imagesEnabled = formData.get('imagesEnabled');
+        const videosEnabled = formData.get('videosEnabled');
+        const audioEnabled = formData.get('audioEnabled');
+
         const fullName = formData.get('fullName');
         const birthDate = formData.get('birthDate');
         const brothers = formData.get('brothers');
@@ -83,6 +87,9 @@ export async function POST(req) {
 
         let userId = authResult.user.uid;
         let isPrivateF = isPrivate === 'true';
+        let isAudioEnabled = audioEnabled === 'true';
+        let isImagesEnabled = imagesEnabled === 'true';
+        let isVideosEnabled = videosEnabled === 'true';
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
@@ -96,6 +103,9 @@ export async function POST(req) {
             username: username.toLowerCase(),
             name: name.toLowerCase(),
             private: isPrivateF,
+            audioEnabled: isAudioEnabled,
+            imagesEnabled: isImagesEnabled,
+            videosEnabled: isVideosEnabled,
             fullName,
             birthDate,
             instagram,
