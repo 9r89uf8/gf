@@ -131,7 +131,7 @@ const Chat = ({params}) => {
     };
 
     const isPromptEntered = prompt.trim().length > 0;
-    const canSendMessage = (user && user.freeMessages > 0) || !user;
+    const canSendMessage = user && user.freeMessages > 0
 
     return (
         <StyledContainer maxWidth="sm">
