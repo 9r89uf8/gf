@@ -325,6 +325,26 @@ const UpdateGirlInfo = () => {
                                                     component="label"
                                                     sx={{
                                                         position: 'absolute',
+                                                        bottom: 100,
+                                                        right: 5,
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                                        borderRadius: '50%',
+                                                        minWidth: 'auto',
+                                                        padding: 1,
+                                                    }}
+                                                >
+                                                    <CameraAltIcon />
+                                                    <input
+                                                        type="file"
+                                                        hidden
+                                                        onChange={handlePictureChange}
+                                                        accept="image/*"
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    component="label"
+                                                    sx={{
+                                                        position: 'absolute',
                                                         bottom: 0,
                                                         right: 0,
                                                         backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -337,7 +357,7 @@ const UpdateGirlInfo = () => {
                                                     <input
                                                         type="file"
                                                         hidden
-                                                        onChange={handlePictureChange}
+                                                        onChange={handleBackgroundChange}
                                                         accept="image/*"
                                                     />
                                                 </Button>
