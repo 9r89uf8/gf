@@ -2,30 +2,90 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 const { v4: uuidv4 } = require("uuid");
 
-// Text Processing Utilities
-function splitTextAtPunctuationOrSecondEmoji(text) {
-    if (text.length < 28) return [text, ''];
+function splitText(text) {
 
-    const punctuationRegex = /(\.|\?|!)\s*/;
+    // Handle period case
+    const periodIndex = text.indexOf('.');
+    if (periodIndex !== -1) {
+        return [
+            text.substring(0, periodIndex + 1), // Include the period
+            text.substring(periodIndex + 1)     // Text after period
+        ];
+    }
+
+    // Find all emojis in text
     const emojiRegex = /\p{Emoji}/gu;
-    const punctuationMatch = text.match(punctuationRegex);
-    const emojiMatches = [...text.matchAll(emojiRegex)];
+    const emojis = [...text.matchAll(emojiRegex)];
 
-    if (punctuationMatch && (!emojiMatches[1] || punctuationMatch.index < emojiMatches[1].index)) {
-        const index = punctuationMatch.index + punctuationMatch[0].length;
-        return [text.substring(0, index), text.substring(index)];
+    // If we have emojis, handle the splitting
+    if (emojis.length > 0) {
+        // Get the second emoji if it exists
+        if (emojis.length > 1) {
+            const secondEmojiIndex = emojis[1].index;
+            const firstPart = text.substring(0, secondEmojiIndex);
+            const secondPart = text.substring(secondEmojiIndex);
+
+            // Check if second part contains only an emoji
+            const isSecondPartOnlyEmoji = secondPart.trim().match(/^\p{Emoji}$/u);
+
+            if (isSecondPartOnlyEmoji) {
+                const emoji = secondPart.trim();
+                const random = Math.random();
+
+                if (random < 0.25) {
+                    // Option 1: Keep emoji as second part (10% chance)
+                    return [firstPart, emoji];
+                } else if (random < 0.40) {
+                    // Option 2: Add emoji to first part (45% chance)
+                    const addToStart = Math.random() < 0.5;
+                    return [addToStart ? emoji + firstPart : firstPart + emoji, ''];
+                } else {
+                    // Option 3: Delete emoji (45% chance)
+                    return [firstPart, ''];
+                }
+            }
+
+            return [firstPart, secondPart];
+        }
+
+        // If we only have one emoji
+        const emojiIndex = emojis[0].index;
+        const beforeEmoji = text.substring(0, emojiIndex);
+        const emojiAndAfter = text.substring(emojiIndex);
+
+        // If the emoji is alone at the end
+        const isOnlyEmoji = emojiAndAfter.trim().match(/^\p{Emoji}$/u);
+
+        if (isOnlyEmoji) {
+            const emoji = emojiAndAfter.trim();
+            const random = Math.random();
+
+            if (random < 0.10) {
+                return [beforeEmoji, emoji];
+            } else if (random < 0.55) {
+                const addToStart = Math.random() < 0.5;
+                return [addToStart ? emoji + beforeEmoji : beforeEmoji + emoji, ''];
+            } else {
+                return [beforeEmoji, ''];
+            }
+        }
+
+        // If emoji is at start, look for next emoji
+        if (emojiIndex === 0) {
+            const remainingText = text.substring(1);
+            const remainingEmojis = [...remainingText.matchAll(emojiRegex)];
+
+            if (remainingEmojis.length > 0) {
+                const splitIndex = remainingEmojis[0].index + 1;
+                return [
+                    text.substring(0, splitIndex + 1),
+                    text.substring(splitIndex + 1)
+                ];
+            }
+        }
     }
 
-    if (emojiMatches[1]) {
-        const index = emojiMatches[1].index + emojiMatches[1][0].length;
-        return [text.substring(0, index), text.substring(index)];
-    }
-
-    if (emojiMatches.length === 1 && text.endsWith(emojiMatches[0][0])) {
-        const index = emojiMatches[0].index;
-        return [text.substring(0, index), text.substring(index)];
-    }
-
+    // Default case: no split
     return [text, ''];
 }
 
@@ -33,7 +93,7 @@ const removeHashSymbols = text => text.replace(/#/g, '');
 
 // Message Processing
 function processAssistantMessage(assistantMessage) {
-    const [firstPart, secondPart] = splitTextAtPunctuationOrSecondEmoji(assistantMessage);
+    const [firstPart, secondPart] = splitText(assistantMessage);
     const createMessageObject = content => ({
         uid: uuidv4(),
         role: "assistant",
@@ -44,6 +104,7 @@ function processAssistantMessage(assistantMessage) {
     });
 
     const response = [createMessageObject(firstPart)];
+
     if (secondPart) response.push(createMessageObject(secondPart));
 
     return response;
