@@ -229,7 +229,7 @@ const ChatInputComponent = ({
                     <IconButton
                         type="submit"
                         color="primary"
-                        disabled={!canSend}
+                        disabled={!canSend||girl.private}
                         aria-label="Send Message"
                     >
                         <SendIcon sx={{ fontSize: 32 }} />

@@ -25,6 +25,7 @@ import ChatInputComponent from '@/app/components/chat/ChatInputComponent';
 import MediaPreviewComponent from "@/app/components/chat/MediaPreviewComponent";
 import LoginReminder from '@/app/components/chat/LoginReminder';
 import UpgradeReminder from '@/app/components/chat/UpgradeReminder';
+import PrivateGirlReminder from '@/app/components/chat/PrivateGirlReminder';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
     position: 'relative',
@@ -93,7 +94,8 @@ const Chat = ({params}) => {
         // If we have media that's not audio, we need text
         if (media && mediaType !== 'audio' && !prompt.trim()) return;
 
-        if (!user) return;
+        // Return early if user is not logged in or if the girl is private
+        if (!user || (girl && girl.private)) return;
 
         setIsSending(true);
 
@@ -151,6 +153,11 @@ const Chat = ({params}) => {
             {/* Reminder to log in or register */}
             {isPromptEntered && !user && (
                 <LoginReminder />
+            )}
+
+            {/* Show private girl reminder when appropriate */}
+            {isPromptEntered && user && girl && girl.private && (
+                <PrivateGirlReminder />
             )}
 
             {/* Always show ChatInputComponent */}

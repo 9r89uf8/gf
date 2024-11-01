@@ -72,6 +72,8 @@ const DMList = () => {
     const girls = useStore((state) => state.girls);
     const [loading, setLoading] = useState(true);
 
+    //girls.filter((girl) => !girl.private).map
+
     useEffect(() => {
         async function fetchChats() {
             await getChatList();
@@ -145,7 +147,8 @@ const DMList = () => {
                             marginBottom: '20px',
                         }}
                     >
-                        {girls.filter((girl) => !girl.private).map((girl) => (
+
+                        {girls.map((girl) => (
                             <Box
                                 key={girl.id}
                                 sx={{
