@@ -62,6 +62,31 @@ import { useStore } from '../store/store'; // Ensure you import the correct stor
 //     }
 // };
 
+export const getMessagesTest = async (formData) => {
+    const setConversationHistory = useStore.getState().setConversationHistory;
+
+    try {
+        const response = await fetch(`/api/chat/testing`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            setConversationHistory(data);
+            return data;
+        } else {
+            const data = await response.json();
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
+
 export const likeMessage = async (formData) => {
     const updateMessage = useStore.getState().updateMessage;
     try {

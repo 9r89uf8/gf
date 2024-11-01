@@ -12,7 +12,7 @@ import {updateConversation} from "@/app/utils/chat/conversationHandler";
 import {updateUserMessages} from "@/app/utils/chat/userHandler";
 
 const elevenK = process.env.ELEVENLABS_API_KEY;
-const wordsToCheck = ['no puedo participar', 'solicitud'];
+const wordsToCheck = ['no puedo participar', 'no puedo continuar'];
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
