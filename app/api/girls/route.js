@@ -2,8 +2,6 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export async function GET() {
     try {
@@ -24,8 +22,7 @@ export async function GET() {
         return new Response(JSON.stringify(girls), {
             status: 200,
             headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-store, max-age=0'
+                'Content-Type': 'application/json'
             },
         });
     } catch (error) {
