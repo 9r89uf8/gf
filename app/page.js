@@ -90,8 +90,6 @@ const Home = () => {
         >
             <Container maxWidth="lg">
 
-                <PopularCreators />
-
                 {/* Download App Section */}
                 {/*<GlassCard>*/}
                 {/*    <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>*/}
@@ -141,7 +139,7 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </GlassCard>
-
+                <PopularCreators />
                 {/* Enhanced AI Features Section */}
                 <EnhancedAIFeaturesCard />
 
