@@ -1,30 +1,31 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image'
 
 const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
         username: 'arelydiaz.9',
         bio: 'No sean chismosos 😏😂',
-        picture: 'https://d3sog3sqr61u3b.cloudfront.net/1d61f39f-7927-46a0-8bbb-dc4a95027c93.jpeg'
+        picture: '/arely.webp'
     },
     {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
         bio: 'Hola....',
-        picture: 'https://d3sog3sqr61u3b.cloudfront.net/e7e2dddf-93b7-4980-953c-f8ec2e00809c.jpeg'
+        picture: '/andrea.webp'
     },
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
         bio: '👾',
-        picture: 'https://d3sog3sqr61u3b.cloudfront.net/97b5d3bb-c0b2-4443-b789-347e030e8bfe.jpeg'
+        picture: '/rocio.webp'
     },
     {
         id: 'tvLbDSi7ZBDta81qwlKT',
         username: 'ariana2',
         bio: '💚',
-        picture: 'https://d3sog3sqr61u3b.cloudfront.net/82ebd1ee-c264-4d88-9e23-accc5d0d306e.jpeg'
+        picture: '/ariana.webp'
     }
 ];
 
@@ -139,10 +140,11 @@ const PopularCreators = () => {
                 {staticGirls.map((girl, index) => (
                     <div key={girl.id} style={styles.card}>
                         <div style={styles.imageContainer}>
-                            <img
+                            <Image
                                 src={girl.picture}
-                                alt={girl.username}
-                                style={styles.image}
+                                width={200}
+                                height={200}
+                                alt="novia virtual foto"
                             />
                         </div>
 
