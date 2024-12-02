@@ -38,7 +38,7 @@ const FeatureItem = ({ icon, title, description }) => (
 const EnhancedAIFeaturesCard = () => (
     <GlassCard>
         <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4, fontWeight: 'bold' }}>
-            Experimenta una nueva dimensión de compañía
+            Novia Virtual
         </Typography>
         <Grid container spacing={4}>
             <Grid item xs={12} sm={6} md={3}>

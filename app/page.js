@@ -101,7 +101,7 @@ const Home = () => {
                 {/* Company Stats Section */}
                 <GlassCard>
                     <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
-                        La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos
+                        La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos. Novia Virtual.
                     </Typography>
                     <Grid container spacing={4} justifyContent="center">
                         <Grid item xs={12} md={4}>
@@ -212,7 +212,7 @@ const Home = () => {
                         style={{ width: 45, height: 'auto', marginBottom: 1 }}
                     />
                     <Typography sx={{ color: 'white', fontSize: '20px' }}>
-                        © 2024 - Todos los Derechos Reservados NoviaChat.
+                        © 2024 - Todos los Derechos Reservados. Novia Virtual, NoviaChat.com
                     </Typography>
                 </GlassCard>
             </Container>
