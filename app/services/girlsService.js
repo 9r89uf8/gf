@@ -1,7 +1,7 @@
 import { useStore } from '../store/store'; // Ensure you import the correct store
 
 
-export const getGirls = async (formData) => {
+export const getGirls = async () => {
     const setGirls = useStore.getState().setGirls;
 
     try {

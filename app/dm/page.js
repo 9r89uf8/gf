@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/app/store/store';
 import { getChatList } from '@/app/services/chatService';
+import {getGirls} from "@/app/services/girlsService";
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
@@ -76,8 +77,12 @@ const DMList = () => {
 
     useEffect(() => {
         async function fetchChats() {
-            await getChatList();
-            setLoading(false);
+            await getGirls();
+            if(user){
+                await getChatList();
+                setLoading(false);
+            }
+
         }
         fetchChats();
     }, []);
@@ -112,7 +117,7 @@ const DMList = () => {
         >
             <Container maxWidth="lg">
                 {/* Girls List Component */}
-                {loading ? (
+                {!girls ? (
                     <Box
                         sx={{
                             overflowX: 'auto',
