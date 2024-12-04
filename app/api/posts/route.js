@@ -10,6 +10,7 @@ export async function GET() {
         const girlsCollection = await adminDb
             .firestore()
             .collection('posts')
+            .orderBy('timestamp', 'desc')
             .get();
 
         const girls = [];
