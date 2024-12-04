@@ -5,7 +5,7 @@ import Image from 'next/image'
 const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
-        username: 'arelydiaz.9',
+        username: 'antonellaPerez1353',
         bio: 'No sean chismosos 😏😂',
         picture: '/arely.webp'
     },

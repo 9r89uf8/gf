@@ -48,7 +48,7 @@ const GlassCard = ({ children }) => (
 const Home = () => {
     const users = [
         {
-            name: 'ArelyDiaz3',
+            name: 'Antonellaperez1353',
             profilePicture: '/profileTwo.jpg',
             profileLink: '/novia-virtual',
         },
