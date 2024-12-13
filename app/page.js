@@ -99,6 +99,7 @@ const Home = () => {
                 {/*</GlassCard>*/}
 
                 {/* Company Stats Section */}
+                <PopularCreators />
                 <GlassCard>
                     <Typography variant="h5" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
                         La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos. Novia Virtual.
@@ -139,7 +140,7 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </GlassCard>
-                <PopularCreators />
+                {/*<PopularCreators />*/}
                 {/* Enhanced AI Features Section */}
                 <EnhancedAIFeaturesCard />
 
