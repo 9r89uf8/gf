@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Box } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DehazeIcon from '@mui/icons-material/Dehaze';
-import { AccountCircle } from '@mui/icons-material';
 import { useStore } from '@/app/store/store';
 import { logoutUser } from "@/app/services/authService";
 import { styled } from '@mui/material/styles';

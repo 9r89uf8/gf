@@ -1,3 +1,5 @@
+// app/components/landing/Home.jsx (or wherever you keep your landing page)
+
 import React from 'react';
 import PopularCreators from "@/app/components/landing/PopularCreators";
 import ChatPreview from '@/app/components/landing/ChatPreview';
@@ -176,7 +178,7 @@ const Home = () => {
                         style={styles.footerLogo}
                     />
                     <p style={styles.footerText}>
-                        © 2025 - Todos los Derechos Reservados. Novia Virtual, NoviaChat.com
+                        © 2024 - Todos los Derechos Reservados. Novia Virtual, NoviaChat.com
                     </p>
                 </GlassCard>
             </div>

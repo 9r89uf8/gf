@@ -1,38 +1,38 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image'
+import Image from 'next/image';
 
 const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
         username: 'antonellaPerez1353',
         bio: 'No sean chismosos 😏😂',
-        picture: '/arely.webp'
+        picture: '/arely.webp',
     },
     {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
         bio: 'Hola....',
-        picture: '/andrea.webp'
+        picture: '/andrea.webp',
     },
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
         bio: '👾',
-        picture: '/rocio.webp'
+        picture: '/rocio.webp',
     },
     {
         id: 'tvLbDSi7ZBDta81qwlKT',
         username: 'ariana2',
         bio: '💚',
-        picture: '/ariana.webp'
-    }
+        picture: '/ariana.webp',
+    },
 ];
 
 const styles = {
     container: {
         padding: '5px',
-        marginBottom: 30
+        marginBottom: 30,
     },
     title: {
         fontSize: '24px',
@@ -40,12 +40,12 @@ const styles = {
         textAlign: 'center',
         color: 'white',
         marginBottom: '24px',
-        marginTop: -5
+        marginTop: -5,
     },
     grid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '24px'
+        gap: '24px',
     },
     card: {
         borderRadius: '8px',
@@ -55,7 +55,7 @@ const styles = {
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     imageContainer: {
         position: 'relative',
@@ -64,39 +64,43 @@ const styles = {
         borderRadius: '50%',
         overflow: 'hidden',
         border: '4px solid rgba(255, 255, 255, 0.5)',
-        marginBottom: '16px'
-    },
-    image: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover'
+        marginBottom: '16px',
     },
     skeleton: {
         position: 'absolute',
         inset: 0,
         animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        backgroundColor: '#374151'
+        backgroundColor: '#374151',
+        // The skeleton sits behind the image. The loaded image covers it.
+        zIndex: 1,
+    },
+    image: {
+        position: 'relative',
+        zIndex: 2,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
     },
     nameContainer: {
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        marginBottom: '2px'
+        marginBottom: '2px',
     },
     username: {
         fontSize: '25px',
         fontWeight: 'bold',
-        color: 'white'
+        color: 'white',
     },
     bio: {
         color: 'rgba(255, 255, 255, 0.9)',
         fontSize: '18px',
         marginBottom: '24px',
-        marginTop: -5
+        marginTop: -5,
     },
     buttonContainer: {
         display: 'flex',
-        gap: '16px'
+        gap: '16px',
     },
     photoButton: {
         display: 'flex',
@@ -111,7 +115,7 @@ const styles = {
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',
         textDecoration: 'none',
-        fontSize: 20
+        fontSize: 20,
     },
     messageButton: {
         display: 'flex',
@@ -126,25 +130,27 @@ const styles = {
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',
         textDecoration: 'none',
-        fontSize: 20
-    }
+        fontSize: 20,
+    },
 };
 
 const PopularCreators = () => {
-
     return (
         <div style={styles.container}>
             <h2 style={styles.title}>Creadoras Populares</h2>
 
             <div style={styles.grid}>
-                {staticGirls.map((girl, index) => (
+                {staticGirls.map((girl) => (
                     <div key={girl.id} style={styles.card}>
                         <div style={styles.imageContainer}>
+                            {/* The skeleton is absolutely positioned behind the image */}
+                            <div style={styles.skeleton}></div>
                             <Image
                                 src={girl.picture}
+                                alt="novia virtual foto"
                                 width={200}
                                 height={200}
-                                alt="novia virtual foto"
+                                style={styles.image}
                             />
                         </div>
 
@@ -155,20 +161,10 @@ const PopularCreators = () => {
                         <p style={styles.bio}>{girl.bio}</p>
 
                         <div style={styles.buttonContainer}>
-                            <Link
-                                href={`/${girl.id}`}
-                                style={{
-                                    ...styles.photoButton
-                                }}
-                            >
+                            <Link href={`/${girl.id}`} style={styles.photoButton}>
                                 Fotos
                             </Link>
-                            <Link
-                                href={`/chat/${girl.id}`}
-                                style={{
-                                    ...styles.messageButton,
-                                }}
-                            >
+                            <Link href={`/chat/${girl.id}`} style={styles.messageButton}>
                                 Mensaje
                             </Link>
                         </div>

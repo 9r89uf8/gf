@@ -7,24 +7,18 @@ import Notifications from "@/app/components/notifications/Notifications";
 import './styles/globals.css';
 import { Analytics } from "@vercel/analytics/react"
 
-function generateSchemaMarkup() {
-    const schemaData = {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "noviachat",
-        "url": "https://www.noviachat.com",
-        "description": "novia virtual, novia IA.",
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://www.noviachat.com/search?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    };
-
-    return {
-        __html: JSON.stringify(schemaData)
-    };
-}
+const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "noviachat",
+    "url": "https://www.noviachat.com",
+    "description": "novia virtual, novia IA.",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.noviachat.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+};
 
 const Layout = ({ children }) => {
     return (
@@ -61,7 +55,7 @@ const Layout = ({ children }) => {
             {/* Schema Markup */}
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={generateSchemaMarkup()}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
             />
         </head>
         <body>
