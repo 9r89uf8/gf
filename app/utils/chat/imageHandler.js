@@ -59,7 +59,7 @@ export async function handleImageRequest(
             .where('girlId', '==', girlId);
 
         // Add premium filter based on user status
-        picturesQuery = picturesQuery.where('premium', '==', userData.premium);
+        picturesQuery = picturesQuery.where('isPremium', '==', userData.premium);
 
         // Fetch pictures
         const picturesSnapshot = await picturesQuery.get();
