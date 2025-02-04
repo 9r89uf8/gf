@@ -25,6 +25,7 @@ export async function POST(req) {
             freeMessages: 10,
             premium: false,
             name: username,
+            timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         });
 
 

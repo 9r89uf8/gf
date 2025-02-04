@@ -86,6 +86,14 @@ async function generateAudio(text, audioId, apiKey) {
     return Buffer.from(response.data).toString('base64');
 }
 
+// A list of pre-stored audio URLs for moaning
+const moanAudioUrls = [
+    "https://chicagocarhelp.s3.us-east-2.amazonaws.com/girl_is_moaning+(3).mp3",
+    "https://chicagocarhelp.s3.us-east-2.amazonaws.com/girl_is_moaning+(2).mp3",
+    "https://chicagocarhelp.s3.us-east-2.amazonaws.com/girl_is_moaning+(1).mp3",
+    "https://chicagocarhelp.s3.us-east-2.amazonaws.com/girl_is_moaning.mp3"
+];
+
 export async function handleAudioRequest(
     userWantsAudio,
     userData,
@@ -94,18 +102,17 @@ export async function handleAudioRequest(
     girlId,
     assistantMessageProcess,
     conversationHistory,
-    elevenLabsKey
+    elevenLabsKey,
+    userMessage
 ) {
     let audioTextDescription = false;
 
+    // If freeAudio is 0, process normally (splitting the message, etc.)
     if (userData.freeAudio === 0) {
-        // Set displayLink to true for the last object
         assistantMessageProcess = processAssistantMessage(userWantsAudio.content);
         assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
-
-        // Update conversation history
         assistantMessageProcess.forEach(response => {
-            conversationHistory.push({"role": "assistant", "content": response.content});
+            conversationHistory.push({ role: "assistant", content: response.content });
         });
     } else {
         audioTextDescription = true;
@@ -127,37 +134,62 @@ export async function handleAudioRequest(
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             }
         ];
-
-        // Update conversation history with both messages
         conversationHistory.push(
-            {"role": "assistant", "content": userWantsAudio.content},
-            {"role": "assistant", "content": userWantsAudio.description}
+            { role: "assistant", content: userWantsAudio.content },
+            { role: "assistant", content: userWantsAudio.description }
         );
     }
 
-    // Generate audio if user has free audio available
-    if (userData.freeAudio >= 1) {
-        const response = audioTextDescription ? assistantMessageProcess[1] : assistantMessageProcess[0];
+    // Check if the user's text contains the word "gemir" (case-insensitive)
+    if (userMessage.content.toLowerCase().includes("gemir") ||
+        userMessage.content.toLowerCase().includes("gemidos" || userMessage.content.toLowerCase().includes("jemir"))) {
+        // Choose one audio URL at random
+        const selectedUrl =
+            moanAudioUrls[Math.floor(Math.random() * moanAudioUrls.length)];
+        try {
+            // Fetch the audio file from the selected URL as an array buffer
+            const response = await axios.get(selectedUrl, { responseType: 'arraybuffer' });
+            const audioBase64 = Buffer.from(response.data).toString('base64');
+
+            // Attach the audio data to the proper assistant message
+            if (audioTextDescription) {
+                assistantMessageProcess[1].audioData = audioBase64;
+            } else {
+                assistantMessageProcess[0].audioData = audioBase64;
+            }
+
+            // Optionally, update the conversation history if needed (messages are already added below)
+            // Decrement freeAudio count if required by your business logic:
+            if (userData.freeAudio >= 1) {
+                const userRef = adminDb.firestore().collection('users').doc(userId);
+                await userRef.update({
+                    freeAudio: adminDb.firestore.FieldValue.increment(-1)
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching or converting moan audio:", error);
+            // Fallback: you could set response.type = 'text' or proceed with the default generation
+            assistantMessageProcess[0].type = 'text';
+        }
+    } else if (userData.freeAudio >= 1) {
+        // Proceed with normal audio generation using ElevenLabs
+        const responseObj = audioTextDescription ? assistantMessageProcess[1] : assistantMessageProcess[0];
         const removeEmojisAndHash = (str) => {
             return str.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F1E0}-\u{1F1FF}#]/gu, '').trim();
         };
 
-        const finalText = removeEmojisAndHash(response.content);
+        const finalText = removeEmojisAndHash(responseObj.content);
 
         if (finalText.length < 62) {
             const audioBase64 = await generateAudio(finalText, girlData.audioId, elevenLabsKey);
-
-            // Instead of saving to displayAudios collection, add audioBase64 to the second message
             if (audioTextDescription) {
                 assistantMessageProcess[1].audioData = audioBase64;
             } else {
                 assistantMessageProcess[0].audioData = audioBase64;
             }
         } else {
-            response.type = 'text';
+            responseObj.type = 'text';
         }
-
-        // Update user's audio count
         const userRef = adminDb.firestore().collection('users').doc(userId);
         await userRef.update({
             freeAudio: adminDb.firestore.FieldValue.increment(-1)

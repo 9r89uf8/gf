@@ -12,7 +12,7 @@ import {updateConversation} from "@/app/utils/chat/conversationHandler";
 import {updateUserMessages} from "@/app/utils/chat/userHandler";
 
 const elevenK = process.env.ELEVENLABS_API_KEY;
-const wordsToCheck = ['no puedo participar', 'no puedo continuar'];
+const wordsToCheck = ['no puedo participar', 'no puedo continuar', 'no puedo seguir', 'no puedo cumplir'];
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -68,7 +68,7 @@ export async function POST(req) {
             case 'audio':
                 const audioResult = await handleAudioRequest(
                     parsedContent.audio, userData, girlData, userId, girlId,
-                    assistantMessageProcess, conversationHistory, elevenK
+                    assistantMessageProcess, conversationHistory, elevenK, lastUserMessage
                 );
                 conversationHistory = audioResult.updatedHistory;
                 break;

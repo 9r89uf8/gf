@@ -26,6 +26,7 @@ export async function POST(req) {
         // Get all users first
         const usersSnapshot = await adminDb.firestore()
             .collection('users')
+            .orderBy('timestamp', 'asc')
             .get();
 
         // Extract all user IDs
@@ -33,6 +34,7 @@ export async function POST(req) {
 
         // If no users found, return error
         if (userIds.length === 0) {
+            console.error('Users not found');
             return new Response(JSON.stringify({ error: 'No users found' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
@@ -64,6 +66,7 @@ export async function POST(req) {
 
         // If no messages found for this user and girlId combination
         if (messageDataArray.length === 0) {
+            console.error('No messages found');
             return new Response(JSON.stringify({ error: 'No messages found for the selected user' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
