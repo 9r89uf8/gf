@@ -213,25 +213,25 @@ const AddGirl = () => {
             await addGirl(data);
             setSuccessMessage('Girl created successfully!');
             // Reset form fields
-            setFormData({
-                name: '',
-                username: '',
-                audioId: '',
-                bio: '',
-                image: null,
-                isPrivate: false,
-                audioEnabled: false,
-                imagesEnabled: false,
-                videosEnabled: false,
-                background: null,
-                country: '',
-                education: '',
-                age: 15,
-                priority: 1, // Reset priority
-                audios: [],  // Reset audios
-            });
-            setImagePreview(null);
-            setImagePreviewBackground(null)
+            // setFormData({
+            //     name: '',
+            //     username: '',
+            //     audioId: '',
+            //     bio: '',
+            //     image: null,
+            //     isPrivate: false,
+            //     audioEnabled: false,
+            //     imagesEnabled: false,
+            //     videosEnabled: false,
+            //     background: null,
+            //     country: '',
+            //     education: '',
+            //     age: 15,
+            //     priority: 1, // Reset priority
+            //     audios: [],  // Reset audios
+            // });
+            // setImagePreview(null);
+            // setImagePreviewBackground(null)
         } catch (error) {
             console.error('Error creating girl:', error);
             setErrorMessage('Failed to create girl. Please try again.');

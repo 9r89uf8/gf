@@ -2,7 +2,8 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
 
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export async function GET() {
     try {
         const girlsCollection = await adminDb
@@ -22,8 +23,9 @@ export async function GET() {
         return new Response(JSON.stringify(girls), {
             status: 200,
             headers: {
-                'Content-Type': 'application/json'
-            },
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0'
+            }
         });
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), {
