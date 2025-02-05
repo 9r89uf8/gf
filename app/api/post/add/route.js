@@ -9,6 +9,7 @@ const axios = require("axios");
 const fs = require("fs");
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Set the AWS region
 const REGION = "us-east-2"; // e.g. "us-east-1"
@@ -120,7 +121,8 @@ export async function POST(req) {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
-            },
+                'Cache-Control': 'no-store, max-age=0'
+            }
         });
     } catch (error) {
         console.error('Error updating user:', error);
