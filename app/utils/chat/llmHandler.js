@@ -554,15 +554,16 @@ ${userAudioInstructions}
 async function getLLMResponse(messages) {
     const response = await together.chat.completions.create({
         messages: messages,
-        model: "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+        model: "deepseek-ai/DeepSeek-V3",
         max_tokens: 90,
         temperature: 0.7,
         top_p: 0.7,
         top_k: 50,
         repetition_penalty: 1,
-        stop: ["<|im_end|>\",\"<|im_start|>"],
+        stop: ["<｜end▁of▁sentence｜>"],
         stream: false
     });
+    // stop: ["<|im_end|>\",\"<|im_start|>"],
 
     return response.choices[0].message.content;
 }

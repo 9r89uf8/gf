@@ -6,6 +6,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Set the AWS region
 const REGION = "us-east-2";
@@ -159,7 +160,13 @@ export async function POST(req) {
         return NextResponse.json({
             id: newGirlRef.id,
             ...girlRecord,
-        }, { status: 201 });
+        }, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0'
+            }
+        });
     } catch (error) {
         console.error('Error adding new girl:', error);
         return NextResponse.json({ error: error.message }, { status: 400 });
