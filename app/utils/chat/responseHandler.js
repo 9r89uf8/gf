@@ -5,22 +5,15 @@ export const checkWordsInMessage = (message, wordList) => {
 };
 
 export const handleRefusedAnswer = (userData) => {
-    const randomMessages = userData.premium ?
-        { message: '😘', type: 'image' } :
-        {
-            messages: [
-                '😘 para obtener fotos mias tiene que comprar premium.',
-                'comprame premium para mandarte fotos mi amor. 😍',
-                'no puedo mandarte fotos mi amor. tienes que comprar premium',
-                'compra premium para ver mis fotos 😉',
-            ],
-            type: 'premium'
-        };
+    const messages = [
+        "No manches, cambiemos de tema.",
+        "Chale, ya estuvo.",
+        "Bro, otra cosa, ¿va?",
+        "Wee, mejor otro rollo.",
+        "Oye, ya no jala esa onda.",
+        "Nah, mejor hablemos de otra cosa."
+    ];
 
-    if (userData.premium) {
-        return `${randomMessages.message}[IMAGEN: foto mia]`;
-    }
-
-    const randomIndex = Math.floor(Math.random() * randomMessages.messages.length);
-    return `${randomMessages.messages[randomIndex]}[IMAGEN: foto mia]`;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
 };
