@@ -136,7 +136,7 @@ export async function handleAudioRequest(
         ];
         conversationHistory.push(
             { role: "assistant", content: userWantsAudio.content },
-            { role: "assistant", content: userWantsAudio.description }
+            { role: "assistant", content: `${girlData.name} envió un audio al User diciendo '`+userWantsAudio.description+`'` }
         );
     }
 

@@ -54,6 +54,7 @@ export async function POST(req) {
 
         // Get and process LLM response
         let assistantMessage = await handleLLMInteraction(userData, lastUserMessage, girlData, conversationHistory);
+        console.log(assistantMessage)
 
         if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
             assistantMessage = handleRefusedAnswer(userData);

@@ -56,6 +56,8 @@ export async function POST(req) {
         const media = formData.get('media');
         const mediaType = formData.get('mediaType');
 
+        console.log(userMessage)
+
         // Validate file if present
         if (media && mediaType !== 'audio') {
             const validation = validateFile(media);
@@ -137,6 +139,15 @@ export async function POST(req) {
             }
         }
 
+        if(mediaType==='audio'){
+            userMessage = `El User te envió un audio de él. `+ userMessage
+        }
+        if(mediaType==='video'){
+            userMessage = `El User te envió un video de él. `+ userMessage
+        }
+        if(mediaType==='image'){
+            userMessage = `El User te envió una foto de él. `+ userMessage
+        }
         // Add user's message to the conversation history
         conversationHistory.push({ role: 'user', content: userMessage });
 
