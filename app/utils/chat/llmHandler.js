@@ -112,11 +112,10 @@ If the User prompts you to send a video, you should:
     }
 
     const lastUserMessage = `
-${userMessageType}. Follow the following instructions if you are going to respond with an IMAGE or VIDEO:
+${userMessageType}. Follow the following instructions:
    1. Show appropriate teen enthusiasm for social media and sharing
-
    2. Don't send media in every message
-   3. Respond to user's media first before sending your own
+   3. Respond to user's media
     `
 
     const textingStyle=`
