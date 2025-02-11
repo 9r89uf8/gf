@@ -8,24 +8,29 @@ const staticGirls = [
         username: 'antonellaPerez1353',
         bio: 'No sean chismosos 😏😂',
         picture: '/arely.webp',
+        texting: true
     },
     {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
         bio: 'Hola....',
         picture: '/andrea.webp',
+        texting: false
     },
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
         bio: '👾',
         picture: '/rocio.webp',
+        texting: false
+
     },
     {
         id: 'tvLbDSi7ZBDta81qwlKT',
         username: 'ariana2',
         bio: '💚',
         picture: '/ariana.webp',
+        texting: false
     },
 ];
 
@@ -164,10 +169,24 @@ const PopularCreators = () => {
                             <Link href={`/${girl.id}`} style={styles.photoButton}>
                                 Fotos
                             </Link>
-                            <Link href={`/chat/${girl.id}`} style={styles.messageButton}>
-                                Mensaje
-                            </Link>
+                            {girl.texting ? (
+                                <Link href={`/chat/${girl.id}`} style={styles.messageButton}>
+                                    Mensaje
+                                </Link>
+                            ) : (
+                                <span
+                                    style={{
+                                        ...styles.messageButton,
+                                        backgroundColor: 'gray',      // Change color to indicate disabled state
+                                        cursor: 'not-allowed',        // Change cursor style
+                                        pointerEvents: 'none',        // Prevent any pointer events
+                                    }}
+                                >
+                                    Mensaje
+                                </span>
+                            )}
                         </div>
+
                     </div>
                 ))}
             </div>

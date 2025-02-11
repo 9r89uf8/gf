@@ -7,7 +7,6 @@ import { getChatList } from '@/app/services/chatService';
 import {getGirls} from "@/app/services/girlsService";
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
 import { useRouter } from 'next/navigation';
 import { es } from 'date-fns/locale';
 import {

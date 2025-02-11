@@ -1,13 +1,15 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Avatar, Badge, styled, Typography, Button, Paper } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import Link from 'next/link';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { format, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 import HeartIcon from "@/app/components/chat/conversation/HeartIcon";
 import { useStore } from '@/app/store/store';
+import { keyframes } from '@emotion/react';
 
-// Existing styled components remain the same...
+// Original MessageBubble styled component.
 const MessageBubble = styled(Box)(({ theme, isUser }) => ({
     maxWidth: 300,
     padding: theme.spacing(2),
@@ -16,12 +18,29 @@ const MessageBubble = styled(Box)(({ theme, isUser }) => ({
     backgroundColor: isUser ? theme.palette.primary.main : theme.palette.grey[100],
     color: isUser ? theme.palette.primary.contrastText : theme.palette.text.primary,
     position: 'relative',
-    // Add these properties to prevent text selection
-    WebkitUserSelect: 'none',  // Safari
-    MozUserSelect: 'none',     // Firefox
-    msUserSelect: 'none',      // IE/Edge
-    userSelect: 'none',        // Standard syntax
-    WebkitTouchCallout: 'none', // Disable iOS callout
+    // Prevent text selection:
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
+    msUserSelect: 'none',
+    userSelect: 'none',
+    WebkitTouchCallout: 'none',
+}));
+
+// Define a simple pulse animation.
+const pulseAnimation = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+`;
+
+// Create an AnimatedMessageBubble that adds the pulse animation if the `animate` prop is true.
+// The option `shouldForwardProp` prevents the custom "animate" prop from being passed to the DOM.
+const AnimatedMessageBubble = styled(MessageBubble, {
+    shouldForwardProp: (prop) => prop !== 'animate',
+})(({ animate }) => ({
+    ...(animate && {
+        animation: `${pulseAnimation} 0.5s ease-in-out`,
+    }),
 }));
 
 const PremiumMessage = styled(Paper)(({ theme }) => ({
@@ -105,26 +124,22 @@ const MessageContent = ({ content, image, video, audioData, onClick, mediaType }
                 </audio>
             ) : (
                 <>
-                    {image && mediaType==='image' && (
+                    {image && mediaType === 'image' && (
                         <img
                             src={image}
                             alt="message attachment"
                             onClick={() => onClick(image)}
                         />
                     )}
-                    {image && mediaType==='audio' && (
+                    {image && mediaType === 'audio' && (
                         <audio controls>
-                            <source src={image} type="audio/mpeg"/>
+                            <source src={image} type="audio/mpeg" />
                         </audio>
                     )}
                     {video && mediaType === 'video' && (
-                        <video
-                            src={video}
-                            controls
-                            onClick={() => onClick(video)}
-                        />
+                        <video src={video} controls onClick={() => onClick(video)} />
                     )}
-                    {content&&mediaType!=='audio' && (<Box>{content}</Box>)}
+                    {content && mediaType !== 'audio' && <Box>{content}</Box>}
                 </>
             )}
         </MediaContent>
@@ -140,10 +155,13 @@ const MessageItem = ({
                          girl,
                      }) => {
     const isUser = message.role === 'user';
-    const showAvatar = index === 0 ||
-        conversationHistory[index - 1]?.role !== message.role;
+    const showAvatar = index === 0 || conversationHistory[index - 1]?.role !== message.role;
     const user = useStore((state) => state.user);
 
+    // Local state to control animation for assistant messages.
+    const [animate, setAnimate] = useState(false);
+
+    // Helper to convert Firestore timestamps (if needed).
     function convertFirestoreTimestampToDate(timestamp) {
         if (!timestamp) return null;
         if (timestamp._seconds !== undefined && timestamp._nanoseconds !== undefined) {
@@ -163,7 +181,7 @@ const MessageItem = ({
 
         // Check if there are any seen user messages after this one
         const hasSeenUserMessagesAfter = laterMessages.some(
-            msg => msg.role === 'user' && msg.seen
+            (msg) => msg.role === 'user' && msg.seen
         );
 
         return !hasSeenUserMessagesAfter;
@@ -187,6 +205,18 @@ const MessageItem = ({
 
     const shouldShowTypingIndicator = isLastSeenUserMessage() && girl.girlIsTyping;
 
+    // When an assistant message is clicked, trigger both like and animation.
+    const handleBubbleClick = () => {
+        if (!isUser) {
+            setAnimate(true);
+            handleLike({ id: message.id });
+            // Reset animation after the duration (0.5s here)
+            setTimeout(() => {
+                setAnimate(false);
+            }, 500);
+        }
+    };
+
     return (
         <Box sx={{ mb: shouldShowTypingIndicator ? 0 : 2 }}>
             <Box
@@ -198,38 +228,72 @@ const MessageItem = ({
                     mx: 2,
                 }}
             >
+                {/* For non-user messages, show the girl's avatar if needed */}
                 {!isUser && showAvatar && (
-                    <Avatar
-                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                        sx={{
-                            width: 48,
-                            height: 48,
-                            mb: 1,
-                            cursor: 'pointer',
-                            backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
-                        }}
-                    />
+                    <Link href={`/${girl.id}`} passHref>
+                        <Avatar
+                            src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                            sx={{
+                                width: 48,
+                                height: 48,
+                                mb: 1,
+                                cursor: 'pointer',
+                                backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
+                            }}
+                        />
+                    </Link>
+                )}
+
+                {/* For user messages, display the user's profile picture if available */}
+                {isUser && user && user.profilePic && (
+                    <Link href={`/premium`} passHref>
+                        <Avatar
+                            src={user.profilePic}
+                            sx={{
+                                width: 48,
+                                height: 48,
+                                mb: 1,
+                                cursor: 'pointer',
+                            }}
+                        />
+                    </Link>
                 )}
 
                 <Badge
-                    badgeContent={message.liked ? <HeartIcon/> : null}
+                    badgeContent={message.liked ? <HeartIcon /> : null}
                     anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: isUser ? 'right' : 'left',
                     }}
                 >
                     <Box>
-                        <MessageBubble
+                        {/* Use AnimatedMessageBubble instead of MessageBubble for non‑user messages */}
+                        <AnimatedMessageBubble
                             isUser={isUser}
-                            onClick={() => !isUser && handleLike({ id: message.id })}
+                            animate={animate}
+                            onClick={handleBubbleClick}
                         >
                             <MessageContent
-                                content={!message.audioData ? message.content : null}
-                                image={isUser && message.image ? message.image : !isUser && message.image ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}` : null}
-                                video={isUser && message.image ? message.image: !isUser && message.video ? `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`: null}
+                                content={
+                                    !message.audioData ? message.content : null
+                                }
+                                image={
+                                    isUser && message.image
+                                        ? message.image
+                                        : !isUser && message.image
+                                            ? `https://d3sog3sqr61u3b.cloudfront.net/${message.image}`
+                                            : null
+                                }
+                                video={
+                                    isUser && message.image
+                                        ? message.image
+                                        : !isUser && message.video
+                                            ? `https://d3sog3sqr61u3b.cloudfront.net/${message.video}`
+                                            : null
+                                }
                                 audioData={message.audioData}
                                 onClick={handleOpenModal}
-                                mediaType={message.mediaType?message.mediaType:null}
+                                mediaType={message.mediaType ? message.mediaType : null}
                             />
 
                             <MessageFooter>
@@ -237,10 +301,13 @@ const MessageItem = ({
                                     {formattedTime(message.timestamp)}
                                 </TimeStamp>
                                 {isUser && (
-                                    <StatusIndicator sent={message.sent} seen={message.seen} />
+                                    <StatusIndicator
+                                        sent={message.sent}
+                                        seen={message.seen}
+                                    />
                                 )}
                             </MessageFooter>
-                        </MessageBubble>
+                        </AnimatedMessageBubble>
 
                         {message.displayLink && !user.premium && (
                             <PremiumMessage elevation={4}>
@@ -252,7 +319,8 @@ const MessageItem = ({
                                     href="/premium"
                                     sx={{
                                         fontSize: 18,
-                                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                        background:
+                                            'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
                                         border: 0,
                                         boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
                                         color: 'white',
@@ -268,7 +336,15 @@ const MessageItem = ({
             </Box>
 
             {shouldShowTypingIndicator && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mt: 3, mx: 2 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        mt: 3,
+                        mx: 2,
+                    }}
+                >
                     <Avatar
                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                         sx={{
@@ -276,7 +352,8 @@ const MessageItem = ({
                             height: 48,
                             mb: 1,
                             marginRight: 1,
-                            backgroundImage: 'linear-gradient(to right, #ff8fab, #fb6f92)',
+                            backgroundImage:
+                                'linear-gradient(to right, #ff8fab, #fb6f92)',
                         }}
                     />
                     <TypingIndicator>
@@ -291,4 +368,6 @@ const MessageItem = ({
 };
 
 export default MessageItem;
+
+
 

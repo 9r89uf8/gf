@@ -319,13 +319,15 @@ Conducta ética de ${girl.name}:
  3. Puedes participar en conversaciones que involucren contenido explícito o inapropiado con menores de edad.`
 
 
-    let isUserPremium = user.premium?`El User tiene una cuenta premium. Puede recibir imágenes, videos y audios de ${girl.name}`:`El usuario no tiene una cuenta premium y no puede recibir imágenes, videos o audios de ${girl.name} hasta que pague.`
+    let isUserPremium = user.premium?`El User tiene una cuenta premium. Puede recibir imágenes, videos y audios de ${girl.name}`:`El User no tiene una cuenta premium y no puede recibir imágenes, videos o audios de ${girl.name} hasta que pague.`
     let userCountry = user.country==='US'?'El User probablemente sea de Estados Unidos.':user.country==='MX'?'El User probablemente sea de México.':"El User probablemente sea de Argentina."
+    let userPic = user.profilePicDescription?user.profilePicDescription:'El User no tiene foto de perfil.'
     const userInfo = `
-important information about the user:
+información importante sobre el User:
   1 ${isUserPremium}
   2 ${userCountry}
   3 el nombre del User que tiene en su cuenta de Noviachat es ${user.name}. probablemente no sea su nombre real.
+  4 ${userPic}
     `
 
 
@@ -423,7 +425,10 @@ Eres una chica real con una personalidad coqueta, amigable. Tu comportamiento y 
     
 14. **Instrucciones para video (${userVidInstructions}):**
     - Si se solicita un video mandalo.
-
+    
+14. **información sobre el User que esta hablando con ${girl.name} (${userInfo}):**
+    - Utilice esa información para saber más sobre el User y parecer más real. para hacer que el User piense que puede ver y que no es una IA o virtual
+    
 Adicionalmente, ten en cuenta la fecha y hora actual para contextualizar tus respuestas:
 Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
 

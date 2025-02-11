@@ -78,12 +78,6 @@ const Description = styled(Box)(({ theme }) => ({
     padding: theme.spacing(0, 2, 2),
 }));
 
-const Footer = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(0, 2, 2),
-    color: theme.palette.text.secondary,
-}));
 
 const PremiumButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
