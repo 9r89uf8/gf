@@ -68,7 +68,7 @@ const Chat = ({params}) => {
     const handleBuy = () => {
         router.push('/premium'); // Adjust the path to your premium page
     };
-
+    const [mediaSelected, setMediaSelected] = useState(false);
     const [media, setMedia] = useState(null);
     const [mediaPreview, setMediaPreview] = useState(null);
     const [mediaType, setMediaType] = useState(null);
@@ -76,6 +76,7 @@ const Chat = ({params}) => {
     const handleMediaUpload = ({ file, preview, type }) => {
         setMedia(file);
         setMediaPreview(preview);
+        setMediaSelected(true)
         setMediaType(type);
     };
 
@@ -83,6 +84,7 @@ const Chat = ({params}) => {
         setMedia(null);
         setMediaPreview(null);
         setMediaType(null);
+        setMediaSelected(false);
     };
 
     const handleSubmit = async (event) => {
@@ -91,8 +93,6 @@ const Chat = ({params}) => {
         // Check if we have either text or media to send
         if (!prompt.trim() && !media) return;
 
-        // If we have media that's not audio, we need text
-        if (media && mediaType !== 'audio' && !prompt.trim()) return;
 
         // Return early if user is not logged in or if the girl is private
         if (!user || (girl && girl.private)) return;
@@ -106,10 +106,6 @@ const Chat = ({params}) => {
         if (media) {
             formData.append('media', media);
             formData.append('mediaType', mediaType);
-            // For audio, message is optional
-            if (prompt.trim() || mediaType !== 'audio') {
-                formData.append('userMessage', prompt.trim());
-            }
         } else {
             formData.append('userMessage', prompt.trim());
         }
@@ -120,6 +116,7 @@ const Chat = ({params}) => {
         setMediaPreview(null);
         setMediaType(null);
         setIsSending(false);
+        setMediaSelected(false);
 
         if (!girl.girlIsTyping && girl.isActive) {
             await responseFromLLM(formData);
@@ -173,6 +170,7 @@ const Chat = ({params}) => {
                 isPromptEntered={isPromptEntered}
                 girl={girl}
                 mediaType={mediaType}
+                mediaSelected={mediaSelected}
             />
 
             {/* Message about upgrading when user can't send messages */}

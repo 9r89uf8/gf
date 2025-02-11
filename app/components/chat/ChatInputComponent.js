@@ -112,9 +112,10 @@ const ChatInputComponent = ({
                                 setPrompt,
                                 isPromptEntered,
                                 girl,
-                                mediaType
+                                mediaType,
+                                mediaSelected
                             }) => {
-    const [mediaSelected, setMediaSelected] = useState(false);
+
     const [isRecording, setIsRecording] = useState(false);
 
     const handleFileSelect = (event) => {
@@ -131,11 +132,9 @@ const ChatInputComponent = ({
                     });
                 };
                 reader.readAsDataURL(file);
-                setMediaSelected(true);
             } else {
                 alert(validation.error);
                 event.target.value = '';
-                setMediaSelected(false);
             }
         }
     };
@@ -157,7 +156,8 @@ const ChatInputComponent = ({
         (
             isPromptEntered || // Has text
             (mediaType === 'audio') || // Has audio recording
-            (mediaSelected && isPromptEntered) // Has other media with required text
+            mediaSelected // Has other media with required text
+                // (mediaSelected&&isPromptEntered) original
         )
     );
 
@@ -205,7 +205,8 @@ const ChatInputComponent = ({
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     inputProps={{ 'aria-label': 'Escribe un mensaje' }}
-                    disabled={isRecording}
+                    disabled={isRecording||mediaSelected}
+                    // disabled={isRecording} original
                 />
             )}
 

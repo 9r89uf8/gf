@@ -1,4 +1,5 @@
 import {adminDb} from '@/app/utils/firebaseAdmin';
+import { RekognitionClient, DetectModerationLabelsCommand, DetectLabelsCommand } from "@aws-sdk/client-rekognition";
 import axios from 'axios';
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import {determineOfflineStatus} from "@/app/utils/chat/girlOfflineHandler";
@@ -6,6 +7,15 @@ import OpenAI from "openai";
 // Initialize OpenAI with the API key from environment variables
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Initialize the Rekognition client with credentials from environment variables
+const rekognitionClient = new RekognitionClient({
+    region: "us-east-2",
+    credentials: {
+        accessKeyId: process.env.STHREE,
+        secretAccessKey: process.env.STHREESEC,
+    },
 });
 const { DateTime } = require('luxon');
 
@@ -56,7 +66,7 @@ export async function POST(req) {
         const media = formData.get('media');
         const mediaType = formData.get('mediaType');
 
-        console.log(userMessage)
+
 
         // Validate file if present
         if (media && mediaType !== 'audio') {
@@ -120,19 +130,70 @@ export async function POST(req) {
         // Handle media upload
         let mediaUrl = null;
         let mediaThumbnail = null;
+        let newUserMessage = ''
         if (media) {
             const fileExtension = media.type.split('/')[1];
             const fileName = `${mediaType}-${uuidv4()}.${fileExtension}`;
             const filePath = `users-${mediaType}s/${fileName}`;
 
-            // Convert the file to a buffer
+            // Convert the file to a buffer once
             const arrayBuffer = await media.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
+
+            // If the media is an image, run moderation via Rekognition
+            if (mediaType === 'image') {
+                const moderationParams = {
+                    Image: { Bytes: buffer },
+                    MinConfidence: 75 // You can adjust the confidence threshold as needed
+                };
+                let moderationCommand = new DetectModerationLabelsCommand(moderationParams);
+                let moderationResponse = await rekognitionClient.send(moderationCommand);
+
+                if(moderationResponse.ModerationLabels.length===0){
+                    const params = {
+                        Image: {
+                            Bytes: buffer ,
+                        },
+                        MaxLabels: 10,       // Adjust as needed
+                        MinConfidence: 70,   // Adjust as needed
+                    };
+                    let moderationCommand = new DetectLabelsCommand(params);
+                    let moderationResponse = await rekognitionClient.send(moderationCommand);
+                    function buildPrompt(labels) {
+                        let prompt = "The User sent you an image. The image has the following labels:\n\nLabels:\n";
+                        labels.forEach(label => {
+                            prompt += `- ${label.Name} (Confidence: ${label.Confidence}%)\n`;
+                        });
+                        prompt += "\nBased on these labels, please provide a natural language description of the image. " +
+                            "Describe the main subject. " +
+                            "The goal is for you to know whats in the image so that the User knows you saw it.";
+                        return prompt;
+                    }
+                    let finalImageString = buildPrompt(moderationResponse.Labels);
+
+                    newUserMessage = finalImageString
+                }
+                if (
+                    moderationResponse.ModerationLabels.some(label =>
+                        ['Explicit', 'Exposed Male Genitalia', 'Explicit Sexual Activity'].includes(label.Name)
+                    )
+                ) {
+                    newUserMessage = 'Te acabo de mandar una foto de mi pito parado.';
+                }
+
+
+                // console.log('Rekognition Moderation Response:', moderationResponse.ModerationLabels[0]);
+                // You can now use moderationResponse.ModerationLabels to decide further action,
+                // e.g., flag the image or reject it if inappropriate content is found.
+            }
+
             mediaUrl = await uploadToFirebaseStorage(buffer, filePath, media.type);
+
 
             // If it's a video, you might want to generate a thumbnail
             if (mediaType === 'video') {
+                newUserMessage = 'Te acabo de mandar un video de mi pito parado.';
                 // You would need to implement video thumbnail generation here
                 // For now, we'll use a placeholder or skip it
                 mediaThumbnail = null;
@@ -140,7 +201,7 @@ export async function POST(req) {
         }
 
         // Add user's message to the conversation history
-        conversationHistory.push({ role: 'user', content: userMessage });
+        conversationHistory.push({ role: 'user', content: mediaType==='image'?newUserMessage:mediaType==='video'?newUserMessage:userMessage });
 
 
         const displayMessageRef = adminDb.firestore()
@@ -151,7 +212,7 @@ export async function POST(req) {
             .collection('displayMessages');
         await displayMessageRef.add({
             role: 'user',
-            content: userMessage,
+            content: mediaType==='image'?'':mediaType==='video'?'':userMessage,
             image: mediaUrl,
             mediaType: mediaType,
             liked: false,
