@@ -10,6 +10,7 @@ import { createGirlsSlice } from './girlsSlice';
 import { createPostsSlice } from './postsSlice';
 import { createMembershipSlice } from './membershipSlice';
 import { createNotificationsSlice } from './notificationsSlice';
+import {createReelsSlice} from "@/app/store/reelSlice";
 
 export const useStore = create(
     persist(
@@ -22,6 +23,7 @@ export const useStore = create(
             ...createPostsSlice(set, get),
             ...createMembershipSlice(set, get),
             ...createClipsSlice(set, get),
+            ...createReelsSlice(set, get),
             ...createNotificationsSlice(set, get),
             hasHydrated: false,
             setHasHydrated: (state) => set({ hasHydrated: state }),

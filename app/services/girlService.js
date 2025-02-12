@@ -50,6 +50,24 @@ export const addPost = async (formData) => {
     }
 };
 
+export const addReel = async (formData) => {
+    try {
+        const response = await fetch('/api/reel/add', {
+            method: 'POST',
+            body: formData,
+        });
+        if (response.ok) {
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } else {
+            throw new Error('Failed to update');
+        }
+    } catch (error) {
+        console.error('Error updating:', error);
+        return null;
+    }
+};
+
 export const addPicture = async (formData) => {
     const updatePost = useStore.getState().updatePost;
     try {
