@@ -46,6 +46,21 @@ const GlassCard = styled(Card)(({ theme }) => ({
     userSelect: 'none',
 }));
 
+const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    border: 0,
+    borderRadius: 25,
+    color: '#e9ecef',
+    fontSize: 18,
+    height: 35,
+    padding: '0 10px',
+    margin: '10px 0',
+    textTransform: 'none',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
+}));
+
 const GradientIcon = styled(Box)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     borderRadius: '50%',
@@ -74,6 +89,7 @@ const DMList = () => {
 
     //girls.filter((girl) => !girl.private).map
 
+
     useEffect(() => {
         async function fetchChats() {
             await getGirls();
@@ -81,6 +97,7 @@ const DMList = () => {
                 await getChatList();
                 setLoading(false);
             }
+            setLoading(false);
 
         }
         fetchChats();
@@ -176,6 +193,12 @@ const DMList = () => {
                                 <Typography variant="subtitle1" sx={{ color: 'white', mt: 1 }}>
                                     {girl.name}
                                 </Typography>
+                                <GradientButton
+                                    disabled={girl ? girl.private : false}
+                                    onClick={() => handleMessageClick(girl.id)}
+                                >
+                                    Mensaje
+                                </GradientButton>
                             </Box>
                         ))}
                     </Box>
