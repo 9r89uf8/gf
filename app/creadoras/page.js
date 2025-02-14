@@ -16,6 +16,7 @@ import {
     Card,
     Skeleton,
     Stack,
+    Modal
 } from '@mui/material';
 
 // Importing icons
@@ -23,6 +24,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import StarIcon from '@mui/icons-material/Star';
+import CloseIcon from '@mui/icons-material/Close';
 
 const pulseAndGlow = keyframes`
   0% {
@@ -61,6 +63,7 @@ const ProfileImageContainer = styled(Box)(({ theme }) => ({
     height: '120px',
     margin: '0 auto',
     marginBottom: theme.spacing(3),
+    cursor: 'pointer',
     '&::after': {
         content: '""',
         position: 'absolute',
@@ -82,14 +85,38 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     zIndex: 1,
 }));
 
+const ExpandedImageModal = styled(Modal)({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+});
+
+const ExpandedImage = styled('img')({
+    maxWidth: '90vw',
+    maxHeight: '90vh',
+    objectFit: 'contain',
+    borderRadius: '8px',
+});
+
+const CloseButton = styled(Button)({
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    },
+});
+
 const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     border: 0,
     borderRadius: 25,
     color: '#ffffff',
-    fontSize: 16,
-    height: 40,
-    padding: '0 24px',
+    fontSize: '1.1rem',  // Increased font size
+    height: 48,         // Increased height
+    padding: '0 32px',  // Increased padding
     textTransform: 'none',
     fontWeight: 600,
     '&:hover': {
@@ -163,7 +190,16 @@ const Creators = () => {
     const user = useStore((state) => state.user);
     const girls = useStore((state) => state.girls);
     const [loading, setLoading] = useState(true);
+    const [expandedImage, setExpandedImage] = useState(null);
     const isPremium = user && user.premium;
+
+    const handleImageClick = (imageUrl) => {
+        setExpandedImage(imageUrl);
+    };
+
+    const handleCloseExpandedImage = () => {
+        setExpandedImage(null);
+    };
 
     useEffect(() => {
         async function fetchGirls() {
@@ -233,7 +269,7 @@ const Creators = () => {
                         <GradientButton
                             size="large"
                             onClick={() => router.push('/premium')}
-                            sx={{ minWidth: 200 }}
+                            sx={{ minWidth: 240 }}
                         >
                             Obtener Premium
                         </GradientButton>
@@ -262,7 +298,9 @@ const Creators = () => {
                                         backgroundUrl={`https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`}
                                     />
                                     <Box sx={{ position: 'relative', zIndex: 1 }}>
-                                        <ProfileImageContainer>
+                                        <ProfileImageContainer
+                                            onClick={() => handleImageClick(`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`)}
+                                        >
                                             <StyledAvatar
                                                 src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                                 alt={girl.name}
@@ -302,7 +340,7 @@ const Creators = () => {
                                             <GradientButton
                                                 onClick={() => handlePhotosClick(girl.id)}
                                             >
-                                                fotos
+                                                Fotos
                                             </GradientButton>
                                         </Stack>
 
@@ -316,6 +354,25 @@ const Creators = () => {
                     )}
                 </Grid>
             </Container>
+            <ExpandedImageModal
+                open={!!expandedImage}
+                onClose={handleCloseExpandedImage}
+                aria-labelledby="expanded-image"
+            >
+                <Box sx={{ position: 'relative' }}>
+                    <ExpandedImage
+                        src={expandedImage}
+                        alt="Expanded view"
+                        onClick={handleCloseExpandedImage}
+                    />
+                    <CloseButton
+                        onClick={handleCloseExpandedImage}
+                        startIcon={<CloseIcon />}
+                    >
+                        Cerrar
+                    </CloseButton>
+                </Box>
+            </ExpandedImageModal>
         </Box>
     );
 };
