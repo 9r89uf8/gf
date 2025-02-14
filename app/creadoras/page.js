@@ -177,15 +177,25 @@ const Creators = () => {
         if (isPremium) {
             router.push(`/chat/${girlId}`);
         } else {
-            router.push('/premium');
+            router.push(`/chat/${girlId}`);
+        }
+    };
+
+    const formatNumber = (num) => {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        } else {
+            return num.toString();
         }
     };
 
     const handlePhotosClick = (girlId) => {
         if (isPremium) {
-            router.push(`/photos/${girlId}`);
+            router.push(`/${girlId}`);
         } else {
-            router.push('/premium');
+            router.push(`/${girlId}`);
         }
     };
 
@@ -279,7 +289,7 @@ const Creators = () => {
                                         </Typography>
 
                                         <FollowerCount sx={{ mb: 3 }}>
-                                            <span className="number">{girl.followersCount}</span>
+                                            <span className="number">{girl ? formatNumber(girl.followersCount) : 0}</span>
                                             <span className="label">seguidores</span>
                                         </FollowerCount>
 

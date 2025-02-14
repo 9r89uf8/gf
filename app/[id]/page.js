@@ -318,7 +318,7 @@ const GirlProfile = ({ params }) => {
                                                 onClick={handleFollowClick}
                                                 disabled={!user || isFollowLoading}
                                             >
-                                                Dejar de seguir
+                                                No Seguir
                                             </UnfollowButton>
                                         ) : (
                                             <FollowButton
@@ -370,7 +370,7 @@ const GirlProfile = ({ params }) => {
                                         disabled={girl ? girl.private : false}
                                         onClick={() => handleMessageClick(girl.id)}
                                     >
-                                        Enviar Mensaje
+                                        Mensaje
                                     </GradientButton>
                                 ) : (
                                     <GradientButtonTwo>Cuenta Privada</GradientButtonTwo>
