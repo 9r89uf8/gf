@@ -146,27 +146,27 @@ const Home = () => {
                 {/* Make sure EnhancedAIFeaturesCard is also purely CSS if you don't want MUI. */}
 
                 {/* Chat Preview Section */}
-                <GlassCard>
-                    <h2 style={styles.chatSectionHeading}>Ejemplo de Conversación</h2>
+                {/*<GlassCard>*/}
+                {/*    <h2 style={styles.chatSectionHeading}>Ejemplo de Conversación</h2>*/}
 
-                    <ChatPreview />
-                    {/* Also rewrite ChatPreview in plain CSS if needed. */}
+                {/*    <ChatPreview />*/}
+                {/*    /!* Also rewrite ChatPreview in plain CSS if needed. *!/*/}
 
-                    <div style={styles.chatInputContainer}>
-                        <input
-                            type="text"
-                            placeholder="Escribe tu mensaje..."
-                            style={styles.chatInput}
-                            disabled
-                        />
-                        <button
-                            style={styles.sendButton}
-                            disabled
-                        >
-                            enviar
-                        </button>
-                    </div>
-                </GlassCard>
+                {/*    <div style={styles.chatInputContainer}>*/}
+                {/*        <input*/}
+                {/*            type="text"*/}
+                {/*            placeholder="Escribe tu mensaje..."*/}
+                {/*            style={styles.chatInput}*/}
+                {/*            disabled*/}
+                {/*        />*/}
+                {/*        <button*/}
+                {/*            style={styles.sendButton}*/}
+                {/*            disabled*/}
+                {/*        >*/}
+                {/*            enviar*/}
+                {/*        </button>*/}
+                {/*    </div>*/}
+                {/*</GlassCard>*/}
 
                 {/* Footer Section */}
                 <GlassCard>
