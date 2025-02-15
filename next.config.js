@@ -1,6 +1,6 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
+  disable: process.env.NODE_ENV === 'development',
   register: process.env.NODE_ENV !== 'development',
   skipWaiting: true,
 });
@@ -8,7 +8,18 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Add any other Next.js config options here
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'imagedelivery.net',
+        // Optionally, you can restrict the path as well:
+        // pathname: '/**',
+      },
+    ],
+  },
 };
 
 module.exports = withPWA(nextConfig);
+
+

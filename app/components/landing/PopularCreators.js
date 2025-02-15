@@ -2,81 +2,130 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+// Modified the staticGirls array to include age, followers and verified status
 const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
-        username: 'antonellaPerez1353',
+        username: 'antonella1353',
+        age: 18,
+        followers: 69300,
         bio: 'No sean chismosos 😏😂',
-        picture: '/arely.webp',
-        texting: true
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=400,sharpen=3',
+        texting: true,
+        verified: true, // Adding verified status
+        verifiedType: 'blue' // 'gold' or 'blue'
     },
     {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
+        age: 19,
+        followers: 60240,
         bio: 'Hola....',
-        picture: '/andrea.webp',
-        texting: false
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86521b43-3109-4caa-a742-55d12b843f00/w=400,sharpen=3',
+        texting: false,
+        verified: true,
+        verifiedType: 'blue'
     },
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
+        age: 18,
+        followers: 50750,
         bio: '👾',
-        picture: '/rocio.webp',
-        texting: false
-
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=400,sharpen=3',
+        verified: true, // Adding verified status
+        verifiedType: 'blue' // 'gold' or 'blue'
     },
     {
         id: 'tvLbDSi7ZBDta81qwlKT',
         username: 'ariana2',
+        age: 18,
+        followers: 55860,
         bio: '💚',
-        picture: '/ariana.webp',
-        texting: false
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/f9cdaeb6-6b0b-4a3a-da9a-7430f1f07100/w=400,sharpen=3',
+        texting: false,
+        verified: true, // Adding verified status
+        verifiedType: 'blue' // 'gold' or 'blue'
     },
 ];
 
 const styles = {
     container: {
-        padding: '5px',
-        marginBottom: 30,
+        padding: '15px',
+        marginBottom: 40,
+        maxWidth: '1200px',
+        margin: '0 auto',
+    },
+    titleContainer: {
+        textAlign: 'center',
+        marginBottom: '32px',
+        position: 'relative',
     },
     title: {
-        fontSize: '24px',
-        fontWeight: 'bold',
-        textAlign: 'center',
+        fontSize: '36px',
+        fontWeight: '800',
         color: 'white',
+        letterSpacing: '0.5px',
+        textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+        margin: '0 0 4px 0',
+        fontFamily: "'Montserrat', sans-serif",
+    },
+    subtitle: {
+        fontSize: '16px',
+        color: 'rgba(255, 255, 255, 0.8)',
+        fontWeight: '500',
         marginBottom: '24px',
-        marginTop: -5,
+    },
+    creatorsButton: {
+        display: 'inline-block',
+        padding: '10px 30px',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        color: '#1a1a1a',
+        borderRadius: '30px',
+        fontWeight: '600',
+        fontSize: '16px',
+        textDecoration: 'none',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        border: 'none',
+        cursor: 'pointer',
+        marginBottom: '2px',
     },
     grid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '24px',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '30px',
     },
     card: {
-        borderRadius: '8px',
+        borderRadius: '16px',
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
         backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '30px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     },
     imageContainer: {
         position: 'relative',
-        width: '192px',
-        height: '192px',
+        width: '180px',
+        height: '180px',
         borderRadius: '50%',
         overflow: 'hidden',
-        border: '4px solid rgba(255, 255, 255, 0.5)',
-        marginBottom: '16px',
+        border: '4px solid rgba(255, 255, 255, 0.15)',
+        marginBottom: '20px',
+        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        zIndex: 1,
     },
     skeleton: {
         position: 'absolute',
         inset: 0,
         animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         backgroundColor: '#374151',
-        // The skeleton sits behind the image. The loaded image covers it.
         zIndex: 1,
     },
     image: {
@@ -86,121 +135,225 @@ const styles = {
         height: '100%',
         objectFit: 'cover',
     },
+    profileInfo: {
+        width: '100%',
+        textAlign: 'center',
+    },
     nameContainer: {
+        marginBottom: '4px',
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '8px',
-        marginBottom: '2px',
     },
     username: {
-        fontSize: '25px',
+        fontSize: '22px',
         fontWeight: 'bold',
         color: 'white',
+        margin: '0 0 2px 0',
+    },
+    verificationBadge: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '20px',
+        height: '20px',
+        borderRadius: '50%',
+        marginLeft: '4px',
+    },
+    goldBadge: {
+        backgroundColor: '#FFD700',
+        boxShadow: '0 0 8px rgba(255, 215, 0, 0.6)',
+    },
+    blueBadge: {
+        backgroundColor: '#1DA1F2',
+        boxShadow: '0 0 8px rgba(29, 161, 242, 0.6)',
+    },
+    checkmark: {
+        width: '12px',
+        height: '12px',
+        display: 'block',
+        color: 'white',
+    },
+    ageFollowers: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '12px',
+        fontSize: '16px', // Increased from 14px
+        color: 'rgba(255, 255, 255, 0.7)',
+        marginBottom: '12px',
+        fontWeight: '500', // Added to make it more prominent
     },
     bio: {
         color: 'rgba(255, 255, 255, 0.9)',
-        fontSize: '18px',
+        fontSize: '16px',
         marginBottom: '24px',
-        marginTop: -5,
+        lineHeight: '1.4',
+        fontStyle: 'italic',
     },
     buttonContainer: {
         display: 'flex',
         gap: '16px',
+        width: '100%',
+        justifyContent: 'center',
     },
     photoButton: {
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '8px',
-        padding: '8px 24px',
-        borderRadius: '9999px',
+        padding: '10px 20px',
+        borderRadius: '30px',
         backgroundColor: 'white',
-        color: 'black',
+        color: '#1a1a1a',
         fontWeight: '600',
         border: 'none',
         cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
+        transition: 'all 0.3s ease',
         textDecoration: 'none',
-        fontSize: 20,
+        fontSize: '16px',
+        flex: '1',
+        maxWidth: '110px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
     },
     messageButton: {
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '8px',
-        padding: '8px 24px',
-        borderRadius: '9999px',
-        backgroundColor: '#2563eb',
+        padding: '10px 20px',
+        borderRadius: '30px',
+        backgroundColor: '#4361ee',
         color: 'white',
         fontWeight: '600',
         border: 'none',
         cursor: 'pointer',
-        transition: 'background-color 0.3s ease',
+        transition: 'all 0.3s ease',
         textDecoration: 'none',
-        fontSize: 20,
+        fontSize: '16px',
+        flex: '1',
+        maxWidth: '110px',
+        boxShadow: '0 4px 12px rgba(67, 97, 238, 0.3)',
     },
 };
 
+// CheckMark SVG component
+const CheckMark = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={styles.checkmark}
+    >
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
+const formatFollowers = (followers) => {
+    if (followers >= 1000) {
+        return (followers / 1000).toFixed(1) + 'k';
+    }
+    return followers.toString();
+};
+
 const PopularCreators = () => {
+
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Creadoras Populares</h2>
+            <div style={styles.titleContainer}>
+                <h2 style={styles.title}>Creadoras</h2>
+                <p style={styles.subtitle}>Descubre y conecta con las creadoras más destacadas</p>
+
+                <Link href="/creadoras" style={styles.creatorsButton}>
+                    Ver todas las creadoras
+                </Link>
+            </div>
 
             <div style={styles.grid}>
                 {staticGirls.map((girl) => (
-                    <div key={girl.id} style={styles.card}>
-                        <div style={styles.imageContainer}>
-                            {/* The skeleton is absolutely positioned behind the image */}
+                    <div
+                        key={girl.id}
+                        style={styles.card}
+                    >
+                        <div
+                            style={styles.imageContainer}
+                        >
                             <div style={styles.skeleton}></div>
-                            <Image
-                                src={girl.picture}
-                                alt="novia virtual foto"
-                                width={200}
-                                height={200}
-                                style={styles.image}
-                            />
-                        </div>
-
-                        <div style={styles.nameContainer}>
-                            <h3 style={styles.username}>{girl.username}</h3>
-                        </div>
-
-                        <p style={styles.bio}>{girl.bio}</p>
-
-                        <div style={styles.buttonContainer}>
-                            <Link href={`/${girl.id}`} style={styles.photoButton}>
-                                Fotos
+                            <Link
+                                href={`/${girl.id}`}
+                            >
+                                <Image
+                                    src={girl.picture}
+                                    alt={`${girl.username} profile picture`}
+                                    width={200}
+                                    height={200}
+                                    style={styles.image}
+                                />
                             </Link>
-                            {girl.texting ? (
-                                <Link href={`/chat/${girl.id}`} style={styles.messageButton}>
-                                    Mensaje
-                                </Link>
-                            ) : (
-                                <span
-                                    style={{
-                                        ...styles.messageButton,
-                                        backgroundColor: 'gray',      // Change color to indicate disabled state
-                                        cursor: 'not-allowed',        // Change cursor style
-                                        pointerEvents: 'none',        // Prevent any pointer events
-                                    }}
-                                >
-                                    Mensaje
-                                </span>
-                            )}
+
                         </div>
 
+                        <div style={styles.profileInfo}>
+                            <div style={styles.nameContainer}>
+                                <h3 style={styles.username}>{girl.username}</h3>
+                                {girl.verified && (
+                                    <div
+                                        style={{
+                                            ...styles.verificationBadge,
+                                            ...(girl.verifiedType === 'gold' ? styles.goldBadge : styles.blueBadge)
+                                        }}
+                                    >
+                                        <CheckMark />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div style={styles.ageFollowers}>
+                                <span>{girl.age} años</span>
+                                <span>•</span>
+                                <span>{formatFollowers(girl.followers)} seguidores</span>
+                            </div>
+
+                            <p style={styles.bio}>{girl.bio}</p>
+
+                            <div style={styles.buttonContainer}>
+                                <Link
+                                    href={`/${girl.id}`}
+                                    style={styles.photoButton}
+                                >
+                                    Fotos
+                                </Link>
+
+                                {girl.texting ? (
+                                    <Link
+                                        href={`/chat/${girl.id}`}
+                                        style={styles.messageButton}
+                                    >
+                                        Mensaje
+                                    </Link>
+                                ) : (
+                                    <span
+                                        style={{
+                                            ...styles.messageButton,
+                                            backgroundColor: '#718096',
+                                            cursor: 'not-allowed',
+                                            pointerEvents: 'none',
+                                            boxShadow: '0 4px 12px rgba(113, 128, 150, 0.3)',
+                                        }}
+                                    >
+                                        Mensaje
+                                    </span>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
 
-            <style>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: .5;
-          }
-        }
-      `}</style>
         </div>
     );
 };
