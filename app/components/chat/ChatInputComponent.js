@@ -184,6 +184,7 @@ const ChatInputComponent = ({
                         onAudioRecorded={handleAudioRecorded}
                         isRecording={isRecording}
                         setIsRecording={setIsRecording}
+                        canSendMessage={canSendMessage}
                     />
                 )}
             </Box>
@@ -198,7 +199,7 @@ const ChatInputComponent = ({
                                 ? 'grabando un audio...'
                                 : canSendMessage
                                     ? 'Escribe un mensaje...'
-                                    : 'No más mensajes gratis'
+                                    : 'Escribe un mensaje...'
                     }
                     multiline
                     maxRows={6}

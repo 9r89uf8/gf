@@ -9,8 +9,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { alpha, styled } from '@mui/material/styles';
-import { People, Lock, Bolt } from '@mui/icons-material';
-
+import { People, Lock, Bolt, AlternateEmail } from '@mui/icons-material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -18,7 +17,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
+import Divider from '@mui/material/Divider';
 
+// Styled components
 const AnonymousButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #80ed99 30%, #57cc99 90%)',
     border: 0,
@@ -31,36 +32,60 @@ const AnonymousButton = styled(Button)(({ theme }) => ({
     margin: '10px 0',
     '&:hover': {
         background: 'linear-gradient(45deg, #5a5a5a 30%, #3b3b3b 90%)',
+        color: 'white',
     },
 }));
 
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
     color: 'white',
-    background: 'rgba(255, 255, 255, 0.1)',
+    background: 'rgba(255, 255, 255, 0.15)',
     backdropFilter: 'blur(10px)',
-    borderRadius: 15,
-    border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.20)',
+    borderRadius: 20,
+    border: `1px solid ${alpha('#ffffff', 0.25)}`,
+    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.25)',
 }));
 
 const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
     border: 0,
     borderRadius: 25,
-    fontSize: 25,
+    fontSize: 20,
     boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
     color: 'white',
-    height: 48,
+    height: 50,
     padding: '0 30px',
-    margin: '10px 0',
+    margin: '20px 0 10px 0',
+    width: '100%',
+    textTransform: 'none',
     '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+        background: 'linear-gradient(45deg, #0077b6 30%, #03045e 90%)',
+        boxShadow: '0 5px 10px 2px rgba(3, 4, 94, 0.3)',
+    },
+    '&:disabled': {
+        background: 'rgba(255, 255, 255, 0.3)',
+        color: 'rgba(255, 255, 255, 0.5)',
+    },
+}));
+
+const LoginButton = styled(Button)(({ theme }) => ({
+    background: 'transparent',
+    border: '2px solid white',
+    borderRadius: 25,
+    fontSize: 16,
+    color: 'white',
+    height: 45,
+    padding: '0 25px',
+    margin: '10px 0',
+    textTransform: 'none',
+    '&:hover': {
+        background: 'rgba(255, 255, 255, 0.1)',
+        borderColor: '#FE6B8B',
     },
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-    marginBottom: 20,
+    marginBottom: 25,
     '& label.Mui-focused': {
         color: 'white',
     },
@@ -70,6 +95,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
             borderColor: 'rgba(255, 255, 255, 0.5)',
+            borderRadius: 12,
         },
         '&:hover fieldset': {
             borderColor: 'white',
@@ -80,22 +106,36 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
     '& .MuiInputBase-input': {
         color: 'white',
-        fontSize: '1.4rem',
+        fontSize: '1.2rem',
+        padding: '15px',
     },
     '& .MuiInputLabel-root': {
         color: 'rgba(255, 255, 255, 0.7)',
-        fontSize: '1.5rem',
+        fontSize: '1.2rem',
     },
     '& .MuiInputLabel-shrink': {
         fontSize: '1.1rem',
+    },
+    '& .MuiInputAdornment-root .MuiSvgIcon-root': {
+        color: 'rgba(255, 255, 255, 0.7)',
     },
 }));
 
 const FeatureBox = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
     color: 'white',
+}));
+
+const LargeCheckbox = styled(Checkbox)(({ theme }) => ({
+    '& .MuiSvgIcon-root': {
+        fontSize: 28,
+    },
+    color: 'white',
+    '&.Mui-checked': {
+        color: '#80ed99',
+    },
 }));
 
 const RegisterPage = () => {
@@ -148,6 +188,10 @@ const RegisterPage = () => {
         setOpenTermsDialog(false);
     };
 
+    const handleLogin = () => {
+        router.push('/login');
+    };
+
     return (
         <Box
             sx={{
@@ -156,39 +200,47 @@ const RegisterPage = () => {
                 flexDirection: "column",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: 2
+                padding: 3,
             }}
         >
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                <GlassCard sx={{ width: '420px', maxWidth: '100%', marginTop: 3 }}>
-                    <CardContent>
-                        <Typography variant="h4" sx={{ color: 'white', marginBottom: 3, fontWeight: 'bold' }}>
+                <GlassCard sx={{ width: '450px', maxWidth: '100%', marginTop: 3 }}>
+                    <CardContent sx={{ padding: 4 }}>
+                        <Typography variant="h4"
+                                    sx={{
+                                        color: 'white',
+                                        marginBottom: 4,
+                                        fontWeight: 'bold',
+                                        textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                    }}>
                             Crear Cuenta
                         </Typography>
 
-                        <Box sx={{ marginBottom: 3, textAlign: 'left' }}>
+                        <Box sx={{ marginBottom: 4, textAlign: 'left' }}>
                             <FeatureBox>
-                                <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    2M+ usuarios
+                                <People sx={{ marginRight: 2, color: '#FE6B8B', fontSize: 40 }} />
+                                <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                                    2M+ usuarios activos
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
-                                <Lock sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
-                                <Typography variant="h6">
+                                <Lock sx={{ marginRight: 2, color: '#FF8E53', fontSize: 40 }} />
+                                <Typography variant="h6" sx={{ fontWeight: 500 }}>
                                     100% anónimo y seguro
                                 </Typography>
                             </FeatureBox>
                             <FeatureBox>
-                                <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
-                                <Typography variant="h6">
+                                <Bolt sx={{ marginRight: 2, color: '#FE6B8B', fontSize: 40 }} />
+                                <Typography variant="h6" sx={{ fontWeight: 500 }}>
                                     Mensajes encriptados
                                 </Typography>
                             </FeatureBox>
                         </Box>
 
-                        <AnonymousButton onClick={handleDialogOpen}>
-                            ¿Crear Cuenta Secreta?
+                        <AnonymousButton
+                            onClick={handleDialogOpen}
+                        >
+                            ¿Cuenta Secreta?
                         </AnonymousButton>
 
                         {/* Secret Account Dialog */}
@@ -200,11 +252,11 @@ const RegisterPage = () => {
                             fullWidth
                             PaperProps={{
                                 style: {
-                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    background: 'rgba(255, 255, 255, 0.15)',
                                     backdropFilter: 'blur(10px)',
                                     color: 'white',
                                     borderRadius: 15,
-                                    border: `1px solid ${alpha('#ffffff', 0.2)}`,
+                                    border: `1px solid ${alpha('#ffffff', 0.25)}`,
                                 },
                             }}
                         >
@@ -234,8 +286,16 @@ const RegisterPage = () => {
                                     • Disfrute de conversaciones cifradas y seguras.
                                 </Typography>
                             </DialogContent>
-                            <DialogActions sx={{ justifyContent: 'center' }}>
-                                <Button onClick={handleDialogClose} color="primary" variant="contained">
+                            <DialogActions sx={{ justifyContent: 'center', paddingBottom: 3 }}>
+                                <Button
+                                    onClick={handleDialogClose}
+                                    color="primary"
+                                    variant="contained"
+                                    sx={{
+                                        borderRadius: 25,
+                                        padding: '8px 24px',
+                                    }}
+                                >
                                     Cerrar
                                 </Button>
                             </DialogActions>
@@ -250,11 +310,11 @@ const RegisterPage = () => {
                             fullWidth
                             PaperProps={{
                                 style: {
-                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    background: 'rgba(255, 255, 255, 0.15)',
                                     backdropFilter: 'blur(10px)',
                                     color: 'white',
                                     borderRadius: 15,
-                                    border: `1px solid ${alpha('#ffffff', 0.2)}`,
+                                    border: `1px solid ${alpha('#ffffff', 0.25)}`,
                                 },
                             }}
                         >
@@ -262,7 +322,6 @@ const RegisterPage = () => {
                                 Términos y Condiciones
                             </DialogTitle>
                             <DialogContent>
-                                {/* Insert your terms and conditions content here */}
                                 <Typography variant="h6" gutterBottom>
                                     Bienvenido a NoviaChat.com
                                 </Typography>
@@ -312,14 +371,22 @@ const RegisterPage = () => {
                                     Al continuar, confirmas que has leído y aceptas estos términos y condiciones.
                                 </Typography>
                             </DialogContent>
-                            <DialogActions sx={{ justifyContent: 'center' }}>
-                                <Button onClick={handleTermsDialogClose} color="primary" variant="contained">
+                            <DialogActions sx={{ justifyContent: 'center', paddingBottom: 3 }}>
+                                <Button
+                                    onClick={handleTermsDialogClose}
+                                    color="primary"
+                                    variant="contained"
+                                    sx={{
+                                        borderRadius: 25,
+                                        padding: '8px 24px',
+                                    }}
+                                >
                                     Cerrar
                                 </Button>
                             </DialogActions>
                         </Dialog>
 
-                        <form onSubmit={handleRegister} style={{ marginTop: 15 }}>
+                        <form onSubmit={handleRegister} style={{ marginTop: 25 }}>
                             <StyledTextField
                                 label="Nombre Falso o Apodo"
                                 name="name"
@@ -344,32 +411,31 @@ const RegisterPage = () => {
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 variant="outlined"
-                                type="password"
                                 fullWidth
                                 required
                             />
 
                             <FormControlLabel
                                 control={
-                                    <Checkbox
+                                    <LargeCheckbox
                                         checked={termsAccepted}
                                         onChange={(e) => setTermsAccepted(e.target.checked)}
                                         name="terms"
                                         required
-                                        sx={{ color: 'white', '&.Mui-checked': { color: 'white' } }}
                                     />
                                 }
                                 label={
-                                    <Typography variant="body1" sx={{ color: 'white' }}>
+                                    <Typography variant="body1" sx={{ color: 'white', fontWeight: 500 }}>
                                         Acepto los{' '}
                                         <Link
                                             onClick={handleTermsDialogOpen}
-                                            sx={{ color: '#FE6B8B', cursor: 'pointer' }}
+                                            sx={{ color: '#FE6B8B', cursor: 'pointer', fontWeight: 'bold' }}
                                         >
                                             términos y condiciones
                                         </Link>
                                     </Typography>
                                 }
+                                sx={{ marginTop: 1, marginBottom: 1 }}
                             />
 
                             <GradientButton
@@ -379,15 +445,32 @@ const RegisterPage = () => {
                                 Crear Cuenta
                             </GradientButton>
                         </form>
+
+                        <Divider sx={{ my: 3, bgcolor: 'rgba(255,255,255,0.3)' }} />
+
+                        <Box sx={{ textAlign: 'center', mt: 2 }}>
+                            <Typography variant="body1" sx={{ color: 'white', mb: 2 }}>
+                                ¿Ya tienes una cuenta?
+                            </Typography>
+                            <LoginButton onClick={handleLogin}>
+                                Iniciar Sesión
+                            </LoginButton>
+                        </Box>
                     </CardContent>
                 </GlassCard>
             </Box>
 
-            <GlassCard sx={{ padding: 2, maxWidth: '100%', marginTop: 5 }}>
-                <img src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" alt="logo" style={{ width: 45, height: "auto", marginBottom: 1 }} />
-                <Typography sx={{ color: 'white', fontSize: '20px' }}>
-                    © 2024 - Todos los Derechos Reservados NoviaChat. NoviaChat 2025.
-                </Typography>
+            <GlassCard sx={{ padding: 2, maxWidth: '100%', marginTop: 5, mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img
+                        src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
+                        alt="logo"
+                        style={{ width: 45, height: "auto", marginRight: 10 }}
+                    />
+                    <Typography sx={{ color: 'white', fontSize: '18px' }}>
+                        © 2025 - Todos los Derechos Reservados NoviaChat. NoviaChat 2025.
+                    </Typography>
+                </Box>
             </GlassCard>
         </Box>
     );

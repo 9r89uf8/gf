@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Box } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import DehazeIcon from '@mui/icons-material/Dehaze';
+import HomeIcon from '@mui/icons-material/Home';
 import { useStore } from '@/app/store/store';
 import { logoutUser } from "@/app/services/authService";
 import { styled } from '@mui/material/styles';
@@ -20,7 +21,6 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
         background: 'linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,1) 100%)',
     },
 }));
-
 
 const Navbar = () => {
     const router = useRouter();
@@ -70,9 +70,9 @@ const Navbar = () => {
         router.push('/register');
     };
 
-    const handleImages = () => {
+    const handleHome = () => {
         handleMenuClose();
-        router.push('/posts');
+        router.push('/');
     };
 
     const handleSignOut = async () => {
@@ -95,23 +95,23 @@ const Navbar = () => {
                 overflow: 'visible',
             }}
         >
-            <Toolbar sx={{ minHeight: '64px', position: 'relative' }}> {/* Adjust minHeight as needed */}
+            <Toolbar sx={{ minHeight: '64px', position: 'relative' }}>
                 <Box display="flex" alignItems="center" flexGrow={1} sx={{ position: 'relative' }}>
                     <Box
                         component="img"
                         src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
                         alt="logo"
                         sx={{
-                            width: '80px', // Increased size
+                            width: '80px',
                             height: 'auto',
                             marginRight: 2,
                             position: 'absolute',
-                            left: '-10px', // Adjust to make it overflow to the left
-                            top: '-10px', // Adjust to make it overflow to the top
-                            zIndex: 1, // Ensure logo is above other elements
+                            left: '-10px',
+                            top: '-10px',
+                            zIndex: 1,
                         }}
                     />
-                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 22 }}> {/* Adjust marginLeft to accommodate larger logo */}
+                    <Button color="inherit" onClick={() => router.push('/')} sx={{ marginLeft: '70px', fontSize: 22 }}>
                         NoviaChat
                     </Button>
                 </Box>
@@ -129,7 +129,7 @@ const Navbar = () => {
                         <DehazeIcon sx={{ fontSize: 40 }}/>
                     </IconButton>
                     <Menu
-                        style={{maxWidth: 300}}
+                        style={{ maxWidth: 300 }}
                         id="menu-appbar"
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
@@ -141,7 +141,6 @@ const Navbar = () => {
                             },
                         }}
                     >
-
                         {user ? (
                             <>
                                 {user && user.uid === '3UaQ4dtkNthHMq9VKqDCGA0uPix2' && (
@@ -153,11 +152,23 @@ const Navbar = () => {
                                         <MenuItem onClick={handleManage}>Manage Girls</MenuItem>
                                     </>
                                 )}
-                                <StyledMenuItem key="fotos" onClick={handleImages} sx={{ fontSize: 24 }}>Fotos</StyledMenuItem>
-                                <StyledMenuItem key="salir" onClick={handleSignOut} sx={{ fontSize: 24 }}>cerrar sesión</StyledMenuItem>
+                                <StyledMenuItem key="salir" onClick={handleSignOut} sx={{ fontSize: 24 }}>
+                                    cerrar sesión
+                                </StyledMenuItem>
                             </>
                         ) : (
                             [
+                                // Home menu item now has no background and a larger icon
+                                <StyledMenuItem
+                                    key="home"
+                                    onClick={handleHome}
+                                    sx={{
+                                        background: 'transparent',
+                                        '&:hover': { background: 'transparent' },
+                                    }}
+                                >
+                                    <HomeIcon sx={{ fontSize: 45, color: '#343a40', margin:-2 }}/>
+                                </StyledMenuItem>,
                                 <StyledMenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
                                     Entrar a mi cuenta
                                 </StyledMenuItem>,
@@ -174,4 +185,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

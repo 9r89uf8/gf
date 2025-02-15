@@ -18,7 +18,7 @@ const RecordingIndicator = styled(Box)(({ theme }) => ({
     color: theme.palette.error.main,
 }));
 
-const AudioRecorder = ({ onAudioRecorded, isRecording, setIsRecording }) => {
+const AudioRecorder = ({ onAudioRecorded, isRecording, setIsRecording, canSendMessage }) => {
     const [audioDuration, setAudioDuration] = useState(0);
     const mediaRecorderRef = useRef(null);
     const chunksRef = useRef([]);
@@ -112,7 +112,7 @@ const AudioRecorder = ({ onAudioRecorded, isRecording, setIsRecording }) => {
                     </IconButton>
                 </>
             ) : (
-                <IconButton onClick={startRecording}>
+                <IconButton onClick={startRecording} disabled={!canSendMessage}>
                     <MicIcon fontSize="large" />
                 </IconButton>
             )}
