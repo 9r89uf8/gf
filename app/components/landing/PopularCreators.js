@@ -9,6 +9,7 @@ const staticGirls = [
         username: 'antonella1353',
         age: 18,
         followers: 69300,
+        priority: true,
         bio: 'No sean chismosos 😏😂',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
         texting: true,
@@ -19,9 +20,10 @@ const staticGirls = [
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
         age: 19,
+        priority: false,
         followers: 60240,
         bio: 'Hola....',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86521b43-3109-4caa-a742-55d12b843f00/w=200,sharpen=3,fit=scale-down',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86521b43-3109-4caa-a742-55d12b843f00/w=200,fit=scale-down',
         texting: false,
         verified: true,
         verifiedType: 'blue'
@@ -29,10 +31,11 @@ const staticGirls = [
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
+        priority: false,
         age: 18,
         followers: 50750,
         bio: '👾',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,sharpen=3,fit=scale-down',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,fit=scale-down',
         verified: true, // Adding verified status
         verifiedType: 'blue' // 'gold' or 'blue'
     },
@@ -41,8 +44,9 @@ const staticGirls = [
         username: 'ariana2',
         age: 18,
         followers: 55860,
+        priority: false,
         bio: '💚',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/f9cdaeb6-6b0b-4a3a-da9a-7430f1f07100/w=200,sharpen=3,fit=scale-down',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/f9cdaeb6-6b0b-4a3a-da9a-7430f1f07100/w=200,fit=scale-down',
         texting: false,
         verified: true, // Adding verified status
         verifiedType: 'blue' // 'gold' or 'blue'
@@ -292,6 +296,7 @@ const PopularCreators = () => {
                                     width={200}
                                     height={200}
                                     style={styles.image}
+                                    priority={girl.priority}
                                 />
                             </Link>
 
