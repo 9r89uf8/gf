@@ -1,6 +1,7 @@
 // app/layout.jsx
 import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
+import Script from 'next/script';
 import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingNavbar";
 import ServiceWorkerRegister from "@/app/components/sw/ServiceWorkerRegister";
 import Notifications from "@/app/components/notifications/Notifications";
@@ -19,6 +20,7 @@ const schemaData = {
     }
 };
 
+const GA_TRACKING_ID = 'G-ENZST04463'; // Replace with your actual GA tracking ID
 const Layout = ({ children }) => {
     return (
         <html lang="es">
@@ -56,6 +58,19 @@ const Layout = ({ children }) => {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
             />
+            {/* Google Analytics Scripts loaded lazily */}
+            <Script
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+                strategy="lazyOnload"
+            />
+            <Script id="ga-init" strategy="lazyOnload">
+                {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+          `}
+            </Script>
         </head>
         <body>
         {/*<ServiceWorkerRegister />*/}
