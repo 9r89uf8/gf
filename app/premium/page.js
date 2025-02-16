@@ -103,6 +103,14 @@ const PrivateMember = () => {
     };
 
     useEffect(() => {
+        // Fire a GA event if the gtag function is available.
+        if (typeof window !== "undefined" && window.gtag) {
+            window.gtag('event', 'page_view', {
+                event_category: 'Navigation',
+                event_label: 'Premium Page',
+            });
+        }
+        // Proceed with checkout
         getMembership();
     }, []);
 

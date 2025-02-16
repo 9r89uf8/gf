@@ -26,6 +26,14 @@ const CheckoutButton = () => {
     const setLoading = useStore((state) => state.setLoading);
 
     const handleCheckout = () => {
+        // Fire a GA event if the gtag function is available.
+        if (typeof window !== "undefined" && window.gtag) {
+            window.gtag('event', 'click', {
+                event_category: 'Checkout',
+                event_label: 'Checkout Button Clicked',
+            });
+        }
+        // Proceed with checkout
         createCheckoutSession(); // example amount
     };
 

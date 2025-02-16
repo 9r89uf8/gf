@@ -164,13 +164,13 @@ const FollowerCount = styled(Box)({
     },
 });
 
-const BackgroundImage = styled(Box)(({ backgroundUrl }) => ({
+const BackgroundImage = styled(Box)(({ backgroundurl }) => ({
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     height: '30%',
-    backgroundImage: `url(${backgroundUrl})`,
+    backgroundImage: `url(${backgroundurl})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     opacity: 0.3,
@@ -202,6 +202,13 @@ const Creators = () => {
     };
 
     useEffect(() => {
+        // Fire a GA event if the gtag function is available.
+        if (typeof window !== "undefined" && window.gtag) {
+            window.gtag('event', 'page_view', {
+                event_category: 'Navigation',
+                event_label: 'Creadoras Page',
+            });
+        }
         async function fetchGirls() {
             await getGirls();
             setLoading(false);
@@ -295,7 +302,7 @@ const Creators = () => {
                             <Grid item xs={12} sm={6} md={4} key={girl.id}>
                                 <ElegantCard>
                                     <BackgroundImage
-                                        backgroundUrl={`https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`}
+                                        backgroundurl={`https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`}
                                     />
                                     <Box sx={{ position: 'relative', zIndex: 1 }}>
                                         <ProfileImageContainer
