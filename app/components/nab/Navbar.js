@@ -81,6 +81,46 @@ const Navbar = () => {
         router.push('/login');
     };
 
+    const getMenuItems = () => {
+        if (user) {
+            const items = [];
+            if (user.uid === '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
+                items.push(
+                    <MenuItem key="addPictures" onClick={handlePicture}>Add Pictures</MenuItem>,
+                    <MenuItem key="addPosts" onClick={handlePosts}>Add Posts</MenuItem>,
+                    <MenuItem key="updateGirl" onClick={handleUpdate}>Update Girl</MenuItem>,
+                    <MenuItem key="createGirl" onClick={handleCreate}>Create Girl</MenuItem>,
+                    <MenuItem key="manageGirls" onClick={handleManage}>Manage Girls</MenuItem>
+                );
+            }
+            items.push(
+                <StyledMenuItem key="salir" onClick={handleSignOut} sx={{ fontSize: 24 }}>
+                    cerrar sesión
+                </StyledMenuItem>
+            );
+            return items;
+        } else {
+            return [
+                <StyledMenuItem
+                    key="home"
+                    onClick={handleHome}
+                    sx={{
+                        background: 'transparent',
+                        '&:hover': { background: 'transparent' },
+                    }}
+                >
+                    <HomeIcon sx={{ fontSize: 45, color: '#343a40', margin: -2 }} />
+                </StyledMenuItem>,
+                <StyledMenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
+                    Entrar a mi cuenta
+                </StyledMenuItem>,
+                <StyledMenuItem key="register" onClick={handleRegister} sx={{ fontSize: 24 }}>
+                    Crear Cuenta
+                </StyledMenuItem>,
+            ];
+        }
+    };
+
     return (
         <AppBar
             position="relative"
@@ -126,7 +166,7 @@ const Navbar = () => {
                         onClick={handleMenuOpen}
                         color="inherit"
                     >
-                        <DehazeIcon sx={{ fontSize: 40 }}/>
+                        <DehazeIcon sx={{ fontSize: 40 }} />
                     </IconButton>
                     <Menu
                         style={{ maxWidth: 300 }}
@@ -141,42 +181,7 @@ const Navbar = () => {
                             },
                         }}
                     >
-                        {user ? (
-                            <>
-                                {user && user.uid === '3UaQ4dtkNthHMq9VKqDCGA0uPix2' && (
-                                    <>
-                                        <MenuItem onClick={handlePicture}>Add Pictures</MenuItem>
-                                        <MenuItem onClick={handlePosts}>Add Posts</MenuItem>
-                                        <MenuItem onClick={handleUpdate}>Update Girl</MenuItem>
-                                        <MenuItem onClick={handleCreate}>Create Girl</MenuItem>
-                                        <MenuItem onClick={handleManage}>Manage Girls</MenuItem>
-                                    </>
-                                )}
-                                <StyledMenuItem key="salir" onClick={handleSignOut} sx={{ fontSize: 24 }}>
-                                    cerrar sesión
-                                </StyledMenuItem>
-                            </>
-                        ) : (
-                            [
-                                // Home menu item now has no background and a larger icon
-                                <StyledMenuItem
-                                    key="home"
-                                    onClick={handleHome}
-                                    sx={{
-                                        background: 'transparent',
-                                        '&:hover': { background: 'transparent' },
-                                    }}
-                                >
-                                    <HomeIcon sx={{ fontSize: 45, color: '#343a40', margin:-2 }}/>
-                                </StyledMenuItem>,
-                                <StyledMenuItem key="login" onClick={handleLogin} sx={{ fontSize: 24 }}>
-                                    Entrar a mi cuenta
-                                </StyledMenuItem>,
-                                <StyledMenuItem key="register" onClick={handleRegister} sx={{ fontSize: 24 }}>
-                                    Crear Cuenta
-                                </StyledMenuItem>,
-                            ]
-                        )}
+                        {getMenuItems()}
                     </Menu>
                 </div>
             </Toolbar>
