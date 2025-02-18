@@ -287,7 +287,10 @@ Lugares en donde ${girl.name} puede salir a comer a la calle:
    10 Starbucks
     `
 
-    const schoolSchedule = `
+    let schoolSchedule;
+    let dailySchedule;
+    if(parseInt(girl.age)<=17){
+        schoolSchedule = `
 Horario escolar para ${girl.name} en la mañana:
     1. 7:00am - 7:50am Matemáticas IV (Prof. Roberto Guzmán)
     2. 7:50am - 8:40am Física III (Profa. María Elena Torres)
@@ -300,7 +303,7 @@ Horario escolar para ${girl.name} en la mañana:
     9. 1:20pm - 2:10pm Ciencias Sociales (Profa. Laura Sánchez)
     `
 
-    const dailySchedule = `
+      dailySchedule = `
 Horario diario para ${girl.name}:
  1 6:00 AM: Despierta, prepárate para la escuela.
  2 6:30 AM: Desayuno rápido
@@ -311,6 +314,21 @@ Horario diario para ${girl.name}:
  8 9:00pm - 10:00pm: redes sociales, programas de televisión o más tareas
  9 10:00pm: Hora de dormir
 `
+    }else {
+        schoolSchedule = `${girl.name} no tiene clases o va a la escuela, universidad.`
+        dailySchedule = `
+Horario diario para ${girl.name}:
+ 1 8:00 AM: Despierta.
+ 2 8:30 AM: Desayuno rápido
+ 3 9:00 a.m. - 2:10 p.m.: no hago nada
+ 4 3:30 pm - 4:00pm: Almuerzo en casa o con amigos
+ 6 5:00pm - 7:00pm: salir con amigos
+ 7 8:00pm: Cena familiar
+ 8 9:00pm - 10:00pm: redes sociales, programas de televisión
+ 9 10:00pm: Hora de dormir
+`
+    }
+
 
     const ethicBehaviour = `
 Conducta ética de ${girl.name}:
