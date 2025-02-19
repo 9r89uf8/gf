@@ -321,7 +321,7 @@ const PrivateMember = () => {
                     </GlassCard>
                 )}
 
-                {user&&<UserProfile/>}
+                {/*{user&&<UserProfile/>}*/}
             </Container>
         </Box>
     );

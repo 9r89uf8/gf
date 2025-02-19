@@ -97,6 +97,12 @@ const LoginPage = () => {
         const { user, error } = await loginUser(email, password, setUser);
         setDisableLogin(false);
         if (user) {
+            if (typeof window !== 'undefined' && window.gtag) {
+                window.gtag('event', 'user_loged_in', {
+                    event_category: 'CTA',
+                    event_label: 'login Button'
+                });
+            }
             router.push('/dm');
         } else {
             console.error(error);

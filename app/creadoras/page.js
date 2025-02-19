@@ -245,43 +245,43 @@ const Creators = () => {
     return (
         <Box sx={{ minHeight: '100vh', padding: '20px 0' }}>
             <Container maxWidth="lg">
-                <PremiumBanner>
-                    <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'white', mb: 3 }}>
-                        Cuenta Premium
-                    </Typography>
-                    <Typography variant="h6" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.9)' }}>
-                        Con una cuenta premium, puedes hablar, ver fotos y ver videos de todas nuestras creadoras.
-                    </Typography>
-                    <Stack
-                        direction="row"
-                        spacing={2}
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{ mb: 4 }}
-                    >
-                        <Box display="flex" alignItems="center" flexDirection="column">
-                            <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: 'white' }} />
-                            <Typography variant="body1" sx={{ color: 'white' }}>Mensajes ilimitados</Typography>
-                        </Box>
-                        <Box display="flex" alignItems="center" flexDirection="column">
-                            <PhotoCameraIcon sx={{ fontSize: 40, color: 'white' }} />
-                            <Typography variant="body1" sx={{ color: 'white' }}>Fotos privadas</Typography>
-                        </Box>
-                        <Box display="flex" alignItems="center" flexDirection="column">
-                            <VideocamIcon sx={{ fontSize: 40, color: 'white' }} />
-                            <Typography variant="body1" sx={{ color: 'white' }}>Videos exclusivos</Typography>
-                        </Box>
-                    </Stack>
-                    {!isPremium && (
-                        <GradientButton
-                            size="large"
-                            onClick={() => router.push('/premium')}
-                            sx={{ minWidth: 240 }}
-                        >
-                            Obtener Premium
-                        </GradientButton>
-                    )}
-                </PremiumBanner>
+                {/*<PremiumBanner>*/}
+                {/*    <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'white', mb: 3 }}>*/}
+                {/*        Cuenta Premium*/}
+                {/*    </Typography>*/}
+                {/*    <Typography variant="h6" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.9)' }}>*/}
+                {/*        Con una cuenta premium, puedes hablar, ver fotos y ver videos de todas nuestras creadoras.*/}
+                {/*    </Typography>*/}
+                {/*    <Stack*/}
+                {/*        direction="row"*/}
+                {/*        spacing={2}*/}
+                {/*        justifyContent="center"*/}
+                {/*        alignItems="center"*/}
+                {/*        sx={{ mb: 4 }}*/}
+                {/*    >*/}
+                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
+                {/*            <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: 'white' }} />*/}
+                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Mensajes ilimitados</Typography>*/}
+                {/*        </Box>*/}
+                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
+                {/*            <PhotoCameraIcon sx={{ fontSize: 40, color: 'white' }} />*/}
+                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Fotos privadas</Typography>*/}
+                {/*        </Box>*/}
+                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
+                {/*            <VideocamIcon sx={{ fontSize: 40, color: 'white' }} />*/}
+                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Videos exclusivos</Typography>*/}
+                {/*        </Box>*/}
+                {/*    </Stack>*/}
+                {/*    {!isPremium && (*/}
+                {/*        <GradientButton*/}
+                {/*            size="large"*/}
+                {/*            onClick={() => router.push('/premium')}*/}
+                {/*            sx={{ minWidth: 240 }}*/}
+                {/*        >*/}
+                {/*            Obtener Premium*/}
+                {/*        </GradientButton>*/}
+                {/*    )}*/}
+                {/*</PremiumBanner>*/}
 
                 <Grid container spacing={4}>
                     {loading ? (
@@ -351,9 +351,9 @@ const Creators = () => {
                                             </GradientButton>
                                         </Stack>
 
-                                        <PremiumLabel>
-                                            GRATIS CON PREMIUM
-                                        </PremiumLabel>
+                                        {/*<PremiumLabel>*/}
+                                        {/*    GRATIS CON PREMIUM*/}
+                                        {/*</PremiumLabel>*/}
                                     </Box>
                                 </ElegantCard>
                             </Grid>

@@ -166,6 +166,12 @@ const RegisterPage = () => {
         const { user, error } = await registerUser(data);
         setDisableRegister(false);
         if (user) {
+            if (typeof window !== 'undefined' && window.gtag) {
+                window.gtag('event', 'user_registered', {
+                    event_category: 'CTA',
+                    event_label: 'Register Button'
+                });
+            }
             router.push('/dm');
         } else {
             console.error(error);
@@ -174,6 +180,12 @@ const RegisterPage = () => {
 
     const [openDialog, setOpenDialog] = useState(false);
     const handleDialogOpen = () => {
+        if (typeof window !== 'undefined' && window.gtag) {
+            window.gtag('event', 'anonymous_account_button', {
+                event_category: 'CTA',
+                event_label: 'Anonymous Button'
+            });
+        }
         setOpenDialog(true);
     };
     const handleDialogClose = () => {

@@ -18,9 +18,12 @@ import {
     Paper,
     Divider,
     Avatar,
+    Container
 } from '@mui/material';
-import { Edit, Save, Close, DeleteForever, PersonAdd, PhotoCamera } from '@mui/icons-material';
-import {alpha, styled} from '@mui/material/styles';
+import { Edit, Save, Close, DeleteForever, PhotoCamera } from '@mui/icons-material';
+import { alpha, styled } from '@mui/material/styles';
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const StyledCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
@@ -34,9 +37,20 @@ const StyledCard = styled(Card)(({ theme }) => ({
     userSelect: 'none',
     WebkitUserSelect: 'none',
     msUserSelect: 'none',
-    width: '100%', // Set width to 100%
-    maxWidth: '500px', // Add a max-width for larger screens
-    padding: theme.spacing(3), // Add some padding
+    padding: theme.spacing(3),
+}));
+
+const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #f8f9fa 30%, #e9ecef 90%)',
+    border: 0,
+    borderRadius: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: 'black',
+    height: 48,
+    padding: '0 30px',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -69,20 +83,16 @@ const UserProfile = () => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const [isEditing, setIsEditing] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [newUserInfo, setNewUserInfo] = useState({ name: '', email: '', profilePic: '' });
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [image, setImage] = useState(null);
     const fileInputRef = useRef(null);
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (user) {
             setNewUserInfo(user);
-            setLoading(false);
-        } else {
-            // If user is null, we might want to redirect to login or show a message
-            setLoading(false);
         }
     }, [user]);
 
@@ -98,6 +108,7 @@ const UserProfile = () => {
     };
 
     const handleSave = async () => {
+        setIsUpdating(true);
         const formData = new FormData();
         formData.append('name', newUserInfo.name);
         formData.append('email', newUserInfo.email);
@@ -112,6 +123,8 @@ const UserProfile = () => {
         } catch (error) {
             console.error('Error updating user profile:', error);
             // Handle error (e.g., show error message to user)
+        } finally {
+            setIsUpdating(false);
         }
     };
 
@@ -132,20 +145,54 @@ const UserProfile = () => {
         }
     };
 
-
     // Calculate the days and hours remaining until the membership expires
     let daysRemaining = null;
     let hoursRemaining = null;
 
-    if (user&&user.premium&&girl) {
+    if (user && user.premium && girl) {
         const expirationDate = new Date(user.expirationDate._seconds * 1000);
         daysRemaining = differenceInDays(expirationDate, new Date());
-        hoursRemaining = differenceInHours(expirationDate, new Date()) % 24; // To get the remainder hours after days
+        hoursRemaining = differenceInHours(expirationDate, new Date()) % 24;
+    }
+
+    // If there is no user, show a friendly message with Login and Register options
+    if (!user) {
+        return (
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    padding: 2,
+                }}
+            >
+                <Container maxWidth="sm">
+            <StyledCard>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                    Para hablar con los creadores, por favor crea una cuenta o inicia sesión.
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <ActionButton variant="contained" onClick={() => router.push('/login')}>
+                        Iniciar sesión
+                    </ActionButton>
+                    <ActionButton variant="outlined" onClick={() => router.push('/register')}>
+                        Registrarse
+                    </ActionButton>
+                </Box>
+            </StyledCard>
+                </Container>
+            </Box>
+        );
     }
 
     return (
-        <>
-            <StyledCard>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                background: 'linear-gradient(45deg, #343a40 0%, #212529 100%)',
+                padding: 2,
+            }}
+        >
+            <Container maxWidth="sm">
+                <StyledCard>
                 <Avatar
                     src={newUserInfo.profilePic}
                     alt={newUserInfo.name}
@@ -185,10 +232,20 @@ const UserProfile = () => {
                             value={newUserInfo.email}
                             onChange={handleInputChange}
                         />
-                        <ActionButton variant="contained" startIcon={<Save />} onClick={handleSave}>
+                        <ActionButton
+                            variant="contained"
+                            startIcon={<Save />}
+                            onClick={handleSave}
+                            disabled={isUpdating}
+                        >
                             Guardar
                         </ActionButton>
-                        <ActionButton variant="outlined" startIcon={<Close />} onClick={handleCancel}>
+                        <ActionButton
+                            variant="outlined"
+                            startIcon={<Close />}
+                            onClick={handleCancel}
+                            disabled={isUpdating}
+                        >
                             Cancelar
                         </ActionButton>
                     </>
@@ -200,7 +257,7 @@ const UserProfile = () => {
                             Editar
                         </ActionButton>
                         <ActionButton
-                            style={{marginBottom: 20}}
+                            style={{ marginBottom: 20 }}
                             variant="contained"
                             color="error"
                             startIcon={<DeleteForever />}
@@ -211,9 +268,6 @@ const UserProfile = () => {
                         </ActionButton>
                     </>
                 )}
-
-
-
 
                 {user && user.premium ? (
                     <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}>
@@ -241,10 +295,17 @@ const UserProfile = () => {
                             </Typography>
                         )}
                     </Box>
-                ) : null}
+                ) :
+                    <>
+                        <GradientButton
+                            onClick={() => router.push('/premium')}
+                        >
+                            comprar premium
+                        </GradientButton>
+                    </>
+                }
 
-            </StyledCard>
-
+                </StyledCard>
             <Dialog
                 open={openDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}
@@ -266,7 +327,8 @@ const UserProfile = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </>
+            </Container>
+        </Box>
     );
 };
 

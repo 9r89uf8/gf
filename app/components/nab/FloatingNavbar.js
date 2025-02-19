@@ -110,7 +110,7 @@ export default function FloatingNavbar() {
         { name: 'TOP', path: '/dm', icon: <MessageIcon /> },
         {
             name: 'USER',
-            path: '/premium',
+            path: '/user',
             icon: <KeyboardDoubleArrowUpIcon fontSize='large' />,
             onClick: handlePremiumClick,
         },
@@ -120,7 +120,7 @@ export default function FloatingNavbar() {
     const popoverOptions = [
         {
             label: 'Mi Cuenta',
-            path: '/premium',
+            path: '/user',
             gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
             icon: <AccountCircleIcon sx={{ fontSize: '2rem' }} />,
         },
@@ -138,7 +138,7 @@ export default function FloatingNavbar() {
                 value={pathname}
                 onChange={(event, newValue) => {
                     // Skip navigation when the account icon ("/premium") is clicked.
-                    if (newValue === '/premium') return;
+                    if (newValue === '/user') return;
                     if (newValue) {
                         router.push(newValue);
                     }
