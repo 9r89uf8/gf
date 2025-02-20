@@ -138,6 +138,12 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
 
     const handleConfirmDelete = async () => {
         await deleteMessages({ girlId: girl.id });
+        if (typeof window !== 'undefined' && window.gtag) {
+            window.gtag('event', 'user_deleted_chat', {
+                event_category: 'CTA',
+                event_label: 'Delete Button'
+            });
+        }
         handleCloseDeleteDialog();
     };
 

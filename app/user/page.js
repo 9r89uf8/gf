@@ -138,6 +138,12 @@ const UserProfile = () => {
         try {
             await deleteUser();
             setOpenDeleteDialog(false);
+            if (typeof window !== 'undefined' && window.gtag) {
+                window.gtag('event', 'user_deleted_account', {
+                    event_category: 'CTA',
+                    event_label: 'User Delete Button'
+                });
+            }
             router.push('/register');
         } catch (error) {
             console.error('Error deleting user:', error);

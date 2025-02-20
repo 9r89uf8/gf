@@ -214,7 +214,7 @@ const DMList = () => {
                             fontFamily: 'Anton, sans-serif',
                         }}
                     >
-                        Tus Chats
+                        Tus Mensajes
                     </Typography>
 
                     {user ? (
@@ -351,7 +351,7 @@ const DMList = () => {
 
                             <InfoBox>
                                 <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Puedes recibir:
+                                    Puedes recibir
                                 </Typography>
                                 <Stack direction="row" spacing={4} justifyContent="center">
                                     <Box display="flex" flexDirection="column" alignItems="center">

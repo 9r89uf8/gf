@@ -180,6 +180,24 @@ export async function POST(req) {
         // Update the girl record in the database
         await girlDoc.update(girlRecord);
 
+        // Now update all posts related to this girl
+        const postsSnapshot = await adminDb.firestore().collection('posts')
+            .where('girlId', '==', girlId)
+            .get();
+
+        // Use a batch for atomic writes (each batch supports up to 500 writes)
+        const batch = adminDb.firestore().batch();
+        postsSnapshot.forEach((doc) => {
+            const postRef = doc.ref;
+            batch.update(postRef, {
+                girlName: girlRecord.name,
+                girlPicUrl: girlRecord.picture,
+                girlUsername: girlRecord.username,
+            });
+        });
+        await batch.commit();
+
+
         return NextResponse.json({
             id: girlDoc.id,
             ...girlRecord,
