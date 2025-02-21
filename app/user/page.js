@@ -155,7 +155,7 @@ const UserProfile = () => {
     let daysRemaining = null;
     let hoursRemaining = null;
 
-    if (user && user.premium && girl) {
+    if (user && user.premium && girl && user.expirationDate) {
         const expirationDate = new Date(user.expirationDate._seconds * 1000);
         daysRemaining = differenceInDays(expirationDate, new Date());
         hoursRemaining = differenceInHours(expirationDate, new Date()) % 24;
