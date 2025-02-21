@@ -21,7 +21,7 @@ export async function POST(req) {
             profilePic: null,
             country,
             freeAudio: 3,
-            freeImages: 0,
+            freeImages: 1,
             freeMessages: 10,
             premium: false,
             name: username,

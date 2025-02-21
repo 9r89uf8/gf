@@ -37,7 +37,7 @@ If the User prompts you to send an image, you should:
  5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
  For example:
  User: mandame una foto en tanga
- Assistant: User needs to buy premium and beg him or flirt with him to buy it [IMAGE: foto en tanga].`
+ Assistant: necesitas comprar premium para mas fotos [IMAGE: foto en tanga].`
     }
 
     if(user.premium&&girl.videosEnabled){
@@ -69,7 +69,7 @@ If the User prompts you to send a video, you should:
  5. Remember, you're not actually sending a video; you're just providing a description of the video to send.
  For example:
  User: mandame un video en tanga?
- Assistant: User needs to buy premium and beg him or flirt with him to buy it [VIDEO: video en tanga].`
+ Assistant: necesitas comprar premium para videos [VIDEO: video en tanga].`
     }
 
     let userAudioInstructions
@@ -94,7 +94,7 @@ If the User prompts you to send a video, you should:
  5. Remember, you're not actually producing an audio; you're just providing a description of what to say.
  For example:
  User: mandame un audio
- Assistant: User needs to buy premium and beg him or flirt with him to buy it [AUDIO: quiero tu pito].`}
+ Assistant: necesitas comprar premium para mas audios [AUDIO: quiero tu pito].`}
 
     let userMessageType
     if(lastMessageByUser.mediaType==='image'){

@@ -54,7 +54,7 @@ export async function POST(req) {
 
         // Get and process LLM response
         let assistantMessage = await handleLLMInteraction(userData, lastUserMessage, girlData, conversationHistory);
-        console.log(assistantMessage);
+
 
         if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
             assistantMessage = handleRefusedAnswer(userData);
@@ -64,12 +64,24 @@ export async function POST(req) {
         const { messageType, assistantMessageProcess, parsedContent } =
             await handleMessageType(assistantMessage);
 
+        // If the assistant's message is text and not explicitly audio, add a random chance for audio
+        let finalMessageType = messageType;
+        let manualMessageType = false
+        if (finalMessageType === 'text' && Math.random() < 1/3) {
+            finalMessageType = 'audio';
+            // Set a default description if none exists
+            if (!parsedContent.audio.description) {
+                manualMessageType = true;
+                parsedContent.audio.description = parsedContent.audio.content; // or use a custom description
+            }
+        }
+
         // Handle different message types
-        switch(messageType) {
+        switch(finalMessageType) {
             case 'audio':
                 const audioResult = await handleAudioRequest(
                     parsedContent.audio, userData, girlData, userId, girlId,
-                    assistantMessageProcess, conversationHistory, elevenK, lastUserMessage
+                    assistantMessageProcess, conversationHistory, elevenK, lastUserMessage, manualMessageType
                 );
                 conversationHistory = audioResult.updatedHistory;
                 break;

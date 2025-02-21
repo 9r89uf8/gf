@@ -103,14 +103,17 @@ export async function handleAudioRequest(
     assistantMessageProcess,
     conversationHistory,
     elevenLabsKey,
-    userMessage
+    userMessage,
+    manualMessageType
 ) {
     let audioTextDescription = false;
 
     // If freeAudio is 0, process normally (splitting the message, etc.)
     if (userData.freeAudio === 0) {
         assistantMessageProcess = processAssistantMessage(userWantsAudio.content);
-        assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
+        if(!manualMessageType){
+            assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
+        }
         assistantMessageProcess.forEach(response => {
             conversationHistory.push({ role: "assistant", content: response.content });
         });
@@ -134,10 +137,17 @@ export async function handleAudioRequest(
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             }
         ];
-        conversationHistory.push(
-            { role: "assistant", content: userWantsAudio.content },
-            { role: "assistant", content: `${girlData.name} envió un audio al User diciendo '`+userWantsAudio.description+`'` }
-        );
+        if (audioTextDescription && userWantsAudio.description !== userWantsAudio.content) {
+            // Push two separate messages
+            conversationHistory.push(
+                { role: "assistant", content: userWantsAudio.content },
+                { role: "assistant", content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.description}'` }
+            );
+        } else {
+            // Push just one message if description is default/duplicative
+            conversationHistory.push({ role: "assistant", content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.content}'` });
+        }
+
     }
 
     // Check if the user's text contains the word "gemir" (case-insensitive)
@@ -196,7 +206,7 @@ export async function handleAudioRequest(
         });
     }
 
-    // Add messages to displayMessages collection
+// Instead of blindly adding every message in assistantMessageProcess:
     const displayMessageRef = adminDb.firestore()
         .collection('users')
         .doc(userId)
@@ -204,9 +214,33 @@ export async function handleAudioRequest(
         .doc(girlId)
         .collection('displayMessages');
 
-    for (const message of assistantMessageProcess) {
-        await displayMessageRef.add(message);
+    if (userData.freeAudio === 0) {
+        // When freeAudio is 0, only one message exists.
+        for (const message of assistantMessageProcess) {
+            await displayMessageRef.add(message);
+        }
+        // await displayMessageRef.add({
+        //     ...assistantMessageProcess[0],
+        //     content: userWantsAudio.content
+        // });
+    } else if (audioTextDescription && userWantsAudio.description && userWantsAudio.description !== userWantsAudio.content) {
+        // For explicit audio requests, add two messages:
+        await displayMessageRef.add({
+            ...assistantMessageProcess[0],
+            content: userWantsAudio.content
+        });
+        await displayMessageRef.add({
+            ...assistantMessageProcess[1],
+            content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.description}'`
+        });
+    } else {
+        // For manual audio responses, add just one message.
+        await displayMessageRef.add({
+            ...assistantMessageProcess[1],
+            content: userWantsAudio.content
+        });
     }
+
 
     return {
         success: true,
