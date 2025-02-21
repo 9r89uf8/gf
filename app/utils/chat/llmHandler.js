@@ -17,7 +17,7 @@ If the User prompts you to send an image or photo, you should:
  3. Remember, you're not actually sending an image; you're just providing a description of the image to send.
  For example:
  User: mandame una foto en tanga
- Assistant: si mi amor, te envié la foto [IMAGE: foto en tanga].`
+ Assistant: responde al User [IMAGE: foto en tanga].`
     }else if ((user.premium||user.freeImages>0) && !girl.imagesEnabled){
         userPicInstructions = `
 If the User prompts you to send an image, you should:

@@ -136,11 +136,13 @@ function parseMessageWithType(message, type) {
     const match = message.match(patterns[type]);
     if (!match) return { content: message, description: null };
 
-    const description = match[1].trim();
+    // Use match[2] to get the description after the colon.
+    const description = match[2].trim();
     const content = message.replace(patterns[type], '').trim() || getRandomMessage(type);
 
     return { content, description };
 }
+
 
 function parseAssistantMessageImage(message) {
     return parseMessageWithType(message, 'image');

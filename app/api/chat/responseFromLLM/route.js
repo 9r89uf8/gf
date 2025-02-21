@@ -63,6 +63,7 @@ export async function POST(req) {
         // Parse and handle message type
         const { messageType, assistantMessageProcess, parsedContent } =
             await handleMessageType(assistantMessage);
+        // console.log(messageType)
 
         // If the assistant's message is text and not explicitly audio, add a random chance for audio
         let finalMessageType = messageType;
