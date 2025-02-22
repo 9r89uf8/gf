@@ -65,6 +65,25 @@ const Reels = () => {
                         mb: 0,
                     }}
                 >
+                    {/* Reels Button (inactive) */}
+                    <Button
+                        component={Link}
+                        href="/reels"
+                        variant="contained"
+                        sx={{
+                            borderRadius: '50%',
+                            minWidth: 64,    // Increased width
+                            minHeight: 64,   // Increased height
+                            padding: 0,
+                            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                            '&:hover': {
+                                background: 'linear-gradient(45deg, #FE6B8B 40%, #FF8E53 100%)',
+                            },
+                        }}
+                    >
+                        <OndemandVideoIcon sx={{ color: '#ffffff', fontSize: 32 }} />
+                    </Button>
+
                     {/* Posts Button (active) */}
                     <Button
                         component={Link}
@@ -84,24 +103,7 @@ const Reels = () => {
                         <GridOnIcon sx={{ color: '#fff', fontSize: 32 }} />
                     </Button>
 
-                    {/* Reels Button (inactive) */}
-                    <Button
-                        component={Link}
-                        href="/reels"
-                        variant="contained"
-                        sx={{
-                            borderRadius: '50%',
-                            minWidth: 64,    // Increased width
-                            minHeight: 64,   // Increased height
-                            padding: 0,
-                            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                            '&:hover': {
-                                background: 'linear-gradient(45deg, #FE6B8B 40%, #FF8E53 100%)',
-                            },
-                        }}
-                    >
-                        <OndemandVideoIcon sx={{ color: '#ffffff', fontSize: 32 }} />
-                    </Button>
+
                 </Box>
 
                 <Grid container spacing={3}>

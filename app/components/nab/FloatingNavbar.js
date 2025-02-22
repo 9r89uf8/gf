@@ -106,7 +106,7 @@ export default function FloatingNavbar() {
     };
 
     const routes = [
-        { name: 'HOME', path: '/posts', icon: <CameraAltIcon fontSize='large' /> },
+        { name: 'HOME', path: '/reels', icon: <CameraAltIcon fontSize='large' /> },
         { name: 'TOP', path: '/dm', icon: <MessageIcon /> },
         {
             name: 'USER',
