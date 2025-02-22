@@ -26,6 +26,8 @@ const uploadToS3 = (file, fileName) => {
         if (file.type === 'video/mp4') extension = '.mp4';
         else if (file.type === 'image/jpeg') extension = '.jpeg';
         else if (file.type === 'image/png') extension = '.png';
+        else if (file.type === 'image/gif') extension = '.gif';
+        else if (file.type === 'image/webp') extension = '.webp';
         // Add other mimetypes here as necessary...
 
         // Check if extension was determined, reject if not

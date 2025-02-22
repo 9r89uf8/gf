@@ -69,7 +69,6 @@ const UploadMedia = () => {
     return (
         <Box
             sx={{
-                minHeight: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
