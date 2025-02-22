@@ -121,8 +121,9 @@ const Home = () => {
 
                 {/* Company Stats Section */}
                 <GlassCard>
+                    <h1>Novia Virtual</h1>
                     <h2 style={styles.headingCenter}>
-                        La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos. Novia Virtual.
+                        La app de más rápido crecimiento para hispanohablantes en Latinoamérica y Estados Unidos.
                     </h2>
 
                     <div style={styles.statsGrid}>
