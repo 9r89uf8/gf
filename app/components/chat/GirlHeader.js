@@ -146,12 +146,12 @@ const TweetText = styled(Typography)(({ theme }) => ({
     color: '#6c757d',
     fontSize: '1.3rem',
     lineHeight: 1.5,
-    marginBottom: theme.spacing(1.5),
+    marginBottom: theme.spacing(2.5),
 }));
 
 const TweetDate = styled(Typography)(({ theme }) => ({
     color: '#657786',
-    fontSize: '0.875rem',
+    fontSize: '1.0rem',
     position: 'absolute',
     bottom: theme.spacing(1),
     right: theme.spacing(2),
