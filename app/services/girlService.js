@@ -30,6 +30,30 @@ export const getGirl = async (formData) => {
     }
 };
 
+export const getGirlTweet = async (formData) => {
+    const addTweet = useStore.getState().addTweet;
+
+    try {
+        const response = await fetch('/api/tweets/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            addTweet(data);
+            return data;
+        } else {
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
+
 
 export const addPost = async (formData) => {
     const updatePost = useStore.getState().updatePost;

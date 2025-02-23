@@ -5,6 +5,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useStore } from '@/app/store/store';
 import { getGirl } from '@/app/services/girlService';
 import { checkIfCookie } from '@/app/services/authService';
+import {getGirlTweet} from "@/app/services/girlService";
 import {
     fetchMessages,
     saveUserMessage,
@@ -48,6 +49,7 @@ const Chat = ({params}) => {
             setLoadingGirl(true);
             await checkIfCookie(); // Ensure the user data is available
             await getGirl({ id: params.id }); // Ensure the girl data is available
+            await getGirlTweet({ id: params.id })
         };
 
         initializeData();

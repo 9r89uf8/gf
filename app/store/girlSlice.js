@@ -99,5 +99,14 @@ export const createGirlSlice = (set) => ({
                 )
             }
         };
-    })
+    }),
+    // New method to add the tweet to girl.tweet
+    addTweet: (tweet) => set((state) => ({
+        girl: state.girl
+            ? {
+                ...state.girl,
+                tweet: tweet, // Add or update the tweet field
+            }
+            : null
+    }))
 });

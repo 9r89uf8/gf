@@ -78,10 +78,9 @@ const ViewProfileButton = styled(GradientButton)({
 });
 
 const DeleteButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #FF3D00 30%, #FF6E40 90%)',
+    background: 'linear-gradient(45deg, #495057 30%, #212529 90%)',
     border: 0,
     borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 0, 0, .3)',
     color: 'white',
     height: 48,
     padding: '0 30px',
@@ -124,7 +123,42 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
-const GirlHeader = ({ girl, loadingGirl, chat }) => {
+const TweetBox = styled(Box)(({ theme }) => ({
+    background: 'linear-gradient(120deg, #ffffff 0%, #f0f2f5 100%)',
+    borderRadius: theme.spacing(2),
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(3),
+    position: 'relative',
+    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+    width: '100%', // Make it full width
+}));
+
+const TweetTitle = styled(Typography)(({ theme }) => ({
+    color: '#1976d2', // MUI's primary blue
+    fontSize: '1.1rem',
+    fontWeight: 500,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    textAlign: 'center'
+}));
+
+const TweetText = styled(Typography)(({ theme }) => ({
+    color: '#6c757d',
+    fontSize: '1.3rem',
+    lineHeight: 1.5,
+    marginBottom: theme.spacing(1.5),
+}));
+
+const TweetDate = styled(Typography)(({ theme }) => ({
+    color: '#657786',
+    fontSize: '0.875rem',
+    position: 'absolute',
+    bottom: theme.spacing(1),
+    right: theme.spacing(2),
+    fontStyle: 'italic',
+}));
+
+const GirlHeader = ({ girl, loadingGirl }) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const conversationHistory = useStore((state) => state.conversationHistory);
 
@@ -212,7 +246,7 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                                     borderRadius: '50%',
                                     backgroundColor: girl.isActive ? 'green' : 'red',
                                     marginRight: 1,
-                                    animation: `${flash} ${girl.isActive ? '2s' : '2s'} infinite`,
+                                    animation: `${flash} ${girl.isActive ? '4s' : '4s'} infinite`,
                                 }}
                             />
                             <Typography variant="body2" style={{ color: 'gray' }}>
@@ -237,37 +271,31 @@ const GirlHeader = ({ girl, loadingGirl, chat }) => {
                             </ViewProfileButton>
                         </Link>
 
-                        <InfoBox>
-                            <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                ¡Puedes recibir de {girl.name}!
-                            </Typography>
-                            <Stack direction="row" spacing={4} justifyContent="center">
-                                <Box display="flex" flexDirection="column" alignItems="center">
-                                    <GradientIcon>
-                                        <AudiotrackIcon fontSize="large" sx={{ color: 'white' }} />
-                                    </GradientIcon>
-                                    <Typography variant="body1">Audios</Typography>
-                                </Box>
-                                <Box display="flex" flexDirection="column" alignItems="center">
-                                    <GradientIcon>
-                                        <PhotoCameraIcon fontSize="large" sx={{ color: 'white' }} />
-                                    </GradientIcon>
-                                    <Typography variant="body1">Imágenes</Typography>
-                                </Box>
-                                <Box display="flex" flexDirection="column" alignItems="center">
-                                    <GradientIcon>
-                                        <VideocamIcon fontSize="large" sx={{ color: 'white' }} />
-                                    </GradientIcon>
-                                    <Typography variant="body1">Videos</Typography>
-                                </Box>
-                            </Stack>
-                        </InfoBox>
+                        {/* Add the TweetBox here */}
+                        {girl&&girl.tweet&&
+                            <TweetBox>
+                                <TweetTitle>
+                                    último estado
+                                </TweetTitle>
+                                <TweetText>
+                                    {girl.tweet.text}
+                                </TweetText>
+                                <TweetDate>
+                                    {girl.tweet.timestamp
+                                        ? formatDistanceToNow(convertFirestoreTimestampToDate(girl.tweet.timestamp), {
+                                            addSuffix: true,
+                                            locale: es
+                                        })
+                                        : 'just now'}
+                                </TweetDate>
+                            </TweetBox>
+                        }
 
-                        <Stack spacing={2} width="100%">
-                            {girl && girl.audioFiles && girl.audioFiles.slice(0, 5).map((audioSrc, index) => (
-                                <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />
-                            ))}
-                        </Stack>
+                        {/*<Stack spacing={2} width="100%">*/}
+                        {/*    {girl && girl.audioFiles && girl.audioFiles.slice(0, 5).map((audioSrc, index) => (*/}
+                        {/*        <AudioPlayer key={index} src={`https://d3sog3sqr61u3b.cloudfront.net/${audioSrc}`} />*/}
+                        {/*    ))}*/}
+                        {/*</Stack>*/}
 
                         {conversationHistory && conversationHistory.length > 0 && (
                             <DeleteButton
