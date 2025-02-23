@@ -141,11 +141,11 @@ export async function handleAudioRequest(
             // Push two separate messages
             conversationHistory.push(
                 { role: "assistant", content: userWantsAudio.content },
-                { role: "assistant", content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.description}'` }
+                { role: "assistant", content: userWantsAudio.description }
             );
         } else {
             // Push just one message if description is default/duplicative
-            conversationHistory.push({ role: "assistant", content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.content}'` });
+            conversationHistory.push({ role: "assistant", content: userWantsAudio.content });
         }
 
     }
@@ -231,10 +231,9 @@ export async function handleAudioRequest(
         });
         await displayMessageRef.add({
             ...assistantMessageProcess[1],
-            content: `${girlData.name} envió un audio al User diciendo '${userWantsAudio.description}'`
+            content: userWantsAudio.description
         });
     } else {
-        // For manual audio responses, add just one message.
         await displayMessageRef.add({
             ...assistantMessageProcess[1],
             content: userWantsAudio.content

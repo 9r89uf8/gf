@@ -56,6 +56,7 @@ export async function POST(req) {
         let assistantMessage = await handleLLMInteraction(userData, lastUserMessage, girlData, conversationHistory);
 
 
+
         if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
             assistantMessage = handleRefusedAnswer(userData);
         }
@@ -64,18 +65,37 @@ export async function POST(req) {
         const { messageType, assistantMessageProcess, parsedContent } =
             await handleMessageType(assistantMessage);
         // console.log(messageType)
+        // console.log(assistantMessage)
+        // console.log(assistantMessageProcess)
 
         // If the assistant's message is text and not explicitly audio, add a random chance for audio
         let finalMessageType = messageType;
-        let manualMessageType = false
-        if (finalMessageType === 'text' && Math.random() < 1/3) {
-            finalMessageType = 'audio';
-            // Set a default description if none exists
-            if (!parsedContent.audio.description) {
-                manualMessageType = true;
-                parsedContent.audio.description = parsedContent.audio.content; // or use a custom description
+        let manualMessageType = false;
+
+        if (finalMessageType === 'text') {
+            if (userData.isPremium) { // assuming "isPremium" is the flag indicating premium users
+                if (Math.random() < 1/4) {
+                    finalMessageType = 'audio';
+                    if (!parsedContent.audio.description) {
+                        manualMessageType = true;
+                        parsedContent.audio.description = parsedContent.audio.content;
+                    }
+                }
+            } else {
+                // non-premium users
+                if (userData.freeAudio > 0) {
+                    if (Math.random() < 1) {
+                        finalMessageType = 'audio';
+                        if (!parsedContent.audio.description) {
+                            manualMessageType = true;
+                            parsedContent.audio.description = parsedContent.audio.content;
+                        }
+                    }
+                }
+                // If userData.freeAudio <= 0, we leave finalMessageType as "text"
             }
         }
+
 
         // Handle different message types
         switch(finalMessageType) {
@@ -143,7 +163,6 @@ export async function POST(req) {
             }
         }
 
-        console.log(error.message);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },

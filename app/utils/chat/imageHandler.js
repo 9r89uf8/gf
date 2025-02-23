@@ -100,7 +100,7 @@ export async function handleImageRequest(
             : activePic[Math.floor(Math.random() * activePic.length)];
 
         // Update conversation history
-        conversationHistory.push({ "role": "assistant", "content": `${girl.name} le respondió al User diciendo: '${userWantsImage.content}'. ${girl.name} tambien le envió una foto al User` });
+        conversationHistory.push({ "role": "assistant", "content": userWantsImage.content });
 
         const displayMessageRef = adminDb.firestore()
             .collection('users')

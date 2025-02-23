@@ -93,7 +93,7 @@ export async function handleVideoRequest(
         }
 
         // Proceed to add the messages to the user's displayMessages collection
-        conversationHistory.push({ "role": "assistant", "content": `${girl.name} le respondió al User diciendo: '${userWantsVideo.content}'. ${girl.name} tambien le envió un video al User` });
+        conversationHistory.push({ "role": "assistant", "content": userWantsVideo.content });
 
         const displayMessageRef = adminDb.firestore()
             .collection('users')
