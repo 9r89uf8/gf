@@ -22,7 +22,7 @@ export async function POST(req) {
             country,
             freeAudio: 3,
             freeImages: 1,
-            freeMessages: 14,
+            freeMessages: 20,
             premium: false,
             name: username,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
