@@ -102,7 +102,7 @@ const styles = {
     },
     card: {
         borderRadius: '16px',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: '#f8f9fa',
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
         padding: '30px',
@@ -153,7 +153,7 @@ const styles = {
     username: {
         fontSize: '22px',
         fontWeight: 'bold',
-        color: 'white',
+        color: 'black',
         margin: '0 0 2px 0',
     },
     verificationBadge: {
@@ -177,19 +177,19 @@ const styles = {
         width: '12px',
         height: '12px',
         display: 'block',
-        color: 'white',
+        color: 'black',
     },
     ageFollowers: {
         display: 'flex',
         justifyContent: 'center',
         gap: '12px',
         fontSize: '16px', // Increased from 14px
-        color: 'rgba(255, 255, 255, 0.7)',
+        color: 'black',
         marginBottom: '12px',
         fontWeight: '500', // Added to make it more prominent
     },
     bio: {
-        color: 'rgba(255, 255, 255, 0.9)',
+        color: 'black',
         fontSize: '16px',
         marginBottom: '24px',
         lineHeight: '1.4',
@@ -208,8 +208,8 @@ const styles = {
         gap: '8px',
         padding: '10px 20px',
         borderRadius: '30px',
-        backgroundColor: 'white',
-        color: '#1a1a1a',
+        backgroundColor: 'black',
+        color: 'white',
         fontWeight: '600',
         border: 'none',
         cursor: 'pointer',
