@@ -1,3 +1,4 @@
+//verify-session
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { adminDb } from '@/app/utils/firebaseAdmin';
@@ -27,13 +28,13 @@ export async function POST(req) {
             const membershipData = membershipDoc.data();
 
             const timestamp = adminDb.firestore.Timestamp;
-            // Generate a timestamp with an additional two days
+            // Generate a timestamp with an additional 20 days
             const currentTimestamp = new Date();
             const expirationTimestamp = addDays(currentTimestamp, membershipData.duration);
 
             await userRef.update({
                 freeMessages: 1000,
-                freeAudio: 50,
+                freeAudio: 100,
                 premium: true,
                 expired: false,
                 expirationDate: timestamp.fromDate(expirationTimestamp)
