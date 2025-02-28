@@ -1,9 +1,11 @@
+//route to save the user message to the database
 import {adminDb} from '@/app/utils/firebaseAdmin';
 import { RekognitionClient, DetectModerationLabelsCommand, DetectLabelsCommand } from "@aws-sdk/client-rekognition";
-import axios from 'axios';
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import {determineOfflineStatus} from "@/app/utils/chat/girlOfflineHandler";
+import {setResponseDelay} from "@/app/utils/chat/respondUntil";
 import OpenAI from "openai";
+
 // Initialize OpenAI with the API key from environment variables
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -17,7 +19,6 @@ const rekognitionClient = new RekognitionClient({
         secretAccessKey: process.env.STHREESEC,
     },
 });
-const { DateTime } = require('luxon');
 
 const {v4: uuidv4} = require("uuid");
 
@@ -66,8 +67,6 @@ export async function POST(req) {
         const media = formData.get('media');
         const mediaType = formData.get('mediaType');
 
-
-
         // Validate file if present
         if (media && mediaType !== 'audio') {
             const validation = validateFile(media);
@@ -104,7 +103,6 @@ export async function POST(req) {
             }
         }
 
-
         const userDocF = await adminDb.firestore()
             .collection('users')
             .doc(userId)
@@ -113,7 +111,6 @@ export async function POST(req) {
 
         const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
-
 
         // Get the conversation history from Firestore
         const conversationRef = adminDb.firestore()
@@ -124,8 +121,6 @@ export async function POST(req) {
 
         let doc = await conversationRef.get();
         let conversationHistory = doc.exists ? doc.data().messages : await getOrCreateConversationHistory(doc, userData, girlData);
-
-
 
         // Handle media upload
         let mediaUrl = null;
@@ -140,7 +135,6 @@ export async function POST(req) {
             const arrayBuffer = await media.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
-
             // If the media is an image, run moderation via Rekognition
             if (mediaType === 'image') {
                 const moderationParams = {
@@ -153,7 +147,7 @@ export async function POST(req) {
                 if(moderationResponse.ModerationLabels.length===0){
                     const params = {
                         Image: {
-                            Bytes: buffer ,
+                            Bytes: buffer,
                         },
                         MaxLabels: 10,       // Adjust as needed
                         MinConfidence: 70,   // Adjust as needed
@@ -180,16 +174,14 @@ export async function POST(req) {
                     )
                 ) {
                     newUserMessage = 'Te acabo de mandar una foto de mi pito parado.';
+
+                    // Set explicit flag if image is explicit
+                    // if (!messageLabels) messageLabels = {};
+                    // messageLabels.is_explicit = true;
                 }
-
-
-                // console.log('Rekognition Moderation Response:', moderationResponse.ModerationLabels[0]);
-                // You can now use moderationResponse.ModerationLabels to decide further action,
-                // e.g., flag the image or reject it if inappropriate content is found.
             }
 
             mediaUrl = await uploadToFirebaseStorage(buffer, filePath, media.type);
-
 
             // If it's a video, you might want to generate a thumbnail
             if (mediaType === 'video') {
@@ -201,8 +193,7 @@ export async function POST(req) {
         }
 
         // Add user's message to the conversation history
-        conversationHistory.push({ role: 'user', content: mediaType==='image'?newUserMessage:mediaType==='video'?newUserMessage:userMessage });
-
+        // conversationHistory.push({ role: 'user', content: mediaType==='image'?newUserMessage:mediaType==='video'?newUserMessage:userMessage });
 
         const displayMessageRef = adminDb.firestore()
             .collection('users')
@@ -210,21 +201,27 @@ export async function POST(req) {
             .collection('conversations')
             .doc(girlId)
             .collection('displayMessages');
-        await displayMessageRef.add({
+
+        // Create base message object for Firebase
+        const messageData = {
             role: 'user',
             content: mediaType==='image'?'':mediaType==='video'?'':userMessage,
             image: mediaUrl,
             mediaType: mediaType,
+            retryCount: 0,
+            status: 'normal',
             liked: false,
             sent: true,
             seen: false,
             processed: false,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
-        });
+        };
+
+
+        // Add the message with labels to displayMessages collection
+        await displayMessageRef.add(messageData);
 
         // Save the updated conversation history back to Firestore
-        // After adding the message to 'displayMessages'
-
         const currentDoc = await conversationRef.get();
         const currentOnlineStatus = currentDoc.exists ? currentDoc.data().isGirlOnline : null;
 
@@ -239,6 +236,28 @@ export async function POST(req) {
                 mediaType: mediaType
             }
         };
+
+        // Check if there's already an active respondUntil timestamp
+        if (currentDoc.exists && currentDoc.data().respondUntil) {
+            const currentRespondUntil = currentDoc.data().respondUntil;
+
+            // Check if the current respondUntil timestamp is in the future
+            if (currentRespondUntil.toDate() > new Date()) {
+                // Keep the existing respondUntil timestamp
+                updateData.respondUntil = currentRespondUntil;
+            } else {
+                // If the timestamp is in the past, calculate a new one
+                const responseDelay = await setResponseDelay();
+                updateData.respondUntil = responseDelay.respondUntil;
+            }
+        } else {
+            // If no respondUntil exists, calculate a new one
+            const responseDelay = await setResponseDelay();
+            updateData.respondUntil = responseDelay.respondUntil;
+        }
+
+
+
 
         // Only check and update online status if currently online
         if (currentOnlineStatus) {
@@ -261,8 +280,10 @@ export async function POST(req) {
         const updatedUserDoc = await userRef.get();
         updatedUserData = updatedUserDoc.data();
 
-
-        return new Response(JSON.stringify({updatedUserData, girlName: girlData.name }), {
+        return new Response(JSON.stringify({
+            updatedUserData,
+            girlName: girlData.name
+        }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',

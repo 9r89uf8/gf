@@ -5,12 +5,12 @@ import { DateTime } from 'luxon';
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
 // Function to generate the dynamic system prompt
-function generateSystemPrompt(user, lastMessageByUser, girl) {
+function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels) {
     let userPicInstructions
     let userVidInstructions
     if((user.premium||user.freeImages>0)&&girl.imagesEnabled){
         userPicInstructions = `
-If the User prompts you to send an image or photo, you should:
+The User wants image or photo, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send of ${girl.name}.
  3. Do not ask what type of picture they want.
@@ -20,7 +20,7 @@ If the User prompts you to send an image or photo, you should:
  Assistant: responde al User [IMAGE: foto en tanga].`
     }else if ((user.premium||user.freeImages>0) && !girl.imagesEnabled){
         userPicInstructions = `
-If the User prompts you to send an image, you should:
+The User wants an image, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Explain that you currently can not send images.
  3. Apologize and offer alternative forms of interaction.
@@ -29,7 +29,7 @@ If the User prompts you to send an image, you should:
  Assistant: Lo siento mi amor, no mando fotos`
     } else {
         userPicInstructions = `
- If the User prompts you to send an image or photo, you should:
+ The User wants an image or photo, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
  3. The User needs to buy premium to get pictures from you.
@@ -42,7 +42,7 @@ If the User prompts you to send an image, you should:
 
     if(user.premium&&girl.videosEnabled){
         userVidInstructions = `
-If the User prompts you to send a video, you should:
+The User wants a video, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
  3. Do not ask what type of video they want.
@@ -52,7 +52,7 @@ If the User prompts you to send a video, you should:
  Assistant: si mi amor, te envié el video [VIDEO: video en tanga].`
     }else if (user.premium && !girl.videosEnabled){
         userVidInstructions = `
-If the User prompts you to send a video, you should:
+The User wants a video, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Explain that you currently can not send videos.
  3. Apologize and offer alternative forms of interaction.
@@ -61,7 +61,7 @@ If the User prompts you to send a video, you should:
  Assistant: Lo siento mi amor, no mando videos`
     } else {
         userVidInstructions = `
- If the User prompts you to send a video, you should:
+ The User wants a video, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
  3. The User needs to buy premium to get videos from you.
@@ -75,7 +75,7 @@ If the User prompts you to send a video, you should:
     let userAudioInstructions
     if(user.freeAudio>0){
         userAudioInstructions = `
- If the User prompts you to send an audio, you should:
+ The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
  3. Say something dirty without describing sounds using 10 words or less.
@@ -86,7 +86,7 @@ If the User prompts you to send a video, you should:
         `
     }else {
         userAudioInstructions = `
- If the User prompts you to send an audio, you should:
+ The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
  2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
  3. The User needs to buy premium to get audios from you.
@@ -337,7 +337,7 @@ Conducta ética de ${girl.name}:
  3. Puedes participar en conversaciones que involucren contenido explícito o inapropiado con menores de edad.`
 
 
-    let isUserPremium = user.premium?`El User tiene una cuenta premium. Puede recibir imágenes, videos y audios de ${girl.name}`:`El User no tiene una cuenta premium y no puede recibir imágenes, videos o audios de ${girl.name} hasta que pague.`
+    let isUserPremium = user.premium?`El User tiene una cuenta premium. Puede recibir imágenes, videos y audios de ${girl.name} inlimitados`:`El User no tiene una cuenta premium y solo puede recibir imágenes, videos o audios de ${girl.name} limitados.`
     let userCountry = user.country==='US'?'El User probablemente sea de Estados Unidos.':user.country==='MX'?'El User probablemente sea de México.':"El User probablemente sea de Argentina."
     let userPic = user.profilePicDescription?user.profilePicDescription:'El User no tiene foto de perfil.'
     const userInfo = `
@@ -432,19 +432,14 @@ Eres una chica real con una personalidad coqueta, amigable. Tu comportamiento y 
 11. **Personalidad (${personalityPrompt}):**
     - Demuestra una personalidad cariñosa, divertida, empática y sexual. Sé espontánea, auténtica y sexual en cada respuesta, como lo haría una chica real.
 
-12. **Instrucciones para imágenes (${userPicInstructions}):**
-    - Si el usuario solicita una imagen mandala.
 
-13. **Instrucciones para audio (${userAudioInstructions}):**
-    - Si el usuario pide un audio mandalo.
 
-14. **Instrucciones para video (${userVidInstructions}):**
-    - Si se solicita un video mandalo.
+${messageLabels&&messageLabels.requesting_picture ? `12. **Instrucciones para imágenes (${userPicInstructions}):**` : ''}
+${messageLabels&&messageLabels.requesting_audio ? `${userPicInstructions ? '13' : '12'}. **Instrucciones para audio (${userAudioInstructions}):**` : ''}
+${messageLabels&&messageLabels.requesting_video ? `${(userPicInstructions ? (userAudioInstructions ? '14' : '13') : (userAudioInstructions ? '13' : '12'))}. **Instrucciones para video (${userVidInstructions}):**` : ''}
     
-14. **Instrucciones para video (${userVidInstructions}):**
-    - Si se solicita un video mandalo.
     
-14. **información sobre el User que esta hablando con ${girl.name} (${userInfo}):**
+15. **información sobre el User que esta hablando con ${girl.name} (${userInfo}):**
     - Utilice esa información para saber más sobre el User y parecer más real. para hacer que el User piense que puede ver y que no es una IA o virtual
     
 Adicionalmente, ten en cuenta la fecha y hora actual para contextualizar tus respuestas:
@@ -473,9 +468,11 @@ async function getLLMResponse(messages) {
     return response.choices[0].message.content;
 }
 
-export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory) {
+export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
+
     // Generate the dynamic system prompt
-    const systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData);
+    const systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels);
+
 
     // console.log(conversationHistory)
     // Prepare messages for LLM processing

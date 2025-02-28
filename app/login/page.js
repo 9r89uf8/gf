@@ -11,7 +11,9 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { alpha, styled } from '@mui/material/styles';
-import { People, Lock, Bolt, TrendingUp } from '@mui/icons-material';
+import { People, Lock, Bolt, TrendingUp, Visibility, VisibilityOff } from '@mui/icons-material';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 import Link from 'next/link';
 
 const GlassCard = styled(Card)(({ theme }) => ({
@@ -81,6 +83,7 @@ const FeatureBox = styled(Box)(({ theme }) => ({
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(true); // Password visible by default
     const [disableLogin, setDisableLogin] = useState(false);
     const [userCount, setUserCount] = useState(0);
     const router = useRouter();
@@ -123,30 +126,14 @@ const LoginPage = () => {
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
                 <GlassCard sx={{ width: '420px', maxWidth: '100%', marginTop: 3 }}>
                     <CardContent>
-                        <Typography variant="h4" sx={{ color: 'white', marginBottom: 3, fontWeight: 'bold' }}>
-                            Mi Cuenta
+                        {/* Updated heading and subtitle */}
+                        <Typography variant="h4" sx={{ color: 'white', marginBottom: 1, fontWeight: 'bold' }}>
+                            bienvenido
+                        </Typography>
+                        <Typography variant="h6" sx={{ color: 'white', marginBottom: 3 }}>
+                            ingresa tu correo electrónico y contraseña para continuar
                         </Typography>
 
-                        <Box sx={{ marginBottom: 3, textAlign: 'left' }}>
-                            <FeatureBox>
-                                <People sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    2M+ usuarios
-                                </Typography>
-                            </FeatureBox>
-                            <FeatureBox>
-                                <Lock sx={{ marginRight: 1, color: '#FF8E53', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    100% anónimo y seguro
-                                </Typography>
-                            </FeatureBox>
-                            <FeatureBox>
-                                <Bolt sx={{ marginRight: 1, color: '#FE6B8B', fontSize: 45 }} />
-                                <Typography variant="h6">
-                                    Mensajes encriptados
-                                </Typography>
-                            </FeatureBox>
-                        </Box>
 
                         <form onSubmit={handleLogin}>
                             <StyledTextField
@@ -164,9 +151,18 @@ const LoginPage = () => {
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
                                 variant="outlined"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 fullWidth
                                 required
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
                             />
                             <GradientButton
                                 type="submit"
@@ -191,6 +187,23 @@ const LoginPage = () => {
                         >
                             ¿Olvidaste tu contraseña?
                         </Button>
+                        {/* Link button to create an account */}
+                        <Button
+                            component={Link}
+                            href="/register"
+                            sx={{
+                                fontSize: 20,
+                                marginTop: 2,
+                                color: 'white',
+                                textDecoration: 'underline',
+                                '&:hover': {
+                                    backgroundColor: 'transparent',
+                                    textDecoration: 'underline',
+                                },
+                            }}
+                        >
+                            Crear Cuenta
+                        </Button>
                     </CardContent>
                 </GlassCard>
             </Box>
@@ -206,4 +219,5 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 

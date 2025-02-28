@@ -47,7 +47,8 @@ export async function handleVideoRequest(
     girlId,
     userId,
     conversationHistory,
-    girl
+    girl,
+    userMessage
 ) {
     // Handle premium users
     if (userData.premium&&girl.videosEnabled) {
@@ -116,6 +117,7 @@ export async function handleVideoRequest(
             content: contentText,
             video: selectedVideo.video, // Ensure the video URL is stored in selectedVideo.video
             mediaType: 'video',
+            respondingTo: userMessage.content,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
 
@@ -130,6 +132,7 @@ export async function handleVideoRequest(
                 role: "assistant",
                 liked: false,
                 displayLink: false,
+                respondingTo: userMessage.content,
                 content: removeHashSymbols(firstPart),
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             }];
@@ -139,6 +142,7 @@ export async function handleVideoRequest(
                     role: "assistant",
                     liked: false,
                     displayLink: false,
+                    respondingTo: userMessage.content,
                     content: removeHashSymbols(secondPart),
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp()
                 });

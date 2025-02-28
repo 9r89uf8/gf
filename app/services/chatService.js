@@ -175,6 +175,8 @@ export const saveUserMessage = async (formData) => {
     }
 };
 
+
+
 export const responseFromLLM = async (formData) => {
     const addNotification = useStore.getState().addNotification;
     const setMessageSent = useStore.getState().setMessageSent;
@@ -191,24 +193,32 @@ export const responseFromLLM = async (formData) => {
             updateUser({
                 freeAudio: data.updatedUserData.freeAudio,
                 freeMessages: data.updatedUserData.freeMessages
-            })
+            });
             if(data.sendNotification){
                 addNotification({
                     id: Date.now(),
                     type: 'success',
                     message: `a ${data.girlName} le gustó tu mensaje.`,
                 });
-
             }
-            return data.assistantMessage;
+            return {
+                success: true,
+                assistantMessage: data.assistantMessage
+            };
         } else {
             setMessageSent(false);
-            throw new Error('Failed to send chat prompt');
+            return {
+                success: false,
+                error: 'Failed to send chat prompt'
+            };
         }
     } catch (error) {
         setMessageSent(false);
         console.error('Error sending chat prompt:', error.message);
-        return null;
+        return {
+            success: false,
+            error: error.message
+        };
     }
 };
 

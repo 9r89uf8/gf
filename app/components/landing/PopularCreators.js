@@ -7,7 +7,7 @@ const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
         username: 'antonella1353',
-        age: 16,
+        age: 18,
         followers: 69300,
         priority: true,
         bio: 'No sean chismosos 😏😂',
@@ -32,7 +32,7 @@ const staticGirls = [
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
         priority: false,
-        age: 17,
+        age: 19,
         followers: 50750,
         bio: '👾',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,fit=scale-down',
@@ -42,7 +42,7 @@ const staticGirls = [
     {
         id: 'tvLbDSi7ZBDta81qwlKT',
         username: 'ariana2',
-        age: 18,
+        age: 19,
         followers: 55860,
         priority: false,
         bio: '💚',

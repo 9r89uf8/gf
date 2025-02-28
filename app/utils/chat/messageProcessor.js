@@ -1,6 +1,35 @@
 // app/utils/chat/messageProcessor.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
 
+// Get all unprocessed user messages, ordered by timestamp
+export const getUnprocessedMessages = async (userId, girlId) => {
+    const displayMessageRef = adminDb.firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(girlId)
+        .collection('displayMessages');
+
+    const query = displayMessageRef
+        .where('role', '==', 'user')
+        .where('processed', '==', false)
+        .where('status', '==', 'normal')
+        .orderBy('timestamp', 'asc'); // Process oldest messages first
+
+    const messagesSnapshot = await query.get();
+
+    if (messagesSnapshot.empty) {
+        return [];
+    }
+
+    // Return all unprocessed messages with their IDs
+    return messagesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
+};
+
+// Get the last processed message (keep for backward compatibility)
 export const getLastProcessedMessage = async (userId, girlId) => {
     const displayMessageRef = adminDb.firestore()
         .collection('users')
@@ -29,7 +58,39 @@ export const getLastProcessedMessage = async (userId, girlId) => {
     };
 };
 
-export const markMessagesAsSeen = async (userId, girlId, likedMessageByAssistant) => {
+// Mark a single message as seen
+export const markMessageAsSeen = async (userId, girlId, messageId) => {
+    const messageRef = adminDb.firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(girlId)
+        .collection('displayMessages')
+        .doc(messageId);
+
+    await messageRef.update({
+        seen: true
+    });
+};
+
+// Mark a single message as processed
+export const markMessageAsProcessed = async (userId, girlId, messageId, liked = false) => {
+    const messageRef = adminDb.firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(girlId)
+        .collection('displayMessages')
+        .doc(messageId);
+
+    await messageRef.update({
+        processed: true,
+        liked: liked || false
+    });
+};
+
+// Mark all unprocessed messages as seen (keep for backward compatibility)
+export const markMessagesAsSeen = async (userId, girlId, likedMessageByAssistant = false) => {
     const displayMessageRef = adminDb.firestore()
         .collection('users')
         .doc(userId)

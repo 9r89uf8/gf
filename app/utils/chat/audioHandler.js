@@ -1,69 +1,21 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
 const { v4: uuidv4 } = require("uuid");
-
-function splitTextAtPunctuationOrSecondEmoji(text) {
-    // If text is less than 10 characters, don't split it
-    if (text.length < 28) {
-        return [text, ''];
-    }
-
-    // Regular expression to match the first occurrence of period, question mark, or exclamation point
-    const punctuationRegex = /(\.|\?|!)\s*/;
-
-    // Regular expression to match emojis
-    const emojiRegex = /\p{Emoji}/gu;
-
-    // Find the index where the first punctuation mark occurs
-    const punctuationMatch = text.match(punctuationRegex);
-
-    // Find all emoji matches
-    let emojiMatches = [...text.matchAll(emojiRegex)];
-
-    if (punctuationMatch && (!emojiMatches[1] || punctuationMatch.index < emojiMatches[1].index)) {
-        // If punctuation comes first or there's no second emoji, split at punctuation
-        const index = punctuationMatch.index + punctuationMatch[0].length;
-        return [text.substring(0, index), text.substring(index)];
-    } else if (emojiMatches[1]) {
-        // If there's a second emoji and it comes before punctuation, split at the second emoji
-        const index = emojiMatches[1].index + emojiMatches[1][0].length;
-        return [text.substring(0, index), text.substring(index)];
-    } else if (emojiMatches.length === 1 && text.endsWith(emojiMatches[0][0])) {
-        // If there's only one emoji and it's at the end of the text, split before the emoji
-        const index = emojiMatches[0].index;
-        return [text.substring(0, index), text.substring(index)];
-    } else {
-        // If no punctuation or emoji is found, return the whole text as the first part and an empty string as the second
-        return [text, ''];
-    }
-}
-
 function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
 
-function processAssistantMessage(assistantMessage) {
-    const [firstPart, secondPart] = splitTextAtPunctuationOrSecondEmoji(assistantMessage);
-    let response = [{
+function processAssistantMessage(assistantMessage, userMessage) {
+    // No longer splitting the message - return a single response
+    return [{
         uid: uuidv4(),
         role: "assistant",
         liked: false,
-        displayLink: false,
-        content: removeHashSymbols(firstPart),
+        displayLink: true,
+        respondingTo: userMessage.content,
+        content: removeHashSymbols(assistantMessage),
         timestamp: adminDb.firestore.FieldValue.serverTimestamp()
     }];
-    if (secondPart) {
-        response.push({
-            uid: uuidv4(),
-            role: "assistant",
-            liked: false,
-            displayLink: false,
-            content: removeHashSymbols(secondPart),
-            timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-        });
-    }
-
-    return response;
 }
 
 async function generateAudio(text, audioId, apiKey) {
@@ -110,7 +62,7 @@ export async function handleAudioRequest(
 
     // If freeAudio is 0, process normally (splitting the message, etc.)
     if (userData.freeAudio === 0) {
-        assistantMessageProcess = processAssistantMessage(userWantsAudio.content);
+        assistantMessageProcess = processAssistantMessage(userWantsAudio.content, userMessage);
         if(!manualMessageType){
             assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
         }
@@ -125,6 +77,7 @@ export async function handleAudioRequest(
                 role: "assistant",
                 liked: false,
                 displayLink: false,
+                respondingTo: userMessage.content,
                 content: userWantsAudio.content,
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             },
@@ -133,6 +86,7 @@ export async function handleAudioRequest(
                 role: "assistant",
                 liked: false,
                 displayLink: false,
+                respondingTo: userMessage.content,
                 content: userWantsAudio.description,
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             }

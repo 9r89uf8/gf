@@ -28,9 +28,9 @@ const MessageBubble = styled(Box)(({ theme, isUser }) => ({
 
 // Define a simple pulse animation.
 const pulseAnimation = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 `;
 
 // Create an AnimatedMessageBubble that adds the pulse animation if the `animate` prop is true.
@@ -41,6 +41,22 @@ const AnimatedMessageBubble = styled(MessageBubble, {
     ...(animate && {
         animation: `${pulseAnimation} 0.5s ease-in-out`,
     }),
+}));
+
+// New component for displaying what the assistant is responding to
+const RespondingToText = styled(Typography)(({ theme }) => ({
+    fontSize: '0.95rem',
+    color: '#000000',
+    marginBottom: theme.spacing(1),
+    padding: theme.spacing(0.5, 1),
+    background: 'linear-gradient(45deg, #8ecae6 30%, #219ebc 90%)',
+    borderRadius: 8,
+    maxWidth: '100%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
 }));
 
 const PremiumMessage = styled(Paper)(({ theme }) => ({
@@ -187,6 +203,14 @@ const MessageItem = ({
         return !hasSeenUserMessagesAfter;
     };
 
+    // Check if this is an assistant message and there's another assistant message before it
+    const isConsecutiveAssistantMessage = () => {
+        if (isUser || index === 0) return false;
+
+        // Check if the previous message is also from the assistant
+        return conversationHistory[index - 1]?.role !== 'user';
+    };
+
     const formattedTime = (timestamp) => {
         const date = convertFirestoreTimestampToDate(timestamp);
         if (!date) return '';
@@ -267,6 +291,13 @@ const MessageItem = ({
                     }}
                 >
                     <Box>
+                        {/* Display "responding to" text if this is a consecutive assistant message */}
+                        {!isUser && isConsecutiveAssistantMessage() && message.respondingTo && (
+                            <RespondingToText>
+                                Respondió a: {message.respondingTo || 'Message'}
+                            </RespondingToText>
+                        )}
+
                         {/* Use AnimatedMessageBubble instead of MessageBubble for non‑user messages */}
                         <AnimatedMessageBubble
                             isUser={isUser}

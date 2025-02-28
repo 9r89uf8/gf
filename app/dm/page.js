@@ -7,6 +7,7 @@ import { getChatList } from '@/app/services/chatService';
 import {getGirls} from "@/app/services/girlsService";
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
+import {useMultipleMessageResponder} from "@/app/components/hooks/UseMultipleMessageResponder";
 import { useRouter } from 'next/navigation';
 import { es } from 'date-fns/locale';
 import {
@@ -25,6 +26,7 @@ import { styled, keyframes } from '@mui/system';
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import VideocamIcon from "@mui/icons-material/Videocam";
+
 
 const flash = keyframes`
     0% { opacity: 1; }
@@ -88,7 +90,10 @@ const DMList = () => {
     const [loading, setLoading] = useState(true);
 
     //girls.filter((girl) => !girl.private).map
-
+    useMultipleMessageResponder({
+        userId: user?.uid,
+        chats: chats || []
+    });
 
     useEffect(() => {
         async function fetchChats() {
@@ -297,28 +302,86 @@ const DMList = () => {
                                                         >
                                                             {chat.girlName}
                                                         </Typography>
-                                                        <Button
-                                                            variant="contained"
-                                                            fullWidth
-                                                            onClick={() => handleMessageClick(chat.girlId)}
-                                                            sx={{
-                                                                backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
-                                                                color: 'black',
-                                                                padding: '10px 20px',
-                                                                borderRadius: '5px',
+
+                                                        <Box sx={{
+                                                            width: '100%',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            gap: '8px'
+                                                        }}>
+                                                            <Box sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                color: 'white',
                                                                 fontWeight: 'bold',
                                                                 fontSize: 12,
-                                                                boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
-                                                                textOverflow: 'ellipsis',
-                                                                overflow: 'hidden',
-                                                                whiteSpace: 'nowrap',
-                                                                '&:hover': {
-                                                                    background: 'linear-gradient(45deg, #E0E0E0 30%, #FFFFFF 90%)',
-                                                                },
-                                                            }}
-                                                        >
-                                                            {truncateWithEllipsis(chat.lastMessage?.content || 'Sin mensajes', 22)}
-                                                        </Button>
+                                                            }}>
+                                                                {chat.lastMessage?.mediaType === 'image' && (
+                                                                    <>
+                                                                        <PhotoCameraIcon fontSize="small" />
+                                                                        {chat.lastMessage?.content || 'Sin mensajes'}
+                                                                    </>
+                                                                )}
+                                                                {chat.lastMessage?.mediaType === 'audio' && (
+                                                                    <>
+                                                                        <AudiotrackIcon fontSize="small" />
+                                                                        {chat.lastMessage?.content || 'Sin mensajes'}
+                                                                    </>
+                                                                )}
+                                                                {chat.lastMessage?.mediaType === 'video' && (
+                                                                    <>
+                                                                        <VideocamIcon fontSize="small" />
+                                                                        {chat.lastMessage?.content || 'Sin mensajes'}
+                                                                    </>
+                                                                )}
+                                                                {chat.lastMessage?.mediaType === 'text' && (
+                                                                    <Typography
+                                                                        component="span"
+                                                                        sx={{
+                                                                            overflow: 'hidden',
+                                                                            display: 'inline-block',
+                                                                            width: '100%',
+                                                                            '& span:nth-of-type(1)': { fontWeight: 'bold' },
+                                                                            '& span:nth-of-type(2)': {
+                                                                                opacity: 0.7,
+                                                                                background: 'linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)',
+                                                                                WebkitBackgroundClip: 'text',
+                                                                                WebkitTextFillColor: 'transparent',
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {chat.lastMessage?.message && (
+                                                                            truncateWithEllipsis(chat.lastMessage?.message || 'Sin mensajes', 22)
+                                                                        )}
+                                                                    </Typography>
+                                                                )}
+                                                            </Box>
+
+                                                            <Button
+                                                                variant="contained"
+                                                                fullWidth
+                                                                onClick={() => handleMessageClick(chat.girlId)}
+                                                                sx={{
+                                                                    backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
+                                                                    color: 'black',
+                                                                    padding: '6px 12px',
+                                                                    borderRadius: '5px',
+                                                                    fontWeight: 'bold',
+                                                                    fontSize: 11,
+                                                                    boxShadow: '0 2px 4px 1px rgba(255, 255, 255, .3)',
+                                                                    '&:hover': {
+                                                                        background: 'linear-gradient(45deg, #E0E0E0 30%, #FFFFFF 90%)',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                {chat.lastMessage?.mediaType === 'image' && 'Ver imagen'}
+                                                                {chat.lastMessage?.mediaType === 'audio' && 'Escuchar audio'}
+                                                                {chat.lastMessage?.mediaType === 'video' && 'Ver video'}
+                                                                {chat.lastMessage?.mediaType === 'text' && 'Ver mensaje'}
+                                                                {!chat.lastMessage?.mediaType && 'Sin mensajes'}
+                                                            </Button>
+                                                        </Box>
 
                                                         <Typography variant="body2" sx={{ marginTop: 1, color: 'gray' }}>
                                                             {date
@@ -348,32 +411,6 @@ const DMList = () => {
                             <Typography variant="h6" sx={{ textAlign: 'center', color: 'white', mt: 3, marginBottom: 2 }}>
                                 Regístrate para textear
                             </Typography>
-
-                            <InfoBox>
-                                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                                    Puedes recibir
-                                </Typography>
-                                <Stack direction="row" spacing={4} justifyContent="center">
-                                    <Box display="flex" flexDirection="column" alignItems="center">
-                                        <GradientIcon>
-                                            <AudiotrackIcon fontSize="large" sx={{ color: 'white' }} />
-                                        </GradientIcon>
-                                        <Typography variant="body1">Audios</Typography>
-                                    </Box>
-                                    <Box display="flex" flexDirection="column" alignItems="center">
-                                        <GradientIcon>
-                                            <PhotoCameraIcon fontSize="large" sx={{ color: 'white' }} />
-                                        </GradientIcon>
-                                        <Typography variant="body1">Imágenes</Typography>
-                                    </Box>
-                                    <Box display="flex" flexDirection="column" alignItems="center">
-                                        <GradientIcon>
-                                            <VideocamIcon fontSize="large" sx={{ color: 'white' }} />
-                                        </GradientIcon>
-                                        <Typography variant="body1">Videos</Typography>
-                                    </Box>
-                                </Stack>
-                            </InfoBox>
                         </>
                     )}
                 </GlassCard>

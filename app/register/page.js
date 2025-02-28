@@ -30,7 +30,6 @@ const GlassCard = styled(Card)(({ theme }) => ({
     backdropFilter: 'blur(10px)',
     borderRadius: 20,
     border: `1px solid ${alpha('#ffffff', 0.25)}`,
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.25)',
 }));
 
 const RegisterButton = styled(Button)(({ theme }) => ({

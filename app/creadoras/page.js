@@ -347,7 +347,7 @@ const Creators = () => {
                                             <GradientButton
                                                 onClick={() => handlePhotosClick(girl.id)}
                                             >
-                                                Fotos
+                                                Perfil
                                             </GradientButton>
                                         </Stack>
 

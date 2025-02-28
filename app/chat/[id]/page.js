@@ -1,4 +1,4 @@
-// Chat.js
+// React component page Chat.js
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -20,6 +20,7 @@ import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import GirlHeader from '@/app/components/chat/GirlHeader';
 import {useRealtimeConversation} from "@/app/components/hooks/UseRealtimeChats";
 import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
+import {useMessageResponder} from "@/app/components/hooks/UseMessageResponder";
 
 // Import the new components
 import ChatInputComponent from '@/app/components/chat/ChatInputComponent';
@@ -61,10 +62,11 @@ const Chat = ({params}) => {
         girlId: params.id
     });
 
-    useRealtimeGirlStatus({
+    useMessageResponder({
         userId: user?.uid,
         girlId: params.id
     });
+
 
 
     const handleBuy = () => {
@@ -112,6 +114,7 @@ const Chat = ({params}) => {
             formData.append('userMessage', prompt.trim());
         }
 
+        //save the user message to firebase
         await saveUserMessage(formData);
         setPrompt('');
         setMedia(null);
@@ -120,9 +123,11 @@ const Chat = ({params}) => {
         setIsSending(false);
         setMediaSelected(false);
 
-        if (!girl.girlIsTyping && girl.isActive) {
-            await responseFromLLM(formData);
-        }
+        //then we give the latest message from the user to the LLM
+        //delete useMessageResponder before using the code below
+        // if (!girl.girlIsTyping && girl.isActive) {
+        //     await responseFromLLM(formData);
+        // }
     };
 
 
@@ -158,6 +163,7 @@ const Chat = ({params}) => {
             {isPromptEntered && user && girl && girl.private && (
                 <PrivateGirlReminder />
             )}
+
 
             {/* Always show ChatInputComponent */}
             <ChatInputComponent

@@ -15,9 +15,10 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Skeleton,
+    Skeleton, IconButton,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
 import AudioPlayer from './AudioPlayer';
 import { DeleteForever } from "@mui/icons-material";
@@ -70,10 +71,31 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const BackGradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #212529 30%, #000000 90%)',
+    border: 0,
+    borderRadius: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    margin: '10px 15px 10px 0',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
+}));
+
 const ViewProfileButton = styled(GradientButton)({
     borderRadius: 20,
     fontWeight: 600,
     fontSize: 23,
+    textTransform: 'none',
+});
+
+const BackButton = styled(BackGradientButton)({
+    borderRadius: 20,
+    fontWeight: 900,
+    fontSize: 33,
     textTransform: 'none',
 });
 
@@ -265,11 +287,18 @@ const GirlHeader = ({ girl, loadingGirl }) => {
                             </Typography>
                             <VerifiedIcon/>
                         </Box>
-                        <Link href={`/${girl.id}`} passHref legacyBehavior>
-                            <ViewProfileButton variant="contained" sx={{ mb: 3 }}>
-                                Fotos
-                            </ViewProfileButton>
-                        </Link>
+                        <Box display="flex" justifyContent="center">
+                            <Link href={`/dm`} passHref legacyBehavior>
+                                <BackButton variant="contained" sx={{ mb: 3 }}>
+                                    <KeyboardBackspaceIcon sx={{fontSize: 40}}/>
+                                </BackButton>
+                            </Link>
+                            <Link href={`/${girl.id}`} passHref legacyBehavior>
+                                <ViewProfileButton variant="contained" sx={{ mb: 3 }}>
+                                    Perfil
+                                </ViewProfileButton>
+                            </Link>
+                        </Box>
 
                         {/* Add the TweetBox here */}
                         {girl&&girl.tweet&&
