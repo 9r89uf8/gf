@@ -1,6 +1,6 @@
 import React from 'react';
 import PopularCreators from "@/app/components/landing/PopularCreators";
-import ChatPreview from '@/app/components/landing/ChatPreview';
+import Link from 'next/link';
 import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard"; // same note: rewrite if it uses MUI
 
 const styles = {
@@ -102,6 +102,38 @@ const styles = {
         color: 'white',
         fontSize: '18px',
     },
+    // New styles for the Welcome component
+    welcomeContainer: {
+        marginBottom: '32px',
+        textAlign: 'center',
+    },
+    welcomeTitle: {
+        fontSize: '42px',
+        fontWeight: 'bold',
+        letterSpacing: '4px',
+        marginBottom: '16px',
+        color: 'white',
+    },
+    welcomeDescription: {
+        fontSize: '18px',
+        marginBottom: '24px',
+        color: 'white',
+    },
+    startChatButton: {
+        display: 'inline-block',
+        padding: '10px 15px',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        color: '#1a1a1a',
+        borderRadius: '30px',
+        fontWeight: '500',
+        fontSize: '20px',
+        textDecoration: 'none',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        border: 'none',
+        cursor: 'pointer',
+        marginBottom: '2px',
+    },
 };
 
 const GlassCard = ({ children }) => (
@@ -110,11 +142,29 @@ const GlassCard = ({ children }) => (
     </div>
 );
 
+const Welcome = () => {
+
+    return (
+        <GlassCard>
+            <div style={styles.welcomeContainer}>
+                <h1 style={styles.welcomeTitle}>hola</h1>
+                <p style={styles.welcomeDescription}>
+                    Descubre una experiencia única de compañía virtual. Explora nuestra plataforma y comienza a chatear para conectar de manera auténtica e innovadora.
+                </p>
+                <Link href="/creadoras" style={styles.startChatButton}>
+                    Iniciar Chat
+                </Link>
+            </div>
+        </GlassCard>
+    );
+};
+
 const Home = () => {
     return (
         <div style={styles.pageContainer}>
             <div style={styles.maxWidthContainer}>
-
+                {/* Welcome Section */}
+                <Welcome />
 
                 {/* Popular Creators Section */}
                 <PopularCreators />
@@ -146,29 +196,6 @@ const Home = () => {
                 <EnhancedAIFeaturesCard />
                 {/* Make sure EnhancedAIFeaturesCard is also purely CSS if you don't want MUI. */}
 
-                {/* Chat Preview Section */}
-                {/*<GlassCard>*/}
-                {/*    <h2 style={styles.chatSectionHeading}>Ejemplo de Conversación</h2>*/}
-
-                {/*    <ChatPreview />*/}
-                {/*    /!* Also rewrite ChatPreview in plain CSS if needed. *!/*/}
-
-                {/*    <div style={styles.chatInputContainer}>*/}
-                {/*        <input*/}
-                {/*            type="text"*/}
-                {/*            placeholder="Escribe tu mensaje..."*/}
-                {/*            style={styles.chatInput}*/}
-                {/*            disabled*/}
-                {/*        />*/}
-                {/*        <button*/}
-                {/*            style={styles.sendButton}*/}
-                {/*            disabled*/}
-                {/*        >*/}
-                {/*            enviar*/}
-                {/*        </button>*/}
-                {/*    </div>*/}
-                {/*</GlassCard>*/}
-
                 {/* Footer Section */}
                 <GlassCard>
                     <img
@@ -186,3 +213,4 @@ const Home = () => {
 };
 
 export default Home;
+
