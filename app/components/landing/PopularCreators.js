@@ -66,10 +66,10 @@ const styles = {
         position: 'relative',
     },
     title: {
-        fontSize: '36px',
+        fontSize: '43px',
         fontWeight: '800',
         color: 'white',
-        letterSpacing: '0.5px',
+        letterSpacing: '3px',
         textShadow: '0 2px 4px rgba(0,0,0,0.2)',
         margin: '0 0 4px 0',
         fontFamily: "'Montserrat', sans-serif",

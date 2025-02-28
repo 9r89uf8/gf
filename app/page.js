@@ -118,6 +118,8 @@ const styles = {
         fontSize: '18px',
         marginBottom: '24px',
         color: 'white',
+        lineHeight: '1.4',    // increases the space between lines
+        letterSpacing: '1px', // adds extra space between letters
     },
     startChatButton: {
         display: 'inline-block',
@@ -198,11 +200,6 @@ const Home = () => {
 
                 {/* Footer Section */}
                 <GlassCard>
-                    <img
-                        src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png"
-                        alt="logo"
-                        style={styles.footerLogo}
-                    />
                     <p style={styles.footerText}>
                         © 2025 - Todos los Derechos Reservados. Novia Virtual, NoviaChat.com
                     </p>
