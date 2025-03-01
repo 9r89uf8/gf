@@ -1,11 +1,11 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
-import {NextResponse} from "next/server";
+import { handleLLMInteraction } from "@/app/utils/tweets/llHandler";
+import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
 
 export async function POST(req) {
     try {
@@ -15,9 +15,7 @@ export async function POST(req) {
         }
 
         const userId = authResult.user.uid;
-        const { girlId, text } = await req.json();
-
-
+        const { girlId } = await req.json();
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
@@ -26,18 +24,50 @@ export async function POST(req) {
                 headers: { 'Content-Type': 'application/json' },
             });
         }
+
+        // Get girl data
+        const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
+        const girlData = girlDoc.data();
+
+        // Get the initial LLM message and remove double quotes
+        let llMMessage = await handleLLMInteraction(girlData);
+        llMMessage = llMMessage.replace(/"/g, '');
+
+        // Retry up to 3 times if the message is too long (>100 characters)
+        let attempts = 1;
+        while (llMMessage.length > 100 && attempts < 3) {
+            llMMessage = await handleLLMInteraction(girlData);
+            llMMessage = llMMessage.replace(/"/g, '');
+            attempts++;
+        }
+
+        // If the message is still too long after 3 attempts, do not save it; just return "ok"
+        if (llMMessage.length > 100) {
+            return new Response("ok", { status: 200 });
+        }
+
         const tweetRecord = {
             girlId: girlId,
-            text: text,
+            text: llMMessage,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
 
-        // Save the post to Firestore
-        const tweetRef = await adminDb.firestore().collection('tweet').add(tweetRecord);
+        // Reference the tweet document by girlId
+        const tweetDocRef = adminDb.firestore().collection('tweet').doc(girlId);
+        const tweetDocSnapshot = await tweetDocRef.get();
+
+        if (tweetDocSnapshot.exists) {
+            // Update the existing tweet
+            await tweetDocRef.update(tweetRecord);
+        } else {
+            // Create a new tweet with the document id as girlId
+            await tweetDocRef.set(tweetRecord);
+        }
 
         return new Response(JSON.stringify({
-            id: tweetRef.id,
-            ...tweetRecord,}), {
+            id: girlId,
+            ...tweetRecord,
+        }), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
@@ -45,7 +75,7 @@ export async function POST(req) {
             }
         });
     } catch (error) {
-        console.error('Error updating user:', error);
+        console.error('Error updating tweet:', error.message);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },

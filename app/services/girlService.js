@@ -176,6 +176,30 @@ export const deleteGirl = async (formData) => {
     }
 };
 
+export const addTweetToGirl = async (formData) => {
+
+    try {
+        const response = await fetch('/api/tweets/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+
+            return data;
+        } else {
+            console.log('errror')
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
+
 export const followGirl = async (formData) => {
     const updateFollowers = useStore.getState().updateFollowers;
     const removeFollower = useStore.getState().removeFollower;

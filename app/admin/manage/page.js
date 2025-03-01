@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
-import { getGirl, deleteGirl } from "@/app/services/girlService";
+import { getGirl, deleteGirl, addTweetToGirl } from "@/app/services/girlService";
 import {deleteGirlPost, deleteGirlPicture, deleteGirlVideo} from "@/app/services/postsService";
 import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
@@ -113,6 +113,21 @@ const ManageGirlPosts = () => {
         } catch (error) {
             console.error('Error deleting girl:', error);
             alert('Failed to delete the girl.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreateTweet = async () => {
+        if (!selectedGirl) return;
+
+        setLoading(true);
+        try {
+            let post = await addTweetToGirl({ girlId: selectedGirl.id });
+            alert(post.text);
+        } catch (error) {
+            console.error('Error creating tweet:', error);
+            alert('Failed to create tweet.');
         } finally {
             setLoading(false);
         }
@@ -236,6 +251,10 @@ const ManageGirlPosts = () => {
                                             </Typography>
                                             <GradientButton onClick={handleDeleteGirl}>
                                                 Delete Girl
+                                            </GradientButton>
+
+                                            <GradientButton onClick={handleCreateTweet}>
+                                                Create Tweet
                                             </GradientButton>
                                         </Box>
 
