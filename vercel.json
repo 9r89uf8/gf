@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/tweet/random",
+      "path": "/api/tweets/random",
       "schedule": "0 * * * *"
     }
   ]
