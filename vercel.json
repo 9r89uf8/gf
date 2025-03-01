@@ -1,13 +1,10 @@
 {
   "crons": [
     {
-      "path": "/api/girl/sleep",
-      "schedule": "50 23 * * *"
-    },
-    {
-      "path": "/api/girl/awake",
-      "schedule": "0 7 * * *"
+      "path": "/api/tweet/random",
+      "schedule": "0 * * * *"
     }
   ]
 }
+
 
