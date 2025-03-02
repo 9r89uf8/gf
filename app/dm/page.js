@@ -20,7 +20,11 @@ import {
     Grid,
     Container,
     Card,
-    Skeleton, Stack,
+    Skeleton,
+    Stack,
+    CardContent,
+    CardActions,
+    CardMedia,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/system';
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
@@ -48,38 +52,40 @@ const GlassCard = styled(Card)(({ theme }) => ({
     userSelect: 'none',
 }));
 
-const GradientButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-    border: 0,
-    borderRadius: 25,
-    color: '#e9ecef',
-    fontSize: 18,
-    height: 35,
-    padding: '0 10px',
-    margin: '10px 0',
-    textTransform: 'none',
+// Styled component for girl cards
+const GirlCard = styled(Card)(({ theme }) => ({
+    width: 130,
+    height: 230,
+    margin: theme.spacing(0, 1.5),
+    borderRadius: theme.shape.borderRadius * 2,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    background: 'white',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    flex: '0 0 auto',
     '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+        transform: 'translateY(-5px)',
+        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
     },
 }));
 
-const GradientIcon = styled(Box)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-    borderRadius: '50%',
-    padding: theme.spacing(1.5),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(1),
+const AvatarWrapper = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    margin: theme.spacing(1, 0),
 }));
 
-const InfoBox = styled(Box)(({ theme }) => ({
-    background: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 15,
-    padding: theme.spacing(2),
-    marginBottom: 25,
-    textAlign: 'center',
-    color: 'white',
+const StatusIndicator = styled(Box)(({ isActive }) => ({
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    width: 12,
+    height: 12,
+    borderRadius: '50%',
+    backgroundColor: isActive ? '#4CAF50' : '#FFA000',
+    border: '2px solid white',
+    animation: `${flash} ${isActive ? '2s' : '0s'} infinite`,
 }));
 
 const DMList = () => {
@@ -89,7 +95,6 @@ const DMList = () => {
     const girls = useStore((state) => state.girls);
     const [loading, setLoading] = useState(true);
 
-    //girls.filter((girl) => !girl.private).map
     useMultipleMessageResponder({
         userId: user?.uid,
         chats: chats || []
@@ -103,7 +108,6 @@ const DMList = () => {
                 setLoading(false);
             }
             setLoading(false);
-
         }
         fetchChats();
     }, []);
@@ -137,7 +141,20 @@ const DMList = () => {
             }}
         >
             <Container maxWidth="lg">
-                {/* Girls List Component */}
+                {/* Girls Grid Section */}
+                {/*<Typography*/}
+                {/*    variant="h5"*/}
+                {/*    sx={{*/}
+                {/*        mt: 4,*/}
+                {/*        mb: 2,*/}
+                {/*        color: 'white',*/}
+                {/*        textAlign: 'center',*/}
+                {/*        fontFamily: 'Anton, sans-serif',*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    Chicas Disponibles*/}
+                {/*</Typography>*/}
+
                 {!girls ? (
                     <Box
                         sx={{
@@ -146,20 +163,35 @@ const DMList = () => {
                             flexDirection: 'row',
                             padding: '10px 0',
                             marginBottom: '20px',
+                            '&::-webkit-scrollbar': {
+                                height: '8px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                                borderRadius: '4px',
+                            },
                         }}
                     >
                         {[...Array(5)].map((_, index) => (
                             <Box
                                 key={index}
                                 sx={{
+                                    width: 200,
+                                    height: 260,
+                                    bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                    borderRadius: 4,
+                                    mx: 1.5,
+                                    p: 2,
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
-                                    marginRight: '10px',
+                                    justifyContent: 'center',
+                                    flex: '0 0 auto',
                                 }}
                             >
-                                <Skeleton variant="circular" width={85} height={85} />
-                                <Skeleton variant="text" width={60} height={30} sx={{ mt: 1 }} />
+                                <Skeleton variant="circular" width={100} height={100} />
+                                <Skeleton variant="text" width={120} height={30} sx={{ mt: 2 }} />
+                                <Skeleton variant="rectangular" width={140} height={40} sx={{ mt: 2 }} />
                             </Box>
                         ))}
                     </Box>
@@ -171,44 +203,82 @@ const DMList = () => {
                             flexDirection: 'row',
                             padding: '10px 0',
                             marginBottom: '20px',
+                            '&::-webkit-scrollbar': {
+                                height: '8px',
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                                borderRadius: '4px',
+                            },
                         }}
                     >
-
                         {girls.map((girl) => (
-                            <Box
-                                key={girl.id}
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    marginRight: '10px',
-                                }}
-                            >
-                                <Link href={`/chat/${girl.id}`} passHref>
+                            <GirlCard key={girl.id}>
+                                <AvatarWrapper>
                                     <Avatar
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                         alt={girl.name}
                                         sx={{
-                                            width: 85,
-                                            height: 85,
-                                            cursor: 'pointer',
+                                            width: 120,
+                                            height: 120,
+                                            border: '4px solid white',
+                                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                                         }}
                                     />
-                                </Link>
-                                <Typography variant="subtitle1" sx={{ color: 'white', mt: 1 }}>
-                                    {girl.name}
-                                </Typography>
-                                <GradientButton
-                                    disabled={girl ? girl.private : false}
-                                    onClick={() => handleMessageClick(girl.id)}
-                                >
-                                    Mensaje
-                                </GradientButton>
-                            </Box>
+                                    <StatusIndicator isActive={girl.isActive} />
+                                </AvatarWrapper>
+
+                                <CardContent sx={{
+                                    textAlign: 'center',
+                                    p: 1,
+                                    flex: '1 0 auto',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    marginTop: -5,
+                                    marginBottom: -5
+                                }}>
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            color: '#333',
+                                            mb: 0.5,
+                                        }}
+                                    >
+                                        {girl.username}
+                                    </Typography>
+                                </CardContent>
+
+                                <CardActions sx={{ width: '100%', p: 2, pt: 0 }}>
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        disabled={girl ? girl.private : false}
+                                        onClick={() => handleMessageClick(girl.id)}
+                                        sx={{
+                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+                                            color: 'white',
+                                            borderRadius: '20px',
+                                            textTransform: 'none',
+                                            '&:hover': {
+                                                background: 'linear-gradient(45deg, #023e8a 30%, #0096c7 90%)',
+                                            },
+                                            '&.Mui-disabled': {
+                                                background: '#e0e0e0',
+                                                color: '#9e9e9e',
+                                            }
+                                        }}
+                                    >
+                                        Mensaje
+                                    </Button>
+                                </CardActions>
+                            </GirlCard>
                         ))}
                     </Box>
                 )}
 
+                {/* Messages Section - Keep the original styling */}
                 <GlassCard>
                     <Typography
                         variant="h5"

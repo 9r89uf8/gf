@@ -125,6 +125,22 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const GradientButtonTwo = styled(Button)(({ theme }) => ({
+    background: 'white',
+    border: 0,
+    borderRadius: 25,
+    color: 'black',
+    fontSize: '1.1rem',  // Increased font size
+    height: 48,         // Increased height
+    padding: '0 32px',  // Increased padding
+    textTransform: 'none',
+    fontWeight: 600,
+    '&:hover': {
+        background: 'linear-gradient(45deg, #023e8a 30%, #0096c7 90%)',
+        boxShadow: '0 3px 10px rgba(0, 150, 199, 0.3)',
+    },
+}));
+
 const PremiumBanner = styled(Box)(({ theme }) => ({
     background: 'rgba(255, 255, 255, 0.1)',
     borderRadius: theme.shape.borderRadius * 2,
@@ -344,11 +360,11 @@ const Creators = () => {
                                             >
                                                 Mensaje
                                             </GradientButton>
-                                            <GradientButton
+                                            <GradientButtonTwo
                                                 onClick={() => handlePhotosClick(girl.id)}
                                             >
                                                 Perfil
-                                            </GradientButton>
+                                            </GradientButtonTwo>
                                         </Stack>
 
                                         {/*<PremiumLabel>*/}
