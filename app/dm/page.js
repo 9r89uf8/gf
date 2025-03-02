@@ -215,6 +215,7 @@ const DMList = () => {
                         {girls.map((girl) => (
                             <GirlCard key={girl.id}>
                                 <AvatarWrapper>
+                                    <Link href={`/${girl.id}`} passHref>
                                     <Avatar
                                         src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                         alt={girl.name}
@@ -225,6 +226,7 @@ const DMList = () => {
                                             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
                                         }}
                                     />
+                                    </Link>
                                     <StatusIndicator isActive={girl.isActive} />
                                 </AvatarWrapper>
 

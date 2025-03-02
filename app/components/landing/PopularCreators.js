@@ -151,7 +151,7 @@ const styles = {
         gap: '8px',
     },
     username: {
-        fontSize: '22px',
+        fontSize: '25px',
         fontWeight: 'bold',
         color: 'black',
         margin: '0 0 2px 0',
@@ -183,14 +183,14 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         gap: '12px',
-        fontSize: '16px', // Increased from 14px
+        fontSize: '18px', // Increased from 14px
         color: 'black',
         marginBottom: '12px',
         fontWeight: '500', // Added to make it more prominent
     },
     bio: {
         color: 'black',
-        fontSize: '16px',
+        fontSize: '18px',
         marginBottom: '24px',
         lineHeight: '1.4',
         fontStyle: 'italic',
@@ -227,7 +227,7 @@ const styles = {
         gap: '8px',
         padding: '10px 20px',
         borderRadius: '30px',
-        backgroundColor: '#4361ee',
+        backgroundColor: '#01428c',
         color: 'white',
         fontWeight: '600',
         border: 'none',
@@ -326,13 +326,6 @@ const PopularCreators = () => {
                             <p style={styles.bio}>{girl.bio}</p>
 
                             <div style={styles.buttonContainer}>
-                                <Link
-                                    href={`/${girl.id}`}
-                                    style={styles.photoButton}
-                                >
-                                    Fotos
-                                </Link>
-
                                 {girl.texting ? (
                                     <Link
                                         href={`/chat/${girl.id}`}
@@ -353,6 +346,12 @@ const PopularCreators = () => {
                                         Mensaje
                                     </span>
                                 )}
+                                <Link
+                                    href={`/${girl.id}`}
+                                    style={styles.photoButton}
+                                >
+                                    Perfil
+                                </Link>
                             </div>
                         </div>
                     </div>
