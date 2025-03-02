@@ -318,8 +318,8 @@ const PopularCreators = () => {
                             </div>
 
                             <div style={styles.ageFollowers}>
-                                <span>{girl.age} años</span>
-                                <span>•</span>
+                                {/*<span>{girl.age} años</span>*/}
+                                {/*<span>•</span>*/}
                                 <span>{formatFollowers(girl.followers)} seguidores</span>
                             </div>
 
