@@ -29,20 +29,25 @@ export async function POST(req) {
         const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
 
+        // Check if there's an existing tweet for this girl
+        const tweetDocRef = adminDb.firestore().collection('tweet').doc(girlId);
+        const tweetDocSnapshot = await tweetDocRef.get();
+        const existingTweetData = tweetDocSnapshot.exists ? tweetDocSnapshot.data() : null;
+
         // Get the initial LLM message and remove double quotes
-        let llMMessage = await handleLLMInteraction(girlData);
+        let llMMessage = await handleLLMInteraction(girlData, existingTweetData);
         llMMessage = llMMessage.replace(/"/g, '');
 
         // Retry up to 3 times if the message is too long (>100 characters)
         let attempts = 1;
-        while (llMMessage.length > 100 && attempts < 3) {
-            llMMessage = await handleLLMInteraction(girlData);
+        while (llMMessage.length > 200 && attempts < 3) {
+            llMMessage = await handleLLMInteraction(girlData, existingTweetData);
             llMMessage = llMMessage.replace(/"/g, '');
             attempts++;
         }
 
         // If the message is still too long after 3 attempts, do not save it; just return "ok"
-        if (llMMessage.length > 100) {
+        if (llMMessage.length > 150) {
             return new Response("ok", { status: 200 });
         }
 
@@ -51,10 +56,6 @@ export async function POST(req) {
             text: llMMessage,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
-
-        // Reference the tweet document by girlId
-        const tweetDocRef = adminDb.firestore().collection('tweet').doc(girlId);
-        const tweetDocSnapshot = await tweetDocRef.get();
 
         if (tweetDocSnapshot.exists) {
             // Update the existing tweet

@@ -315,7 +315,7 @@ const Creators = () => {
                                         </ProfileImageContainer>
 
                                         <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 600, mb: 1 }}>
-                                            {girl.name}, {girl.age}
+                                            {girl.name}
                                         </Typography>
 
                                         <Typography

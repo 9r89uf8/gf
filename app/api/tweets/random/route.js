@@ -9,7 +9,6 @@ export const revalidate = 0;
 
 export async function GET(req) {
     try {
-
         // Fetch all girls from the collection
         const girlsSnapshot = await adminDb.firestore().collection('girls').get();
         if (girlsSnapshot.empty) {
@@ -19,51 +18,75 @@ export async function GET(req) {
             });
         }
 
-        // Convert snapshot to an array and choose a random girl
+        // Convert snapshot to an array
         const girls = girlsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const randomIndex = Math.floor(Math.random() * girls.length);
-        const randomGirl = girls[randomIndex];
-        const girlId = randomGirl.id;
-        const girlData = randomGirl;
+        const results = [];
+        const errors = [];
 
-        // Get the initial LLM message and remove double quotes
-        let llMMessage = await handleLLMInteraction(girlData);
-        llMMessage = llMMessage.replace(/"/g, '');
+        // Process each girl to generate and save tweets
+        for (const girlData of girls) {
+            try {
+                const girlId = girlData.id;
 
-        // Retry up to 3 times if the message is too long (>100 characters)
-        let attempts = 1;
-        while (llMMessage.length > 100 && attempts < 3) {
-            llMMessage = await handleLLMInteraction(girlData);
-            llMMessage = llMMessage.replace(/"/g, '');
-            attempts++;
-        }
+                // Check if there's an existing tweet for this girl
+                const tweetDocRef = adminDb.firestore().collection('tweet').doc(girlId);
+                const tweetDocSnapshot = await tweetDocRef.get();
+                const existingTweetData = tweetDocSnapshot.exists ? tweetDocSnapshot.data() : null;
 
-        // If the message is still too long after 3 attempts, do not save it; just return "ok"
-        if (llMMessage.length > 100) {
-            return new Response("ok", { status: 200 });
-        }
+                // Get the initial LLM message and remove double quotes
+                let llMMessage = await handleLLMInteraction(girlData, existingTweetData);
+                llMMessage = llMMessage.replace(/"/g, '');
 
-        const tweetRecord = {
-            girlId: girlId,
-            text: llMMessage,
-            timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-        };
+                // Retry up to 3 times if the message is too long (>150 characters)
+                let attempts = 1;
+                while (llMMessage.length > 150 && attempts < 3) {
+                    llMMessage = await handleLLMInteraction(girlData, existingTweetData);
+                    llMMessage = llMMessage.replace(/"/g, '');
+                    attempts++;
+                }
 
-        // Reference the tweet document by girlId
-        const tweetDocRef = adminDb.firestore().collection('tweet').doc(girlId);
-        const tweetDocSnapshot = await tweetDocRef.get();
+                // If the message is still too long after 3 attempts, skip this girl
+                if (llMMessage.length > 150) {
+                    errors.push({
+                        girlId,
+                        error: "Generated tweet too long after multiple attempts"
+                    });
+                    continue;
+                }
 
-        if (tweetDocSnapshot.exists) {
-            // Update the existing tweet
-            await tweetDocRef.update(tweetRecord);
-        } else {
-            // Create a new tweet with the document id as girlId
-            await tweetDocRef.set(tweetRecord);
+                const tweetRecord = {
+                    girlId: girlId,
+                    text: llMMessage,
+                    timestamp: adminDb.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (tweetDocSnapshot.exists) {
+                    // Update the existing tweet
+                    await tweetDocRef.update(tweetRecord);
+                } else {
+                    // Create a new tweet with the document id as girlId
+                    await tweetDocRef.set(tweetRecord);
+                }
+
+                results.push({
+                    id: girlId,
+                    ...tweetRecord
+                });
+            } catch (error) {
+                errors.push({
+                    girlId: girlData.id,
+                    error: error.message
+                });
+            }
         }
 
         return new Response(JSON.stringify({
-            id: girlId,
-            ...tweetRecord,
+            success: true,
+            processed: girls.length,
+            successful: results.length,
+            errors: errors.length,
+            results,
+            errorDetails: errors
         }), {
             status: 200,
             headers: {
@@ -72,7 +95,7 @@ export async function GET(req) {
             }
         });
     } catch (error) {
-        console.error('Error updating tweet:', error.message);
+        console.error('Error updating tweets:', error.message);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },

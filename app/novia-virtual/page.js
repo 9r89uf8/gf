@@ -16,7 +16,7 @@ const styles = {
         color: 'white'
     },
     title: {
-        fontSize: '3.5rem',
+        fontSize: '2.3rem',
         marginBottom: '1rem',
         fontWeight: 'bold'
     },
@@ -103,16 +103,16 @@ const NoviaVirtual = () => {
     return (
         <div style={styles.container}>
             <header style={styles.heroSection}>
-                <h1 style={styles.title}>Hola</h1>
+                <h1 style={styles.title}>Novia Virtual</h1>
                 <p style={styles.subtitle}>
                     Con nuestra Novia Virtual, sentirás la calidez de una compañera que siempre está ahí para escucharte, comprenderte y acompañarte.
                 </p>
                 <div style={styles.ctaContainer}>
                     <Link
-                        href={`/posts`}
+                        href={`/creadoras`}
                         style={styles.ctaButton}
                     >
-                        Fotos
+                        Buscar
                     </Link>
                 </div>
             </header>
