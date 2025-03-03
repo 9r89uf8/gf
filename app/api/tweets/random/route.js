@@ -39,14 +39,14 @@ export async function GET(req) {
 
                 // Retry up to 3 times if the message is too long (>150 characters)
                 let attempts = 1;
-                while (llMMessage.length > 150 && attempts < 3) {
+                while (llMMessage.length > 130 && attempts < 3) {
                     llMMessage = await handleLLMInteraction(girlData, existingTweetData);
                     llMMessage = llMMessage.replace(/"/g, '');
                     attempts++;
                 }
 
                 // If the message is still too long after 3 attempts, skip this girl
-                if (llMMessage.length > 150) {
+                if (llMMessage.length > 130) {
                     errors.push({
                         girlId,
                         error: "Generated tweet too long after multiple attempts"
