@@ -3,6 +3,7 @@ import PopularCreators from "@/app/components/landing/PopularCreators";
 import Link from 'next/link';
 import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard"; // same note: rewrite if it uses MUI
 
+
 const styles = {
     pageContainer: {
         minHeight: '100vh',
