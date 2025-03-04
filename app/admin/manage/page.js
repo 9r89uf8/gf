@@ -87,7 +87,6 @@ const ManageGirlPosts = () => {
     const selectedGirl = useStore((state) => state.girl); // Currently selected girl
 
     const [loading, setLoading] = useState(false);
-
     // Handle girl selection
     const handleSelectGirl = async (girlId) => {
         setLoading(true);
@@ -328,6 +327,12 @@ const ManageGirlPosts = () => {
                                                                     />
                                                                 ) : null}
                                                             </MediaWrapper>
+                                                            <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+                                                                {post.description}
+                                                            </Typography>
+                                                            <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+                                                                Premium: {post.isPremium?'premium':'free'}
+                                                            </Typography>
                                                             <Button
                                                                 variant="contained"
                                                                 color="secondary"

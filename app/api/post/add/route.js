@@ -115,6 +115,7 @@ export async function POST(req) {
         // Save the post to Firestore
         const postRef = await adminDb.firestore().collection('posts').add(postRecord);
 
+        console.log('post saved')
         return new Response(JSON.stringify({
             id: postRef.id,
             ...postRecord,}), {
