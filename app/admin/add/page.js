@@ -1,4 +1,3 @@
-// src/components/Philosophy/CreatePhilosophy.js
 'use client';
 import React, { useState } from 'react';
 import {
@@ -16,13 +15,14 @@ import {
     MenuItem,
     InputLabel,
     FormControl,
+    CircularProgress,
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
-import { addPost } from '@/app/services/girlService';
+import { addPost, getS3PresignedUrl, uploadToS3WithPresignedUrl } from '@/app/services/girlService';
 import { useStore } from '@/app/store/store';
 
-// Styled components
+// Styled components (unchanged)
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
     color: 'white',
@@ -93,6 +93,8 @@ const AddPost = () => {
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [selectedGirl, setSelectedGirl] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handlePremiumChange = (event) => {
         setIsPremium(event.target.checked);
@@ -106,24 +108,45 @@ const AddPost = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('premium', isPremium ? 'true' : 'false');
-        formData.append('description', description);
-        formData.append('girlId', selectedGirl);
-        if (image) {
-            formData.append('image', image);
-        }
-
+        setIsUploading(true);
         try {
-            await addPost(formData);
+            // Create post data
+            const postData = {
+                premium: isPremium,
+                description,
+                girlId: selectedGirl,
+            };
+
+            // If we have an image, use the presigned URL flow
+            if (image) {
+                // Get presigned URL
+                const presignedData = await getS3PresignedUrl(image.type);
+
+                // Upload the file directly to S3
+                await uploadToS3WithPresignedUrl(presignedData.url, image);
+
+                // Add the file information to the post data
+                postData.fileKey = presignedData.fileName;
+                postData.fileUrl = presignedData.fileUrl;
+            }
+
+            // Create the post with the uploaded file information
+            await addPost(postData);
+
             // Reset form fields
             setIsPremium(false);
             setDescription('');
             setImage(null);
             setImagePreview(null);
             setSelectedGirl('');
+            setUploadProgress(0);
+
+            alert('Post creado exitosamente!');
         } catch (error) {
             console.error('Error creating post:', error);
+            alert('Error al crear el post: ' + error.message);
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -225,6 +248,7 @@ const AddPost = () => {
                                     component="label"
                                     startIcon={<PhotoCamera />}
                                     fullWidth
+                                    disabled={isUploading}
                                 >
                                     Subir Imagen
                                     <input type="file" hidden onChange={handleFileChange} />
@@ -240,8 +264,18 @@ const AddPost = () => {
                                 )}
                             </Grid>
                             <Grid item xs={12}>
-                                <GradientButton type="submit" variant="contained" fullWidth>
-                                    Crear Post
+                                <GradientButton
+                                    type="submit"
+                                    variant="contained"
+                                    fullWidth
+                                    disabled={isUploading}
+                                >
+                                    {isUploading ? (
+                                        <>
+                                            <CircularProgress size={24} sx={{ color: 'white', mr: 1 }} />
+                                            Subiendo...
+                                        </>
+                                    ) : 'Crear Post'}
                                 </GradientButton>
                             </Grid>
                         </Grid>
