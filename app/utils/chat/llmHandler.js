@@ -445,41 +445,71 @@ ${messageLabels&&messageLabels.requesting_video ? `${(userPicInstructions ? (use
 Adicionalmente, ten en cuenta la fecha y hora actual para contextualizar tus respuestas:
 Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
 
-Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer una experiencia auténtica, coherente y sexual. Recuerda que el User es hombre y tiene pito o verga o pene. Recuerda que solo puedes enviar fotos si el User te pide fotos.
+Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer una experiencia auténtica, coherente y sexual. Recuerda que el User es hombre y tiene pito o verga o pene. Recuerda que solo puedes enviar fotos si el User te pide fotos. NO respondas con puros emojis.
   `.trim()
     }
 
 }
 
-async function getLLMResponse(messages) {
-    const response = await together.chat.completions.create({
-        messages: messages,
-        model: "deepseek-ai/DeepSeek-V3",
-        max_tokens: 90,
-        temperature: 0.7,
-        top_p: 0.7,
-        top_k: 50,
-        repetition_penalty: 1,
-        stop: ["<｜end▁of▁sentence｜>"],
-        stream: false
-    });
-    // stop: ["<|im_end|>\",\"<|im_start|>"],
+async function getLLMResponse(messages, modelOptions = []) {
+    // Default model list if none provided
+    const modelsToTry = modelOptions.length > 0 ? modelOptions : [
+        "deepseek-ai/DeepSeek-V3",
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        // Add more fallback models here
+    ];
 
-    return response.choices[0].message.content;
+    let lastError = null;
+
+    // Try each model in sequence until one works
+    for (const model of modelsToTry) {
+        try {
+            const response = await together.chat.completions.create({
+                messages: messages,
+                model: model,
+                max_tokens: 90,
+                temperature: 0.7,
+                top_p: 0.7,
+                top_k: 50,
+                repetition_penalty: 1,
+                stop: ["<｜end▁of▁sentence｜>"],
+                stream: false
+            });
+
+            // console.log(`Successfully used model: ${model}`);
+            return response.choices[0].message.content;
+        } catch (error) {
+            console.warn(`Error with model ${model}:`, error.message);
+            lastError = error;
+            // Continue to the next model
+        }
+    }
+
+    // If we've tried all models and none worked
+    throw new Error(`All models failed. Last error: ${lastError?.message}`);
 }
 
 export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
-
     // Generate the dynamic system prompt
     const systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels);
 
-
-    // console.log(conversationHistory)
     // Prepare messages for LLM processing
     const messagesForLLM = [systemPrompt, ...conversationHistory];
 
-    // Get response from LLM
-    const assistantMessage = await getLLMResponse(messagesForLLM);
+    // You can optionally specify preferred models in order
+    const preferredModels = [
+        "deepseek-ai/DeepSeek-V3",
+        "anthropic/claude-3-opus-20240229",
+        "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    ];
 
-    return assistantMessage;
+    // Get response from LLM with fallback options
+    try {
+        const assistantMessage = await getLLMResponse(messagesForLLM, preferredModels);
+        return assistantMessage;
+    } catch (error) {
+        console.error("All LLM models failed:", error);
+        return "Tengo que irme. Te mando un mensaje más tarde";
+    }
 }

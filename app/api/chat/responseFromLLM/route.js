@@ -207,14 +207,50 @@ export async function POST(req) {
 
                 default:
                     // Text message - add to conversation history and display messages
+                // Define a list of generic replacement messages
+                    const genericMessages = [
+                        "jajaja",
+                        "muestrame tu pene",
+                        "como es tu pene?",
+                        "k haces?",
+                        "tengo unas ganas tremendas"
+                    ];
+
+                // Function to count emojis in a string
+                function countEmojis(text) {
+                    // This regex pattern matches most common emoji characters
+                    const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+                    const matches = text.match(emojiRegex);
+                    return matches ? matches.length : 0;
+                }
+
+                // Function to get a random message from the generic messages list
+                function getRandomGenericMessage() {
+                    const randomIndex = Math.floor(Math.random() * genericMessages.length);
+                    return genericMessages[randomIndex];
+                }
+
+                    // Process each response
                     assistantMessageProcess.forEach(response => {
-                        typeOfMessageContent = response.content
+                        let messageContent = response.content;
+
+                        // Check if the message has too many emojis (e.g., 10 or more)
+                        if (countEmojis(messageContent) >= 10) {
+                            // Replace with a random generic message
+                            messageContent = getRandomGenericMessage();
+                        }
+
+                        // Update the response content
+                        response.content = messageContent;
+
+                        // Add to conversation history
                         updatedConversationHistory.push({
                             "role": "assistant",
-                            "content": response.content
+                            "content": messageContent
                         });
                     });
 
+                    // Display the messages
                     for (const response of assistantMessageProcess) {
                         await displayMessageRef.add(response);
                     }

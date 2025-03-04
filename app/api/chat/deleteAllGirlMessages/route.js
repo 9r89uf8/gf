@@ -42,12 +42,40 @@ export async function POST(req) {
         // Get reference to the displayMessages subcollection
         const displayMessagesRef = conversationRef.collection('displayMessages');
 
-        // Create a new document in archivedConversations collection
+        // Reference to the archived conversation document
+        const archivedConversationId = `${userId}_${girlId}`;
         const archivedConversationRef = adminDb.firestore()
             .collection('archivedConversations')
-            .doc(`${userId}_${girlId}`);
+            .doc(archivedConversationId);
 
-        // Save the conversation data
+        // Check if archive already exists
+        const existingArchive = await archivedConversationRef.get();
+
+        // If archive exists, delete it and all subcollections first
+        if (existingArchive.exists) {
+            // Function to delete all documents in a collection
+            async function deleteCollection(collectionRef) {
+                const batchSize = 100; // Firestore batch limit
+                let snapshot = await collectionRef.limit(batchSize).get();
+                while (!snapshot.empty) {
+                    const batch = adminDb.firestore().batch();
+                    snapshot.docs.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+
+                    snapshot = await collectionRef.limit(batchSize).get();
+                }
+            }
+
+            // Delete the subcollections of the existing archive
+            const subcollections = await archivedConversationRef.listCollections();
+            for (const subcollection of subcollections) {
+                await deleteCollection(subcollection);
+            }
+        }
+
+        // Save the conversation data (creates new or overwrites existing)
         await archivedConversationRef.set(archiveData);
 
         // Save all display messages as a subcollection

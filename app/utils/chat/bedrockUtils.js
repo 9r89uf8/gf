@@ -70,7 +70,7 @@ export async function analyzeUserMessage(userMessage) {
         try {
             return JSON.parse(content);
         } catch (error) {
-            console.error("Error parsing Bedrock response as JSON:", error);
+            console.error("Error parsing Bedrock response as JSON:", error.message);
             // Return a default object if parsing fails
             return {
                 is_explicit: false,
