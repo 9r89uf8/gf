@@ -1,12 +1,10 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
-import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import { v4 as uuidv4 } from "uuid";
 import {NextResponse} from "next/server";
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const axios = require("axios");
-const fs = require("fs");
+
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -115,7 +113,6 @@ export async function POST(req) {
         // Save the post to Firestore
         const postRef = await adminDb.firestore().collection('posts').add(postRecord);
 
-        console.log('post saved')
         return new Response(JSON.stringify({
             id: postRef.id,
             ...postRecord,}), {
