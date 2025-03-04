@@ -26,6 +26,57 @@ export async function POST(req) {
             .collection('conversations')
             .doc(girlId);
 
+        const userDocF = await adminDb.firestore()
+            .collection('users')
+            .doc(userId)
+            .get();
+        const userData = userDocF.data();
+
+        // Prepare basic data for archiving
+        const archiveData = {
+            userData,
+            girlId,
+            archivedAt: adminDb.firestore.FieldValue.serverTimestamp()
+        };
+
+        // Get reference to the displayMessages subcollection
+        const displayMessagesRef = conversationRef.collection('displayMessages');
+
+        // Create a new document in archivedConversations collection
+        const archivedConversationRef = adminDb.firestore()
+            .collection('archivedConversations')
+            .doc(`${userId}_${girlId}`);
+
+        // Save the conversation data
+        await archivedConversationRef.set(archiveData);
+
+        // Save all display messages as a subcollection
+        const archivedMessagesRef = archivedConversationRef.collection('displayMessages');
+
+        // Fetch and save messages in batches
+        const batchSize = 100; // Firestore batch limit
+        let messageSnapshot = await displayMessagesRef.limit(batchSize).get();
+
+        while (!messageSnapshot.empty) {
+            const batch = adminDb.firestore().batch();
+
+            messageSnapshot.docs.forEach((doc) => {
+                const messageRef = archivedMessagesRef.doc(doc.id);
+                batch.set(messageRef, doc.data());
+            });
+
+            await batch.commit();
+
+            // Get the last document processed
+            const lastDoc = messageSnapshot.docs[messageSnapshot.docs.length - 1];
+
+            // Get the next batch
+            messageSnapshot = await displayMessagesRef
+                .startAfter(lastDoc)
+                .limit(batchSize)
+                .get();
+        }
+
         // Function to delete all documents in a collection
         async function deleteCollection(collectionRef) {
             const batchSize = 100; // Firestore batch limit
@@ -55,9 +106,12 @@ export async function POST(req) {
         // Delete the conversation and its subcollections
         await deleteDocumentAndSubcollections(conversationRef);
 
-        return NextResponse.json({ message: 'Data for the girl deleted successfully' }, { status: 200 });
+        return NextResponse.json({
+            message: 'Data for the girl deleted successfully and archived',
+            archivedConversationId: archivedConversationRef.id
+        }, { status: 200 });
     } catch (error) {
-        console.error('Error deleting user data:', error);
+        console.error('Error deleting and archiving user data:', error);
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }

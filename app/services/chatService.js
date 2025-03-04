@@ -63,7 +63,6 @@ import { useStore } from '../store/store'; // Ensure you import the correct stor
 // };
 
 export const getMessagesTest = async (formData) => {
-    const setConversationHistory = useStore.getState().setConversationHistory;
 
     try {
         const response = await fetch(`/api/chat/testing`, {
@@ -75,7 +74,25 @@ export const getMessagesTest = async (formData) => {
         });
         if (response.ok) {
             const data = await response.json();
-            setConversationHistory(data);
+            return data;
+        } else {
+            const data = await response.json();
+            throw new Error('Failed to fetch the latest jornada');
+        }
+    } catch (error) {
+        console.error(error.message);
+        return null;
+    }
+};
+
+export const getArchivedMessages = async () => {
+
+    try {
+        const response = await fetch(`/api/chat/getArchivedConversations`, {
+            method: 'GET'
+        });
+        if (response.ok) {
+            const data = await response.json();
             return data;
         } else {
             const data = await response.json();

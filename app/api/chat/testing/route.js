@@ -1,14 +1,14 @@
 // app/api/posts/create/route.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
-import {authMiddleware} from "@/app/middleware/authMiddleware";
-import {NextResponse} from "next/server";
+import { authMiddleware } from "@/app/middleware/authMiddleware";
+import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function POST(req) {
     try {
-        let girlId = 'BgHd9LWDnFFhS6BoaqwL'
+        let girlId = 'BgHd9LWDnFFhS6BoaqwL';
         const authResult = await authMiddleware(req);
         if (!authResult.authenticated) {
             return NextResponse.json({ error: authResult.error }, { status: 401 });
@@ -23,57 +23,69 @@ export async function POST(req) {
             });
         }
 
-        // Get all users first
+        // Calculate date 5 days ago
+        const fiveDaysAgo = new Date();
+        fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+
+        // Get users with timestamps from last 5 days
         const usersSnapshot = await adminDb.firestore()
             .collection('users')
-            .orderBy('timestamp', 'asc')
+            .where('timestamp', '>=', fiveDaysAgo)
+            .orderBy('timestamp', 'desc')
             .get();
 
-        // Extract all user IDs
-        const userIds = usersSnapshot.docs.map(doc => doc.id);
-
-        // If no users found, return error
-        if (userIds.length === 0) {
-            console.error('Users not found');
-            return new Response(JSON.stringify({ error: 'No users found' }), {
+        // Return error if no recent users found
+        if (usersSnapshot.empty) {
+            console.error('No users found from the last 5 days');
+            return new Response(JSON.stringify({ error: 'No recent users found' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
 
-        // Randomly select a user ID
-        const randomIndex = Math.floor(Math.random() * userIds.length);
-        const randomUserId = userIds[randomIndex];
+        // Process each user and their messages
+        const results = [];
 
-        // Get reference to the randomly selected user's messages
-        const messagesRef = adminDb.firestore()
-            .collection('users')
-            .doc(randomUserId)
-            .collection('conversations')
-            .doc(girlId)
-            .collection('displayMessages')
-            .orderBy('timestamp', 'asc');
+        for (const userDoc of usersSnapshot.docs) {
+            const userData = {
+                id: userDoc.id,
+                ...userDoc.data()
+            };
 
-        // Get the messages
-        const messagesDocs = await messagesRef.get();
+            // Get the user's messages
+            const messagesRef = adminDb.firestore()
+                .collection('users')
+                .doc(userDoc.id)
+                .collection('conversations')
+                .doc(girlId)
+                .collection('displayMessages')
+                .orderBy('timestamp', 'asc');
 
-        // Transform the messages data
-        const messageDataArray = messagesDocs.docs.map(doc => ({
-            id: doc.id,
-            userId: randomUserId, // Including the userId for reference
-            ...doc.data()
-        }));
+            const messagesDocs = await messagesRef.get();
 
-        // If no messages found for this user and girlId combination
-        if (messageDataArray.length === 0) {
-            console.error('No messages found');
-            return new Response(JSON.stringify({ error: 'No messages found for the selected user' }), {
+            // Transform the messages data
+            const displayMessages = messagesDocs.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Add this user and their messages to results
+            results.push({
+                userData,
+                displayMessages
+            });
+        }
+
+        // If no results found
+        if (results.length === 0) {
+            console.error('No messages found for any recent users');
+            return new Response(JSON.stringify({ error: 'No messages found for recent users' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
 
-        return new Response(JSON.stringify(messageDataArray), {
+        return new Response(JSON.stringify(results), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',

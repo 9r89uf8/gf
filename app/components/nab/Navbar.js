@@ -123,6 +123,16 @@ const Navbar = () => {
         router.push('/admin/manage');
     };
 
+    const handleArchived = () => {
+        handleMenuClose();
+        router.push('/admin/archived');
+    };
+
+    const handleTesting = () => {
+        handleMenuClose();
+        router.push('/admin/testing');
+    };
+
     const handleRegister = () => {
         handleMenuClose();
         router.push('/register');
@@ -148,7 +158,9 @@ const Navbar = () => {
                     <MenuItem key="addPosts" onClick={handlePosts}>Add Posts</MenuItem>,
                     <MenuItem key="updateGirl" onClick={handleUpdate}>Update Girl</MenuItem>,
                     <MenuItem key="createGirl" onClick={handleCreate}>Create Girl</MenuItem>,
-                    <MenuItem key="manageGirls" onClick={handleManage}>Manage Girls</MenuItem>
+                    <MenuItem key="manageGirls" onClick={handleManage}>Manage Girls</MenuItem>,
+                    <MenuItem key="archived" onClick={handleArchived}>Archived</MenuItem>,
+                    <MenuItem key="testing" onClick={handleTesting}>Testing</MenuItem>
                 );
             }
             items.push(
