@@ -54,91 +54,47 @@ export const getGirlTweet = async (formData) => {
     }
 };
 
-// app/services/girlService.js
-export const getS3PresignedUrl = async (fileType) => {
-    try {
-        const response = await fetch('/api/s3upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ fileType }),
-        });
+export const uploadFileToS3 = async (file) => {
+    // Request the pre-signed URL from our API route
+    const res = await fetch('/api/upload-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileType: file.type }),
+    });
+    const { signedUrl, key } = await res.json();
 
-        if (!response.ok) {
-            throw new Error('Failed to get pre-signed URL');
-        }
+    // Use the signed URL to PUT the file directly to S3
+    const uploadRes = await fetch(signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+    });
 
-        return await response.json();
-    } catch (error) {
-        console.error('Error getting pre-signed URL:', error);
-        throw error;
+    if (!uploadRes.ok) {
+        throw new Error('Failed to upload file to S3');
     }
+    // Return the file key or URL for further use (e.g., saving in your post record)
+    return key;
 };
 
-export const uploadToS3WithPresignedUrl = async (presignedUrl, file) => {
+
+//girlService addPost
+export const addPost = async (formData) => {
+    const updatePost = useStore.getState().updatePost;
     try {
-        const response = await fetch(presignedUrl, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to upload to S3');
-        }
-
-        return true;
-    } catch (error) {
-        console.error('Error uploading to S3:', error);
-        throw error;
-    }
-};
-
-export const addPost = async (postData, file) => {
-    try {
-        // 1. If there's a file, get a pre-signed URL and upload directly to S3
-        let fileKey = null;
-        let fileUrl = null;
-
-        if (file) {
-            // Get pre-signed URL for the file
-            const { url, fileName, fileUrl: s3FileUrl } = await getS3PresignedUrl(file.type);
-
-            // Upload the file directly to S3
-            await uploadToS3WithPresignedUrl(url, file);
-
-            fileKey = fileName;
-            fileUrl = s3FileUrl;
-        }
-
-        // 2. Create the post in your database
-        const formData = new FormData();
-        formData.append('premium', postData.premium ? 'true' : 'false');
-        formData.append('description', postData.description);
-        formData.append('girlId', postData.girlId);
-
-        if (fileKey) {
-            // Just pass the file key, not the actual file
-            formData.append('fileKey', fileKey);
-            formData.append('fileUrl', fileUrl);
-        }
-
         const response = await fetch('/api/post/add', {
             method: 'POST',
             body: formData,
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to create post');
+        if (response.ok) {
+            const updatedMessage = await response.json();
+            return updatedMessage;
+        } else {
+            throw new Error('Failed to update');
         }
-
-        return await response.json();
     } catch (error) {
-        console.error('Error creating post:', error);
-        throw error;
+        console.error('Error updating:', error);
+        return null;
     }
 };
 

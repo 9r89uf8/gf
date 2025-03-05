@@ -1,10 +1,14 @@
-// app/api/post/add/route.js
+// app/api/addPost
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
-import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
+import {NextResponse} from "next/server";
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
 
 export async function POST(req) {
     try {
@@ -17,22 +21,26 @@ export async function POST(req) {
         const formData = await req.formData();
         const premium = formData.get('premium');
         const description = formData.get('description');
+        const file = formData.get('image');
         const girlId = formData.get('girlId');
-        const fileKey = formData.get('fileKey'); // Get the file key instead of the file
-        const fileUrl = formData.get('fileUrl'); // Get the file URL
 
-        let isPremium = premium === 'true';
+        let isPremium = premium === 'true'
+
 
         // Check if the user is admin
         if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            });
         }
 
         const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
 
+
         const postRecord = {
-            girlName: girlData.name,
+            girlName:girlData.name,
             girlUsername: girlData.username,
             girlId: girlId,
             girlPicUrl: girlData.picture,
@@ -43,22 +51,37 @@ export async function POST(req) {
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         };
 
-        // If we have a file key and URL, add them to the post record
-        if (fileKey) {
-            if (fileKey.includes('.mp4')) {
-                postRecord.video = fileKey;
-            } else {
-                postRecord.image = fileKey;
-            }
+
+
+        const fileKey = formData.get('fileKey');
+        // Then store fileKey in your post record, e.g.:
+        // Extract the extension from the fileKey
+        const extension = fileKey.split('.').pop().toLowerCase();
+        let mediaType = null;
+
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+            mediaType = 'image';
+        } else if (['mp4', 'mov', 'avi'].includes(extension)) {
+            mediaType = 'video';
         }
+
+        // Then add to your postRecord
+        if (mediaType === 'image') {
+            postRecord.image = fileKey;
+        } else if (mediaType === 'video') {
+            postRecord.video = fileKey;
+        }
+        postRecord.mediaType = mediaType;
+
+
+
 
         // Save the post to Firestore
         const postRef = await adminDb.firestore().collection('posts').add(postRecord);
 
-        return NextResponse.json({
+        return new Response(JSON.stringify({
             id: postRef.id,
-            ...postRecord,
-        }, {
+            ...postRecord,}), {
             status: 200,
             headers: {
                 'Content-Type': 'application/json',
@@ -66,7 +89,10 @@ export async function POST(req) {
             }
         });
     } catch (error) {
-        console.error('Error creating post:', error);
-        return NextResponse.json({ error: error.message }, { status: 400 });
+        console.error('Error updating user:', error);
+        return new Response(JSON.stringify({ error: error.message }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+        });
     }
 }
