@@ -217,7 +217,6 @@ export async function POST(req) {
                         break;
 
                     default:
-                        console.log(assistantMessage)
                         // Text message - add to conversation history and display messages
                         // Define a list of generic replacement messages
                         const genericMessages = [
