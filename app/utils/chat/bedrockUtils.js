@@ -8,6 +8,7 @@ const bedrockClient = new BedrockRuntimeClient({
         accessKeyId: process.env.STHREE,
         secretAccessKey: process.env.STHREESEC,
     },
+    endpoint: "https://bedrock-runtime.us-east-2.amazonaws.com" // Explicitly set endpoint
 });
 
 /**

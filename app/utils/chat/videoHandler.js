@@ -1,46 +1,12 @@
 // app/utils/chat/imageHandler.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
+import {decrementFreeImage, getConversationLimits} from "@/app/api/chat/conversationLimits/route";
 const {v4: uuidv4} = require("uuid");
 
 function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
 
-function splitTextAtPunctuationOrSecondEmoji(text) {
-    // If text is less than 10 characters, don't split it
-    if (text.length < 28) {
-        return [text, ''];
-    }
-
-    // Regular expression to match the first occurrence of period, question mark, or exclamation point
-    const punctuationRegex = /(\.|\?|!)\s*/;
-
-    // Regular expression to match emojis
-    const emojiRegex = /\p{Emoji}/gu;
-
-    // Find the index where the first punctuation mark occurs
-    const punctuationMatch = text.match(punctuationRegex);
-
-    // Find all emoji matches
-    let emojiMatches = [...text.matchAll(emojiRegex)];
-
-    if (punctuationMatch && (!emojiMatches[1] || punctuationMatch.index < emojiMatches[1].index)) {
-        // If punctuation comes first or there's no second emoji, split at punctuation
-        const index = punctuationMatch.index + punctuationMatch[0].length;
-        return [text.substring(0, index), text.substring(index)];
-    } else if (emojiMatches[1]) {
-        // If there's a second emoji and it comes before punctuation, split at the second emoji
-        const index = emojiMatches[1].index + emojiMatches[1][0].length;
-        return [text.substring(0, index), text.substring(index)];
-    } else if (emojiMatches.length === 1 && text.endsWith(emojiMatches[0][0])) {
-        // If there's only one emoji and it's at the end of the text, split before the emoji
-        const index = emojiMatches[0].index;
-        return [text.substring(0, index), text.substring(index)];
-    } else {
-        // If no punctuation or emoji is found, return the whole text as the first part and an empty string as the second
-        return [text, ''];
-    }
-}
 export async function handleVideoRequest(
     userWantsVideo,
     userData,
@@ -50,8 +16,10 @@ export async function handleVideoRequest(
     girl,
     userMessage
 ) {
+    const conversationLimits = await getConversationLimits(userId, girlId);
+    const freeImagesRemaining = conversationLimits.freeImages;
     // Handle premium users
-    if (userData.premium&&girl.videosEnabled) {
+    if ((userData.premium || freeImagesRemaining > 0)&&girl.imagesEnabled) {
         let videoDescription = userWantsVideo.description.toLowerCase();
 
         // Fetch videos where girlId matches
@@ -121,33 +89,26 @@ export async function handleVideoRequest(
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
 
+        // Update user's freeImages count only if they're not premium
+        if (!userData.premium && freeImagesRemaining > 0) {
+            await decrementFreeImage(userId, girlId)
+        }
+
         return { success: true, updatedHistory: conversationHistory };
     }
     // Handle non-premium users
     else {
         const processAssistantMessage = (assistantMessage) => {
-            const [firstPart, secondPart] = splitTextAtPunctuationOrSecondEmoji(assistantMessage);
-            let response = [{
+            // No longer splitting the message
+            return [{
                 uid: uuidv4(),
                 role: "assistant",
                 liked: false,
                 displayLink: false,
                 respondingTo: userMessage.content,
-                content: removeHashSymbols(firstPart),
+                content: removeHashSymbols(assistantMessage),
                 timestamp: adminDb.firestore.FieldValue.serverTimestamp()
             }];
-            if (secondPart) {
-                response.push({
-                    uid: uuidv4(),
-                    role: "assistant",
-                    liked: false,
-                    displayLink: false,
-                    respondingTo: userMessage.content,
-                    content: removeHashSymbols(secondPart),
-                    timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-                });
-            }
-            return response;
         };
 
         let assistantMessageProcess = processAssistantMessage(userWantsVideo.content);

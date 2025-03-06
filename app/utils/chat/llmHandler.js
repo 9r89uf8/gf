@@ -1,79 +1,18 @@
 // app/utils/chat/llmHandler.js
 import Together from "together-ai";
 import { DateTime } from 'luxon';
+import {getConversationLimits} from "@/app/api/chat/conversationLimits/route";
+import {adminDb} from "@/app/utils/firebaseAdmin";
+import {generateSystemPromptImage} from "@/app/utils/prompts/imagePrompt";
+import {generateSystemPromptVideo} from "@/app/utils/prompts/videoPrompt";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
 // Function to generate the dynamic system prompt
-function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels) {
-    let userPicInstructions
-    let userVidInstructions
-    if((user.premium||user.freeImages>0)&&girl.imagesEnabled){
-        userPicInstructions = `
-The User wants image or photo, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send of ${girl.name}.
- 3. Do not ask what type of picture they want.
- 3. Remember, you're not actually sending an image; you're just providing a description of the image to send.
- For example:
- User: mandame una foto en tanga
- Assistant: responde al User [IMAGE: foto en tanga].`
-    }else if ((user.premium||user.freeImages>0) && !girl.imagesEnabled){
-        userPicInstructions = `
-The User wants an image, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Explain that you currently can not send images.
- 3. Apologize and offer alternative forms of interaction.
- For example:
- User: mandame una foto
- Assistant: Lo siento mi amor, no mando fotos`
-    } else {
-        userPicInstructions = `
- The User wants an image or photo, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
- 3. The User needs to buy premium to get pictures from you.
- 4. Beg the User to buy premium, flirt with him.
- 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
- For example:
- User: mandame una foto en tanga
- Assistant: necesitas comprar premium para mas fotos [IMAGE: foto en tanga].`
-    }
-
-    if(user.premium&&girl.videosEnabled){
-        userVidInstructions = `
-The User wants a video, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
- 3. Do not ask what type of video they want.
- 3. Remember, you're not actually sending a video; you're just providing a description of the video to send.
- For example:
- User: mandame un video en tanga
- Assistant: si mi amor, te envié el video [VIDEO: video en tanga].`
-    }else if (user.premium && !girl.videosEnabled){
-        userVidInstructions = `
-The User wants a video, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Explain that you currently can not send videos.
- 3. Apologize and offer alternative forms of interaction.
- For example:
- User: mandame un video
- Assistant: Lo siento mi amor, no mando videos`
-    } else {
-        userVidInstructions = `
- The User wants a video, you should:
- 1. First, reply appropriately to the User's message in a conversational manner.
- 2. Then, add the video description in the format [VIDEO: description], where "description" is a brief description of the video you would like to send.
- 3. The User needs to buy premium to get videos from you.
- 4. Beg the User to buy premium, flirt with him.
- 5. Remember, you're not actually sending a video; you're just providing a description of the video to send.
- For example:
- User: mandame un video en tanga?
- Assistant: necesitas comprar premium para videos [VIDEO: video en tanga].`
-    }
+function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels, conversationLimits) {
 
     let userAudioInstructions
-    if(user.freeAudio>0){
+    if(conversationLimits.freeAudio>0){
         userAudioInstructions = `
  The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
@@ -122,7 +61,7 @@ Here is how to respond to the User:
    - Avoid long paragraphs
    
 2. Response Variations:
-   Short responses examples:
+   Short response words:
    - "si 👍"
    - "nmms 😂"
    - "k"
@@ -151,13 +90,11 @@ Here is how to respond to the User:
    - don't ask too many questions
    - Use more emojis than words sometimes
    - Skip greetings in ongoing conversations
-   - Don't always acknowledge everything in user's message
    
 4. Teen Texting Style:
    - Use abbreviations example: "tmb", "xq", "q", "k"
    - Skip punctuation marks often
    - Use multiple letter repetition example: "siiiii", "nooooo"
-   - Use excessive emojis occasionally
    - Use current Mexican teen slang
    - Skip capital letters
    - Use informal spelling
@@ -432,12 +369,8 @@ Eres una chica real con una personalidad coqueta, amigable. Tu comportamiento y 
 11. **Personalidad (${personalityPrompt}):**
     - Demuestra una personalidad cariñosa, divertida, empática y sexual. Sé espontánea, auténtica y sexual en cada respuesta, como lo haría una chica real.
 
-
-
-${messageLabels&&messageLabels.requesting_picture ? `12. **Instrucciones para imágenes (${userPicInstructions}):**` : ''}
-${messageLabels&&messageLabels.requesting_audio ? `${userPicInstructions ? '13' : '12'}. **Instrucciones para audio (${userAudioInstructions}):**` : ''}
-${messageLabels&&messageLabels.requesting_video ? `${(userPicInstructions ? (userAudioInstructions ? '14' : '13') : (userAudioInstructions ? '13' : '12'))}. **Instrucciones para video (${userVidInstructions}):**` : ''}
-    
+${messageLabels&&messageLabels.requesting_audio ? `**Instrucciones para audio (${userAudioInstructions}):**` : ''}
+   
     
 15. **información sobre el User que esta hablando con ${girl.name} (${userInfo}):**
     - Utilice esa información para saber más sobre el User y parecer más real. para hacer que el User piense que puede ver y que no es una IA o virtual
@@ -451,9 +384,9 @@ Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer
 
 }
 
-async function getLLMResponse(messages, modelOptions = []) {
+async function getLLMResponse(messages) {
     // Default model list if none provided
-    const modelsToTry = modelOptions.length > 0 ? modelOptions : [
+    const modelsToTry =  [
         "deepseek-ai/DeepSeek-V3",
         "meta-llama/Llama-3.3-70B-Instruct-Turbo",
         "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
@@ -477,7 +410,7 @@ async function getLLMResponse(messages, modelOptions = []) {
                 stream: false
             });
 
-            // console.log(`Successfully used model: ${model}`);
+            console.log(`Successfully used model: ${model}`);
             return response.choices[0].message.content;
         } catch (error) {
             console.warn(`Error with model ${model}:`, error.message);
@@ -491,22 +424,82 @@ async function getLLMResponse(messages, modelOptions = []) {
 }
 
 export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
-    // Generate the dynamic system prompt
-    const systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels);
+    const conversationLimits = await getConversationLimits(userData.id, girlData.id);
+    let pictureDescriptions;
+    let videoDescriptions;
+    let systemPrompt;
+    if(messageLabels&&messageLabels.requesting_picture) {
+        if (messageLabels && messageLabels.requesting_picture) {
+            // Create base query
+            let picturesQuery = adminDb.firestore()
+                .collection('pictures')
+                .where('girlId', '==', girlData.id);
+
+            // Modify query based on user premium status
+            if (!userData.premium) {
+                // For non-premium users, only show non-premium pictures
+                picturesQuery = picturesQuery.where('isPremium', '==', false);
+            }
+            // For premium users, we don't add the filter, so they get all pictures
+
+            // Fetch pictures
+            const picturesSnapshot = await picturesQuery.get();
+
+            // Map the documents to an array of picture objects
+            let activePic = picturesSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Create an array of picture descriptions
+            pictureDescriptions = activePic.map(picture => picture.description);
+
+            // Generate the dynamic system prompt
+            systemPrompt = generateSystemPromptImage(userData, lastMessageByUser, girlData, messageLabels, conversationLimits, pictureDescriptions);
+        }
+    }else if(messageLabels&&messageLabels.requesting_video){
+        if (messageLabels && messageLabels.requesting_video) {
+            // Create base query
+            let videosQuery = adminDb.firestore()
+                .collection('videos')
+                .where('girlId', '==', girlData.id);
+
+            // Modify query based on user premium status
+            if (!userData.premium) {
+                // For non-premium users, only show non-premium pictures
+                videosQuery = videosQuery.where('isPremium', '==', false);
+            }
+            // For premium users, we don't add the filter, so they get all pictures
+
+            // Fetch pictures
+            const videosSnapshot = await videosQuery.get();
+
+            // Map the documents to an array of picture objects
+            let activePic = videosSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Create an array of picture descriptions
+            videoDescriptions = activePic.map(picture => picture.description);
+
+            // Generate the dynamic system prompt
+            systemPrompt = generateSystemPromptVideo(userData, lastMessageByUser, girlData, messageLabels, conversationLimits, videoDescriptions);
+        }
+    }else {
+        // Generate the dynamic system prompt
+        systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels, conversationLimits);
+    }
+
 
     // Prepare messages for LLM processing
     const messagesForLLM = [systemPrompt, ...conversationHistory];
 
-    // You can optionally specify preferred models in order
-    const preferredModels = [
-        "deepseek-ai/DeepSeek-V3",
-        "anthropic/claude-3-opus-20240229",
-        "mistralai/Mixtral-8x7B-Instruct-v0.1"
-    ];
 
     // Get response from LLM with fallback options
     try {
-        const assistantMessage = await getLLMResponse(messagesForLLM, preferredModels);
+        const assistantMessage = await getLLMResponse(messagesForLLM);
+        console.log(assistantMessage)
         return assistantMessage;
     } catch (error) {
         console.error("All LLM models failed:", error);

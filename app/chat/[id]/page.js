@@ -44,6 +44,7 @@ const Chat = ({params}) => {
     const [isSending, setIsSending] = useState(false);
     const loadingGirl = useStore((state) => state.loadingGirl);
     const setLoadingGirl = useStore((state) => state.setLoadingGirl);
+    const conversationLimits = useStore((state) => state.conversationLimits);
 
     useEffect(() => {
         const initializeData = async () => {
@@ -137,7 +138,7 @@ const Chat = ({params}) => {
     };
 
     const isPromptEntered = prompt.trim().length > 0;
-    const canSendMessage = user && user.freeMessages > 0
+    const canSendMessage = user && conversationLimits && conversationLimits.freeMessages > 0
 
     return (
         <StyledContainer maxWidth="sm">

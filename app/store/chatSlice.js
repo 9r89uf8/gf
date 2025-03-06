@@ -1,10 +1,12 @@
 // store/chatSlice.js
 export const createChatSlice = (set) => ({
     conversationHistory: [],
+    conversationLimits:null,
     messageSent: false,
     chats: [],
     audios: [],
     setConversationHistory: (conversationHistory) => set({ conversationHistory }),
+    setConversationLimits: (conversationLimits) => set({ conversationLimits }),
     setMessageSent: (messageSent) => set({ messageSent }),
     setAudios: (audios) => set({ audios }),
     setChats: (chats) => set({ chats }),

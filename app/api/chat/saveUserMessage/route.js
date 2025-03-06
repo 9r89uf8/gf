@@ -49,9 +49,14 @@ const validateFile = (file) => {
 
 async function getOrCreateConversationHistory(doc) {
     if (doc.exists) {
-        // Retrieve only user and assistant messages for display
-        const messages = doc.data().messages.filter(message => message.role !== 'system');
-        return messages;
+        const data = doc.data();
+        // Check if messages array exists
+        if (data.messages && Array.isArray(data.messages)) {
+            // Retrieve only user and assistant messages for display
+            return data.messages.filter(message => message.role !== 'system');
+        }
+        // If messages array doesn't exist, return empty array
+        return [];
     } else {
         // Return an empty array; system prompts will be added later for LLM processing
         return [];
@@ -120,7 +125,8 @@ export async function POST(req) {
             .doc(girlId);
 
         let doc = await conversationRef.get();
-        let conversationHistory = doc.exists ? doc.data().messages : await getOrCreateConversationHistory(doc, userData, girlData);
+        // Use updated function to get conversation history
+        let conversationHistory = await getOrCreateConversationHistory(doc);
 
         // Handle media upload
         let mediaUrl = null;
@@ -173,7 +179,7 @@ export async function POST(req) {
                         ['Explicit', 'Exposed Male Genitalia', 'Explicit Sexual Activity'].includes(label.Name)
                     )
                 ) {
-                    newUserMessage = 'Te acabo de mandar una foto de mi pito parado.';
+                    newUserMessage = 'Te acabo de mandar una foto de mi p.';
 
                     // Set explicit flag if image is explicit
                     // if (!messageLabels) messageLabels = {};
@@ -185,7 +191,7 @@ export async function POST(req) {
 
             // If it's a video, you might want to generate a thumbnail
             if (mediaType === 'video') {
-                newUserMessage = 'Te acabo de mandar un video de mi pito parado.';
+                newUserMessage = 'Te acabo de mandar un video de mi p.';
                 // You would need to implement video thumbnail generation here
                 // For now, we'll use a placeholder or skip it
                 mediaThumbnail = null;

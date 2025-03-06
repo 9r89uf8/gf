@@ -1,6 +1,8 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
+import {getConversationLimits, decrementFreeAudio} from "@/app/api/chat/conversationLimits/route";
 const { v4: uuidv4 } = require("uuid");
+
 function removeHashSymbols(text) {
     return text.replace(/#/g, '');
 }
@@ -58,10 +60,14 @@ export async function handleAudioRequest(
     userMessage,
     manualMessageType
 ) {
+    // Get conversation-specific limits instead of global userData.freeAudio
+    const conversationLimits = await getConversationLimits(userId, girlId);
+    const freeAudioRemaining = conversationLimits.freeAudio;
+
     let audioTextDescription = false;
 
-    // If freeAudio is 0, process normally (splitting the message, etc.)
-    if (userData.freeAudio === 0) {
+    // If freeAudio is 0 for this conversation, process normally
+    if (freeAudioRemaining === 0 && !userData.isPremium) {
         assistantMessageProcess = processAssistantMessage(userWantsAudio.content, userMessage);
         if(!manualMessageType){
             assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
@@ -101,12 +107,12 @@ export async function handleAudioRequest(
             // Push just one message if description is default/duplicative
             conversationHistory.push({ role: "assistant", content: userWantsAudio.content });
         }
-
     }
 
     // Check if the user's text contains the word "gemir" (case-insensitive)
     if (userMessage.content.toLowerCase().includes("gemir") ||
-        userMessage.content.toLowerCase().includes("gemidos" || userMessage.content.toLowerCase().includes("jemir"))) {
+        userMessage.content.toLowerCase().includes("gemidos") ||
+        userMessage.content.toLowerCase().includes("jemir")) {
         // Choose one audio URL at random
         const selectedUrl =
             moanAudioUrls[Math.floor(Math.random() * moanAudioUrls.length)];
@@ -122,20 +128,16 @@ export async function handleAudioRequest(
                 assistantMessageProcess[0].audioData = audioBase64;
             }
 
-            // Optionally, update the conversation history if needed (messages are already added below)
-            // Decrement freeAudio count if required by your business logic:
-            if (userData.freeAudio >= 1) {
-                const userRef = adminDb.firestore().collection('users').doc(userId);
-                await userRef.update({
-                    freeAudio: adminDb.firestore.FieldValue.increment(-1)
-                });
+            // Decrement freeAudio count in the conversation-specific limits
+            if (freeAudioRemaining >= 1 && !userData.isPremium) {
+                await decrementFreeAudio(userId, girlId);
             }
         } catch (error) {
             console.error("Error fetching or converting moan audio:", error);
             // Fallback: you could set response.type = 'text' or proceed with the default generation
             assistantMessageProcess[0].type = 'text';
         }
-    } else if (userData.freeAudio >= 1) {
+    } else if (freeAudioRemaining >= 1 || userData.isPremium) {
         // Proceed with normal audio generation using ElevenLabs
         const responseObj = audioTextDescription ? assistantMessageProcess[1] : assistantMessageProcess[0];
         const removeEmojisAndHash = (str) => {
@@ -154,13 +156,14 @@ export async function handleAudioRequest(
         } else {
             responseObj.type = 'text';
         }
-        const userRef = adminDb.firestore().collection('users').doc(userId);
-        await userRef.update({
-            freeAudio: adminDb.firestore.FieldValue.increment(-1)
-        });
+
+        // Decrement the conversation-specific freeAudio count
+        if (!userData.isPremium) {
+            await decrementFreeAudio(userId, girlId);
+        }
     }
 
-// Instead of blindly adding every message in assistantMessageProcess:
+    // Add messages to displayMessages collection
     const displayMessageRef = adminDb.firestore()
         .collection('users')
         .doc(userId)
@@ -168,15 +171,11 @@ export async function handleAudioRequest(
         .doc(girlId)
         .collection('displayMessages');
 
-    if (userData.freeAudio === 0) {
+    if (freeAudioRemaining === 0 && !userData.isPremium) {
         // When freeAudio is 0, only one message exists.
         for (const message of assistantMessageProcess) {
             await displayMessageRef.add(message);
         }
-        // await displayMessageRef.add({
-        //     ...assistantMessageProcess[0],
-        //     content: userWantsAudio.content
-        // });
     } else if (audioTextDescription && userWantsAudio.description && userWantsAudio.description !== userWantsAudio.content) {
         // For explicit audio requests, add two messages:
         await displayMessageRef.add({
@@ -193,7 +192,6 @@ export async function handleAudioRequest(
             content: userWantsAudio.content
         });
     }
-
 
     return {
         success: true,

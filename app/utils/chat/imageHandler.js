@@ -1,5 +1,6 @@
 // app/utils/chat/imageHandler.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
+import {getConversationLimits, decrementFreeImage} from "@/app/api/chat/conversationLimits/route";
 const {v4: uuidv4} = require("uuid");
 
 function removeHashSymbols(text) {
@@ -15,8 +16,10 @@ export async function handleImageRequest(
     girl,
     userMessage
 ) {
+    const conversationLimits = await getConversationLimits(userId, girlId);
+    const freeImagesRemaining = conversationLimits.freeImages;
 // Handle premium users and users with free images
-    if ((userData.premium || userData.freeImages > 0)&&girl.imagesEnabled) {
+    if ((userData.premium || freeImagesRemaining > 0)&&girl.imagesEnabled) {
         let pictureDescription = userWantsImage.description.toLowerCase();
 
         // Create base query
@@ -88,12 +91,10 @@ export async function handleImageRequest(
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         });
 
+
         // Update user's freeImages count only if they're not premium
-        if (!userData.premium && userData.freeImages > 0) {
-            const userRef = adminDb.firestore().collection('users').doc(userId);
-            await userRef.update({
-                freeImages: adminDb.firestore.FieldValue.increment(-1)
-            });
+        if (!userData.premium && freeImagesRemaining > 0) {
+            await decrementFreeImage(userId, girlId)
         }
 
         return { success: true, updatedHistory: conversationHistory };

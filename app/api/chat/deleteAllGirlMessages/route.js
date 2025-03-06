@@ -120,22 +120,18 @@ export async function POST(req) {
             }
         }
 
-        // Function to delete a document and its subcollections
-        async function deleteDocumentAndSubcollections(docRef) {
-            // List subcollections under this document
-            const subcollections = await docRef.listCollections();
-            for (const subcollection of subcollections) {
-                await deleteCollection(subcollection);
-            }
-            // Delete the document itself
-            await docRef.delete();
-        }
+        // Delete the displayMessages subcollection
+        await deleteCollection(displayMessagesRef);
 
-        // Delete the conversation and its subcollections
-        await deleteDocumentAndSubcollections(conversationRef);
+        // Update the conversation document to remove the messages array
+        await conversationRef.update({
+            messages: adminDb.firestore.FieldValue.delete(),
+            lastMessage: adminDb.firestore.FieldValue.delete(),
+
+        });
 
         return NextResponse.json({
-            message: 'Data for the girl deleted successfully and archived',
+            message: 'Messages deleted successfully and archived',
             archivedConversationId: archivedConversationRef.id
         }, { status: 200 });
     } catch (error) {
