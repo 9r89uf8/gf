@@ -499,7 +499,6 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
     // Get response from LLM with fallback options
     try {
         const assistantMessage = await getLLMResponse(messagesForLLM);
-        console.log(assistantMessage)
         return assistantMessage;
     } catch (error) {
         console.error("All LLM models failed:", error);

@@ -113,7 +113,7 @@ export async function POST(req) {
             const hasMessagesLeft = await hasFreeMessagesLeft(userId, girlId);
 
             // If premium user or has free messages left, process the message
-            if (userData.isPremium || hasMessagesLeft) {
+            if (userData.premium || hasMessagesLeft) {
                 // Analyze message content with AWS Bedrock
                 let messageLabels = null;
                 if (userMessage.content) {
@@ -161,10 +161,10 @@ export async function POST(req) {
 
                 // Logic for determining whether to use audio based on conversation limits
                 if (finalMessageType === 'text') {
-                    const audioChance = userData.isPremium ? 1/4 : 1/2;
+                    const audioChance = userData.premium ? 1/4 : 1/2;
                     const conversationLimits = await getConversationLimits(userId, girlId);
 
-                    if (userData.isPremium || conversationLimits.freeAudio > 0) {
+                    if (userData.premium || conversationLimits.freeAudio > 0) {
                         if (Math.random() < audioChance) {
                             finalMessageType = 'audio';
                             if (!parsedContent.audio.description) {
@@ -221,8 +221,8 @@ export async function POST(req) {
                         // Define a list of generic replacement messages
                         const genericMessages = [
                             "jajaja",
-                            "muestrame tu pene",
-                            "como es tu pene?",
+                            "muestrame tu p",
+                            "como es tu p?",
                             "k haces?",
                             "tengo unas ganas tremendas"
                         ];
@@ -272,18 +272,73 @@ export async function POST(req) {
                 typeOfMessage = finalMessageType;
 
                 // Decrement free messages count if not premium
-                if (!userData.isPremium) {
+                if (!userData.premium) {
                     await decrementFreeMessages(userId, girlId);
                 }
+
+                // After displaying the text messages, check if we should also send an image
+                const shouldSendAdditionalImage = async () => {
+                    // Get updated conversation limits to check free image count
+                    const currentLimits = await getConversationLimits(userId, girlId);
+
+                    // Calculate chance based on premium status
+                    const imageChance = userData.premium ? 1/7 : 1/3;
+
+                    // Check if user is eligible to receive an image
+                    if ((userData.premium || currentLimits.freeImages > 0) &&
+                        Math.random() < imageChance) {
+                        messageLabels = {
+                            is_explicit: false,
+                            requesting_picture: true,
+                            requesting_audio: false,
+                            requesting_video: false,
+                            emotional_tone: 'sexy'
+                        }
+
+                        // Get AI response for this specific message
+                        let assistantMessage = await handleLLMInteraction(
+                            userData,
+                            userMessage,
+                            girlData,
+                            updatedConversationHistory,
+                            messageLabels
+                        );
+
+                        if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
+                            assistantMessage = handleRefusedAnswer(userData);
+                        }
+
+                        // Process message type with the user message ID
+                        const { messageType, assistantMessageProcess, parsedContent } =
+                            await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
+
+                        // Send additional image without changing finalMessageType
+                        await handleImageRequest(
+                            parsedContent.image,
+                            userData,
+                            girlId,
+                            userId,
+                            updatedConversationHistory,
+                            girlData,
+                            userMessage
+                        );
+
+                        return true;
+                    }
+                    return false;
+                };
+
+                // Try to send additional image
+                const sentAdditionalImage = await shouldSendAdditionalImage();
             } else {
                 // If out of free messages and not premium, add a message telling user they're out of credits
                 const outOfCreditsMessage = {
                     uid: uuidv4(),
                     role: "assistant",
                     liked: false,
-                    displayLink: false,
+                    displayLink: true,
                     respondingTo: userMessage.content,
-                    content: "Lo siento, has agotado tus mensajes gratuitos con esta chica. Por favor, actualiza a Premium para continuar nuestra conversación o habla con otra chica.",
+                    content: "compra premium para seguir hablando ;)",
                     timestamp: adminDb.firestore.FieldValue.serverTimestamp()
                 };
 

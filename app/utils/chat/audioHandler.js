@@ -67,7 +67,7 @@ export async function handleAudioRequest(
     let audioTextDescription = false;
 
     // If freeAudio is 0 for this conversation, process normally
-    if (freeAudioRemaining === 0 && !userData.isPremium) {
+    if (freeAudioRemaining === 0 && !userData.premium) {
         assistantMessageProcess = processAssistantMessage(userWantsAudio.content, userMessage);
         if(!manualMessageType){
             assistantMessageProcess[assistantMessageProcess.length - 1].displayLink = true;
@@ -129,7 +129,7 @@ export async function handleAudioRequest(
             }
 
             // Decrement freeAudio count in the conversation-specific limits
-            if (freeAudioRemaining >= 1 && !userData.isPremium) {
+            if (freeAudioRemaining >= 1 && !userData.premium) {
                 await decrementFreeAudio(userId, girlId);
             }
         } catch (error) {
@@ -137,7 +137,7 @@ export async function handleAudioRequest(
             // Fallback: you could set response.type = 'text' or proceed with the default generation
             assistantMessageProcess[0].type = 'text';
         }
-    } else if (freeAudioRemaining >= 1 || userData.isPremium) {
+    } else if (freeAudioRemaining >= 1 || userData.premium) {
         // Proceed with normal audio generation using ElevenLabs
         const responseObj = audioTextDescription ? assistantMessageProcess[1] : assistantMessageProcess[0];
         const removeEmojisAndHash = (str) => {
@@ -158,7 +158,7 @@ export async function handleAudioRequest(
         }
 
         // Decrement the conversation-specific freeAudio count
-        if (!userData.isPremium) {
+        if (!userData.premium) {
             await decrementFreeAudio(userId, girlId);
         }
     }
@@ -171,7 +171,7 @@ export async function handleAudioRequest(
         .doc(girlId)
         .collection('displayMessages');
 
-    if (freeAudioRemaining === 0 && !userData.isPremium) {
+    if (freeAudioRemaining === 0 && !userData.premium) {
         // When freeAudio is 0, only one message exists.
         for (const message of assistantMessageProcess) {
             await displayMessageRef.add(message);
