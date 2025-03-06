@@ -19,7 +19,6 @@ import { useRouter } from 'next/navigation';
 import ConversationHistory from '@/app/components/chat/ConversationHistory';
 import GirlHeader from '@/app/components/chat/GirlHeader';
 import {useRealtimeConversation} from "@/app/components/hooks/UseRealtimeChats";
-import {useRealtimeGirlStatus} from "@/app/components/hooks/UseRealtimeGirlStatus";
 import {useMessageResponder} from "@/app/components/hooks/UseMessageResponder";
 
 // Import the new components

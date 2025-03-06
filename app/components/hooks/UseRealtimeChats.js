@@ -7,6 +7,7 @@ import { useStore } from '@/app/store/store';
 export const useRealtimeConversation = ({ userId, girlId }) => {
     const setConversationHistory = useStore((state) => state.setConversationHistory);
     const setConversationLimits = useStore((state) => state.setConversationLimits);
+    const setGirlIsTyping = useStore((state) => state.setGirlIsTyping);
 
     useEffect(() => {
         if (!userId || !girlId) return;
@@ -30,6 +31,10 @@ export const useRealtimeConversation = ({ userId, girlId }) => {
         const limitsUnsubscribe = onSnapshot(conversationDocRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 const data = docSnapshot.data();
+                if(data){
+                    setGirlIsTyping(data.girlIsTyping);
+                }
+
                 // Check if limits exist in the document
                 if (data && data.limits) {
                     setConversationLimits({

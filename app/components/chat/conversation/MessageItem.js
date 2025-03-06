@@ -173,6 +173,7 @@ const MessageItem = ({
     const isUser = message.role === 'user';
     const showAvatar = index === 0 || conversationHistory[index - 1]?.role !== message.role;
     const user = useStore((state) => state.user);
+    const girlIsTyping = useStore((state) => state.girl.girlIsTyping);
 
     // Local state to control animation for assistant messages.
     const [animate, setAnimate] = useState(false);
@@ -188,20 +189,6 @@ const MessageItem = ({
         }
         return new Date(timestamp);
     }
-
-    const isLastSeenUserMessage = () => {
-        if (!isUser || !message.seen) return false;
-
-        // Get all messages after this one
-        const laterMessages = conversationHistory.slice(index + 1);
-
-        // Check if there are any seen user messages after this one
-        const hasSeenUserMessagesAfter = laterMessages.some(
-            (msg) => msg.role === 'user' && msg.seen
-        );
-
-        return !hasSeenUserMessagesAfter;
-    };
 
     // Check if this is an assistant message and there's another assistant message before it
     const isConsecutiveAssistantMessage = () => {
@@ -227,8 +214,6 @@ const MessageItem = ({
         }
     };
 
-    const shouldShowTypingIndicator = isLastSeenUserMessage() && girl.girlIsTyping;
-
     // When an assistant message is clicked, trigger both like and animation.
     const handleBubbleClick = () => {
         if (!isUser) {
@@ -242,7 +227,7 @@ const MessageItem = ({
     };
 
     return (
-        <Box sx={{ mb: shouldShowTypingIndicator ? 0 : 2 }}>
+        <Box sx={{ mb: 2 }}>
             <Box
                 sx={{
                     display: 'flex',
@@ -365,38 +350,10 @@ const MessageItem = ({
                     </Box>
                 </Badge>
             </Box>
-
-            {shouldShowTypingIndicator && (
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        mt: 3,
-                        mx: 2,
-                    }}
-                >
-                    <Avatar
-                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
-                        sx={{
-                            width: 48,
-                            height: 48,
-                            mb: 1,
-                            marginRight: 1,
-                            backgroundImage:
-                                'linear-gradient(to right, #ff8fab, #fb6f92)',
-                        }}
-                    />
-                    <TypingIndicator>
-                        <TypingDot delay="0s" />
-                        <TypingDot delay="0.2s" />
-                        <TypingDot delay="0.4s" />
-                    </TypingIndicator>
-                </Box>
-            )}
         </Box>
     );
 };
+
 
 export default MessageItem;
 

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import MessageList from "@/app/components/chat/conversation/MessageList";
 import ImageModal from "@/app/components/chat/conversation/ImageModal";
 import {Box, CircularProgress, Container, styled} from '@mui/material';
+import {RealisticTypingIndicator} from "@/app/components/chat/conversation/TypingIndicatorComponent";
 
 function ConversationHistory({ conversationHistory, loading, handleLike, girl }) {
     const messagesEndRef = useRef(null);
@@ -55,6 +56,7 @@ function ConversationHistory({ conversationHistory, loading, handleLike, girl })
                 girl={girl}
                 getLastUserMessage={getLastUserMessage}
             />
+            <RealisticTypingIndicator girl={girl} />
             <div ref={messagesEndRef} />
             <ImageModal
                 open={openModal}

@@ -9,7 +9,6 @@ import {
     Box
 } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import SendIcon from '@mui/icons-material/Send';
 import { motion } from 'framer-motion';
 import AudioRecorder from "@/app/components/chat/conversation/AudioRecorder";
