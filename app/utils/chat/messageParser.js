@@ -63,15 +63,19 @@ function parseAssistantMessageAudio(message) {
 
 // Main Message Type Handler
 export async function handleMessageType(assistantMessage, respondingToMessageId = null, userMessage) {
+
     const userWantsImage = parseAssistantMessageImage(assistantMessage);
     const userWantsVideo = parseAssistantMessageVideo(assistantMessage);
     const userWantsAudio = parseAssistantMessageAudio(assistantMessage);
     const assistantMessageProcess = processAssistantMessage(assistantMessage, respondingToMessageId, userMessage);
 
+
+
     const messageType = userWantsAudio.description ? 'audio' :
         userWantsImage.description ? 'image' :
             userWantsVideo.description ? 'video' :
                 'text';
+
 
     return {
         assistantMessageProcess,

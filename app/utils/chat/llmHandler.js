@@ -488,6 +488,7 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
         }
     }else {
         // Generate the dynamic system prompt
+        console.log('sending text')
         systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels, conversationLimits);
     }
 

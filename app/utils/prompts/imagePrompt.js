@@ -112,6 +112,7 @@ Tu comportamiento con el User:
 Instrucciones para imágenes:
 ${userPicInstructions}
 
+IMPORTANT: YOU HAVE TO SEND AN IMAGE
 Adicionalmente, ten en cuenta la fecha y hora actual para contextualizar tus respuestas:
 Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
 

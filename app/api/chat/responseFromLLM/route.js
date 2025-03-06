@@ -304,24 +304,23 @@ export async function POST(req) {
                             messageLabels
                         );
 
-                        if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
-                            assistantMessage = handleRefusedAnswer(userData);
-                        }
-
                         // Process message type with the user message ID
-                        const { messageType, assistantMessageProcess, parsedContent } =
-                            await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
+                        let  parsedContentTwo  = await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
+
 
                         // Send additional image without changing finalMessageType
-                        await handleImageRequest(
-                            parsedContent.image,
-                            userData,
-                            girlId,
-                            userId,
-                            updatedConversationHistory,
-                            girlData,
-                            userMessage
-                        );
+                        if(parsedContentTwo.messageType === 'image'){
+                            await handleImageRequest(
+                                parsedContentTwo.parsedContent.image,
+                                userData,
+                                girlId,
+                                userId,
+                                updatedConversationHistory,
+                                girlData,
+                                userMessage
+                            );
+                        }
+
 
                         return true;
                     }
@@ -329,7 +328,7 @@ export async function POST(req) {
                 };
 
                 // Try to send additional image
-                const sentAdditionalImage = await shouldSendAdditionalImage();
+                await shouldSendAdditionalImage();
             } else {
                 // If out of free messages and not premium, add a message telling user they're out of credits
                 const outOfCreditsMessage = {
