@@ -211,7 +211,7 @@ export async function POST(req) {
         // Create base message object for Firebase
         const messageData = {
             role: 'user',
-            content: mediaType==='image'?'':mediaType==='video'?'':userMessage,
+            content: mediaType==='image'?newUserMessage:mediaType==='video'?newUserMessage:userMessage,
             image: mediaUrl,
             mediaType: mediaType,
             retryCount: 0,
