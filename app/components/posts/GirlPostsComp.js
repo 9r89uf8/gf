@@ -132,7 +132,8 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
     const videoRef = useRef(null);
 
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [videoDuration, setVideoDuration] = useState(null);
+    // Fixed duration of 5 seconds for preview
+    const fixedDuration = 5;
     const [videoPlayerKey, setVideoPlayerKey] = useState(Date.now());
 
     const handleLike = async () => {
@@ -157,12 +158,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
         setIsFullscreen(false);
     };
 
-    // Custom event handler for video metadata loaded
-    const handleVideoMetadata = (player) => {
-        if (player && player.duration) {
-            setVideoDuration(player.duration());
-        }
-    };
+    // No longer need video metadata handler since we're using a fixed duration
 
     return (
         <>
@@ -222,16 +218,15 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                                     },
                                     autoplay: false,
                                 }}
-                                onReady={handleVideoMetadata}
+                                // No longer need onReady handler
                             />
-                            {videoDuration && canViewPremiumContent && (
-                                <DurationBadge>
-                                    <AccessTimeIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                                    <Typography variant="caption">
-                                        {formatDuration(videoDuration)}
-                                    </Typography>
-                                </DurationBadge>
-                            )}
+                            {/* Show duration badge for all users regardless of premium status */}
+                            <DurationBadge>
+                                <AccessTimeIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                <Typography variant="caption">
+                                    {formatDuration(fixedDuration)}
+                                </Typography>
+                            </DurationBadge>
                             {!canViewPremiumContent && (
                                 <BlurredOverlay>
                                     <LockIcon sx={{ fontSize: 60, mb: 2, color: 'white' }} />
@@ -300,4 +295,3 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
 }
 
 export default GirlPostComp;
-
