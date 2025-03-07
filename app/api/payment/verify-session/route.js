@@ -18,9 +18,8 @@ export async function POST(req) {
             const userId = session.metadata.userId;
 
 
-            // After successful update of quinielas, update the user's quinielas amount
             const userRef = adminDb.firestore().collection('users').doc(userId);
-            // Update user's quinielas amount to the length of the updated quinielas
+
 
             const membershipDoc = await adminDb.firestore().collection('membership').doc('aux7IacA81ktapWe1hrr').get();
 
@@ -33,8 +32,6 @@ export async function POST(req) {
             const expirationTimestamp = addDays(currentTimestamp, membershipData.duration);
 
             await userRef.update({
-                freeMessages: 1000,
-                freeAudio: 100,
                 premium: true,
                 expired: false,
                 expirationDate: timestamp.fromDate(expirationTimestamp)

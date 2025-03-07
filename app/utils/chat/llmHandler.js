@@ -12,7 +12,7 @@ const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels, conversationLimits) {
 
     let userAudioInstructions
-    if(conversationLimits.freeAudio>0){
+    if(user.premium||conversationLimits.freeAudio>0){
         userAudioInstructions = `
  The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.

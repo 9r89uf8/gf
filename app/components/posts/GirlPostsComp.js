@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Button,
@@ -66,6 +66,7 @@ const BlurredOverlay = styled(Box)({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
 });
 
 const Actions = styled(Box)(({ theme }) => ({
@@ -78,7 +79,6 @@ const Description = styled(Box)(({ theme }) => ({
     padding: theme.spacing(0, 2, 2),
 }));
 
-
 const PremiumButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
     color: '#f8f9fa',
@@ -87,6 +87,19 @@ const PremiumButton = styled(Button)(({ theme }) => ({
     '&:hover': {
         backgroundImage: 'linear-gradient(45deg, #f39c12, #f1c40f)',
     },
+}));
+
+const DurationBadge = styled(Box)(({ theme }) => ({
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: 'white',
+    padding: theme.spacing(0.5, 1),
+    borderRadius: theme.shape.borderRadius,
+    zIndex: 5,
+    display: 'flex',
+    alignItems: 'center',
 }));
 
 // Modal Style
@@ -103,16 +116,24 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
+// Format time function
+const formatDuration = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
 
 // Main Component
-
 function GirlPostComp({ girl, user, post, index, onLike }) {
     const router = useRouter();
     const isUserLoggedIn = !!user;
     const isUserPremium = user?.premium;
     const canViewPremiumContent = isUserPremium || !post.isPremium;
+    const videoRef = useRef(null);
 
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [videoDuration, setVideoDuration] = useState(null);
+    const [videoPlayerKey, setVideoPlayerKey] = useState(Date.now());
 
     const handleLike = async () => {
         if (isUserLoggedIn) {
@@ -134,6 +155,13 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
 
     const handleCloseFullscreen = () => {
         setIsFullscreen(false);
+    };
+
+    // Custom event handler for video metadata loaded
+    const handleVideoMetadata = (player) => {
+        if (player && player.duration) {
+            setVideoDuration(player.duration());
+        }
     };
 
     return (
@@ -178,19 +206,44 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                             )}
                         </>
                     ) : post.video ? (
-                        <VideoPlayer
-                            options={{
-                                controls: true,
-                                sources: [{
-                                    src: `https://d3sog3sqr61u3b.cloudfront.net/${post.video}`,
-                                    type: 'video/mp4'
-                                }],
-                                controlBar: {
-                                    volumePanel: true,
-                                    fullscreenToggle: false,
-                                },
-                            }}
-                        />
+                        <Box sx={{ position: 'relative' }}>
+                            <VideoPlayer
+                                key={videoPlayerKey}
+                                ref={videoRef}
+                                options={{
+                                    controls: canViewPremiumContent,
+                                    sources: [{
+                                        src: `https://d3sog3sqr61u3b.cloudfront.net/${post.video}`,
+                                        type: 'video/mp4'
+                                    }],
+                                    controlBar: {
+                                        volumePanel: true,
+                                        fullscreenToggle: false,
+                                    },
+                                    autoplay: false,
+                                }}
+                                onReady={handleVideoMetadata}
+                            />
+                            {videoDuration && canViewPremiumContent && (
+                                <DurationBadge>
+                                    <AccessTimeIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                    <Typography variant="caption">
+                                        {formatDuration(videoDuration)}
+                                    </Typography>
+                                </DurationBadge>
+                            )}
+                            {!canViewPremiumContent && (
+                                <BlurredOverlay>
+                                    <LockIcon sx={{ fontSize: 60, mb: 2, color: 'white' }} />
+                                    <Typography variant="h5" align="center" gutterBottom style={{ color: 'white' }}>
+                                        Contenido Premium
+                                    </Typography>
+                                    <PremiumButton variant="contained" onClick={handleBuyPremium}>
+                                        Comprar Premium
+                                    </PremiumButton>
+                                </BlurredOverlay>
+                            )}
+                        </Box>
                     ) : null}
                 </MediaWrapper>
 
