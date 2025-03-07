@@ -8,7 +8,7 @@ const getRandomDelay = (min, max) => {
 // Function to set a response delay for more realistic conversations
 export async function setResponseDelay() {
     // Set a random delay between 4-8 seconds (customize as needed)
-    const delaySeconds = getRandomDelay(4, 12);
+    const delaySeconds = getRandomDelay(2, 6);
     const currentTime = new Date();
     const respondUntil = new Date(currentTime.getTime() + (delaySeconds * 1000));
 
