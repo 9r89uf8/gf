@@ -79,6 +79,13 @@ const Description = styled(Box)(({ theme }) => ({
     padding: theme.spacing(0, 2, 2),
 }));
 
+const DurationText = styled(Typography)(({ theme }) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing(1),
+}));
+
 const PremiumButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
     color: '#f8f9fa',
@@ -259,6 +266,14 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
 
                 {/* Description */}
                 <Description>
+                    <Typography variant="h6">
+                        {post.video && (
+                            <DurationText variant="h5" component="span">
+                                <AccessTimeIcon sx={{ fontSize: 30, ml: 1, mr: 0.5, marginLeft: 0.5 }} />
+                                {formatDuration(fixedDuration)}
+                            </DurationText>
+                        )}
+                    </Typography>
                     <Typography variant="h6">
                         <strong>{post.girlName}</strong> {post.description}
                     </Typography>
