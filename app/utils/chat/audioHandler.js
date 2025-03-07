@@ -58,7 +58,8 @@ export async function handleAudioRequest(
     conversationHistory,
     elevenLabsKey,
     userMessage,
-    manualMessageType
+    manualMessageType,
+    conversationRef
 ) {
     // Get conversation-specific limits instead of global userData.freeAudio
     const conversationLimits = await getConversationLimits(userId, girlId);
@@ -173,10 +174,14 @@ export async function handleAudioRequest(
 
     if (freeAudioRemaining === 0 && !userData.premium) {
         // When freeAudio is 0, only one message exists.
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         for (const message of assistantMessageProcess) {
             await displayMessageRef.add(message);
         }
     } else if (audioTextDescription && userWantsAudio.description && userWantsAudio.description !== userWantsAudio.content) {
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         // For explicit audio requests, add two messages:
         await displayMessageRef.add({
             ...assistantMessageProcess[0],
@@ -187,6 +192,8 @@ export async function handleAudioRequest(
             content: userWantsAudio.description
         });
     } else {
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         await displayMessageRef.add({
             ...assistantMessageProcess[1],
             content: userWantsAudio.content

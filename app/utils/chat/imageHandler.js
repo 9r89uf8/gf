@@ -14,7 +14,8 @@ export async function handleImageRequest(
     userId,
     conversationHistory,
     girl,
-    userMessage
+    userMessage,
+    conversationRef
 ) {
     const conversationLimits = await getConversationLimits(userId, girlId);
     const freeImagesRemaining = conversationLimits.freeImages;
@@ -81,6 +82,8 @@ export async function handleImageRequest(
         // Set content text
         let contentText = userWantsImage.content === '' ? '😘' : userWantsImage.content;
 
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         // Add message with selected image
         await displayMessageRef.add({
             role: 'assistant',
@@ -128,6 +131,8 @@ export async function handleImageRequest(
             .doc(girlId)
             .collection('displayMessages');
 
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         // Add message with display link if images are enabled
         for (const [index, response] of assistantMessageProcess.entries()) {
             if (index === assistantMessageProcess.length - 1 && girl.imagesEnabled) {

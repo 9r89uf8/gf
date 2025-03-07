@@ -14,7 +14,8 @@ export async function handleVideoRequest(
     userId,
     conversationHistory,
     girl,
-    userMessage
+    userMessage,
+    conversationRef
 ) {
     const conversationLimits = await getConversationLimits(userId, girlId);
     const freeImagesRemaining = conversationLimits.freeImages;
@@ -79,6 +80,8 @@ export async function handleVideoRequest(
             contentText = userWantsVideo.content;
         }
 
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         // Add the assistant's message with the selected video
         await displayMessageRef.add({
             role: 'assistant',
@@ -125,6 +128,8 @@ export async function handleVideoRequest(
             .doc(girlId)
             .collection('displayMessages');
 
+        // Display the messages
+        await conversationRef.update({ girlIsTyping: false });
         // Add messages with display link for last message
         for (const [index, response] of assistantMessageProcess.entries()) {
             if (index === assistantMessageProcess.length - 1 && girl.videosEnabled) {

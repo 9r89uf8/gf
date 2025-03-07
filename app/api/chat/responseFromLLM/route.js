@@ -161,7 +161,7 @@ export async function POST(req) {
 
                 // Logic for determining whether to use audio based on conversation limits
                 if (finalMessageType === 'text') {
-                    const audioChance = userData.premium ? 1/4 : 1/200;
+                    const audioChance = userData.premium ? 1/4 : 1/2;
                     const conversationLimits = await getConversationLimits(userId, girlId);
 
                     if (userData.premium || conversationLimits.freeAudio > 0) {
@@ -188,7 +188,8 @@ export async function POST(req) {
                             updatedConversationHistory,
                             elevenK,
                             userMessage,
-                            manualMessageType
+                            manualMessageType,
+                            conversationRef
                         );
                         break;
 
@@ -200,7 +201,8 @@ export async function POST(req) {
                             userId,
                             updatedConversationHistory,
                             girlData,
-                            userMessage
+                            userMessage,
+                            conversationRef
                         );
                         break;
 
@@ -212,7 +214,8 @@ export async function POST(req) {
                             userId,
                             updatedConversationHistory,
                             girlData,
-                            userMessage
+                            userMessage,
+                            conversationRef
                         );
                         break;
 
@@ -221,8 +224,8 @@ export async function POST(req) {
                         // Define a list of generic replacement messages
                         const genericMessages = [
                             "jajaja",
-                            "muestrame tu p",
-                            "como es tu p?",
+                            "muestrame tu pene",
+                            "como es tu pene?",
                             "k haces?",
                             "tengo unas ganas tremendas"
                         ];
@@ -264,6 +267,7 @@ export async function POST(req) {
                         });
 
                         // Display the messages
+                        await conversationRef.update({ girlIsTyping: false });
                         for (const response of assistantMessageProcess) {
                             await displayMessageRef.add(response);
                         }
@@ -282,10 +286,10 @@ export async function POST(req) {
                     const currentLimits = await getConversationLimits(userId, girlId);
 
                     // Calculate chance based on premium status
-                    const imageChance = userData.premium ? 1/7 : 1/100;
+                    const imageChance = userData.premium ? 1/7 : 1/3;
 
                     // Check if user is eligible to receive an image
-                    if ((userData.premium || currentLimits.freeImages > 0) &&
+                    if ((userData.premium || currentLimits.freeImages > 0 && finalMessageType !== 'image') &&
                         Math.random() < imageChance) {
                         messageLabels = {
                             is_explicit: false,
