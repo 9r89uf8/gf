@@ -1,56 +1,12 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
-import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
-import { v4 as uuidv4 } from "uuid";
+
 import {NextResponse} from "next/server";
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const axios = require("axios");
-const fs = require("fs");
+
 
 export const dynamic = 'force-dynamic';
 
-// Set the AWS region
-const REGION = "us-east-2"; // e.g. "us-east-1"
-
-// Create an Amazon S3 service client object.
-const s3Client = new S3Client({ region: REGION, credentials: {
-        accessKeyId: process.env.STHREE,
-        secretAccessKey: process.env.STHREESEC,
-    }});
-
-const uploadToS3 = (file, fileName) => {
-    return new Promise(async (resolve, reject) => {
-        let extension;
-        if (file.type === 'video/mp4') extension = '.mp4';
-        else if (file.type === 'image/jpeg') extension = '.jpeg';
-        else if (file.type === 'image/png') extension = '.png';
-        // Add other mimetypes here as necessary...
-
-        // Check if extension was determined, reject if not
-        if (!extension) {
-            reject(new Error('File type not supported'));
-            return;
-        }
-
-        const buffer = await file.arrayBuffer();
-        const params = {
-            Bucket: 'finaltw',
-            Key: `${fileName}${extension}`,
-            Body: Buffer.from(buffer),
-            ACL: 'private',
-            ContentType: file.type,
-        };
-
-        s3Client.send(new PutObjectCommand(params))
-            .then(() => {
-                resolve(`https://finaltw.s3.amazonaws.com/${fileName}${extension}`);
-            })
-            .catch((error) => {
-                reject(error);
-            });
-    });
-};
 
 export async function POST(req) {
     try {
@@ -84,20 +40,25 @@ export async function POST(req) {
 
 
 
-        let fileUrl = null;
-        if (file) {
-            const fileName = uuidv4();
-            const fileType = file.type.split('/')[1]; // Assuming the mimetype is something like 'video/mp4'
+        const fileKey = formData.get('fileKey');
+        // Then store fileKey in your post record, e.g.:
+        // Extract the extension from the fileKey
+        const extension = fileKey.split('.').pop().toLowerCase();
+        let mediaType = null;
 
-
-            const url = await uploadToS3(file, fileName);
-
-            if (file.type.startsWith('image/')) {
-                postRecord.image = `${fileName}.${fileType}`;
-            } else if (file.type.startsWith('video/')) {
-                postRecord.video = `${fileName}.${fileType}`;
-            }
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+            mediaType = 'image';
+        } else if (['mp4', 'mov', 'avi'].includes(extension)) {
+            mediaType = 'video';
         }
+
+        // Then add to your postRecord
+        if (mediaType === 'image') {
+            postRecord.image = fileKey;
+        } else if (mediaType === 'video') {
+            postRecord.video = fileKey;
+        }
+        postRecord.mediaType = mediaType;
 
         let postRef
         if(postRecord.image){

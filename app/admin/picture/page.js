@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
-import { addPicture } from '@/app/services/girlService';
+import { addPicture, uploadFileToS3 } from '@/app/services/girlService';
 import { useStore } from '@/app/store/store';
 
 // Styled components (unchanged)
@@ -106,12 +106,23 @@ const AddPicture = () => {
             return;
         }
 
+        let fileKey = null;
+        if (image) {
+            try {
+                fileKey = await uploadFileToS3(image);
+            } catch (error) {
+                console.error('Error uploading fileee:', error.message);
+                alert('File upload failed.');
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append('description', description);
         formData.append('premium', isPremium ? 'true' : 'false');
         formData.append('girlId', selectedGirl); // Add the selected girl's ID
-        if (image) {
-            formData.append('image', image);
+        if (fileKey) {
+            formData.append('fileKey', fileKey);
         }
 
         try {
