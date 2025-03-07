@@ -269,6 +269,7 @@ export async function POST(req) {
                         // Display the messages
                         await conversationRef.update({ girlIsTyping: false });
                         for (const response of assistantMessageProcess) {
+                            typeOfMessageContent = response.content;
                             await displayMessageRef.add(response);
                         }
                 }
