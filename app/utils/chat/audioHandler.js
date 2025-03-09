@@ -192,7 +192,8 @@ export async function handleAudioRequest(
         });
     } else {
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        // Display the messages
+        await updateGirIsTyping(userId, girlId)
         await displayMessageRef.add({
             ...assistantMessageProcess[1],
             content: userWantsAudio.content

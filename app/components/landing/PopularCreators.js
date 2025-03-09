@@ -24,7 +24,7 @@ const staticGirls = [
         followers: 60240,
         bio: 'Hola....',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down',
-        texting: false,
+        texting: true,
         verified: true,
         verifiedType: 'blue'
     },

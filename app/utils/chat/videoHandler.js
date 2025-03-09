@@ -128,7 +128,8 @@ export async function handleVideoRequest(
             .collection('displayMessages');
 
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        // Display the messages
+        await updateGirIsTyping(userId, girlId)
         // Add messages with display link for last message
         for (const [index, response] of assistantMessageProcess.entries()) {
             if (index === assistantMessageProcess.length - 1 && girl.videosEnabled) {

@@ -133,7 +133,8 @@ export async function handleImageRequest(
             .collection('displayMessages');
 
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        // Display the messages
+        await updateGirIsTyping(userId, girlId)
         // Add message with display link if images are enabled
         for (const [index, response] of assistantMessageProcess.entries()) {
             if (index === assistantMessageProcess.length - 1 && girl.imagesEnabled) {
