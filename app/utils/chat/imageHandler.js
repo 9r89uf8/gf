@@ -1,6 +1,6 @@
 // app/utils/chat/imageHandler.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
-import {getConversationLimits, decrementFreeImage} from "@/app/api/chat/conversationLimits/route";
+import {getConversationLimits, decrementFreeImage, updateGirIsTyping} from "@/app/api/chat/conversationLimits/route";
 const {v4: uuidv4} = require("uuid");
 
 function removeHashSymbols(text) {
@@ -14,13 +14,13 @@ export async function handleImageRequest(
     userId,
     conversationHistory,
     girl,
-    userMessage,
-    conversationRef
+    userMessage
 ) {
     const conversationLimits = await getConversationLimits(userId, girlId);
     const freeImagesRemaining = conversationLimits.freeImages;
 // Handle premium users and users with free images
     if ((userData.premium || freeImagesRemaining > 0)&&girl.imagesEnabled) {
+        console.log('we are sendig the user an image')
         let pictureDescription = userWantsImage.description.toLowerCase();
 
         // Create base query
@@ -83,7 +83,7 @@ export async function handleImageRequest(
         let contentText = userWantsImage.content === '' ? '😘' : userWantsImage.content;
 
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        await updateGirIsTyping(userId, girlId)
         // Add message with selected image
         await displayMessageRef.add({
             role: 'assistant',
@@ -104,6 +104,7 @@ export async function handleImageRequest(
     }
     // Handle non-premium users
     else {
+        console.log('we are sending a text instead of an image')
         // Modified to no longer split messages
         const processAssistantMessage = (assistantMessage) => {
             return [{

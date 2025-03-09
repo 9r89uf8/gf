@@ -188,8 +188,7 @@ export async function POST(req) {
                             updatedConversationHistory,
                             elevenK,
                             userMessage,
-                            manualMessageType,
-                            conversationRef
+                            manualMessageType
                         );
                         break;
 
@@ -201,8 +200,7 @@ export async function POST(req) {
                             userId,
                             updatedConversationHistory,
                             girlData,
-                            userMessage,
-                            conversationRef
+                            userMessage
                         );
                         break;
 
@@ -214,8 +212,7 @@ export async function POST(req) {
                             userId,
                             updatedConversationHistory,
                             girlData,
-                            userMessage,
-                            conversationRef
+                            userMessage
                         );
                         break;
 

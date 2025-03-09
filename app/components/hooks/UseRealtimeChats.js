@@ -31,18 +31,24 @@ export const useRealtimeConversation = ({ userId, girlId }) => {
         const limitsUnsubscribe = onSnapshot(conversationDocRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 const data = docSnapshot.data();
-                if(data){
-                    setGirlIsTyping(data.girlIsTyping);
-                }
+                if (data) {
+                    setGirlIsTyping(data.girlIsTyping || false);
 
-                // Check if limits exist in the document
-                if (data && data.limits) {
-                    setConversationLimits({
-                        freeAudio: data.limits.freeAudio || 0,
-                        freeImages: data.limits.freeImages || 0,
-                        freeMessages: data.limits.freeMessages || 0
-                    });
+                    // Only set limits if they exist and have meaningful values
+                    if (data.limits) {
+                        setConversationLimits({
+                            freeAudio: data.limits.freeAudio || 0,
+                            freeImages: data.limits.freeImages || 0,
+                            freeMessages: data.limits.freeMessages || 0
+                        });
+                    } else {
+                        setConversationLimits(null); // Reset to null if no limits
+                    }
                 }
+            } else {
+                // Document doesn't exist, explicitly reset state
+                setConversationLimits(null);
+                setGirlIsTyping(false);
             }
         }, (error) => {
             console.error('Error in limits subscription:', error);

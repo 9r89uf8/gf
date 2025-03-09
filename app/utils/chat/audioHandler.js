@@ -1,6 +1,6 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import axios from 'axios';
-import {getConversationLimits, decrementFreeAudio} from "@/app/api/chat/conversationLimits/route";
+import {getConversationLimits, decrementFreeAudio, updateGirIsTyping} from "@/app/api/chat/conversationLimits/route";
 const { v4: uuidv4 } = require("uuid");
 
 function removeHashSymbols(text) {
@@ -58,8 +58,7 @@ export async function handleAudioRequest(
     conversationHistory,
     elevenLabsKey,
     userMessage,
-    manualMessageType,
-    conversationRef
+    manualMessageType
 ) {
     // Get conversation-specific limits instead of global userData.freeAudio
     const conversationLimits = await getConversationLimits(userId, girlId);
@@ -175,13 +174,13 @@ export async function handleAudioRequest(
     if (freeAudioRemaining === 0 && !userData.premium) {
         // When freeAudio is 0, only one message exists.
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        await updateGirIsTyping(userId, girlId)
         for (const message of assistantMessageProcess) {
             await displayMessageRef.add(message);
         }
     } else if (audioTextDescription && userWantsAudio.description && userWantsAudio.description !== userWantsAudio.content) {
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        await updateGirIsTyping(userId, girlId)
         // For explicit audio requests, add two messages:
         await displayMessageRef.add({
             ...assistantMessageProcess[0],

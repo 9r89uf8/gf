@@ -97,6 +97,19 @@ export async function decrementFreeAudio(userId, girlId) {
     return limits;
 }
 
+// Function to update the girls is typing
+export async function updateGirIsTyping(userId, girlId) {
+    const conversationRef = adminDb.firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('conversations')
+        .doc(girlId);
+
+    await conversationRef.update({ girlIsTyping: false });
+
+    return 'updated girlIsTyping';
+}
+
 // Function to decrement images count when an image is produced
 export async function decrementFreeImage(userId, girlId) {
     const limits = await getConversationLimits(userId, girlId);

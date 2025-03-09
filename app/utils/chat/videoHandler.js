@@ -1,6 +1,6 @@
 // app/utils/chat/imageHandler.js
 import { adminDb } from '@/app/utils/firebaseAdmin';
-import {decrementFreeImage, getConversationLimits} from "@/app/api/chat/conversationLimits/route";
+import {decrementFreeImage, getConversationLimits, updateGirIsTyping} from "@/app/api/chat/conversationLimits/route";
 const {v4: uuidv4} = require("uuid");
 
 function removeHashSymbols(text) {
@@ -14,8 +14,7 @@ export async function handleVideoRequest(
     userId,
     conversationHistory,
     girl,
-    userMessage,
-    conversationRef
+    userMessage
 ) {
     const conversationLimits = await getConversationLimits(userId, girlId);
     const freeImagesRemaining = conversationLimits.freeImages;
@@ -81,7 +80,7 @@ export async function handleVideoRequest(
         }
 
         // Display the messages
-        await conversationRef.update({ girlIsTyping: false });
+        await updateGirIsTyping(userId, girlId)
         // Add the assistant's message with the selected video
         await displayMessageRef.add({
             role: 'assistant',
