@@ -5,28 +5,28 @@ import Image from 'next/image';
 // Modified the staticGirls array to include age, followers and verified status
 const staticGirls = [
     {
-        id: 'BgHd9LWDnFFhS6BoaqwL',
-        username: 'antonella1353',
-        age: 18,
-        followers: 69300,
-        priority: true,
-        bio: 'No sean chismosos 😏😂',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
-        texting: true,
-        verified: true, // Adding verified status
-        verifiedType: 'blue' // 'gold' or 'blue'
-    },
-    {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
         age: 18,
-        priority: false,
+        priority: true,
         followers: 60240,
         bio: 'Hola....',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down',
         texting: true,
         verified: true,
         verifiedType: 'blue'
+    },
+    {
+        id: 'BgHd9LWDnFFhS6BoaqwL',
+        username: 'antonella1353',
+        age: 18,
+        followers: 69300,
+        priority: false,
+        bio: 'No sean chismosos 😏😂',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
+        texting: true,
+        verified: true, // Adding verified status
+        verifiedType: 'blue' // 'gold' or 'blue'
     },
     {
         id: 'CGj52Y66J4icn6qOqGJY',
