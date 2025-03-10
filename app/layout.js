@@ -3,7 +3,6 @@ import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
 import Script from 'next/script';
 import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingNavbar";
-import ServiceWorkerRegister from "@/app/components/sw/ServiceWorkerRegister";
 import Notifications from "@/app/components/notifications/Notifications";
 import './styles/globals.css';
 
@@ -20,7 +19,8 @@ const schemaData = {
     }
 };
 
-const GA_TRACKING_ID = 'G-ENZST04463'; // Replace with your actual GA tracking ID
+const GA_TRACKING_ID = 'G-ENZST04463';
+const GOOGLE_ADS_ID = 'AW-16904589160';
 const Layout = ({ children }) => {
     return (
         <html lang="es">
@@ -53,27 +53,29 @@ const Layout = ({ children }) => {
             <meta name="robots" content="index, follow"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-            {/* Schema Markup */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-            />
-            {/* Google Analytics Scripts loaded lazily */}
-            <Script
-                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-                strategy="lazyOnload"
-            />
+            {/* Optimized Google Analytics Script - Lazy Load */}
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} strategy="lazyOnload" />
             <Script id="ga-init" strategy="lazyOnload">
                 {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-          `}
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+        `}
+            </Script>
+
+            {/* Optimized Google Ads Tag - Lazy Load */}
+            <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="lazyOnload" />
+            <Script id="google-ads-init" strategy="lazyOnload">
+                {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GOOGLE_ADS_ID}');
+        `}
             </Script>
         </head>
         <body>
-        {/*<ServiceWorkerRegister />*/}
         <Navbar/>
         <Notifications />
         <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
