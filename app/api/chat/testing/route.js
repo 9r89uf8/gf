@@ -8,7 +8,7 @@ export const revalidate = 0;
 
 export async function POST(req) {
     try {
-        let girlId = 'BgHd9LWDnFFhS6BoaqwL';
+        let girlIds = ['uerQ5TMDanh1wex83HIE', 'BgHd9LWDnFFhS6BoaqwL']
         const authResult = await authMiddleware(req);
         if (!authResult.authenticated) {
             return NextResponse.json({ error: authResult.error }, { status: 401 });
@@ -52,28 +52,42 @@ export async function POST(req) {
                 ...userDoc.data()
             };
 
-            // Get the user's messages
-            const messagesRef = adminDb.firestore()
-                .collection('users')
-                .doc(userDoc.id)
-                .collection('conversations')
-                .doc(girlId)
-                .collection('displayMessages')
-                .orderBy('timestamp', 'asc');
+            // Try to find messages for any girl ID
+            let foundMessages = false;
 
-            const messagesDocs = await messagesRef.get();
+            // We'll check each girl ID in order until we find messages
+            for (const girlId of girlIds) {
+                // Get the user's messages for this specific girl
+                const messagesRef = adminDb.firestore()
+                    .collection('users')
+                    .doc(userDoc.id)
+                    .collection('conversations')
+                    .doc(girlId)
+                    .collection('displayMessages')
+                    .orderBy('timestamp', 'asc');
 
-            // Transform the messages data
-            const displayMessages = messagesDocs.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+                const messagesDocs = await messagesRef.get();
 
-            // Add this user and their messages to results
-            results.push({
-                userData,
-                displayMessages
-            });
+                // If messages exist for this girl
+                if (!messagesDocs.empty) {
+                    // Transform the messages data
+                    const displayMessages = messagesDocs.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    // Add this user and their messages to results
+                    results.push({
+                        userData,
+                        displayMessages,
+                        girlId // Include which girl these messages are for
+                    });
+
+                    foundMessages = true;
+                    break; // Stop checking other girl IDs for this user
+                }
+            }
+
         }
 
         // If no results found
