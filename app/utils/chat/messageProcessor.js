@@ -23,10 +23,22 @@ export const getUnprocessedMessages = async (userId, girlId) => {
     }
 
     // Return all unprocessed messages with their IDs
-    return messagesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
+    // Replace content with mediaContent for image and video types
+    return messagesSnapshot.docs.map(doc => {
+        const data = doc.data();
+
+        // Check if mediaType is 'image' or 'video' and replace content with mediaContent
+        if (data.mediaType === 'image' || data.mediaType === 'video') {
+            if (data.mediaContent) {
+                data.content = data.mediaContent;
+            }
+        }
+
+        return {
+            id: doc.id,
+            ...data
+        };
+    });
 };
 
 // Get the last processed message (keep for backward compatibility)
