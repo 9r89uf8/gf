@@ -292,7 +292,7 @@ const PopularCreators = () => {
                             >
                                 <Image
                                     src={girl.picture}
-                                    alt={`${girl.username} profile picture`}
+                                    alt="Chica IA, novia virtual sonriendo"
                                     width={200}
                                     height={200}
                                     style={styles.image}

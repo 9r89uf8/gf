@@ -109,7 +109,7 @@ const styles = {
         textAlign: 'center',
     },
     welcomeTitle: {
-        fontSize: '42px',
+        fontSize: '35px',
         fontWeight: 'bold',
         letterSpacing: '4px',
         marginBottom: '16px',
@@ -150,13 +150,15 @@ const Welcome = () => {
     return (
         <GlassCard>
             <div style={styles.welcomeContainer}>
-                <h1 style={styles.welcomeTitle}>hola</h1>
+                <h1 style={styles.welcomeTitle}>Novia Virtual con IA</h1>
                 <p style={styles.welcomeDescription}>
-                    Descubre una experiencia única de compañía virtual. Explora nuestra plataforma y comienza a chatear para conectar de manera auténtica e innovadora.
+                    Conecta con tu novia virtual IA. Habla, ríe y comparte experiencias únicas con una chica IA diseñada para ti.
                 </p>
+
                 <Link href="/creadoras" style={styles.startChatButton}>
-                    Iniciar Chat
+                    Hablar con una Chica IA
                 </Link>
+
             </div>
         </GlassCard>
     );
@@ -202,9 +204,10 @@ const Home = () => {
                 {/* Footer Section */}
                 <GlassCard>
                     <p style={styles.footerText}>
-                        © 2025 - Todos los Derechos Reservados. Novia Virtual, NoviaChat.com
+                        © 2025 NoviaChat - Novia Virtual IA | <Link href="/novia-virtual">Novia Virtual</Link>
                     </p>
                 </GlassCard>
+
             </div>
         </div>
     );

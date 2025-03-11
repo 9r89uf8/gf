@@ -9,9 +9,9 @@ import './styles/globals.css';
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "noviachat",
+    "name": "NoviaChat - Novia Virtual IA",
     "url": "https://www.noviachat.com",
-    "description": "novia virtual, novia IA.",
+    "description": "Novia Virtual IA, tu compañera virtual ideal para chat, voz e imágenes. Una chica IA siempre contigo.",
     "potentialAction": {
         "@type": "SearchAction",
         "target": "https://www.noviachat.com/search?q={search_term_string}",
@@ -25,9 +25,9 @@ const Layout = ({ children }) => {
     return (
         <html lang="es">
         <head>
-            <title>Novia Virtual - Noviachat | Texto, Foto y Voz.</title>
+            <title>Novia Virtual IA - NoviaChat | Chatea, Habla y Comparte</title>
             <meta name="description"
-                  content="Novia virtual impulsada por IA. Tu Compañera Virtual Siempre Contigo"/>
+                  content="Conversa con tu novia virtual IA en texto, fotos y voz. Siempre a tu lado."/>
             <meta name="keywords"
                   content="NoviaChat, compañera virtual, novia virtual, chat IA, inteligencia artificial, compañía virtual"/>
             <link rel="canonical" href="https://www.noviachat.com/"/>
