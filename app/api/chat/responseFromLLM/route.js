@@ -284,7 +284,7 @@ export async function POST(req) {
                     const currentLimits = await getConversationLimits(userId, girlId);
 
                     // Calculate chance based on premium status
-                    const imageChance = userData.premium ? 1/7 : 1/3;
+                    const imageChance = userData.premium ? 1/7 : 1/2;
 
                     // Check if user is eligible to receive an image
                     if ((userData.premium || currentLimits.freeImages > 0 && finalMessageType !== 'image') &&

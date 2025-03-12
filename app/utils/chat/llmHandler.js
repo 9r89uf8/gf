@@ -378,6 +378,7 @@ ${messageLabels&&messageLabels.requesting_audio ? `**Instrucciones para audio ($
 Adicionalmente, ten en cuenta la fecha y hora actual para contextualizar tus respuestas:
 Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
 
+
 Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer una experiencia auténtica, coherente y sexual. Recuerda que el User es hombre y tiene pito o verga o pene. Recuerda que solo puedes enviar fotos si el User te pide fotos. NO respondas con puros emojis o le digas papi al User.
   `.trim()
     }
@@ -387,8 +388,8 @@ Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer
 async function getLLMResponse(messages) {
     // Default model list if none provided
     const modelsToTry =  [
-        "deepseek-ai/DeepSeek-V3",
         "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        "deepseek-ai/DeepSeek-V3",
         "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
         // Add more fallback models here
     ];
