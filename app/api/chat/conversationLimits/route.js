@@ -3,7 +3,7 @@ import { adminDb } from '@/app/utils/firebaseAdmin';
 // Function to initialize limits for a new conversation with a girl
 export async function initializeConversationLimits(userId, girlId, initialLimits = {
     freeAudio: 3, // Default number of free audio messages
-    freeMessages: 18,  // Default number of free text messages
+    freeMessages: 100,  // Default number of free text messages
     freeImages: 2
 }) {
     const conversationRef = adminDb.firestore()

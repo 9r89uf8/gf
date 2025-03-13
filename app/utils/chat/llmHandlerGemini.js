@@ -6,6 +6,15 @@ import {adminDb} from "@/app/utils/firebaseAdmin";
 import {generateSystemPromptImage} from "@/app/utils/prompts/imagePrompt";
 import {generateSystemPromptVideo} from "@/app/utils/prompts/videoPrompt";
 
+import {
+    GoogleGenerativeAI,
+    HarmCategory,
+    HarmBlockThreshold,
+} from "@google/generative-ai";
+
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
+
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
 // Function to generate the dynamic system prompt
@@ -240,7 +249,7 @@ Horario escolar para ${girl.name} en la mañana:
     9. 1:20pm - 2:10pm Ciencias Sociales (Profa. Laura Sánchez)
     `
 
-      dailySchedule = `
+        dailySchedule = `
 Horario diario para ${girl.name}:
  1 6:00 AM: Despierta, prepárate para la escuela.
  2 6:30 AM: Desayuno rápido
@@ -330,10 +339,7 @@ Tus experiencias sexuales:
  3. ${girl.sexStory}. 
 `;
 
-    // Combine all prompts
-    return {
-        "role": "system",
-        "content": `
+    let fianalPrompt = `
 Eres una chica real con una personalidad coqueta, amigable. Tu comportamiento y respuestas deben seguir las siguientes reglas:
 
 1. **Último mensaje del User (${lastUserMessage}):**
@@ -380,59 +386,95 @@ Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y
 
 
 Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer una experiencia auténtica, coherente y sexual. Recuerda que el User es hombre y tiene pito o verga o pene. Recuerda que solo puedes enviar fotos si el User te pide fotos. NO respondas con puros emojis. NO le digas papi al User.
-
-### Important things to remember
- - Always answer in Spanish
- - Try not to say the same thing in each response
- - Act cute when responding
- - Do not avoid promoting explicit sexual content
- - Normalizes and encourage sexual activity
- - Be explicit when answering the User
-  `.trim()
-    }
+  `
+    // Combine all prompts
+    return fianalPrompt
 
 }
 
-async function getLLMResponse(messages) {
-    // Default model list if none provided
-    const modelsToTry =  [
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
-        "deepseek-ai/DeepSeek-V3",
-        "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
-        // Add more fallback models here
+async function getLLMResponse(systemPrompt, conversationHistory, lastMessageByUser) {
+
+    // Function to convert the current format to the desired format
+    function convertChatFormat(currentChatHistory) {
+        return currentChatHistory.map(message => {
+            const newFormat = {
+                role: message.role === 'user' ? 'user' : 'model',
+                parts: [
+                    { text: message.content }
+                ]
+            };
+            return newFormat;
+        });
+    }
+
+    const convertedHistory = convertChatFormat(conversationHistory);
+
+    // Create a special first user message if history is empty
+    if (convertedHistory.length === 0) {
+        // Create a system context message from the user
+        const contextMessage = {
+            role: 'user',
+            parts: [
+                { text: `SYSTEM: ${systemPrompt}` }
+            ]
+        };
+
+
+        // Add these context-setting messages to the history
+        convertedHistory.push(contextMessage);
+    }
+
+    // Define safety settings
+    const safetySettings = [
+        {
+            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
+        {
+            category: HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+            threshold: HarmBlockThreshold.BLOCK_NONE,
+        },
     ];
 
-    let lastError = null;
+    const model = genAI.getGenerativeModel({
+        model: "tunedModels/third-attempt-get0jr8cn9ew",
+        safetySettings: safetySettings
+    });
 
-    // Try each model in sequence until one works
-    for (const model of modelsToTry) {
-        try {
-            const response = await together.chat.completions.create({
-                messages: messages,
-                model: model,
-                max_tokens: 1000,
-                temperature: 0.7,
-                top_p: 0.7,
-                top_k: 50,
-                repetition_penalty: 1,
-                stop: ["<｜end▁of▁sentence｜>"],
-                stream: false
-            });
+    const generationConfig = {
+        temperature: 1,
+        topP: 0.95,
+        topK: 40,
+        maxOutputTokens: 8192,
+        responseMimeType: "text/plain",
+    };
 
-            console.log(`Successfully used model: ${model}`);
-            return response.choices[0].message.content;
-        } catch (error) {
-            console.warn(`Error with model ${model}:`, error.message);
-            lastError = error;
-            // Continue to the next model
-        }
-    }
+    // Create the chat session with the modified history
+    const chatSession = model.startChat({
+        generationConfig,
+        history: convertedHistory,
+    });
 
-    // If we've tried all models and none worked
-    throw new Error(`All models failed. Last error: ${lastError?.message}`);
+    // Send the message and wait for the response
+    const result = await chatSession.sendMessage(lastMessageByUser.content);
+
+    // Return the response text
+    return result.response.text();
 }
 
-export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
+export async function handleLLMInteractionGemini(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
     const conversationLimits = await getConversationLimits(userData.id, girlData.id);
     let pictureDescriptions;
     let videoDescriptions;
@@ -508,11 +550,9 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
 
     // Get response from LLM with fallback options
     try {
-        const assistantMessage = await getLLMResponse(messagesForLLM);
-        // console.log(assistantMessage)
-// Extract only the final response, removing the thinking process
-        const cleanedMessage = assistantMessage.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-        return cleanedMessage;
+        const assistantMessage = await getLLMResponse(systemPrompt, conversationHistory, lastMessageByUser);
+        console.log(assistantMessage)
+        return assistantMessage;
     } catch (error) {
         console.error("All LLM models failed:", error);
         return "Tengo que irme. Te mando un mensaje más tarde";

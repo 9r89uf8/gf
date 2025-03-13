@@ -148,6 +148,7 @@ export async function POST(req) {
                 );
 
                 if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
+                    console.log('refused')
                     assistantMessage = handleRefusedAnswer(userData);
                 }
 
