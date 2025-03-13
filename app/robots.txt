@@ -1,32 +1,34 @@
+# Robots.txt for NoviaChat.com
+# Last updated: March 12, 2025
+
+# Global rules
 User-agent: *
-Disallow: /terms
-Disallow: /privacy
-Disallow: /about
-Disallow: /login
-Disallow: /register
-Disallow: /profile
-Disallow: /plans
-Disallow: /jornada
-Disallow: /all
-Disallow: /success
-Disallow: /create
-Disallow: /chat
-Disallow: /contact
-Disallow: /user
-Disallow: /winners
-Disallow: /top
-Disallow: /buy
-Disallow: /pay
-Disallow: /girl
-Disallow: /users
-Disallow: /clips
-Disallow: /admin
-Disallow: /user
-Disallow: /premium
-Disallow: /chat
+Disallow: /admin/
+Disallow: /chat/
+Disallow: /clips/
+Disallow: /dm/
+Disallow: /login/
+Disallow: /payment/
+Disallow: /posts/
+Disallow: /premium/
+Disallow: /reels/
+Disallow: /register/
+Disallow: /user/
+
+# Explicitly allow key SEO pages
+Allow: /novia-virtual
+Allow: /creadoras
 
 
-Allow: /
+# Crawl rate management for major search engines
+User-agent: Googlebot
+Crawl-delay: 1
 
+User-agent: bingbot
+Crawl-delay: 2
 
+User-agent: Slurp
+Crawl-delay: 3
+
+# Sitemaps
 Sitemap: https://www.noviachat.com/sitemap.xml
