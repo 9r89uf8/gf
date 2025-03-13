@@ -17,6 +17,7 @@ Disallow: /user/
 
 # Explicitly allow key SEO pages
 Allow: /novia-virtual
+Allow: /chica-ia
 Allow: /creadoras
 
 
