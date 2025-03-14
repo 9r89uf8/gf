@@ -6,6 +6,13 @@ import {adminDb} from "@/app/utils/firebaseAdmin";
 import {generateSystemPromptImage} from "@/app/utils/prompts/imagePrompt";
 import {generateSystemPromptVideo} from "@/app/utils/prompts/videoPrompt";
 
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY
+});
+
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
 // Function to generate the dynamic system prompt
@@ -393,44 +400,75 @@ Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer
 
 }
 
+/**
+ * Attempts to get a response from an LLM using DeepSeek API first,
+ * then falls back to Together.ai API if the first attempt fails.
+ *
+ * @param {Array} messages - Array of message objects following the OpenAI chat format
+ * @returns {Promise<string>} - The LLM response text
+ * @throws {Error} - If all API attempts fail
+ */
 async function getLLMResponse(messages) {
-    // Default model list if none provided
-    const modelsToTry =  [
-        "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
-        "deepseek-ai/DeepSeek-V3",
-        "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
-        // Add more fallback models here
-    ];
+    // First try using DeepSeek API
+    try {
+        const completion = await openai.chat.completions.create({
+            messages: messages,
+            model: "deepseek-reasoner",
+            temperature: 1.3
+        });
 
-    let lastError = null;
+        console.log("Successfully used DeepSeek API");
+        return completion.choices[0].message.content;
+    } catch (deepseekError) {
+        console.warn("DeepSeek API failed:", deepseekError.message);
 
-    // Try each model in sequence until one works
-    for (const model of modelsToTry) {
-        try {
-            const response = await together.chat.completions.create({
-                messages: messages,
-                model: model,
-                max_tokens: 1000,
-                temperature: 0.7,
-                top_p: 0.7,
-                top_k: 50,
-                repetition_penalty: 1,
-                stop: ["<｜end▁of▁sentence｜>"],
-                stream: false
-            });
+        // If DeepSeek fails, try Together.ai with various models
+        const modelsToTry = [
+            "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
+            "deepseek-ai/DeepSeek-V3",
+            "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        ];
 
-            console.log(`Successfully used model: ${model}`);
-            return response.choices[0].message.content;
-        } catch (error) {
-            console.warn(`Error with model ${model}:`, error.message);
-            lastError = error;
-            // Continue to the next model
+        let lastError = null;
+
+        // Try each Together.ai model in sequence until one works
+        for (const model of modelsToTry) {
+            try {
+                const response = await together.chat.completions.create({
+                    messages: messages,
+                    model: model,
+                    max_tokens: 1000,
+                    temperature: 0.7,
+                    top_p: 0.7,
+                    top_k: 50,
+                    repetition_penalty: 1,
+                    stop: ["<｜end▁of▁sentence｜>"],
+                    stream: false
+                });
+
+                console.log(`Successfully used Together.ai with model: ${model}`);
+                return response.choices[0].message.content;
+            } catch (error) {
+                console.warn(`Error with Together.ai model ${model}:`, error.message);
+                lastError = error;
+                // Continue to the next model
+            }
         }
-    }
 
-    // If we've tried all models and none worked
-    throw new Error(`All models failed. Last error: ${lastError?.message}`);
+        // If we've tried all models and none worked
+        throw new Error(`All LLM API attempts failed. DeepSeek error: ${deepseekError.message}, Together.ai last error: ${lastError?.message}`);
+    }
 }
+
+// Example usage:
+// const messages = [
+//   { role: "system", content: "You are a helpful assistant." },
+//   { role: "user", content: "What is the capital of France?" }
+// ];
+//
+// getLLMResponse(messages)
+//   .then(response => console.log("LLM Response:", response))
+//   .catch(error => console.error("Error getting LLM response:", error));
 
 export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
     const conversationLimits = await getConversationLimits(userData.id, girlData.id);
