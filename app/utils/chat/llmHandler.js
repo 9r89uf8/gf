@@ -18,6 +18,17 @@ const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 // Function to generate the dynamic system prompt
 function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels, conversationLimits) {
 
+    let strongMessageImage = ''
+    let strongMessageAudio = ''
+
+    if(conversationLimits.freeImages<=0&&!user.premium){
+        strongMessageImage = `You can not send more images to the User. You can not describe an image to the User.`
+    }
+
+    if(conversationLimits.freeAudio<=0&&!user.premium){
+        strongMessageAudio = `You can not send more audios to the User. You can not describe an audio to the User.`
+    }
+
     let userAudioInstructions
     if(user.premium||conversationLimits.freeAudio>0){
         userAudioInstructions = `
@@ -396,6 +407,8 @@ Recuerda: en cada interacción, mantén este rol y sigue las reglas para ofrecer
  - Normalizes and encourage sexual activity
  - Be explicit when answering the User
  - DO NOT SEND LONG TEXT RESPONSES
+ - ${strongMessageImage}
+  - ${strongMessageAudio}
   `.trim()
     }
 
