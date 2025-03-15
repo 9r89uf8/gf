@@ -428,7 +428,8 @@ async function getLLMResponse(messages) {
         const completion = await openai.chat.completions.create({
             messages: messages,
             model: "deepseek-reasoner",
-            temperature: 1.3
+            temperature: 1.3,
+            max_tokens:500
         });
 
         console.log("Successfully used DeepSeek API");
@@ -452,7 +453,7 @@ async function getLLMResponse(messages) {
                     messages: messages,
                     model: model,
                     max_tokens: 1000,
-                    temperature: 0.7,
+                    temperature: 1.3,
                     top_p: 0.7,
                     top_k: 50,
                     repetition_penalty: 1,
@@ -562,6 +563,7 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
     try {
         const assistantMessage = await getLLMResponse(messagesForLLM);
 
+
 // More robust cleanup approach
         let cleanedMessage = assistantMessage;
 
@@ -577,7 +579,6 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
 // Trim any whitespace
         cleanedMessage = cleanedMessage.trim();
 
-        console.log(cleanedMessage);
         return cleanedMessage;
     } catch (error) {
         console.error("All LLM models failed:", error);

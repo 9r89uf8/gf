@@ -52,10 +52,6 @@ export const useMessageResponder = ({ userId, girlId }) => {
                     // Get reference to the conversation document
                     const conversationRef = doc(db, 'users', userId, 'conversations', girlId);
 
-                    // Update girlIsTyping to true when we start processing
-                    // await updateDoc(conversationRef, {
-                    //     girlIsTyping: true
-                    // });
 
                     try {
                         const formData = new FormData();
@@ -106,15 +102,6 @@ export const useMessageResponder = ({ userId, girlId }) => {
                         // Clear the respondUntil reference after processing
                         respondUntilRef.current = null;
 
-                        // Set girlIsTyping back to false when we're done processing
-                        // try {
-                        //     const conversationRef = doc(db, 'users', userId, 'conversations', girlId);
-                        //     await updateDoc(conversationRef, {
-                        //         girlIsTyping: false
-                        //     });
-                        // } catch (error) {
-                        //     console.error('Error updating girlIsTyping to false:', error);
-                        // }
 
                         // Reset processing flag when done
                         isProcessingRef.current = false;
