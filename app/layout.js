@@ -2,7 +2,8 @@
 import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
 import Script from 'next/script';
-import ConditionalFloatingNavbar from "@/app/components/nab/ConditionalFloatingNavbar";
+import dynamic from 'next/dynamic';
+const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
 import Notifications from "@/app/components/notifications/Notifications";
 import './styles/globals.css';
 
@@ -103,31 +104,39 @@ const Layout = ({ children }) => {
             <Script
                 id="schema-website"
                 type="application/ld+json"
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
             />
 
             <Script
-                id="schema-product"
+                id="schema-website"
                 type="application/ld+json"
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
 
             <Script
-                id="schema-faq"
+                id="schema-website"
                 type="application/ld+json"
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
 
-            {/* Optimized Google Analytics Script - Lazy Load */}
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} strategy="lazyOnload" />
-            <Script id="ga-init" strategy="lazyOnload">
-                {`
+            <Script
+                id="google-analytics"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-        `}
-            </Script>
+          requestIdleCallback(() => {
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+          });
+        `,
+                }}
+            />
+
 
             {/* Optimized Google Ads Tag - Lazy Load */}
             <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="lazyOnload" />
