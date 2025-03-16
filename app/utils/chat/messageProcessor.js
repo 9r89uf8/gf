@@ -14,6 +14,7 @@ export const getUnprocessedMessages = async (userId, girlId) => {
         .where('role', '==', 'user')
         .where('processed', '==', false)
         .where('status', '==', 'normal')
+        .where('isProcessing', '==', false)  // Exclude messages that are being processed
         .orderBy('timestamp', 'asc'); // Process oldest messages first
 
     const messagesSnapshot = await query.get();
@@ -41,33 +42,20 @@ export const getUnprocessedMessages = async (userId, girlId) => {
     });
 };
 
-// Get the last processed message (keep for backward compatibility)
-export const getLastProcessedMessage = async (userId, girlId) => {
-    const displayMessageRef = adminDb.firestore()
+// Mark a message as currently being processed
+export const markMessageAsProcessing = async (userId, girlId, messageId) => {
+    const messageRef = adminDb.firestore()
         .collection('users')
         .doc(userId)
         .collection('conversations')
         .doc(girlId)
-        .collection('displayMessages');
+        .collection('displayMessages')
+        .doc(messageId);
 
-    const query = displayMessageRef
-        .where('role', '==', 'user')
-        .where('processed', '==', true)
-        .orderBy('timestamp', 'desc')
-        .limit(1);
-
-    const messageSnapshot = await query.get();
-
-    if (messageSnapshot.empty) {
-        return null;
-    }
-
-    // Return the first (and only) document with its ID and data
-    const doc = messageSnapshot.docs[0];
-    return {
-        id: doc.id,
-        ...doc.data()
-    };
+    await messageRef.update({
+        isProcessing: true,
+        processingStartTime: adminDb.firestore.FieldValue.serverTimestamp()
+    });
 };
 
 // Mark a single message as seen
@@ -97,12 +85,13 @@ export const markMessageAsProcessed = async (userId, girlId, messageId, liked = 
 
     await messageRef.update({
         processed: true,
+        isProcessing: false,  // Clear processing flag
         liked: liked || false
     });
 };
 
-// Mark all unprocessed messages as seen (keep for backward compatibility)
-export const markMessagesAsSeen = async (userId, girlId, likedMessageByAssistant = false) => {
+// Reset "stuck" processing messages (processing for more than X minutes)
+export const resetStuckProcessingMessages = async (userId, girlId, maxProcessingTimeMinutes = 5) => {
     const displayMessageRef = adminDb.firestore()
         .collection('users')
         .doc(userId)
@@ -110,33 +99,31 @@ export const markMessagesAsSeen = async (userId, girlId, likedMessageByAssistant
         .doc(girlId)
         .collection('displayMessages');
 
+    // Calculate cutoff time (X minutes ago)
+    const cutoffTime = new Date();
+    cutoffTime.setMinutes(cutoffTime.getMinutes() - maxProcessingTimeMinutes);
+
+    // Get messages that have been processing for too long
     const query = displayMessageRef
-        .where('role', '==', 'user')
-        .where('seen', '==', false)
-        .orderBy('timestamp', 'desc');
+        .where('isProcessing', '==', true)
+        .where('processingStartTime', '<', cutoffTime);
 
-    const messagesSnapshot = await query.get();
+    const stuckMessages = await query.get();
 
-    if (!messagesSnapshot.empty) {
-        const batch = adminDb.firestore().batch();
-        let isFirstDoc = true;
-
-        messagesSnapshot.forEach((doc) => {
-            if (isFirstDoc && likedMessageByAssistant) {
-                batch.update(doc.ref, {
-                    seen: true,
-                    processed: true,
-                    liked: true
-                });
-            } else {
-                batch.update(doc.ref, {
-                    seen: true,
-                    processed: true
-                });
-            }
-            isFirstDoc = false;
+    // Reset all stuck messages
+    const batch = adminDb.firestore().batch();
+    stuckMessages.docs.forEach(doc => {
+        const messageRef = displayMessageRef.doc(doc.id);
+        batch.update(messageRef, {
+            isProcessing: false,
+            processingError: 'Processing timed out and was reset'
         });
+    });
 
+    if (!stuckMessages.empty) {
         await batch.commit();
+        console.log(`Reset ${stuckMessages.size} stuck processing messages`);
     }
+
+    return stuckMessages.size;
 };

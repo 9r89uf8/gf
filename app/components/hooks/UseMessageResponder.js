@@ -22,22 +22,35 @@ export const useMessageResponder = ({ userId, girlId }) => {
     const isProcessingRef = useRef(false); // Track if we're currently processing a response
     const [hasUnprocessedMessages, setHasUnprocessedMessages] = useState(false);
 
+
     // Function to check for unprocessed messages and call LLM if respondUntil has passed
     const checkUnprocessedMessages = async () => {
         // Prevent multiple simultaneous calls
         if (!userId || !girlId || isProcessingRef.current) return;
 
         try {
+
             // First check if there are unprocessed messages without triggering a response
             const messagesRef = collection(db, 'users', userId, 'conversations', girlId, 'displayMessages');
+
+            // FIXED QUERY: We can't use both '!=' and 'not-in' in Firestore
+            // So we'll use simple filters and handle additional filtering in memory
             const unprocessedQuery = query(
                 messagesRef,
+                where('role', '==', 'user'),
                 where('processed', '==', false),
-                where('status', 'not-in', ['error']) // Ignore messages already marked with error
+                where('isProcessing', '==', false) // Only get messages not being processed
             );
+
             const querySnapshot = await getDocs(unprocessedQuery);
 
-            const hasMessages = !querySnapshot.empty;
+            // Filter out messages with error status in memory
+            const validMessages = querySnapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.status !== 'error';
+            });
+
+            const hasMessages = validMessages.length > 0;
             setHasUnprocessedMessages(hasMessages);
 
             if (hasMessages) {
@@ -52,14 +65,18 @@ export const useMessageResponder = ({ userId, girlId }) => {
                     // Get reference to the conversation document
                     const conversationRef = doc(db, 'users', userId, 'conversations', girlId);
 
-
                     try {
+                        // Update the conversation to show the girl is typing
+                        // await updateDoc(conversationRef, {
+                        //     girlIsTyping: true
+                        // });
+
                         const formData = new FormData();
                         formData.append('userId', userId);
                         formData.append('girlId', girlId);
 
-                        // Get the first unprocessed message to work with
-                        const messageDoc = querySnapshot.docs[0];
+                        // Get the first unprocessed message to work with (from our filtered list)
+                        const messageDoc = validMessages[0];
                         const messageData = messageDoc.data();
                         const messageId = messageDoc.id;
 
@@ -83,6 +100,7 @@ export const useMessageResponder = ({ userId, girlId }) => {
                                 // We've reached max retries, mark as error
                                 await updateDoc(messageRef, {
                                     status: 'error',
+                                    isProcessing: false, // Clear processing flag
                                     errorMessage: result?.error || 'Max retry attempts reached',
                                     lastErrorTimestamp: new Date()
                                 });
@@ -91,6 +109,7 @@ export const useMessageResponder = ({ userId, girlId }) => {
                                 // Increment retry counter
                                 await updateDoc(messageRef, {
                                     retryCount: currentRetries + 1,
+                                    isProcessing: false, // Clear processing flag
                                     lastRetryTimestamp: new Date()
                                 });
                                 console.log(`Retry attempt ${currentRetries + 1}/${MAX_RETRIES} for message ${messageId}`);
@@ -98,10 +117,33 @@ export const useMessageResponder = ({ userId, girlId }) => {
                         }
                     } catch (error) {
                         console.error('Error handling LLM response:', error);
+
+                        // If we encounter an error here, make sure to reset isProcessing on the message
+                        try {
+                            const messageDoc = validMessages[0];
+                            if (messageDoc) {
+                                const messageRef = doc(db, 'users', userId, 'conversations', girlId, 'displayMessages', messageDoc.id);
+                                await updateDoc(messageRef, {
+                                    isProcessing: false,
+                                    processingError: error.message
+                                });
+                            }
+                        } catch (resetError) {
+                            console.error('Error resetting message processing status:', resetError);
+                        }
+
+                        // Also make sure to reset girlIsTyping
+                        try {
+                            const conversationRef = doc(db, 'users', userId, 'conversations', girlId);
+                            await updateDoc(conversationRef, {
+                                girlIsTyping: false
+                            });
+                        } catch (updateError) {
+                            console.error('Error resetting girlIsTyping after error:', updateError);
+                        }
                     } finally {
                         // Clear the respondUntil reference after processing
                         respondUntilRef.current = null;
-
 
                         // Reset processing flag when done
                         isProcessingRef.current = false;
@@ -168,6 +210,9 @@ export const useMessageResponder = ({ userId, girlId }) => {
                 checkUnprocessedMessages();
             }
         }, 2000); // Check every 2 seconds instead of every 1 second
+
+        // Reset any stuck messages on component mount
+        // resetStuckMessages();
 
         return () => {
             if (responseCheckIntervalRef.current) {

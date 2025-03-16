@@ -8,18 +8,24 @@ import { handleMessageType } from "@/app/utils/chat/messageParser";
 import {
     getUnprocessedMessages,
     markMessageAsSeen,
-    markMessageAsProcessed
+    markMessageAsProcessed,
+    markMessageAsProcessing,
+    resetStuckProcessingMessages
 } from "@/app/utils/chat/messageProcessor";
 import { checkWordsInMessage } from "@/app/utils/chat/responseHandler";
 import { handleRefusedAnswer } from "@/app/utils/chat/responseHandler";
 import { updateConversation } from "@/app/utils/chat/conversationHandler";
 import { updateUserMessages } from "@/app/utils/chat/userHandler";
 import { analyzeUserMessage } from "@/app/utils/chat/bedrockUtils";
-import {analyzeUserMessageLlama} from "@/app/utils/chat/llamaAnalize";
-import {getConversationLimits,
+import { analyzeUserMessageLlama } from "@/app/utils/chat/llamaAnalize";
+import {
+    getConversationLimits,
     decrementFreeMessages,
-    hasFreeMessagesLeft} from "@/app/api/chat/conversationLimits/route";
-import {NextResponse} from "next/server";
+    hasFreeMessagesLeft
+} from "@/app/api/chat/conversationLimits/route";
+import { NextResponse } from "next/server";
+import { v4 as uuidv4 } from 'uuid'; // Make sure to import uuidv4
+
 const elevenK = process.env.ELEVENLABS_API_KEY;
 const wordsToCheck = ['no puedo participar', 'no puedo continuar', 'no puedo seguir', 'no puedo cumplir', 'no puedo ayudar'];
 
@@ -41,12 +47,16 @@ export async function POST(req) {
             adminDb.firestore().collection('girls').doc(girlId).get()
         ]);
 
+        // Reset any messages that have been "processing" for too long (5 minutes)
+        // await resetStuckProcessingMessages(userId, girlId);
+
         // Get conversation limits for this specific girl
         const conversationLimits = await getConversationLimits(userId, girlId);
 
         // Get all unprocessed user messages
         let unprocessedMessages = await getUnprocessedMessages(userId, girlId);
-// Extract data and include IDs
+
+        // Extract data and include IDs
         const userData = {
             ...userDocF.data(),
             id: userId  // Include the user ID
@@ -71,6 +81,7 @@ export async function POST(req) {
 
         // If no unprocessed messages, nothing to do
         if (unprocessedMessages.length === 0) {
+            console.log('no messages found.');
             await conversationRef.update({ girlIsTyping: false });
             return new Response(JSON.stringify({
                 girlName: girlData.name,
@@ -100,221 +111,110 @@ export async function POST(req) {
 
         // Process each message individually
         for (const userMessage of unprocessedMessages) {
-            // Mark message as seen immediately
-            await markMessageAsSeen(userId, girlId, userMessage.id);
+            try {
+                // Mark message as processing before we do anything else
+                await markMessageAsProcessing(userId, girlId, userMessage.id);
 
-            // Check if this message should be liked (1/3 chance per message)
-            const shouldLikeMessage = Math.random() < 1/3;
-            if (shouldLikeMessage) {
-                likedMessageByAssistant = true;
-            }
+                // Mark message as seen immediately
+                await markMessageAsSeen(userId, girlId, userMessage.id);
 
-            // Check if user has free messages left with this girl
-            const hasMessagesLeft = await hasFreeMessagesLeft(userId, girlId);
+                // Check if this message should be liked (1/3 chance per message)
+                const shouldLikeMessage = Math.random() < 1/3;
+                if (shouldLikeMessage) {
+                    likedMessageByAssistant = true;
+                }
 
-            // If premium user or has free messages left, process the message
-            if (userData.premium || hasMessagesLeft) {
-                // Analyze message content with AWS Bedrock
-                let messageLabels = null;
-                if (userMessage.content) {
-                    try {
-                        messageLabels = await analyzeUserMessage(userMessage.content);
-                        console.log('Message analysis labels:', messageLabels);
-                    } catch (error) {
-                        console.log('First analysis method failed, trying backup method');
+                // Check if user has free messages left with this girl
+                const hasMessagesLeft = await hasFreeMessagesLeft(userId, girlId);
+
+                // If premium user or has free messages left, process the message
+                if (userData.premium || hasMessagesLeft) {
+                    // Analyze message content with AWS Bedrock
+                    let messageLabels = null;
+                    if (userMessage.content) {
                         try {
-                            messageLabels = await analyzeUserMessageLlama(userMessage.content);
-                            console.log('Backup analysis successful:', messageLabels);
-                        } catch (secondError) {
-                            console.error('Both analysis methods failed:', secondError);
-                            return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-                        }
-                    }
-                }
+                            messageLabels = await analyzeUserMessage(userMessage.content);
+                            console.log('Message analysis labels:', messageLabels);
+                        } catch (error) {
+                            console.log('First analysis method failed, trying backup method');
+                            try {
+                                messageLabels = await analyzeUserMessageLlama(userMessage.content);
+                                console.log('Backup analysis successful:', messageLabels);
+                            } catch (secondError) {
+                                console.error('Both analysis methods failed:', secondError);
 
-                // Add the current user message to conversation history BEFORE sending to LLM
-                updatedConversationHistory.push({
-                    "role": "user",
-                    "content": userMessage.content
-                });
+                                // Mark message as having error but still processed
+                                await markMessageAsProcessed(userId, girlId, userMessage.id, false);
 
-                // Get AI response for this specific message
-                let assistantMessage = await handleLLMInteraction(
-                    userData,
-                    userMessage,
-                    girlData,
-                    updatedConversationHistory,
-                    messageLabels
-                );
-
-                if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
-                    console.log('refused')
-                    assistantMessage = handleRefusedAnswer(userData);
-                }
-
-                // Process message type with the user message ID
-                const { messageType, assistantMessageProcess, parsedContent } =
-                    await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
-
-                // If the assistant's message is text and not explicitly audio, add a random chance for audio
-                let finalMessageType = messageType;
-                let manualMessageType = false;
-
-                // Logic for determining whether to use audio based on conversation limits
-                if (finalMessageType === 'text') {
-                    const audioChance = userData.premium ? 1/4 : 1/2;
-                    const conversationLimits = await getConversationLimits(userId, girlId);
-
-                    if (userData.premium || conversationLimits.freeAudio > 0) {
-                        if (Math.random() < audioChance) {
-                            finalMessageType = 'audio';
-                            if (!parsedContent.audio.description) {
-                                manualMessageType = true;
-                                parsedContent.audio.description = parsedContent.audio.content;
+                                return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
                             }
                         }
                     }
-                }
 
-                // Handle different message types
-                switch(finalMessageType) {
-                    case 'audio':
-                        const audioResult = await handleAudioRequest(
-                            parsedContent.audio,
-                            userData,
-                            girlData,
-                            userId,
-                            girlId,
-                            assistantMessageProcess,
-                            updatedConversationHistory,
-                            elevenK,
-                            userMessage,
-                            manualMessageType
-                        );
-                        break;
+                    // Add the current user message to conversation history BEFORE sending to LLM
+                    updatedConversationHistory.push({
+                        "role": "user",
+                        "content": userMessage.content
+                    });
 
-                    case 'image':
-                        const imageResult = await handleImageRequest(
-                            parsedContent.image,
-                            userData,
-                            girlId,
-                            userId,
-                            updatedConversationHistory,
-                            girlData,
-                            userMessage
-                        );
-                        break;
+                    // Get AI response for this specific message
+                    let assistantMessage = await handleLLMInteraction(
+                        userData,
+                        userMessage,
+                        girlData,
+                        updatedConversationHistory,
+                        messageLabels
+                    );
 
-                    case 'video':
-                        const videoResult = await handleVideoRequest(
-                            parsedContent.video,
-                            userData,
-                            girlId,
-                            userId,
-                            updatedConversationHistory,
-                            girlData,
-                            userMessage
-                        );
-                        break;
-
-                    default:
-                        // Text message - add to conversation history and display messages
-                        // Define a list of generic replacement messages
-                        const genericMessages = [
-                            "jajaja",
-                            "muestrame tu pene",
-                            "como es tu pene?",
-                            "k haces?",
-                            "tengo unas ganas tremendas"
-                        ];
-
-
-
-                        // Function to count emojis in a string
-                    function countEmojis(text) {
-                        // This regex pattern matches most common emoji characters
-                        const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-                        const matches = text.match(emojiRegex);
-                        return matches ? matches.length : 0;
+                    if (checkWordsInMessage(assistantMessage, wordsToCheck)) {
+                        console.log('refused')
+                        assistantMessage = handleRefusedAnswer(userData);
                     }
 
-                        // Function to get a random message from the generic messages list
-                    function getRandomGenericMessage() {
-                        const randomIndex = Math.floor(Math.random() * genericMessages.length);
-                        return genericMessages[randomIndex];
-                    }
+                    // Process message type with the user message ID
+                    const { messageType, assistantMessageProcess, parsedContent } =
+                        await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
 
-                        // Process each response
-                        assistantMessageProcess.forEach(response => {
-                            let messageContent = response.content;
+                    // If the assistant's message is text and not explicitly audio, add a random chance for audio
+                    let finalMessageType = messageType;
+                    let manualMessageType = false;
 
-                            // Check if the message has too many emojis (e.g., 10 or more)
-                            if (countEmojis(messageContent) >= 10) {
-                                // Replace with a random generic message
-                                messageContent = getRandomGenericMessage();
+                    // Logic for determining whether to use audio based on conversation limits
+                    if (finalMessageType === 'text') {
+                        const audioChance = userData.premium ? 1/4 : 1/2;
+                        const conversationLimits = await getConversationLimits(userId, girlId);
+
+                        if (userData.premium || conversationLimits.freeAudio > 0) {
+                            if (Math.random() < audioChance) {
+                                finalMessageType = 'audio';
+                                if (!parsedContent.audio.description) {
+                                    manualMessageType = true;
+                                    parsedContent.audio.description = parsedContent.audio.content;
+                                }
                             }
-
-                            // Update the response content
-                            response.content = messageContent;
-
-                            // Add to conversation history
-                            updatedConversationHistory.push({
-                                "role": "assistant",
-                                "content": messageContent
-                            });
-                        });
-
-                        // Display the messages
-                        await conversationRef.update({ girlIsTyping: false });
-                        for (const response of assistantMessageProcess) {
-                            typeOfMessageContent = response.content;
-                            await displayMessageRef.add(response);
                         }
-                }
+                    }
 
-                typeOfMessage = finalMessageType;
+                    // Handle different message types
+                    switch(finalMessageType) {
+                        case 'audio':
+                            const audioResult = await handleAudioRequest(
+                                parsedContent.audio,
+                                userData,
+                                girlData,
+                                userId,
+                                girlId,
+                                assistantMessageProcess,
+                                updatedConversationHistory,
+                                elevenK,
+                                userMessage,
+                                manualMessageType
+                            );
+                            break;
 
-                // Decrement free messages count if not premium
-                if (!userData.premium) {
-                    await decrementFreeMessages(userId, girlId);
-                }
-
-                // After displaying the text messages, check if we should also send an image
-                const shouldSendAdditionalImage = async () => {
-                    // Get updated conversation limits to check free image count
-                    const currentLimits = await getConversationLimits(userId, girlId);
-
-                    // Calculate chance based on premium status
-                    const imageChance = userData.premium ? 1/7 : 1/2;
-
-                    // Check if user is eligible to receive an image
-                    if ((userData.premium || currentLimits.freeImages > 0 && finalMessageType !== 'image') &&
-                        Math.random() < imageChance) {
-                        messageLabels = {
-                            is_explicit: false,
-                            requesting_picture: true,
-                            requesting_audio: false,
-                            requesting_video: false,
-                            emotional_tone: 'sexy'
-                        }
-
-                        // Get AI response for this specific message
-                        let assistantMessage = await handleLLMInteraction(
-                            userData,
-                            userMessage,
-                            girlData,
-                            updatedConversationHistory,
-                            messageLabels
-                        );
-
-                        // Process message type with the user message ID
-                        let  parsedContentTwo  = await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
-
-
-                        // Send additional image without changing finalMessageType
-                        if(parsedContentTwo.messageType === 'image'){
-                            await handleImageRequest(
-                                parsedContentTwo.parsedContent.image,
+                        case 'image':
+                            const imageResult = await handleImageRequest(
+                                parsedContent.image,
                                 userData,
                                 girlId,
                                 userId,
@@ -322,45 +222,179 @@ export async function POST(req) {
                                 girlData,
                                 userMessage
                             );
+                            break;
+
+                        case 'video':
+                            const videoResult = await handleVideoRequest(
+                                parsedContent.video,
+                                userData,
+                                girlId,
+                                userId,
+                                updatedConversationHistory,
+                                girlData,
+                                userMessage
+                            );
+                            break;
+
+                        default:
+                            // Text message - add to conversation history and display messages
+                            // Define a list of generic replacement messages
+                            const genericMessages = [
+                                "jajaja",
+                                "muestrame tu p",
+                                "como es tu p?",
+                                "k haces?",
+                                "tengo unas ganas tremendas"
+                            ];
+
+                            // Function to count emojis in a string
+                        function countEmojis(text) {
+                            // This regex pattern matches most common emoji characters
+                            const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
+                            const matches = text.match(emojiRegex);
+                            return matches ? matches.length : 0;
                         }
 
+                            // Function to get a random message from the generic messages list
+                        function getRandomGenericMessage() {
+                            const randomIndex = Math.floor(Math.random() * genericMessages.length);
+                            return genericMessages[randomIndex];
+                        }
 
-                        return true;
+                            // Process each response
+                            assistantMessageProcess.forEach(response => {
+                                let messageContent = response.content;
+
+                                // Check if the message has too many emojis (e.g., 10 or more)
+                                if (countEmojis(messageContent) >= 10) {
+                                    // Replace with a random generic message
+                                    messageContent = getRandomGenericMessage();
+                                }
+
+                                // Update the response content
+                                response.content = messageContent;
+
+                                // Add to conversation history
+                                updatedConversationHistory.push({
+                                    "role": "assistant",
+                                    "content": messageContent
+                                });
+                            });
+
+                            // Display the messages
+                            await conversationRef.update({ girlIsTyping: false });
+                            for (const response of assistantMessageProcess) {
+                                typeOfMessageContent = response.content;
+                                await displayMessageRef.add(response);
+                            }
                     }
-                    return false;
-                };
 
-                // Try to send additional image
-                await shouldSendAdditionalImage();
-            } else {
-                // If out of free messages and not premium, add a message telling user they're out of credits
-                const outOfCreditsMessage = {
-                    uid: uuidv4(),
-                    role: "assistant",
-                    liked: false,
-                    displayLink: true,
-                    respondingTo: userMessage.content,
-                    content: "compra premium para seguir hablando ;)",
-                    timestamp: adminDb.firestore.FieldValue.serverTimestamp()
-                };
+                    typeOfMessage = finalMessageType;
 
-                await displayMessageRef.add(outOfCreditsMessage);
+                    // Decrement free messages count if not premium
+                    if (!userData.premium) {
+                        await decrementFreeMessages(userId, girlId);
+                    }
 
-                updatedConversationHistory.push({
-                    "role": "user",
-                    "content": userMessage.content
-                });
+                    // After displaying the text messages, check if we should also send an image
+                    const shouldSendAdditionalImage = async () => {
+                        // Get updated conversation limits to check free image count
+                        const currentLimits = await getConversationLimits(userId, girlId);
 
-                updatedConversationHistory.push({
-                    "role": "assistant",
-                    "content": outOfCreditsMessage.content
-                });
+                        // Calculate chance based on premium status
+                        const imageChance = userData.premium ? 1/7 : 1/2;
 
-                typeOfMessage = "text";
+                        // Check if user is eligible to receive an image
+                        if ((userData.premium || currentLimits.freeImages > 0 && finalMessageType !== 'image') &&
+                            Math.random() < imageChance) {
+                            messageLabels = {
+                                is_explicit: false,
+                                requesting_picture: true,
+                                requesting_audio: false,
+                                requesting_video: false,
+                                emotional_tone: 'sexy'
+                            }
+
+                            // Get AI response for this specific message
+                            let assistantMessage = await handleLLMInteraction(
+                                userData,
+                                userMessage,
+                                girlData,
+                                updatedConversationHistory,
+                                messageLabels
+                            );
+
+                            // Process message type with the user message ID
+                            let parsedContentTwo = await handleMessageType(assistantMessage, userMessage.id, userMessage.content);
+
+                            // Send additional image without changing finalMessageType
+                            if(parsedContentTwo.messageType === 'image'){
+                                await handleImageRequest(
+                                    parsedContentTwo.parsedContent.image,
+                                    userData,
+                                    girlId,
+                                    userId,
+                                    updatedConversationHistory,
+                                    girlData,
+                                    userMessage
+                                );
+                            }
+
+                            return true;
+                        }
+                        return false;
+                    };
+
+                    // Try to send additional image
+                    await shouldSendAdditionalImage();
+                } else {
+                    // If out of free messages and not premium, add a message telling user they're out of credits
+                    const outOfCreditsMessage = {
+                        uid: uuidv4(),
+                        role: "assistant",
+                        liked: false,
+                        displayLink: true,
+                        respondingTo: userMessage.content,
+                        content: "compra premium para seguir hablando ;)",
+                        timestamp: adminDb.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    await displayMessageRef.add(outOfCreditsMessage);
+
+                    updatedConversationHistory.push({
+                        "role": "user",
+                        "content": userMessage.content
+                    });
+
+                    updatedConversationHistory.push({
+                        "role": "assistant",
+                        "content": outOfCreditsMessage.content
+                    });
+
+                    typeOfMessage = "text";
+                }
+
+                // Mark message as processed after handling
+                await markMessageAsProcessed(userId, girlId, userMessage.id, shouldLikeMessage);
+            } catch (error) {
+                console.error(`Error processing message ${userMessage.id}:`, error);
+
+                // Reset processing state for this message but mark it as having an error
+                try {
+                    const messageRef = displayMessageRef.doc(userMessage.id);
+                    await messageRef.update({
+                        isProcessing: false,
+                        processed: true,  // Mark as processed to avoid retries
+                        status: 'error',
+                        processingError: error.message
+                    });
+                } catch (updateError) {
+                    console.error('Error updating message status:', updateError);
+                }
+
+                // Continue processing other messages
+                continue;
             }
-
-            // Mark message as processed after handling
-            await markMessageAsProcessed(userId, girlId, userMessage.id, shouldLikeMessage);
         }
 
         // Update conversation with all new messages

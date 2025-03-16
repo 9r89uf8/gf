@@ -221,6 +221,7 @@ export async function POST(req) {
             sent: true,
             seen: false,
             processed: false,
+            isProcessing: false,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp(),
         };
 
