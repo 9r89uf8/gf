@@ -30,6 +30,7 @@ const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "Novia Virtual IA en NoviaChat",
+    "image": "https://www.noviachat.com/ariana.webp",
     "description": "Compañía virtual personalizada con chicas IA. Conversaciones naturales, imágenes y mensajes de voz.",
     "brand": {
         "@type": "Brand",
