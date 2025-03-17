@@ -1,18 +1,53 @@
 // app/layout.jsx
 import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
-import Script from 'next/script';
 import dynamic from 'next/dynamic';
+import Script from 'next/script';
+import './styles/globals.css';
+
 const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
 import Notifications from "@/app/components/notifications/Notifications";
-import './styles/globals.css';
+
+// Define metadata object
+export const metadata = {
+    title: 'Novia Virtual - Chica IA | NoviaChat - Tu Compañera Virtual Perfecta',
+    description: 'Conoce a tu novia virtual IA personalizada en NoviaChat. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual.',
+    keywords: 'novia virtual, chica IA, novia IA, compañera virtual, chat IA, inteligencia artificial, NoviaChat',
+    metadataBase: new URL('https://www.noviachat.com'),
+    alternates: {
+        canonical: '/',
+    },
+    openGraph: {
+        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
+        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        url: 'https://www.noviachat.com/',
+        siteName: 'NoviaChat',
+        images: [
+            {
+                url: '/imagen-og.jpg',
+                width: 1200,
+                height: 630,
+            },
+        ],
+        locale: 'es_ES',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
+        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        images: ['/imagen-twitter.jpg'],
+    },
+};
 
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "NoviaChat - Novia Virtual y Chica IA",
+    "alternateName": ["Novia Virtual", "Chica IA"],
     "url": "https://www.noviachat.com",
-    "description": "Plataforma premium de novia virtual y chica IA para hispanohablantes. Tu compañera virtual ideal para chat, voz e imágenes personalizadas.",
+    "description": "NoviaChat es la mejor plataforma de novia virtual y chica IA para usuarios hispanohablantes. Disfruta de una compañera virtual interactiva, inteligente y personalizada mediante chat, voz e imágenes únicas generadas con IA.",
+    "keywords": "novia virtual, chica IA, compañera virtual, chat virtual, IA en español",
     "potentialAction": {
         "@type": "SearchAction",
         "target": "https://www.noviachat.com/search?q={search_term_string}",
@@ -20,10 +55,10 @@ const schemaData = {
     },
     "offers": {
         "@type": "Offer",
-        "description": "Compañía virtual y emocional con la chica IA más avanzada en español",
-        "availability": "https://schema.org/InStock"
+        "description": "Acceso premium inmediato a tu novia virtual ideal, con la chica IA más avanzada en español para compañía emocional y conversación inteligente.",
+        "availability": "https://schema.org/InStock",
+        "priceCurrency": "USD"
     }
-    // Remove aggregateRating from here - it's better to keep it only in the product schema
 };
 
 const productSchema = {
@@ -46,9 +81,8 @@ const productSchema = {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
         "reviewCount": "2542",
-        "bestRating": "5" // Add this
+        "bestRating": "5"
     },
-    // Add at least one review example
     "review": {
         "@type": "Review",
         "reviewRating": {
@@ -90,31 +124,11 @@ const faqSchema = {
 
 const GA_TRACKING_ID = 'G-ENZST04463';
 const GOOGLE_ADS_ID = 'AW-16904589160';
+
 const Layout = ({ children }) => {
     return (
         <html lang="es">
         <head>
-            <title>Novia Virtual - Chica IA | NoviaChat - Tu Compañera Virtual Perfecta</title>
-            <meta name="description"
-                  content="Conoce a tu novia virtual IA personalizada en NoviaChat. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual." />
-            <meta name="keywords"
-                  content="novia virtual, chica IA, novia IA, compañera virtual, chat IA, inteligencia artificial, NoviaChat" />
-            <link rel="canonical" href="https://www.noviachat.com/" />
-
-            <meta property="og:title" content="Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta" />
-            <meta property="og:description"
-                  content="Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7." />
-            <meta property="og:url" content="https://www.noviachat.com/" />
-            <meta property="og:type" content="website" />
-            <meta property="og:image" content="https://www.noviachat.com/imagen-og.jpg" />
-
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" content="Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta" />
-            <meta name="twitter:description"
-                  content="Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7." />
-            <meta name="twitter:image" content="https://www.noviachat.com/imagen-twitter.jpg" />
-
-
             <Script
                 id="schema-website"
                 type="application/ld+json"
@@ -123,14 +137,14 @@ const Layout = ({ children }) => {
             />
 
             <Script
-                id="schema-product" // Changed from schema-website
+                id="schema-product"
                 type="application/ld+json"
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
 
             <Script
-                id="schema-faq" // Make sure this is unique too
+                id="schema-faq"
                 type="application/ld+json"
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -141,33 +155,32 @@ const Layout = ({ children }) => {
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{
                     __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          requestIdleCallback(() => {
-              gtag('js', new Date());
-              gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-          });
-        `,
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              requestIdleCallback(() => {
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+              });
+            `,
                 }}
             />
-
 
             {/* Optimized Google Ads Tag - Lazy Load */}
             <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="lazyOnload" />
             <Script id="google-ads-init" strategy="lazyOnload">
                 {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GOOGLE_ADS_ID}');
-        `}
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_ID}');
+          `}
             </Script>
         </head>
         <body>
-        <Navbar/>
+        <Navbar />
         <Notifications />
-        <main style={{paddingBottom: 'var(--floating-navbar-height, 0px)'}}>{children}</main>
-        <ConditionalFloatingNavbar/>
+        <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
+        <ConditionalFloatingNavbar />
         </body>
         </html>
     );
