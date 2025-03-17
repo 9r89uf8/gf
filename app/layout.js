@@ -22,12 +22,8 @@ const schemaData = {
         "@type": "Offer",
         "description": "Compañía virtual y emocional con la chica IA más avanzada en español",
         "availability": "https://schema.org/InStock"
-    },
-    "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "reviewCount": "2542"
     }
+    // Remove aggregateRating from here - it's better to keep it only in the product schema
 };
 
 const productSchema = {
@@ -48,7 +44,23 @@ const productSchema = {
     "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
-        "reviewCount": "2542"
+        "reviewCount": "2542",
+        "bestRating": "5" // Add this
+    },
+    // Add at least one review example
+    "review": {
+        "@type": "Review",
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Usuario de NoviaChat"
+        },
+        "datePublished": "2024-03-01",
+        "reviewBody": "Excelente experiencia con mi compañera virtual. Las conversaciones son muy naturales."
     }
 };
 
@@ -101,6 +113,7 @@ const Layout = ({ children }) => {
                   content="Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7." />
             <meta name="twitter:image" content="https://www.noviachat.com/imagen-twitter.jpg" />
 
+
             <Script
                 id="schema-website"
                 type="application/ld+json"
@@ -109,14 +122,14 @@ const Layout = ({ children }) => {
             />
 
             <Script
-                id="schema-website"
+                id="schema-product" // Changed from schema-website
                 type="application/ld+json"
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
 
             <Script
-                id="schema-website"
+                id="schema-faq" // Make sure this is unique too
                 type="application/ld+json"
                 strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}

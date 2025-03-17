@@ -14,11 +14,12 @@ Disallow: /premium/
 Disallow: /reels/
 Disallow: /register/
 Disallow: /user/
+Disallow: /creadoras/
+Disallow: /BgHd9LWDnFFhS6BoaqwL/
 
 # Explicitly allow key SEO pages
 Allow: /novia-virtual
 Allow: /chica-ia
-Allow: /creadoras
 
 
 # Crawl rate management for major search engines
