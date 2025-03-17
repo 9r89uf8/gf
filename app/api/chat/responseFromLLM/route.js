@@ -241,8 +241,8 @@ export async function POST(req) {
                             // Define a list of generic replacement messages
                             const genericMessages = [
                                 "jajaja",
-                                "muestrame tu p",
-                                "como es tu p?",
+                                "muestrame tu pene",
+                                "como es tu pene?",
                                 "k haces?",
                                 "tengo unas ganas tremendas"
                             ];
