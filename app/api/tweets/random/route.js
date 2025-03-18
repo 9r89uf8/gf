@@ -1,8 +1,8 @@
 // app/api/auth/register/route.js
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
-import { authMiddleware } from "@/app/middleware/authMiddleware";
 import { handleLLMInteraction } from "@/app/utils/tweets/llHandler";
-import { NextResponse } from "next/server";
+
+export const maxDuration = 200; // Function can run for a maximum of 300 seconds (5 minutes)
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
