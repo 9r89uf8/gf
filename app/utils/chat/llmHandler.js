@@ -440,16 +440,6 @@ async function getLLMResponse(messages) {
     }
 }
 
-// Example usage:
-// const messages = [
-//   { role: "system", content: "You are a helpful assistant." },
-//   { role: "user", content: "What is the capital of France?" }
-// ];
-//
-// getLLMResponse(messages)
-//   .then(response => console.log("LLM Response:", response))
-//   .catch(error => console.error("Error getting LLM response:", error));
-
 export async function handleLLMInteraction(userData, lastMessageByUser, girlData, conversationHistory, messageLabels) {
     const conversationLimits = await getConversationLimits(userData.id, girlData.id);
     let pictureDescriptions;
