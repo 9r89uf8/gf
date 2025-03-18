@@ -25,7 +25,7 @@ export async function POST(req) {
 
         // Calculate date 5 days ago
         const fiveDaysAgo = new Date();
-        fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+        fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 2);
 
         // Get users with timestamps from last 5 days
         const usersSnapshot = await adminDb.firestore()
@@ -36,7 +36,7 @@ export async function POST(req) {
 
         // Return error if no recent users found
         if (usersSnapshot.empty) {
-            console.error('No users found from the last 5 days');
+            console.error('No users found from the last 2 days');
             return new Response(JSON.stringify({ error: 'No recent users found' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },

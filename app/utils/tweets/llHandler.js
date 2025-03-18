@@ -53,6 +53,8 @@ Ejemplos ideales:
  
 Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
 
+PROVIDE ONLY THE TWEET. NO EXPLANATION OF HOW YOU GOT THE TWEET.
+
 Ahora escribe un tweet breve y provocativo y sexual usando este estilo.`;
 
     return {
