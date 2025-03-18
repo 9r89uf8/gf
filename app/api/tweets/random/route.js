@@ -35,6 +35,7 @@ export async function GET(req) {
 
                 // Get the initial LLM message and remove double quotes
                 let llMMessage = await handleLLMInteraction(girlData, existingTweetData);
+                console.log(llMMessage);
                 llMMessage = llMMessage.replace(/"/g, '');
 
                 // Retry up to 3 times if the message is too long (>150 characters)
