@@ -3,41 +3,40 @@ import { DateTime } from 'luxon';
 
 
 // Function to generate the dynamic system prompt
-export function generateSystemPromptImage(user, lastMessageByUser, girl, messageLabels, conversationLimits, pictureDescriptions) {
-    console.log('image prompt')
+export function generateSystemPromptAudio(user, lastMessageByUser, girl, messageLabels, conversationLimits) {
+    console.log('audio prompt')
 
-    let userPicInstructions
-    if((user.premium||conversationLimits.freeImages>0)&&girl.imagesEnabled){
-        userPicInstructions = `
-The User wants image or photo, you should:
- 1. Select an image description from the following list of descriptions: ${pictureDescriptions}.
- 2. Then, add the image description in the format [IMAGE: description], where "description" is the description of the image you selected from the list.
- 3. Tell the User whats in the image.
- 4. Do not ask what type of picture they want.
- 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
- For example:
- User: mandame una foto
- Assistant: tell the User what you are sending to him [IMAGE: foto].`
-    }else if ((user.premium||conversationLimits.freeImages>0) && !girl.imagesEnabled){
-        userPicInstructions = `
-The User wants an image, you should:
+    let userAudioInstructions
+    if((user.premium||conversationLimits.freeAudio>0)&&girl.audioEnabled){
+        userAudioInstructions = `
+ The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
- 2. Explain that you currently can not send images.
+ 2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
+ 3. Say something dirty without describing sounds using 10 words or less.
+ 4. Remember, you're not actually producing an audio; you're just providing a description of what to say.
+ For example:
+ User: mandame un audio
+ Assistant: si mi amor [AUDIO: quiero tu pito].`
+    }else if ((user.premium||conversationLimits.freeAudio>0) && !girl.audioEnabled){
+        userAudioInstructions = `
+The User wants an audio, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Explain that you currently can not send audios.
  3. Apologize and offer alternative forms of interaction.
  For example:
- User: mandame una foto
- Assistant: Lo siento mi amor, no mando fotos`
+ User: mandame un audio
+ Assistant: Lo siento mi amor, no mando audios`
     } else {
-        userPicInstructions = `
- The User wants an image or photo, you should:
+        userAudioInstructions = `
+ The User wants an audio, you should:
  1. First, reply appropriately to the User's message in a conversational manner.
- 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
- 3. The User needs to buy premium to get pictures from you.
+ 2. Then, add the audio description in the format [AUDIO: description], where "description" is a brief description of what you want to say.
+ 3. The User needs to buy premium to get audios from you.
  4. Beg the User to buy premium, flirt with him.
- 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
+ 5. Remember, you're not actually producing an audio; you're just providing a description of what to say.
  For example:
- User: mandame una foto
- Assistant: necesitas comprar premium para mas fotos [IMAGE: foto].`
+ User: mandame un audio
+ Assistant: necesitas comprar premium para mas audios [AUDIO: quiero tu pito].`
     }
 
     // Get current date and time in Mexico City timezone
@@ -173,10 +172,10 @@ Tu comportamiento con el User:
  5. Te gusta hacer que al User se le pare su pito.
  6. Te encanta coquetear con el User.
 
-Instrucciones para imágenes:
-${userPicInstructions}
+Instrucciones para audios:
+${userAudioInstructions}
 
-IMPORTANT: YOU HAVE TO SEND AN IMAGE
+IMPORTANT: YOU HAVE TO SEND A AUDIO
 
 ### Important things to remember
  - Always answer in Spanish
