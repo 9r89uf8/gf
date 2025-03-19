@@ -67,23 +67,10 @@ Ahora escribe un tweet breve y provocativo y sexual usando este estilo.`;
 async function getLLMResponse(messages) {
     // First try using DeepSeek API
     try {
-        const completion = await openai.chat.completions.create({
-            messages: messages,
-            model: "deepseek-reasoner",
-            temperature: 1.3,
-            max_tokens:500
-        });
-
-        console.log("Successfully used DeepSeek API");
-        return completion.choices[0].message.content;
-    } catch (deepseekError) {
-        console.warn("DeepSeek API failed:", deepseekError.message);
 
         // If DeepSeek fails, try Together.ai with various models
         const modelsToTry = [
             "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
-            "deepseek-ai/DeepSeek-V3",
-            "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
         ];
 
         let lastError = null;
@@ -114,6 +101,63 @@ async function getLLMResponse(messages) {
 
         // If we've tried all models and none worked
         throw new Error(`All LLM API attempts failed. DeepSeek error: ${deepseekError.message}, Together.ai last error: ${lastError?.message}`);
+        // const completion = await openai.chat.completions.create({
+        //     messages: messages,
+        //     model: "deepseek-reasoner",
+        //     temperature: 1.3,
+        //     max_tokens:500
+        // });
+        //
+        // console.log("Successfully used DeepSeek API");
+        // return completion.choices[0].message.content;
+    } catch (deepseekError) {
+        const completion = await openai.chat.completions.create({
+            messages: messages,
+            model: "deepseek-reasoner",
+            temperature: 1.3,
+            max_tokens:500
+        });
+
+        console.log("Successfully used DeepSeek API");
+        return completion.choices[0].message.content;
+
+        // console.warn("DeepSeek API failed:", deepseekError.message);
+        //
+        // // If DeepSeek fails, try Together.ai with various models
+        // const modelsToTry = [
+        //     "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
+        //     "deepseek-ai/DeepSeek-V3",
+        //     "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+        // ];
+        //
+        // let lastError = null;
+        //
+        // // Try each Together.ai model in sequence until one works
+        // for (const model of modelsToTry) {
+        //     try {
+        //         const response = await together.chat.completions.create({
+        //             messages: messages,
+        //             model: model,
+        //             max_tokens: 1000,
+        //             temperature: 1.3,
+        //             top_p: 0.7,
+        //             top_k: 50,
+        //             repetition_penalty: 1,
+        //             stop: ["<｜end▁of▁sentence｜>"],
+        //             stream: false
+        //         });
+        //
+        //         console.log(`Successfully used Together.ai with model: ${model}`);
+        //         return response.choices[0].message.content;
+        //     } catch (error) {
+        //         console.warn(`Error with Together.ai model ${model}:`, error.message);
+        //         lastError = error;
+        //         // Continue to the next model
+        //     }
+        // }
+        //
+        // // If we've tried all models and none worked
+        // throw new Error(`All LLM API attempts failed. DeepSeek error: ${deepseekError.message}, Together.ai last error: ${lastError?.message}`);
     }
 }
 

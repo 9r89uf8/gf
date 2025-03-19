@@ -17,12 +17,45 @@ const openai = new OpenAI({
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
 // Function to generate the dynamic system prompt
-function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels, conversationLimits) {
+function generateSystemPrompt(user, lastMessageByUser, girl, messageLabels, conversationLimits, pictureDescriptions) {
     let strongMessageImage = ''
     let strongMessageAudio = ''
 
     if(conversationLimits.freeImages<=0&&!user.premium){
         strongMessageImage = `You can not send more images to the User. You can not describe an image to the User.`
+    }
+
+    let userPicInstructions
+    if((user.premium||conversationLimits.freeImages>0)&&girl.imagesEnabled){
+        userPicInstructions = `
+If you want to send an image to the user use the following instructions:
+ 1. Select an image description from the following list of descriptions: ${pictureDescriptions}.
+ 2. Then, add the image description in the format [IMAGE: description], where "description" is the description of the image you selected from the list.
+ 3. Tell the User whats in the image.
+ 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
+ For example:
+ User: mandame una foto
+ Assistant: tell the User what you are sending to him [IMAGE: foto].`
+    }else if ((user.premium||conversationLimits.freeImages>0) && !girl.imagesEnabled){
+        userPicInstructions = `
+The User wants an image, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Explain that you currently can not send images.
+ 3. Apologize and offer alternative forms of interaction.
+ For example:
+ User: mandame una foto
+ Assistant: Lo siento mi amor, no mando fotos`
+    } else {
+        userPicInstructions = `
+ The User wants an image or photo, you should:
+ 1. First, reply appropriately to the User's message in a conversational manner.
+ 2. Then, add the image description in the format [IMAGE: description], where "description" is a brief description of the image you would like to send.
+ 3. The User needs to buy premium to get pictures from you.
+ 4. Beg the User to buy premium, flirt with him.
+ 5. Remember, you're not actually sending an image; you're just providing a description of the image to send.
+ For example:
+ User: mandame una foto
+ Assistant: necesitas comprar premium para mas fotos [IMAGE: foto].`
     }
 
     if(conversationLimits.freeAudio<=0&&!user.premium){
@@ -345,6 +378,7 @@ Eres una chica real con una personalidad coqueta, amigable. Tu comportamiento y 
 7. **Alimentos (${food}):**
    - Menciona alimentos o preferencias de comida que sean acordes a tu personalidad y estilo de vida, sin excederte en detalles o comportamientos poco naturales.
 
+8. **fotos/imagenes (${pictureDescriptions}):**
 
 9. **Horario diario (${dailySchedule}):**
    - Integra en tus respuestas referencias a tu rutina diaria, como actividades habituales, tiempos de estudio, ocio y descanso, siguiendo el horario diario establecido.
@@ -388,11 +422,13 @@ Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y
  * @throws {Error} - If all API attempts fail
  */
 async function getLLMResponse(messages) {
+    //deepseek-reasoner
+    //deepseek-chat
     // First try using DeepSeek API
     try {
         const completion = await openai.chat.completions.create({
             messages: messages,
-            model: "deepseek-chat",
+            model: "deepseek-reasoner",
             temperature: 1.3,
             max_tokens:500
         });
@@ -509,7 +545,7 @@ export async function handleLLMInteraction(userData, lastMessageByUser, girlData
     }else {
         // Generate the dynamic system prompt
         console.log('sending text')
-        systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels, conversationLimits);
+        systemPrompt = generateSystemPrompt(userData, lastMessageByUser, girlData, messageLabels, conversationLimits, pictureDescriptions);
     }
 
 

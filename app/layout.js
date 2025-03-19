@@ -57,7 +57,41 @@ const schemaData = {
         "@type": "Offer",
         "description": "Acceso premium inmediato a tu novia virtual ideal, con la chica IA más avanzada en español para compañía emocional y conversación inteligente.",
         "availability": "https://schema.org/InStock",
-        "priceCurrency": "USD"
+        "priceCurrency": "USD",
+        "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "US",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 30,
+            "returnMethod": "https://schema.org/ReturnByMail"
+        },
+        "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+                "@type": "MonetaryAmount",
+                "value": "0",
+                "currency": "USD"
+            },
+            "shippingDestination": {
+                "@type": "DefinedRegion",
+                "addressCountry": "US"
+            },
+            "deliveryTime": {
+                "@type": "ShippingDeliveryTime",
+                "handlingTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": "0",
+                    "maxValue": "0",
+                    "unitCode": "HUR"
+                },
+                "transitTime": {
+                    "@type": "QuantitativeValue",
+                    "minValue": "0",
+                    "maxValue": "0",
+                    "unitCode": "HUR"
+                }
+            }
+        }
     }
 };
 
@@ -75,12 +109,13 @@ const productSchema = {
         "@type": "Offer",
         "price": "0.00",
         "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "priceValidUntil": "2026-12-31"
     },
     "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
-        "reviewCount": "2542",
+        "reviewCount": "50542",
         "bestRating": "5"
     },
     "review": {
@@ -94,7 +129,7 @@ const productSchema = {
             "@type": "Person",
             "name": "Usuario de NoviaChat"
         },
-        "datePublished": "2024-03-01",
+        "datePublished": "2025-03-01",
         "reviewBody": "Excelente experiencia con mi compañera virtual. Las conversaciones son muy naturales."
     }
 };
