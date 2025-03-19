@@ -81,14 +81,14 @@ const schemaData = {
                 "@type": "ShippingDeliveryTime",
                 "handlingTime": {
                     "@type": "QuantitativeValue",
-                    "minValue": "0",
-                    "maxValue": "0",
+                    "minValue": "1",
+                    "maxValue": "2",
                     "unitCode": "h"
                 },
                 "transitTime": {
                     "@type": "QuantitativeValue",
                     "minValue": "0",
-                    "maxValue": "0",
+                    "maxValue": "1",
                     "unitCode": "h"
                 }
             }
@@ -135,14 +135,14 @@ const productSchema = {
                 "@type": "ShippingDeliveryTime",
                 "handlingTime": {
                     "@type": "QuantitativeValue",
-                    "minValue": "0",
-                    "maxValue": "0",
+                    "minValue": "1",
+                    "maxValue": "2",
                     "unitCode": "h"
                 },
                 "transitTime": {
                     "@type": "QuantitativeValue",
                     "minValue": "0",
-                    "maxValue": "0",
+                    "maxValue": "1",
                     "unitCode": "h"
                 }
             }
