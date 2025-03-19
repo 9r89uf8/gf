@@ -63,7 +63,8 @@ const schemaData = {
             "applicableCountry": "US",
             "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
             "merchantReturnDays": 30,
-            "returnMethod": "https://schema.org/ReturnByMail"
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
         },
         "shippingDetails": {
             "@type": "OfferShippingDetails",
@@ -116,7 +117,8 @@ const productSchema = {
             "applicableCountry": "US",
             "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
             "merchantReturnDays": 30,
-            "returnMethod": "https://schema.org/ReturnByMail"
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
         },
         "shippingDetails": {
             "@type": "OfferShippingDetails",
