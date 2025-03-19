@@ -125,7 +125,7 @@ export default function FloatingNavbar() {
             icon: <AccountCircleIcon sx={{ fontSize: '2rem' }} />,
         },
         {
-            label: 'Creadoras',
+            label: 'Chicas IA',
             path: '/creadoras',
             gradient: 'linear-gradient(135deg, #4A90E2 0%, #67B26F 100%)',
             icon: <GroupIcon sx={{ fontSize: '2rem' }} />,

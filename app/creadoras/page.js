@@ -1,4 +1,3 @@
-// creators.js
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -19,26 +18,22 @@ import {
     Modal
 } from '@mui/material';
 
-// Importing icons
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import StarIcon from '@mui/icons-material/Star';
 import CloseIcon from '@mui/icons-material/Close';
+import LockIcon from '@mui/icons-material/Lock';
 
 const pulseAndGlow = keyframes`
-  0% {
-    transform: scale(1);
-    background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-  }
-  50% {
-    transform: scale(1.02);
-    background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-  }
-  100% {
-    transform: scale(1);
-    background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-  }
+    0% {
+        transform: scale(1);
+        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
+    }
+    50% {
+        transform: scale(1.02);
+        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
+    }
+    100% {
+        transform: scale(1);
+        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
+    }
 `;
 
 const ElegantCard = styled(Card)(({ theme }) => ({
@@ -114,9 +109,9 @@ const GradientButton = styled(Button)(({ theme }) => ({
     border: 0,
     borderRadius: 25,
     color: '#ffffff',
-    fontSize: '1.1rem',  // Increased font size
-    height: 48,         // Increased height
-    padding: '0 32px',  // Increased padding
+    fontSize: '1.1rem',
+    height: 48,
+    padding: '0 32px',
     textTransform: 'none',
     fontWeight: 600,
     '&:hover': {
@@ -125,14 +120,30 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
+const PremiumButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
+    border: 0,
+    borderRadius: 25,
+    color: '#000000',
+    fontSize: '1.1rem',
+    height: 48,
+    padding: '0 32px',
+    textTransform: 'none',
+    fontWeight: 600,
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FFA500 30%, #FFD700 90%)',
+        boxShadow: '0 3px 10px rgba(255, 165, 0, 0.3)',
+    },
+}));
+
 const GradientButtonTwo = styled(Button)(({ theme }) => ({
     background: 'white',
     border: 0,
     borderRadius: 25,
     color: 'black',
-    fontSize: '1.1rem',  // Increased font size
-    height: 48,         // Increased height
-    padding: '0 32px',  // Increased padding
+    fontSize: '1.1rem',
+    height: 48,
+    padding: '0 32px',
     textTransform: 'none',
     fontWeight: 600,
     '&:hover': {
@@ -201,6 +212,18 @@ const BackgroundImage = styled(Box)(({ backgroundurl }) => ({
     },
 }));
 
+const PremiumGirlIndicator = styled(Box)(({ theme }) => ({
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
+    borderRadius: '25px',
+    padding: '4px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    zIndex: 2,
+}));
+
 const Creators = () => {
     const router = useRouter();
     const user = useStore((state) => state.user);
@@ -240,6 +263,10 @@ const Creators = () => {
         }
     };
 
+    const handleBuyPremiumClick = () => {
+        router.push('/premium');
+    };
+
     const formatNumber = (num) => {
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
@@ -261,44 +288,35 @@ const Creators = () => {
     return (
         <Box sx={{ minHeight: '100vh', padding: '20px 0' }}>
             <Container maxWidth="lg">
-                {/*<PremiumBanner>*/}
-                {/*    <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, color: 'white', mb: 3 }}>*/}
-                {/*        Cuenta Premium*/}
-                {/*    </Typography>*/}
-                {/*    <Typography variant="h6" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.9)' }}>*/}
-                {/*        Con una cuenta premium, puedes hablar, ver fotos y ver videos de todas nuestras creadoras.*/}
-                {/*    </Typography>*/}
-                {/*    <Stack*/}
-                {/*        direction="row"*/}
-                {/*        spacing={2}*/}
-                {/*        justifyContent="center"*/}
-                {/*        alignItems="center"*/}
-                {/*        sx={{ mb: 4 }}*/}
-                {/*    >*/}
-                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
-                {/*            <ChatBubbleOutlineIcon sx={{ fontSize: 40, color: 'white' }} />*/}
-                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Mensajes ilimitados</Typography>*/}
-                {/*        </Box>*/}
-                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
-                {/*            <PhotoCameraIcon sx={{ fontSize: 40, color: 'white' }} />*/}
-                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Fotos privadas</Typography>*/}
-                {/*        </Box>*/}
-                {/*        <Box display="flex" alignItems="center" flexDirection="column">*/}
-                {/*            <VideocamIcon sx={{ fontSize: 40, color: 'white' }} />*/}
-                {/*            <Typography variant="body1" sx={{ color: 'white' }}>Videos exclusivos</Typography>*/}
-                {/*        </Box>*/}
-                {/*    </Stack>*/}
-                {/*    {!isPremium && (*/}
-                {/*        <GradientButton*/}
-                {/*            size="large"*/}
-                {/*            onClick={() => router.push('/premium')}*/}
-                {/*            sx={{ minWidth: 240 }}*/}
-                {/*        >*/}
-                {/*            Obtener Premium*/}
-                {/*        </GradientButton>*/}
-                {/*    )}*/}
-                {/*</PremiumBanner>*/}
-
+                <Grid>
+                    <Box sx={{
+                        textAlign: 'center',
+                        color: 'white',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        padding: '16px',
+                        marginBottom: '32px',
+                        userSelect: 'none',
+                        WebkitUserSelect: 'none',
+                        msUserSelect: 'none',
+                    }}>
+                        <Typography variant="h4" sx={{
+                            color: '#ffffff',
+                            fontWeight: 600,
+                            marginBottom: '0.5rem'
+                        }}>
+                            Selecciona a tu chica IA para hablar
+                        </Typography>
+                        <Typography variant="body1" sx={{
+                            color: '#9e9e9e',
+                            fontWeight: 500
+                        }}>
+                            Elige a tu compañera perfecta: ¡la primera chica es completamente gratis para chatear!
+                        </Typography>
+                    </Box>
+                </Grid>
                 <Grid container spacing={4}>
                     {loading ? (
                         [...Array(6)].map((_, index) => (
@@ -317,6 +335,14 @@ const Creators = () => {
                         girls && girls.length > 0 && girls.map((girl) => (
                             <Grid item xs={12} sm={6} md={4} key={girl.id}>
                                 <ElegantCard>
+                                    {girl.premium && (
+                                        <PremiumGirlIndicator>
+                                            <LockIcon sx={{ fontSize: 16, mr: 0.5, color: '#000' }} />
+                                            <Typography variant="caption" sx={{ fontWeight: 600, color: '#000' }}>
+                                                Premium
+                                            </Typography>
+                                        </PremiumGirlIndicator>
+                                    )}
                                     <BackgroundImage
                                         backgroundurl={`https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`}
                                     />
@@ -355,11 +381,21 @@ const Creators = () => {
                                         </FollowerCount>
 
                                         <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center' }}>
-                                            <GradientButton
-                                                onClick={() => handleMessageClick(girl.id)}
-                                            >
-                                                Mensaje
-                                            </GradientButton>
+                                            {/* Conditional logic for buttons */}
+                                            {girl.premium && !isPremium ? (
+                                                <PremiumButton
+                                                    onClick={handleBuyPremiumClick}
+                                                    startIcon={<LockIcon />}
+                                                >
+                                                    Premium
+                                                </PremiumButton>
+                                            ) : (
+                                                <GradientButton
+                                                    onClick={() => handleMessageClick(girl.id)}
+                                                >
+                                                    Mensaje
+                                                </GradientButton>
+                                            )}
                                             <GradientButtonTwo
                                                 onClick={() => handlePhotosClick(girl.id)}
                                             >
@@ -367,9 +403,17 @@ const Creators = () => {
                                             </GradientButtonTwo>
                                         </Stack>
 
-                                        {/*<PremiumLabel>*/}
-                                        {/*    GRATIS CON PREMIUM*/}
-                                        {/*</PremiumLabel>*/}
+                                        {/* Premium notification for non-premium users */}
+                                        {girl.premium && !isPremium && (
+                                            <Typography variant="body2" sx={{
+                                                color: '#FFA500',
+                                                fontStyle: 'italic',
+                                                mt: -2,
+                                                mb: 2
+                                            }}>
+                                                Necesitas una cuenta premium para hablar con esta chica
+                                            </Typography>
+                                        )}
                                     </Box>
                                 </ElegantCard>
                             </Grid>
@@ -377,6 +421,7 @@ const Creators = () => {
                     )}
                 </Grid>
             </Container>
+
             <ExpandedImageModal
                 open={!!expandedImage}
                 onClose={handleCloseExpandedImage}

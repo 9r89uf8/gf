@@ -30,6 +30,7 @@ import { styled, keyframes } from '@mui/system';
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import LockIcon from "@mui/icons-material/Lock";
 
 
 const flash = keyframes`
@@ -88,12 +89,46 @@ const StatusIndicator = styled(Box)(({ isActive }) => ({
     animation: `${flash} ${isActive ? '2s' : '0s'} infinite`,
 }));
 
+const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    border: 0,
+    borderRadius: 25,
+    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
+    color: 'white',
+    fontSize: 18,
+    height: 48,
+    padding: '0 8px',
+    margin: '3px 0',
+    fontWeight: 'bold',
+    textTransform: 'none',
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+    },
+}));
+
+const PremiumButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
+    border: 0,
+    borderRadius: 25,
+    color: '#000000',
+    fontSize: 14,
+    height: 48,
+    padding: '0 8px',
+    textTransform: 'none',
+    fontWeight: 600,
+    '&:hover': {
+        background: 'linear-gradient(45deg, #FFA500 30%, #FFD700 90%)',
+        boxShadow: '0 3px 10px rgba(255, 165, 0, 0.3)',
+    },
+}));
+
 const DMList = () => {
     const router = useRouter();
     const chats = useStore((state) => state.chats);
     const user = useStore((state) => state.user);
     const girls = useStore((state) => state.girls);
     const [loading, setLoading] = useState(true);
+    const isPremium = user && user.premium;
 
     useMultipleMessageResponder({
         userId: user?.uid,
@@ -126,6 +161,10 @@ const DMList = () => {
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
+    };
+
+    const handlePremium = () => {
+        router.push('/premium');
     };
 
     function truncateWithEllipsis(text, maxLength) {
@@ -253,27 +292,21 @@ const DMList = () => {
                                 </CardContent>
 
                                 <CardActions sx={{ width: '100%', p: 2, pt: 0 }}>
-                                    <Button
-                                        variant="contained"
-                                        fullWidth
-                                        disabled={girl ? girl.private : false}
-                                        onClick={() => handleMessageClick(girl.id)}
-                                        sx={{
-                                            background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
-                                            color: 'white',
-                                            borderRadius: '20px',
-                                            textTransform: 'none',
-                                            '&:hover': {
-                                                background: 'linear-gradient(45deg, #023e8a 30%, #0096c7 90%)',
-                                            },
-                                            '&.Mui-disabled': {
-                                                background: '#e0e0e0',
-                                                color: '#9e9e9e',
-                                            }
-                                        }}
-                                    >
-                                        Mensaje
-                                    </Button>
+                                    {/* Conditional logic for buttons */}
+                                    {girl.premium && !isPremium ? (
+                                        <PremiumButton
+                                            onClick={handlePremium}
+                                            startIcon={<LockIcon />}
+                                        >
+                                            Premium
+                                        </PremiumButton>
+                                    ) : (
+                                        <GradientButton
+                                            onClick={() => handleMessageClick(girl.id)}
+                                        >
+                                            Mensaje
+                                        </GradientButton>
+                                    )}
                                 </CardActions>
                             </GirlCard>
                         ))}

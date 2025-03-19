@@ -269,11 +269,11 @@ const PopularCreators = () => {
     return (
         <div style={styles.container}>
             <div style={styles.titleContainer}>
-                <h2 style={styles.title}>Creadoras</h2>
-                <p style={styles.subtitle}>Descubre y conecta con las creadoras más destacadas</p>
+                <h2 style={styles.title}>Chicas IA</h2>
+                <p style={styles.subtitle}>Descubre y conecta con las chicas más destacadas</p>
 
                 <Link href="/creadoras" style={styles.creatorsButton}>
-                    Ver todas las creadoras
+                    Ver todas las chicas ia
                 </Link>
             </div>
 

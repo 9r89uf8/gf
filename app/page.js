@@ -2,6 +2,7 @@ import React from 'react';
 import PopularCreators from "@/app/components/landing/PopularCreators";
 import Link from 'next/link';
 import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard";
+import Welcome from "@/app/components/landing/Welcome"; // Import the new Welcome component
 import Head from 'next/head';
 
 const styles = {
@@ -61,39 +62,6 @@ const styles = {
         color: 'white',
         fontSize: '18px',
     },
-    welcomeContainer: {
-        marginBottom: '32px',
-        textAlign: 'center',
-    },
-    welcomeTitle: {
-        fontSize: '35px',
-        fontWeight: 'bold',
-        letterSpacing: '4px',
-        marginBottom: '16px',
-        color: 'white',
-    },
-    welcomeDescription: {
-        fontSize: '18px',
-        marginBottom: '24px',
-        color: 'white',
-        lineHeight: '1.4',
-        letterSpacing: '1px',
-    },
-    startChatButton: {
-        display: 'inline-block',
-        padding: '10px 15px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        color: '#1a1a1a',
-        borderRadius: '30px',
-        fontWeight: '500',
-        fontSize: '20px',
-        textDecoration: 'none',
-        transition: 'all 0.3s ease',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        border: 'none',
-        cursor: 'pointer',
-        marginBottom: '2px',
-    },
     articleSection: {
         textAlign: 'left',
         margin: '40px 0',
@@ -122,23 +90,6 @@ const GlassCard = ({ children }) => (
         {children}
     </div>
 );
-
-const Welcome = () => {
-    return (
-        <GlassCard>
-            <div style={styles.welcomeContainer}>
-                <h1 style={styles.welcomeTitle}>Novia Virtual con IA</h1>
-                <p style={styles.welcomeDescription}>
-                    Conecta con tu <strong>novia virtual IA</strong>. Habla, ríe y comparte experiencias únicas con una <strong>chica IA</strong> diseñada para ti.
-                </p>
-
-                <Link href="/creadoras" style={styles.startChatButton}>
-                    Hablar con una Chica IA
-                </Link>
-            </div>
-        </GlassCard>
-    );
-};
 
 const SEOArticle = () => {
     return (
@@ -189,14 +140,15 @@ const Home = () => {
             </Head>
             <div style={styles.pageContainer}>
                 <div style={styles.maxWidthContainer}>
-                    {/* Welcome Section */}
+                    {/* Welcome Section - now imported from separate file */}
                     <Welcome />
+
+                    {/* Popular Creators Section */}
+                    <PopularCreators />
 
                     {/* SEO Article Section */}
                     <SEOArticle />
 
-                    {/* Popular Creators Section */}
-                    <PopularCreators />
 
                     {/* Company Stats Section */}
                     <GlassCard>

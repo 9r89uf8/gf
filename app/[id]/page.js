@@ -17,7 +17,7 @@ import {
     Grid,
     Divider,
     Skeleton,
-    Modal,
+    Modal, Stack,
 } from '@mui/material';
 import { alpha, styled } from "@mui/material/styles";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -26,6 +26,7 @@ import CakeIcon from '@mui/icons-material/Cake';
 import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
+import LockIcon from "@mui/icons-material/Lock";
 
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
@@ -98,37 +99,19 @@ const GradientButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const GradientButtonTwo = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #ffb703 30%, #fb8500 90%)',
+const PremiumButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
-    color: 'white',
-    fontSize: 22,
+    color: '#000000',
+    fontSize: '1.1rem',
     height: 48,
-    padding: '0 10px',
-    margin: '10px 0',
-    fontWeight: 'bold',
+    padding: '0 32px',
     textTransform: 'none',
+    fontWeight: 600,
     '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
-    },
-}));
-
-const GradientButtonBuy = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
-    border: 0,
-    borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
-    color: 'white',
-    fontSize: 24,
-    height: 48,
-    padding: '0 30px',
-    margin: '10px 0',
-    fontWeight: 'bold',
-    textTransform: 'none',
-    '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+        background: 'linear-gradient(45deg, #FFA500 30%, #FFD700 90%)',
+        boxShadow: '0 3px 10px rgba(255, 165, 0, 0.3)',
     },
 }));
 
@@ -153,6 +136,7 @@ const GirlProfile = ({ params }) => {
     const [loading, setLoading] = React.useState(true);
     const [isFollowing, setIsFollowing] = React.useState(false);
     const [isFollowLoading, setIsFollowLoading] = React.useState(false);
+    const isPremium = user && user.premium;
 
     useEffect(() => {
         const fetchGirl = async () => {
@@ -363,17 +347,36 @@ const GirlProfile = ({ params }) => {
                                         {girl ? girl.bio : 'No sean chismosos 😂😏'}
                                     </Typography>
                                 )}
-                                {loading ? (
-                                    <Skeleton variant="rectangular" width={200} height={48} />
-                                ) : girl && !girl.private ? (
-                                    <GradientButton
-                                        disabled={girl ? girl.private : false}
-                                        onClick={() => handleMessageClick(girl.id)}
-                                    >
-                                        Mensaje
-                                    </GradientButton>
-                                ) : (
-                                    <GradientButtonTwo>Cuenta Privada</GradientButtonTwo>
+
+
+                                <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center' }}>
+                                    {/* Conditional logic for buttons */}
+                                    {girl&&girl.premium && !isPremium ? (
+                                        <PremiumButton
+                                            onClick={handlePremium}
+                                            startIcon={<LockIcon />}
+                                        >
+                                            Premium
+                                        </PremiumButton>
+                                    ) : (
+                                        <GradientButton
+                                            onClick={() => handleMessageClick(girl.id)}
+                                        >
+                                            Mensaje
+                                        </GradientButton>
+                                    )}
+                                </Stack>
+
+                                {/* Premium notification for non-premium users */}
+                                {girl&&girl.premium && !isPremium && (
+                                    <Typography variant="body2" sx={{
+                                        color: '#FFA500',
+                                        fontStyle: 'italic',
+                                        mt: -2,
+                                        mb: 2
+                                    }}>
+                                        Necesitas una cuenta premium para hablar con esta chica
+                                    </Typography>
                                 )}
                             </Box>
                         </Grid>

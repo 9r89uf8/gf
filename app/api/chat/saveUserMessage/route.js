@@ -76,6 +76,7 @@ export async function POST(req) {
         if (media && mediaType !== 'audio') {
             const validation = validateFile(media);
             if (!validation.valid) {
+                console.log('errorrrrrrr audio validation')
                 return new Response(JSON.stringify({ error: validation.error }), {
                     status: 400,
                     headers: { 'Content-Type': 'application/json' },
@@ -116,6 +117,15 @@ export async function POST(req) {
 
         const girlDoc = await adminDb.firestore().collection('girls').doc(girlId).get();
         const girlData = girlDoc.data();
+
+        // Return error if no recent users found
+        if (girlData&&girlData.premium&&!userData.premium) {
+            console.error('girl is premium');
+            return new Response(JSON.stringify({ error: 'girl is premium' }), {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
 
         // Get the conversation history from Firestore
         const conversationRef = adminDb.firestore()
