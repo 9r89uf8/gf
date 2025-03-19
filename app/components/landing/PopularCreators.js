@@ -24,7 +24,7 @@ const staticGirls = [
         priority: false,
         bio: 'No sean chismosos 😏😂',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
-        texting: true,
+        texting: false,
         verified: true, // Adding verified status
         verifiedType: 'blue' // 'gold' or 'blue'
     },

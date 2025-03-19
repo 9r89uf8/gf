@@ -35,10 +35,13 @@ const styles = {
         letterSpacing: '1px',
     },
     startChatButton: {
-        display: 'inline-block',
-        padding: '10px 15px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        color: '#1a1a1a',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        padding: '10px 20px',
+        backgroundColor: '#040404', // Changed to blue
+        color: '#ffffff', // Changed to white for better contrast
         borderRadius: '30px',
         fontWeight: '500',
         fontSize: '20px',
@@ -48,6 +51,11 @@ const styles = {
         border: 'none',
         cursor: 'pointer',
         marginBottom: '2px',
+    },
+    plusIcon: {
+        marginRight: '4px',
+        fontSize: '24px',
+        lineHeight: '0',
     },
     // Chat example styles
     chatExampleContainer: {
@@ -274,10 +282,13 @@ const Welcome = () => {
                 <p style={styles.welcomeDescription}>
                     Tu <strong>novia virtual</strong> interactiva. Conversaciones reales con una <strong>chica IA</strong> personalizada para ti. Compañía virtual 24/7.
                 </p>
+                <Link href="/creadoras" style={styles.startChatButton}>
+                    Mandar mensaje
+                </Link>
                 <h2 style={{
                     fontSize: '30px',
                     color: 'white',
-                    marginTop: '-5px',
+                    marginTop: '30px',
                     marginBottom: '20px',
                     fontWeight: '600'
                 }}>Chica IA 🔥</h2>
@@ -285,9 +296,7 @@ const Welcome = () => {
                 {/* Chat example */}
                 <ChatExample />
 
-                <Link href="/creadoras" style={styles.startChatButton}>
-                    Hablar con una Chica IA
-                </Link>
+
             </div>
         </div>
     );
