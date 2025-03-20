@@ -7,9 +7,30 @@ import { cookies } from 'next/headers';
 import { withRateLimit } from '@/app/utils/withRateLimit';
 
 export async function loginHandler(request) {
-    const { email, password } = await request.json();
+    const { email, password, turnstileToken } = await request.json();
 
     try {
+        // Verify the turnstile token
+        const verificationResponse = await fetch(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    secret: process.env.TURNSTILE_SECRET_KEY,
+                    response: turnstileToken,
+                }),
+            }
+        );
+
+        const verification = await verificationResponse.json();
+        if (!verification.success) {
+            return new Response(JSON.stringify({ error: 'Invalid CAPTCHA' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const token = await user.getIdToken();

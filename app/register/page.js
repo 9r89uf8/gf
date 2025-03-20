@@ -298,50 +298,6 @@ const RegisterPage = () => {
                             </FeatureBox>
                         </Box>
 
-                        <Box>
-                            <InfoPaper>
-                                <Info sx={{ marginRight: 1.5, marginTop: 0.3, color: '#80ed99' }} />
-                                <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                                    ¿Quieres chatear sin usar tus datos reales? Usa una cuenta anónima .
-                                </Typography>
-                            </InfoPaper>
-                            {!isAnonymous && (
-                                <OutlinedButton
-                                    fullWidth
-                                    onClick={handleAnonymousClick}
-                                    sx={{
-                                        borderColor: '#80ed99',
-                                        color: '#80ed99',
-                                        marginBottom: 3,
-                                        '&:hover': {
-                                            borderColor: '#57cc99',
-                                            background: 'rgba(128, 237, 153, 0.1)',
-                                        }
-                                    }}
-                                >
-                                    Crear Cuenta Anónima
-                                </OutlinedButton>
-                            )}
-
-                            {isAnonymous && (
-                                <Button
-                                    onClick={handleClearAuto}
-                                    variant="outlined"
-                                    sx={{
-                                        mb: 2,
-                                        color: 'white',
-                                        borderColor: 'rgba(255,255,255,0.5)',
-                                        '&:hover': {
-                                            borderColor: 'white',
-                                            backgroundColor: 'rgba(255,255,255,0.05)'
-                                        }
-                                    }}
-                                >
-                                    Borrar
-                                </Button>
-                            )}
-
-                        </Box>
 
                         <form onSubmit={handleRegister} style={{ marginTop: 25 }}>
                             <StyledTextField
@@ -425,77 +381,6 @@ const RegisterPage = () => {
                     </Typography>
                 </Box>
             </GlassCard>
-
-            <Dialog
-                open={showAnonymousDialog}
-                onClose={handleCloseDialog}
-                PaperProps={{
-                    sx: {
-                        borderRadius: 3,
-                        padding: 1
-                    }
-                }}
-            >
-                <DialogTitle sx={{ fontWeight: 'bold' }}>Cuenta Anónima</DialogTitle>
-                <DialogContent>
-                    {/*<Typography variant="body1" paragraph>*/}
-                    {/*    Se ha creado una cuenta anónima con los siguientes detalles:*/}
-                    {/*</Typography>*/}
-                    <Box sx={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                        p: 2,
-                        borderRadius: 2,
-                        border: '1px solid rgba(0, 0, 0, 0.08)'
-                    }}>
-                        <Typography variant="h6" sx={{ mt: 1 }}>
-                            <strong>Usuario:</strong> {username}
-                        </Typography>
-                        <Typography variant="h6" sx={{ mt: 1 }}>
-                            <strong>Correo Electrónico:</strong> {email}
-                        </Typography>
-                        <Typography variant="h6" sx={{ mt: 1 }}>
-                            <strong>Contraseña:</strong> {password}
-                        </Typography>
-                    </Box>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            mt: 3,
-                            display: 'block',
-                            color: 'warning.main',
-                            fontWeight: 'medium'
-                        }}
-                    >
-                        ⚠️ Por favor, asegúrate de guardar la Contraseña y Correo Electrónico.
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={handleClearAuto}
-                        variant="outlined"
-                        color="primary"
-                        sx={{
-                            borderRadius: 5,
-                            textTransform: 'none',
-                            px: 3
-                        }}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        onClick={handleCloseDialog}
-                        variant="contained"
-                        color="primary"
-                        sx={{
-                            borderRadius: 5,
-                            textTransform: 'none',
-                            px: 3
-                        }}
-                    >
-                        Continuar
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 };

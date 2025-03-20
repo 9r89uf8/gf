@@ -30,6 +30,29 @@ async function registerHandler(req) {
             });
         }
 
+        // Server-side validation in your API route
+        function isValidEmail(email) {
+            // Use a more sophisticated regex or validation library
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+                !email.endsWith('.ru') && // Block common spam domains
+                !email.endsWith('.xyz');  // Add more as needed
+        }
+
+// Check username for patterns used by bots
+        function isLikelyBot(username) {
+            // Check for patterns like random strings, repeated characters, etc.
+            return /^[a-zA-Z0-9]{8}$/.test(username) ||
+                /(.)\1{4,}/.test(username);
+        }
+
+// In your register handler
+        if (!isValidEmail(email) || isLikelyBot(username)) {
+            return new Response(JSON.stringify({ error: 'Invalid registration' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
 
         // Create the user in Firebase Authentication
         const userRecord = await adminAuth.createUser({

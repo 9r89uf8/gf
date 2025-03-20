@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Card, Typography, TextField, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { passwordReset } from '@/app/services/authService';
@@ -68,10 +68,26 @@ const ResetPassword = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    const [turnstileToken, setTurnstileToken] = useState(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        await passwordReset(email);
+        await passwordReset(email, turnstileToken);
         setIsLoading(false);
         setIsSubmitted(true);
     };
@@ -117,6 +133,7 @@ const ResetPassword = () => {
                                 ),
                             }}
                         />
+                        <div id="turnstile-widget"></div>
 
                         <GradientButton type="submit" disabled={isLoading || isSubmitted}>
                             {isLoading ? "Enviando..." : "Enviar"}

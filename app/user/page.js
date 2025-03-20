@@ -90,6 +90,22 @@ const UserProfile = () => {
     const fileInputRef = useRef(null);
     const router = useRouter();
 
+    const [turnstileToken, setTurnstileToken] = useState(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
     useEffect(() => {
         if (user) {
             setNewUserInfo(user);
@@ -112,6 +128,7 @@ const UserProfile = () => {
         const formData = new FormData();
         formData.append('name', newUserInfo.name);
         formData.append('email', newUserInfo.email);
+        formData.append('turnstileToken', turnstileToken);
 
         if (image) {
             formData.append('image', image);
@@ -238,6 +255,7 @@ const UserProfile = () => {
                             value={newUserInfo.email}
                             onChange={handleInputChange}
                         />
+                        <div id="turnstile-widget"></div>
                         <ActionButton
                             variant="contained"
                             startIcon={<Save />}

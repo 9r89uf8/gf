@@ -88,6 +88,21 @@ const LoginPage = () => {
     const [userCount, setUserCount] = useState(0);
     const router = useRouter();
     const setUser = useStore((state) => state.setUser);
+    const [turnstileToken, setTurnstileToken] = useState(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         // Simulating fetching user count
@@ -97,7 +112,7 @@ const LoginPage = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setDisableLogin(true);
-        const { user, error } = await loginUser(email, password, setUser);
+        const { user, error } = await loginUser(email, password, setUser, turnstileToken);
         setDisableLogin(false);
         if (user) {
             if (typeof window !== 'undefined' && window.gtag) {
@@ -164,6 +179,7 @@ const LoginPage = () => {
                                     )
                                 }}
                             />
+                            <div id="turnstile-widget"></div>
                             <GradientButton
                                 type="submit"
                                 disabled={disableLogin}
