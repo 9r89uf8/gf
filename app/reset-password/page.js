@@ -67,9 +67,8 @@ const ResetPassword = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
-
     const [turnstileToken, setTurnstileToken] = useState(null);
-
+    let data = { email, turnstileToken };
     useEffect(() => {
         const interval = setInterval(() => {
             if (window.turnstile) {
@@ -87,7 +86,7 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        await passwordReset(email, turnstileToken);
+        await passwordReset(data);
         setIsLoading(false);
         setIsSubmitted(true);
     };

@@ -67,14 +67,14 @@ export const registerUser = async (data) => {
     }
 };
 
-export const passwordReset = async (email, turnstileToken) => {
+export const passwordReset = async (data) => {
     try {
         const response = await fetch('/api/auth/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, turnstileToken }),
+            body: JSON.stringify(data),
         });
 
         if (response.ok) {
