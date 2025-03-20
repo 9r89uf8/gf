@@ -17,13 +17,18 @@ const clientConfig = {
 const app = !getApps().length ? initializeApp(clientConfig) : getApp();
 
 // Enable App Check only on the client side
-// if (typeof window !== 'undefined') {
-//     initializeAppCheck(app, {
-//         provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
-//         // Automatically refreshes App Check tokens as needed.
-//         isTokenAutoRefreshEnabled: true,
-//     });
-// }
+if (typeof window !== 'undefined') {
+    // Set the specific debug token for development
+    if (process.env.NODE_ENV === 'development') {
+        // Replace 'YOUR_DEBUG_TOKEN_HERE' with the actual debug token you generated
+        window.FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_FIREBASE_DEBUG_TOKEN;
+    }
+
+    initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+        isTokenAutoRefreshEnabled: true,
+    });
+}
 
 const auth = getAuth(app);
 const db = getFirestore(app);
