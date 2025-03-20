@@ -1,8 +1,17 @@
 import React from 'react';
-import PopularCreators from "@/app/components/landing/PopularCreators";
-import Link from 'next/link';
-import EnhancedAIFeaturesCard from "@/app/components/landing/EnhancedAIFeaturesCard";
+import dynamic from 'next/dynamic';
 import Welcome from "@/app/components/landing/Welcome"; // Import the new Welcome component
+// Lazy load non-critical components
+const PopularCreators = dynamic(() => import("@/app/components/landing/PopularCreators"), {
+    ssr: true,
+    loading: () => <div style={{ height: "200px" }}></div>
+});
+const EnhancedAIFeaturesCard = dynamic(() => import("@/app/components/landing/EnhancedAIFeaturesCard"), {
+    ssr: false,
+    loading: () => <div style={{ height: "200px" }}></div>
+});
+import Link from 'next/link';
+
 import Head from 'next/head';
 
 const styles = {
