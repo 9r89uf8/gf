@@ -126,7 +126,7 @@ export default function FloatingNavbar() {
         },
         {
             label: 'Chicas IA',
-            path: '/creadoras',
+            path: '/chicas-ia',
             gradient: 'linear-gradient(135deg, #4A90E2 0%, #67B26F 100%)',
             icon: <GroupIcon sx={{ fontSize: '2rem' }} />,
         },

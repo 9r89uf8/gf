@@ -2,9 +2,10 @@
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/app/utils/firebaseClient';
-import {cookies} from "next/headers";
+import { cookies } from "next/headers";
+import { withRateLimit } from '@/app/utils/withRateLimit';
 
-export async function POST(req) {
+async function registerHandler(req) {
     const { email, password, username, country } = await req.json();
 
     try {
@@ -14,7 +15,7 @@ export async function POST(req) {
             password,
         });
 
-        // Save user data to Firestore
+        // Rest of your existing code...
         await adminDb.firestore().collection('users').doc(userRecord.uid).set({
             uid: userRecord.uid,
             email,
@@ -27,7 +28,6 @@ export async function POST(req) {
             name: username,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         });
-
 
         // Sign in the user to get the ID token
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -45,7 +45,7 @@ export async function POST(req) {
 
         // Set the token in an httpOnly cookie
         const cookieStore = cookies();
-        cookieStore.set('token', sessionCookie, {
+        cookieStore.set('tokenAIGF', sessionCookie, {
             path: '/',
             httpOnly: true,
             sameSite: 'lax',
@@ -66,3 +66,11 @@ export async function POST(req) {
         });
     }
 }
+
+// Apply rate limiting - 3 registrations per hour from the same IP
+export const POST = withRateLimit(registerHandler, {
+    name: 'auth:register',
+    limit: process.env.NODE_ENV === 'production' ? 3 : 100, // Higher limit in dev
+    windowMs: 60 * 60 * 1000, // 1 hour
+    enforceInDevelopment: false // Set to true if you want to test rate limiting locally
+});

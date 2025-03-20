@@ -3,6 +3,10 @@
     {
       "path": "/api/tweets/random",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/clean",
+      "schedule": "0 * * * *"
     }
   ]
 }

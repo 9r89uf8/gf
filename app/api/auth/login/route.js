@@ -4,8 +4,9 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/app/utils/firebaseClient';
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { cookies } from 'next/headers';
+import { withRateLimit } from '@/app/utils/withRateLimit';
 
-export async function POST(request) {
+export async function loginHandler(request) {
     const { email, password } = await request.json();
 
     try {
@@ -48,7 +49,7 @@ export async function POST(request) {
         }
         // Set the token in an httpOnly cookie
         const cookieStore = cookies();
-        cookieStore.set('token', sessionCookie, {
+        cookieStore.set('tokenAIGF', sessionCookie, {
             path: '/',
             httpOnly: true,
             sameSite: 'lax',
@@ -67,3 +68,10 @@ export async function POST(request) {
         return NextResponse.json({ error: error.message }, { status: 401 });
     }
 }
+
+export const POST = withRateLimit(loginHandler, {
+    name: 'auth:login',
+    limit: process.env.NODE_ENV === 'production' ? 10 : 100, // Higher limit in dev
+    windowMs: 60 * 60 * 1000, // 1 hour
+    enforceInDevelopment: false // Set to true if you want to test rate limiting locally
+});

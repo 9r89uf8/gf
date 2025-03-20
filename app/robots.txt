@@ -15,6 +15,7 @@ Disallow: /reels/
 Disallow: /register/
 Disallow: /user/
 Disallow: /creadoras/
+Disallow: /chicas-ia/
 Disallow: /BgHd9LWDnFFhS6BoaqwL/
 
 # Explicitly allow key SEO pages

@@ -4,6 +4,7 @@ import { RekognitionClient, DetectModerationLabelsCommand, DetectLabelsCommand }
 import {uploadToFirebaseStorage} from "@/app/middleware/firebaseStorage";
 import {determineOfflineStatus} from "@/app/utils/chat/girlOfflineHandler";
 import {setResponseDelay} from "@/app/utils/chat/respondUntil";
+import { withAuthRateLimit } from '@/app/utils/withAuthRateLimit';
 import OpenAI from "openai";
 
 // Initialize OpenAI with the API key from environment variables
@@ -63,7 +64,7 @@ async function getOrCreateConversationHistory(doc) {
     }
 }
 
-export async function POST(req) {
+export async function saveMessageHandler(req) {
     try {
         const formData = await req.formData();
         const userId = formData.get('userId');
@@ -316,3 +317,12 @@ export async function POST(req) {
         });
     }
 }
+
+// Apply rate limiting with different limits for authenticated vs. unauthenticated users
+export const POST = withAuthRateLimit(saveMessageHandler, {
+    name: 'auth:save',
+    // Higher limits for auth check since it's called frequently
+    limit: 10,           // 60 requests per minute for unauthenticated users
+    authLimit: 300,      // 300 requests per minute for authenticated users
+    windowMs: 60 * 1000, // 1 minute window
+});

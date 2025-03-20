@@ -299,7 +299,7 @@ const EnhancedAIFeaturesCard = () => {
                         Nuestra tecnología de <span style={styles.keywordSpan}>chica IA</span> te ofrece una compañía
                         personalizada disponible 24/7, lista para conversar, compartir momentos y hacer tu día más especial.
                     </p>
-                    <Link href="/creadoras" style={styles.ctaButton}>
+                    <Link href="/chicas-ia" style={styles.ctaButton}>
                         Conoce a tu Chica IA ahora
                     </Link>
                 </div>

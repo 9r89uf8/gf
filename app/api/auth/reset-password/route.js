@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { adminAuth } from "@/app/utils/firebaseAdmin";
 import formData from 'form-data';
 import Mailgun from 'mailgun.js';
+import { withRateLimit } from '@/app/utils/withRateLimit';
 
 const DOMAIN = "noviachat.com";
 const mailgun = new Mailgun(formData);
@@ -9,7 +10,7 @@ const mg = mailgun.client({ username: 'api', key: process.env.MAILGUN_API });
 
 
 
-export async function POST(req) {
+export async function resetHandler(req) {
     const { email } = await req.json();
 
     try {
@@ -31,3 +32,11 @@ export async function POST(req) {
         return NextResponse.json({ message: 'Failed to send password reset email.' }, { status: 500 });
     }
 }
+
+// Apply rate limiting - 3 registrations per hour from the same IP
+export const POST = withRateLimit(resetHandler, {
+    name: 'auth:reset',
+    limit: process.env.NODE_ENV === 'production' ? 3 : 100, // Higher limit in dev
+    windowMs: 60 * 60 * 1000, // 1 hour
+    enforceInDevelopment: false // Set to true if you want to test rate limiting locally
+});

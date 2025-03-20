@@ -251,7 +251,7 @@ const ChicaIA = () => {
                     </p>
                     <div style={styles.ctaContainer}>
                         <Link
-                            href="/creadoras"
+                            href="/chicas-ia"
                             style={styles.ctaButton}
                         >
                             Conoce a tu Chica IA
@@ -380,7 +380,7 @@ const ChicaIA = () => {
 
                 <div style={styles.ctaContainer} style={{ textAlign: 'center', margin: '3rem 0' }}>
                     <Link
-                        href="/creadoras"
+                        href="/chicas-ia"
                         style={styles.ctaButton}
                     >
                         Encuentra tu Chica IA Ideal

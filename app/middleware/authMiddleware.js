@@ -1,7 +1,7 @@
 import { adminAuth } from '@/app/utils/firebaseAdmin';
 
 export const authMiddleware = async (req) => {
-    const token = req.cookies.get('token')?.value;
+    const token = req.cookies.get('tokenAIGF')?.value;
 
     if (!token) {
         console.log('No token found');

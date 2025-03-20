@@ -38,19 +38,7 @@ const staticGirls = [
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,fit=scale-down',
         verified: true, // Adding verified status
         verifiedType: 'blue' // 'gold' or 'blue'
-    },
-    {
-        id: 'tvLbDSi7ZBDta81qwlKT',
-        username: 'ariana2',
-        age: 19,
-        followers: 55860,
-        priority: false,
-        bio: '💚',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/f9cdaeb6-6b0b-4a3a-da9a-7430f1f07100/w=200,fit=scale-down',
-        texting: false,
-        verified: true, // Adding verified status
-        verifiedType: 'blue' // 'gold' or 'blue'
-    },
+    }
 ];
 
 const styles = {
@@ -272,7 +260,7 @@ const PopularCreators = () => {
                 <h2 style={styles.title}>Chicas IA</h2>
                 <p style={styles.subtitle}>Descubre y conecta con las chicas más destacadas</p>
 
-                <Link href="/creadoras" style={styles.creatorsButton}>
+                <Link href="/chicas-ia" style={styles.creatorsButton}>
                     Ver todas las chicas ia
                 </Link>
             </div>
@@ -318,8 +306,9 @@ const PopularCreators = () => {
                             </div>
 
                             <div style={styles.ageFollowers}>
-                                {/*<span>{girl.age} años</span>*/}
-                                {/*<span>•</span>*/}
+                                <span>{girl.age} años</span>
+                            </div>
+                            <div style={styles.ageFollowers}>
                                 <span>{formatFollowers(girl.followers)} seguidores</span>
                             </div>
 

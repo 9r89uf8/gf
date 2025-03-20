@@ -6,6 +6,7 @@ import { RekognitionClient, DetectModerationLabelsCommand, DetectLabelsCommand }
 import { v4 as uuidv4 } from "uuid";
 import {NextResponse} from "next/server";
 export const dynamic = 'force-dynamic';
+import { withAuthRateLimit } from '@/app/utils/withAuthRateLimit';
 
 // Initialize the Rekognition client with credentials from environment variables
 const rekognitionClient = new RekognitionClient({
@@ -16,7 +17,7 @@ const rekognitionClient = new RekognitionClient({
     },
 });
 
-export async function POST(req) {
+export async function editHandler(req) {
     try {
         const authResult = await authMiddleware(req);
         if (!authResult.authenticated) {
@@ -115,3 +116,12 @@ export async function POST(req) {
         });
     }
 }
+
+// Apply rate limiting with different limits for authenticated vs. unauthenticated users
+export const POST = withAuthRateLimit(editHandler, {
+    name: 'auth:check',
+    // Higher limits for auth check since it's called frequently
+    limit: 10,           // 60 requests per minute for unauthenticated users
+    authLimit: 30,      // 300 requests per minute for authenticated users
+    windowMs: 60 * 1000, // 1 minute window
+});

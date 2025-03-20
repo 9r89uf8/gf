@@ -360,6 +360,10 @@ const Creators = () => {
                                             {girl.name}
                                         </Typography>
 
+                                        <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 600, mb: 1 }}>
+                                            {girl.age} años
+                                        </Typography>
+
                                         <Typography
                                             variant="body1"
                                             sx={{

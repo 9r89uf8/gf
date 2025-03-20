@@ -2,12 +2,12 @@
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import {authMiddleware} from "@/app/middleware/authMiddleware";
 import {NextResponse} from "next/server";
-
+import { withAuthRateLimit } from '@/app/utils/withAuthRateLimit';
 export const dynamic = 'force-dynamic';
 
 
 
-export async function GET(req) {
+export async function deleteHandler(req) {
     try {
         const authResult = await authMiddleware(req);
         if (!authResult.authenticated) {
@@ -36,3 +36,11 @@ export async function GET(req) {
         });
     }
 }
+// Apply rate limiting with different limits for authenticated vs. unauthenticated users
+export const GET = withAuthRateLimit(deleteHandler, {
+    name: 'auth:check',
+    // Higher limits for auth check since it's called frequently
+    limit: 10,           // 60 requests per minute for unauthenticated users
+    authLimit: 30,      // 300 requests per minute for authenticated users
+    windowMs: 60 * 1000, // 1 minute window
+});

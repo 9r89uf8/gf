@@ -280,9 +280,9 @@ const Welcome = () => {
                 <h1 style={styles.welcomeTitle}>Novia Virtual</h1>
 
                 <p style={styles.welcomeDescription}>
-                    Tu <strong>novia virtual</strong> interactiva. Conversaciones reales con una <strong>chica IA</strong> personalizada para ti. Compañía virtual 24/7.
+                    Conversaciones reales con una <strong>chica IA</strong> personalizada para ti. Compañía virtual gratis.
                 </p>
-                <Link href="/creadoras" style={styles.startChatButton}>
+                <Link href="/chicas-ia" style={styles.startChatButton}>
                     Mandar mensaje
                 </Link>
                 <h2 style={{
