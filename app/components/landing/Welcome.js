@@ -1,3 +1,4 @@
+//this is the LCP element in the landing page
 import React from 'react';
 import Link from 'next/link';
 import styles from './Welcome.module.css';

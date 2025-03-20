@@ -6,7 +6,7 @@ import Script from 'next/script';
 import './styles/globals.css';
 
 const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
-
+//in here I don't need notifications instantly
 import Notifications from "@/app/components/notifications/Notifications";
 
 // Define metadata object

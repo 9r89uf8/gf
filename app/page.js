@@ -1,12 +1,13 @@
+//landing page
 import React from 'react';
-import dynamic from 'next/dynamic';
+import dynamicM from 'next/dynamic';
 import Welcome from "@/app/components/landing/Welcome"; // Import the new Welcome component
 // Lazy load non-critical components
-const PopularCreators = dynamic(() => import("@/app/components/landing/PopularCreators"), {
+const PopularCreators = dynamicM(() => import("@/app/components/landing/PopularCreators"), {
     ssr: true,
     loading: () => <div style={{ height: "200px" }}></div>
 });
-const EnhancedAIFeaturesCard = dynamic(() => import("@/app/components/landing/EnhancedAIFeaturesCard"), {
+const EnhancedAIFeaturesCard = dynamicM(() => import("@/app/components/landing/EnhancedAIFeaturesCard"), {
     ssr: false,
     loading: () => <div style={{ height: "200px" }}></div>
 });
@@ -199,5 +200,8 @@ const Home = () => {
     );
 };
 
-export default Home;
+export const dynamic = "force-static"; // Use this if the page is truly static!
+// export const revalidate = 60;
+
+export default Home
 
