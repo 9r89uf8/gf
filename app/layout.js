@@ -4,10 +4,12 @@ import Navbar from "@/app/components/nab/Navbar";
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import './styles/globals.css';
+// Import critical CSS
+import './styles/critical.css'
 
 const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
 //in here I don't need notifications instantly
-import Notifications from "@/app/components/notifications/Notifications";
+// import Notifications from "@/app/components/notifications/Notifications";
 
 // Define metadata object
 export const metadata = {
@@ -201,6 +203,7 @@ const Layout = ({ children }) => {
     return (
         <html lang="es">
         <head>
+
             <Script
                 id="schema-website"
                 type="application/ld+json"
@@ -252,7 +255,7 @@ const Layout = ({ children }) => {
         </head>
         <body>
         <Navbar />
-        <Notifications />
+        {/*<Notifications />*/}
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
         <ConditionalFloatingNavbar />
         </body>
