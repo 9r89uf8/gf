@@ -197,7 +197,6 @@ const faqSchema = {
 };
 
 const GA_TRACKING_ID = 'G-ENZST04463';
-const GOOGLE_ADS_ID = 'AW-16904589160';
 
 const Layout = ({ children }) => {
     return (
@@ -207,14 +206,14 @@ const Layout = ({ children }) => {
             <Script
                 id="schema-website"
                 type="application/ld+json"
-                strategy="afterInteractive"
+                strategy="lazyOnload"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
             />
 
             <Script
                 id="schema-product"
                 type="application/ld+json"
-                strategy="afterInteractive"
+                strategy="lazyOnload"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
 
@@ -223,35 +222,25 @@ const Layout = ({ children }) => {
             <Script
                 id="schema-faq"
                 type="application/ld+json"
-                strategy="afterInteractive"
+                strategy="lazyOnload"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
 
             <Script
                 id="google-analytics"
-                strategy="afterInteractive"
+                strategy="lazyOnload" // Changed from afterInteractive
                 dangerouslySetInnerHTML={{
                     __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              requestIdleCallback(() => {
-                gtag('js', new Date());
-                gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-              });
-            `,
-                }}
-            />
-
-            {/* Optimized Google Ads Tag - Lazy Load */}
-            <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="lazyOnload" />
-            <Script id="google-ads-init" strategy="lazyOnload">
-                {`
+        setTimeout(() => {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GOOGLE_ADS_ID}');
-          `}
-            </Script>
+            gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+        }, 2000); // 2 second delay
+        `,
+                }}
+            />
+
         </head>
         <body>
         <Navbar />
