@@ -12,6 +12,7 @@ const Welcome = () => {
                 <Link href="/chicas-ia" className="welcome_startChatButton">
                     Mandar mensaje
                 </Link>
+                <h1>chica ia</h1>
                 {/* Lazy load the chat example */}
                 <LazyLoadedContent />
             </div>
