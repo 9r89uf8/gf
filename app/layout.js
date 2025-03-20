@@ -6,7 +6,7 @@ import Script from 'next/script';
 import './styles/globals.css';
 
 const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
-import Notifications from "@/app/components/notifications/Notifications";
+const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 
 // Define metadata object
 export const metadata = {
