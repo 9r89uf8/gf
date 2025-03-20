@@ -89,6 +89,7 @@ const LoginPage = () => {
     const router = useRouter();
     const setUser = useStore((state) => state.setUser);
     const [turnstileToken, setTurnstileToken] = useState(null);
+    let data = { email, password, turnstileToken };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -112,7 +113,7 @@ const LoginPage = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setDisableLogin(true);
-        const { user, error } = await loginUser(email, password, setUser, turnstileToken);
+        const { user, error } = await loginUser(data);
         setDisableLogin(false);
         if (user) {
             if (typeof window !== 'undefined' && window.gtag) {

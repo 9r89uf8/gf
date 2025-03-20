@@ -1,7 +1,7 @@
 // services/authService.js
 import { useStore } from '../store/store'; // Ensure you import the correct store
 
-export const loginUser = async (email, password, turnstileToken) => {
+export const loginUser = async (data) => {
     const addNotification = useStore.getState().addNotification;
     const setUser = useStore.getState().setUser;
 
@@ -11,7 +11,7 @@ export const loginUser = async (email, password, turnstileToken) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password, turnstileToken }),
+            body: JSON.stringify(data),
         });
 
         if (response.ok) {
