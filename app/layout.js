@@ -214,6 +214,8 @@ const Layout = ({ children }) => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
             />
 
+            <Script async src={"https://challenges.cloudflare.com/turnstile/v0/api.js"} strategy="lazyOnload" />
+
             <Script
                 id="schema-faq"
                 type="application/ld+json"

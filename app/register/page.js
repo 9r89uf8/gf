@@ -1,3 +1,4 @@
+//register page
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -173,7 +174,22 @@ const RegisterPage = () => {
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [showPassword, setShowPassword] = useState(true);
     const router = useRouter();
-    let data = { email, password, username, country };
+    const [turnstileToken, setTurnstileToken] = useState(null);
+    let data = { email, password, username, country, turnstileToken };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         fetch('https://ipinfo.io/json?token=5a17bbfded96f7')
@@ -371,9 +387,11 @@ const RegisterPage = () => {
                                 }}
                             />
 
+                            <div id="turnstile-widget"></div>
+
                             <RegisterButton
                                 type="submit"
-                                disabled={disableRegister}
+                                disabled={disableRegister||!turnstileToken}
                             >
                                 Crear Cuenta
                             </RegisterButton>

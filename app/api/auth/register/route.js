@@ -6,9 +6,31 @@ import { cookies } from "next/headers";
 import { withRateLimit } from '@/app/utils/withRateLimit';
 
 async function registerHandler(req) {
-    const { email, password, username, country } = await req.json();
+    const { email, password, username, country, turnstileToken } = await req.json();
 
     try {
+        // Verify the turnstile token
+        const verificationResponse = await fetch(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    secret: process.env.TURNSTILE_SECRET_KEY,
+                    response: turnstileToken,
+                }),
+            }
+        );
+
+        const verification = await verificationResponse.json();
+        if (!verification.success) {
+            return new Response(JSON.stringify({ error: 'Invalid CAPTCHA' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+
         // Create the user in Firebase Authentication
         const userRecord = await adminAuth.createUser({
             email,
