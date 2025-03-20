@@ -8,23 +8,24 @@ export const revalidate = 0;
 
 export async function GET(req) {
     try {
-        const now = Date.now();
-        const oneDayAgo = now - (24 * 60 * 60 * 1000);
-
-        const rateLimitRef = await adminDb.firestore().collection('rateLimits');
-        const snapshot = await rateLimitRef.where('lastRequest', '<', oneDayAgo).get();
+        const rateLimitRef = adminDb.firestore().collection('rateLimits');
+        const snapshot = await rateLimitRef.get(); // Get all entries
 
         const batch = adminDb.firestore().batch();
         snapshot.forEach(doc => {
             batch.delete(doc.ref);
         });
 
-        if (snapshot.size > 0) {
+        let deletedCount = snapshot.size;
+        if (deletedCount > 0) {
             await batch.commit();
-            console.log(`Cleaned up ${snapshot.size} old rate limit entries`);
+            console.log(`Cleaned up ${deletedCount} rate limit entries`);
         }
 
-        return null;
+        return new Response(JSON.stringify({ message: `Cleaned up ${deletedCount} rate limit entries` }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+        });
     } catch (error) {
         console.error('Error:', error.message);
         return new Response(JSON.stringify({ error: error.message }), {
@@ -33,3 +34,4 @@ export async function GET(req) {
         });
     }
 }
+
