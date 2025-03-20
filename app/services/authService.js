@@ -1,7 +1,7 @@
 // services/authService.js
 import { useStore } from '../store/store'; // Ensure you import the correct store
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, turnstileToken) => {
     const addNotification = useStore.getState().addNotification;
     const setUser = useStore.getState().setUser;
 
@@ -11,7 +11,7 @@ export const loginUser = async (email, password) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, turnstileToken }),
         });
 
         if (response.ok) {
@@ -67,14 +67,14 @@ export const registerUser = async (data) => {
     }
 };
 
-export const passwordReset = async (email) => {
+export const passwordReset = async (email, turnstileToken) => {
     try {
         const response = await fetch('/api/auth/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email, turnstileToken }),
         });
 
         if (response.ok) {
