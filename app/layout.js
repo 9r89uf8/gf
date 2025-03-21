@@ -231,13 +231,11 @@ const Layout = ({ children }) => {
                 strategy="lazyOnload" // Changed from afterInteractive
                 dangerouslySetInnerHTML={{
                     __html: `
-        setTimeout(() => {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-        }, 2000); // 2 second delay
-        `,
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+`,
                 }}
             />
 
