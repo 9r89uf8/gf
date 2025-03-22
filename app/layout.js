@@ -228,14 +228,16 @@ const Layout = ({ children }) => {
 
             <Script
                 id="google-analytics"
-                strategy="lazyOnload" // Changed from afterInteractive
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{
                     __html: `
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
-`,
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              requestIdleCallback(() => {
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}', { page_path: window.location.pathname });
+              });
+            `,
                 }}
             />
 
