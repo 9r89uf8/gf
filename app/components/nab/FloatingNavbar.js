@@ -96,41 +96,13 @@ export default function FloatingNavbar() {
         };
     }, []);
 
-    // Open the popover when the AccountCircle icon is clicked.
-    const handlePremiumClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     const routes = [
-        { name: 'HOME', path: '/reels', icon: <CameraAltIcon fontSize='large' /> },
+        { name: 'HOME', path: '/chicas-ia', icon: <GroupIcon fontSize='large' /> },
         { name: 'TOP', path: '/dm', icon: <MessageIcon /> },
-        {
-            name: 'USER',
-            path: '/user',
-            icon: <KeyboardDoubleArrowUpIcon fontSize='large' />,
-            onClick: handlePremiumClick,
-        },
+        { name: 'USER', path: '/user', icon: <AccountCircleIcon /> }
     ];
 
-    // Popover options with labels, gradients and icons.
-    const popoverOptions = [
-        {
-            label: 'Mi Cuenta',
-            path: '/user',
-            gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
-            icon: <AccountCircleIcon sx={{ fontSize: '2rem' }} />,
-        },
-        {
-            label: 'Chicas IA',
-            path: '/chicas-ia',
-            gradient: 'linear-gradient(135deg, #4A90E2 0%, #67B26F 100%)',
-            icon: <GroupIcon sx={{ fontSize: '2rem' }} />,
-        },
-    ];
 
     return (
         <>
@@ -138,7 +110,6 @@ export default function FloatingNavbar() {
                 value={pathname}
                 onChange={(event, newValue) => {
                     // Skip navigation when the account icon ("/premium") is clicked.
-                    if (newValue === '/user') return;
                     if (newValue) {
                         router.push(newValue);
                     }
@@ -160,40 +131,6 @@ export default function FloatingNavbar() {
                     />
                 ))}
             </FloatingBottomNavigation>
-
-            <StyledPopover
-                open={Boolean(anchorEl)}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-            >
-                {/* Arrange the buttons one below the other */}
-                <Grid container spacing={1} direction="column" alignItems="center">
-                    {popoverOptions.map((option, index) => (
-                        <Grid item key={index}>
-                            <StyledButton
-                                gradient={option.gradient}
-                                onClick={() => {
-                                    handleClose();
-                                    router.push(option.path);
-                                }}
-                            >
-                                {/* Label on top */}
-                                <Box sx={{ fontSize: '1.2rem' }}>{option.label}</Box>
-                                {/* Icon below the text */}
-                                {option.icon}
-                            </StyledButton>
-                        </Grid>
-                    ))}
-                </Grid>
-            </StyledPopover>
         </>
     );
 }

@@ -22,9 +22,11 @@ import {
 } from '@mui/material';
 import { Edit, Save, Close, DeleteForever, PhotoCamera } from '@mui/icons-material';
 import { alpha, styled } from '@mui/material/styles';
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// Removed ExpandLessIcon and ExpandMoreIcon as they weren't used
+// import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+// --- Styled Components remain the same ---
 const StyledCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
     color: 'white',
@@ -78,10 +80,12 @@ const ActionButton = styled(Button)(({ theme }) => ({
     margin: theme.spacing(1),
     borderRadius: theme.shape.borderRadius * 3,
 }));
+// --- End Styled Components ---
+
 
 const UserProfile = () => {
     const user = useStore((state) => state.user);
-    const girl = useStore((state) => state.girl);
+    const girl = useStore((state) => state.girl); // Assuming girl is used for premium check logic
     const [isEditing, setIsEditing] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [newUserInfo, setNewUserInfo] = useState({ name: '', email: '', profilePic: '' });
@@ -91,20 +95,60 @@ const UserProfile = () => {
     const router = useRouter();
 
     const [turnstileToken, setTurnstileToken] = useState(null);
+    // ---- NEW: Create a ref for the Turnstile container ----
+    const turnstileContainerRef = useRef(null);
+    // ---- NEW: Keep track if widget has been rendered ----
+    const turnstileWidgetId = useRef(null); // To store the ID returned by render for potential cleanup
 
+    // ---- MODIFIED: useEffect for Turnstile ----
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (window.turnstile) {
-                window.turnstile.render('#turnstile-widget', {
-                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
-                    callback: (token) => setTurnstileToken(token),
-                });
-                clearInterval(interval);
+        // Only proceed if we are in editing mode AND the container ref is set AND Turnstile script is loaded
+        if (isEditing && turnstileContainerRef.current && window.turnstile) {
+            // Check if a widget already exists in this container (using the stored ID)
+            // This prevents rendering multiple widgets if the component re-renders while editing
+            if (!turnstileWidgetId.current) {
+                try {
+                    const widgetId = window.turnstile.render(turnstileContainerRef.current, { // Pass the DOM element
+                        sitekey: '0x4AAAAAAA_HdjBUf9sbezTK', // Replace with your ACTUAL site key
+                        callback: (token) => {
+                            console.log("Turnstile token received:", token); // Good for debugging
+                            setTurnstileToken(token);
+                        },
+                        'error-callback': (errorCode) => {
+                            console.error(`Turnstile error: ${errorCode}`);
+                            // Handle error appropriately, maybe disable save button or show message
+                        },
+                        'expired-callback': () => {
+                            console.log("Turnstile token expired");
+                            setTurnstileToken(null); // Reset token
+                            // Optionally re-render or prompt user
+                        },
+                        'timeout-callback': () => {
+                            console.log("Turnstile challenge timed out");
+                            // Handle timeout
+                        }
+                    });
+                    turnstileWidgetId.current = widgetId; // Store the widget ID
+                    console.log("Turnstile rendered with widget ID:", widgetId); // Debugging
+                } catch (error) {
+                    console.error("Error rendering Turnstile:", error); // Catch potential render errors
+                }
             }
-        }, 100);
+        }
 
-        return () => clearInterval(interval);
-    }, []);
+        // Cleanup function: Remove the widget when the component unmounts OR when isEditing becomes false
+        return () => {
+            if (turnstileWidgetId.current && window.turnstile) {
+                console.log("Removing Turnstile widget:", turnstileWidgetId.current); // Debugging
+                window.turnstile.remove(turnstileWidgetId.current);
+                turnstileWidgetId.current = null;
+                setTurnstileToken(null); // Also reset the token state on cleanup
+            }
+        };
+        // ---- NEW: Add isEditing to dependency array ----
+        // This ensures the effect runs when isEditing changes (to render when true, cleanup when false)
+    }, [isEditing]);
+
 
     useEffect(() => {
         if (user) {
@@ -118,40 +162,63 @@ const UserProfile = () => {
 
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setImage(e.target.files[0]);
-            setNewUserInfo({ ...newUserInfo, profilePic: URL.createObjectURL(e.target.files[0]) });
+            const file = e.target.files[0];
+            setImage(file);
+            // Use FileReader for preview to avoid revoking issues with URL.createObjectURL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setNewUserInfo(prevState => ({ ...prevState, profilePic: reader.result }));
+            };
+            reader.readAsDataURL(file);
         }
     };
 
     const handleSave = async () => {
+        if (!turnstileToken) {
+            console.error('Turnstile token is missing. Cannot save.');
+            // Optionally show an error message to the user
+            alert("Please complete the security check.");
+            return; // Prevent submission without token
+        }
+
         setIsUpdating(true);
         const formData = new FormData();
         formData.append('name', newUserInfo.name);
         formData.append('email', newUserInfo.email);
-        formData.append('turnstileToken', turnstileToken);
+        formData.append('turnstileToken', turnstileToken); // Send the token
 
         if (image) {
             formData.append('image', image);
         }
 
         try {
-            await editUser(formData);
-            setIsEditing(false);
+            await editUser(formData); // Assuming editUser handles the FormData
+            setIsEditing(false); // Exit editing mode on success
+            // Optional: Re-fetch user data or update store state if editUser doesn't do it
         } catch (error) {
             console.error('Error updating user profile:', error);
             // Handle error (e.g., show error message to user)
+            alert(`Failed to update profile: ${error.message || 'Unknown error'}`);
         } finally {
             setIsUpdating(false);
+            // Reset Turnstile token after attempt (success or fail)
+            // The cleanup effect should handle removing the widget when isEditing becomes false
+            setTurnstileToken(null);
+            if (turnstileWidgetId.current && window.turnstile) {
+                window.turnstile.reset(turnstileWidgetId.current); // Reset widget for potential reuse if needed
+            }
         }
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        setNewUserInfo(user || { name: '', email: '', profilePic: '' });
-        setImage(null);
+        setNewUserInfo(user || { name: '', email: '', profilePic: '' }); // Reset form
+        setImage(null); // Reset image state
+        // Turnstile cleanup is handled by the useEffect hook when isEditing changes to false
     };
 
     const handleDeleteUser = async () => {
+        setIsUpdating(true); // Prevent other actions during delete
         try {
             await deleteUser();
             setOpenDeleteDialog(false);
@@ -161,196 +228,224 @@ const UserProfile = () => {
                     event_label: 'User Delete Button'
                 });
             }
-            router.push('/register');
+            // Update store or redirect immediately
+            // Assuming deleteUser logs the user out or updates the store state
+            router.push('/register'); // Or login page
         } catch (error) {
             console.error('Error deleting user:', error);
-            // Handle error (e.g., show error message to user)
+            alert(`Failed to delete account: ${error.message || 'Unknown error'}`);
+            // Handle error
+        } finally {
+            setIsUpdating(false);
         }
     };
 
-    // Calculate the days and hours remaining until the membership expires
+    // Calculate the days and hours remaining
     let daysRemaining = null;
     let hoursRemaining = null;
 
-    if (user && user.premium && girl && user.expirationDate) {
-        const expirationDate = new Date(user.expirationDate._seconds * 1000);
-        daysRemaining = differenceInDays(expirationDate, new Date());
-        hoursRemaining = differenceInHours(expirationDate, new Date()) % 24;
+    // Check user, premium status, and expirationDate before calculation
+    if (user?.premium && user?.expirationDate?._seconds) {
+        try {
+            const expirationDate = new Date(user.expirationDate._seconds * 1000);
+            const now = new Date();
+            if (expirationDate > now) { // Only calculate if not expired
+                daysRemaining = differenceInDays(expirationDate, now);
+                hoursRemaining = differenceInHours(expirationDate, now) % 24;
+            }
+        } catch (e) {
+            console.error("Error calculating remaining time:", e); // Handle potential date errors
+        }
     }
 
-    // If there is no user, show a friendly message with Login and Register options
+    // If there is no user, show a friendly message
     if (!user) {
         return (
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    padding: 2,
-                }}
-            >
+            <Box sx={{ minHeight: '100vh', padding: 2 }}>
                 <Container maxWidth="sm">
-            <StyledCard>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Para hablar con los creadores, por favor crea una cuenta o inicia sesión.
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <ActionButton variant="contained" onClick={() => router.push('/login')}>
-                        Iniciar sesión
-                    </ActionButton>
-                    <ActionButton variant="outlined" onClick={() => router.push('/register')}>
-                        Registrarse
-                    </ActionButton>
-                </Box>
-            </StyledCard>
+                    <StyledCard>
+                        <Typography variant="h6" sx={{ mb: 2 }}>
+                            Para hablar tienes que crear una cuenta o inicia sesión.
+                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                            <ActionButton variant="contained" onClick={() => router.push('/login')}>
+                                Iniciar sesión
+                            </ActionButton>
+                            <ActionButton variant="outlined" onClick={() => router.push('/register')}>
+                                Registrarse
+                            </ActionButton>
+                        </Box>
+                    </StyledCard>
                 </Container>
             </Box>
         );
     }
 
+    // Main User Profile View
     return (
         <Box
             sx={{
                 minHeight: '100vh',
                 background: 'linear-gradient(45deg, #343a40 0%, #212529 100%)',
                 padding: 2,
+                paddingTop: 4, // Add some top padding
             }}
         >
             <Container maxWidth="sm">
                 <StyledCard>
-                <Avatar
-                    src={newUserInfo.profilePic}
-                    alt={newUserInfo.name}
-                    sx={{ width: 100, height: 100, margin: 'auto', mb: 2 }}
-                />
-                {isEditing ? (
-                    <>
-                        <input
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                            id="icon-button-file"
-                            type="file"
-                            onChange={handleImageChange}
-                            ref={fileInputRef}
-                        />
-                        <label htmlFor="icon-button-file">
-                            <Button
-                                variant="contained"
-                                component="span"
-                                startIcon={<PhotoCamera />}
-                                sx={{ mb: 2 }}
-                            >
-                                Cambiar foto de perfil
-                            </Button>
-                        </label>
-                        <StyledTextField
-                            fullWidth
-                            name="name"
-                            label="Nombre"
-                            value={newUserInfo.name}
-                            onChange={handleInputChange}
-                        />
-                        <StyledTextField
-                            fullWidth
-                            name="email"
-                            label="Correo electrónico"
-                            value={newUserInfo.email}
-                            onChange={handleInputChange}
-                        />
-                        <div id="turnstile-widget"></div>
-                        <ActionButton
-                            variant="contained"
-                            startIcon={<Save />}
-                            onClick={handleSave}
-                            disabled={isUpdating}
-                        >
-                            Guardar
-                        </ActionButton>
-                        <ActionButton
-                            variant="outlined"
-                            startIcon={<Close />}
-                            onClick={handleCancel}
-                            disabled={isUpdating}
-                        >
-                            Cancelar
-                        </ActionButton>
-                    </>
-                ) : (
-                    <>
-                        <Typography variant="body1" sx={{ mb: 2 }}>{newUserInfo.name}</Typography>
-                        <Typography variant="body1" sx={{ mb: 2 }}>{newUserInfo.email}</Typography>
-                        <ActionButton variant="contained" startIcon={<Edit />} onClick={() => setIsEditing(true)}>
-                            Editar
-                        </ActionButton>
-                        <ActionButton
-                            style={{ marginBottom: 20 }}
-                            variant="contained"
-                            color="error"
-                            startIcon={<DeleteForever />}
-                            onClick={() => setOpenDeleteDialog(true)}
-                            sx={{ mt: 2 }}
-                        >
-                            Eliminar cuenta
-                        </ActionButton>
-                    </>
-                )}
+                    <Avatar
+                        // Use newUserInfo.profilePic for preview during editing, otherwise user.profilePic
+                        src={isEditing ? newUserInfo.profilePic : user.profilePic || ''}
+                        alt={newUserInfo.name || user.name} // Use state or original user data
+                        sx={{ width: 100, height: 100, margin: 'auto', mb: 2, border: '2px solid white' }}
+                    />
+                    {isEditing ? (
+                        <>
+                            <input
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                id="icon-button-file"
+                                type="file"
+                                onChange={handleImageChange}
+                                ref={fileInputRef} // Keep ref if needed elsewhere, otherwise optional
+                            />
+                            <label htmlFor="icon-button-file">
+                                <Button
+                                    variant="contained"
+                                    component="span"
+                                    startIcon={<PhotoCamera />}
+                                    sx={{ mb: 2 }}
+                                >
+                                    Cambiar foto de perfil
+                                </Button>
+                            </label>
+                            <StyledTextField
+                                fullWidth
+                                name="name"
+                                label="Nombre"
+                                value={newUserInfo.name}
+                                onChange={handleInputChange}
+                                InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.7)' } }}
+                            />
+                            <StyledTextField
+                                fullWidth
+                                name="email"
+                                label="Correo electrónico"
+                                value={newUserInfo.email}
+                                onChange={handleInputChange}
+                                InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.7)' } }}
+                            />
 
-                {user && user.premium ? (
-                    <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#ffd700' }}>
-                            Cuenta Premium
-                        </Typography>
-                        {!user.expired ? (
-                            <>
-                                <Typography variant="h6" sx={{ mb: 1 }}>
-                                    Tu cuenta premium está activa.
-                                </Typography>
-                                {daysRemaining !== null && hoursRemaining !== null ? (
-                                    <Typography variant="h6">
-                                        Expira en: <strong>{daysRemaining}</strong> día{daysRemaining !== 1 ? 's' : ''} y <strong>{hoursRemaining}</strong> hora{hoursRemaining !== 1 ? 's' : ''}
-                                    </Typography>
-                                ) : (
-                                    <Typography variant="body2">
-                                        Calculando tiempo restante...
-                                    </Typography>
-                                )}
-                            </>
-                        ) : (
-                            <Typography variant="body1" sx={{ color: '#ff6b6b' }}>
-                                Tu membresía premium ha expirado.
-                            </Typography>
-                        )}
-                    </Box>
-                ) :
-                    <>
-                        <GradientButton
-                            onClick={() => router.push('/premium')}
-                        >
-                            comprar premium
-                        </GradientButton>
-                    </>
-                }
+                            {/* ---- MODIFIED: Turnstile container div with ref ---- */}
+                            <Box
+                                ref={turnstileContainerRef}
+                                id="turnstile-widget-container" // ID can be useful for debugging/styling
+                                sx={{ my: 2, display: 'flex', justifyContent: 'center' }} // Center the widget
+                            />
 
+                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                                <ActionButton
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<Save />}
+                                    onClick={handleSave}
+                                    // Disable save if updating OR if Turnstile token is missing
+                                    disabled={isUpdating || !turnstileToken}
+                                >
+                                    Guardar
+                                </ActionButton>
+                                <ActionButton
+                                    variant="outlined"
+                                    color="secondary"
+                                    sx={{ color: 'white', borderColor: 'white' }} // Style outline button
+                                    startIcon={<Close />}
+                                    onClick={handleCancel}
+                                    disabled={isUpdating} // Only disable cancel if actively updating
+                                >
+                                    Cancelar
+                                </ActionButton>
+                            </Box>
+                        </>
+                    ) : (
+                        <>
+                            {/* Display current user info */}
+                            <Typography variant="h5" sx={{ mb: 1, fontWeight: 'bold' }}>{user.name}</Typography>
+                            <Typography variant="body1" sx={{ mb: 3, color: 'rgba(255, 255, 255, 0.8)' }}>{user.email}</Typography>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+                                <ActionButton variant="contained" startIcon={<Edit />} onClick={() => setIsEditing(true)}>
+                                    Editar Perfil
+                                </ActionButton>
+                                <ActionButton
+                                    variant="contained"
+                                    color="error"
+                                    startIcon={<DeleteForever />}
+                                    onClick={() => setOpenDeleteDialog(true)}
+                                >
+                                    Eliminar cuenta
+                                </ActionButton>
+                            </Box>
+
+                            <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.2)' }} />
+
+                            {/* Premium Status Section */}
+                            {user.premium ? (
+                                <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.05)', borderRadius: 2 }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#ffd700' }}>
+                                        Cuenta Premium ✨
+                                    </Typography>
+                                    {daysRemaining !== null && hoursRemaining !== null ? (
+                                        <>
+                                            <Typography variant="body1" sx={{ mb: 1 }}>
+                                                Tu cuenta premium está activa.
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                Expira en: <strong>{daysRemaining}</strong> día{daysRemaining !== 1 ? 's' : ''} y <strong>{hoursRemaining}</strong> hora{hoursRemaining !== 1 ? 's' : ''}
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        // This covers both expired and calculation error/pending cases
+                                        <Typography variant="body1" sx={{ color: '#ffcbcb' }}>
+                                            Tu membresía premium no está activa o ha expirado.
+                                        </Typography>
+                                    )}
+                                </Box>
+                            ) : (
+                                // Not premium - show upgrade button
+                                <GradientButton
+                                    onClick={() => router.push('/premium')}
+                                    sx={{ mt: 2 }} // Add margin if needed
+                                >
+                                    ✨ Hacerse Premium ✨
+                                </GradientButton>
+                            )}
+                        </>
+                    )}
                 </StyledCard>
-            <Dialog
-                open={openDeleteDialog}
-                onClose={() => setOpenDeleteDialog(false)}
-                PaperComponent={styled(Paper)(({ theme }) => ({
-                    backgroundColor: theme.palette.background.paper,
-                    borderRadius: theme.shape.borderRadius * 2,
-                }))}
-            >
-                <DialogTitle>{"Confirmar eliminación"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDeleteDialog(false)}>Cancelar</Button>
-                    <Button onClick={handleDeleteUser} color="error" autoFocus>
-                        Eliminar
-                    </Button>
-                </DialogActions>
-            </Dialog>
+
+                {/* Delete Confirmation Dialog */}
+                <Dialog
+                    open={openDeleteDialog}
+                    onClose={() => setOpenDeleteDialog(false)}
+                    PaperComponent={styled(Paper)(({ theme }) => ({
+                        backgroundColor: '#424242', // Darker background for dialog
+                        color: 'white',
+                        borderRadius: theme.shape.borderRadius * 2,
+                    }))}
+                >
+                    <DialogTitle>{"Confirmar eliminación"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer. Todos tus datos serán eliminados permanentemente.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ padding: '8px 24px 16px' }}>
+                        <Button onClick={() => setOpenDeleteDialog(false)} sx={{ color: 'white' }}>Cancelar</Button>
+                        <Button onClick={handleDeleteUser} color="error" variant="contained" autoFocus disabled={isUpdating}>
+                            Eliminar Definitivamente
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Container>
         </Box>
     );
