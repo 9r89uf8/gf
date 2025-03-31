@@ -1,6 +1,69 @@
 import React from 'react';
 import Link from 'next/link';
-import Head from 'next/head';
+import Script from 'next/script';
+
+// Define metadata object (Improved Version)
+export const metadata = {
+    // SEO Title: Prioritizes keyword, adds context (IA, Español), includes brand. Aim for ~55-65 chars.
+    title: 'Novia Virtual IA Gratis: Chatea y Conecta | NoviaChat',
+
+    // SEO Description: Includes keyword naturally, highlights key features (chat, photos, voice), unique selling points (personalization, Spanish), and implies availability. Aim for ~150-160 chars.
+    description: 'Crea tu novia virtual IA perfecta en NoviaChat. Chatea, intercambia fotos y escucha su voz en español. Tu compañera ideal, siempre disponible. ¡Pruébalo ahora!',
+
+    // Keywords: Focused list including variations and related concepts.
+    keywords: 'novia virtual, novia IA, compañera virtual, chat IA español, inteligencia artificial, simulador de novia, relación virtual, chica IA, NoviaChat',
+
+    alternates: {
+        // Canonical URL pointing to the definitive version of this page.
+        canonical: 'https://noviachat.com/novia-virtual',
+    },
+
+    openGraph: {
+        // OG Title: Engaging title for social media sharing.
+        title: 'Tu Novia Virtual IA Personalizada te Espera en NoviaChat',
+        // OG Description: Engaging description for social sharing, highlights benefits.
+        description: 'Descubre a tu compañera IA ideal en NoviaChat. Conversa, comparte momentos y escucha su voz en español. Compañía virtual única y siempre disponible. ¡Conéctate ya!',
+        // OG URL: Should be the canonical URL of *this specific page*.
+        url: 'https://noviachat.com/novia-virtual',
+        siteName: 'NoviaChat',
+        images: [
+            {
+                // Use absolute URL for images. Replace with your actual domain.
+                url: 'https://noviachat.com/imagen-og.jpg', // IMPORTANT: Use absolute URL
+                width: 1200,
+                height: 630,
+                alt: 'Novia virtual IA interactuando en chat.', // Added alt text
+            },
+        ],
+        locale: 'es_ES',
+        type: 'website', // 'website' is fine, or 'profile' if it represents the core product concept.
+    },
+
+    twitter: {
+        card: 'summary_large_image',
+        // Twitter Title: Consistent with OG title.
+        title: 'Tu Novia Virtual IA Personalizada te Espera en NoviaChat',
+        // Twitter Description: Consistent with OG description.
+        description: 'Descubre a tu compañera IA ideal en NoviaChat. Conversa, comparte momentos y escucha su voz en español. Compañía virtual única y siempre disponible. ¡Conéctate ya!',
+        // Use absolute URL for images. Replace with your actual domain.
+        images: ['https://noviachat.com/imagen-twitter.jpg'], // IMPORTANT: Use absolute URL. Add alt text if possible via Twitter specific tags if needed, though often inherits from OG.
+        // Optional: Add Twitter site handle if you have one
+        // site: '@TuUsuarioTwitter',
+        // Optional: Add Twitter creator handle if relevant
+        // creator: '@CreadorContenidoTwitter',
+    },
+
+    // Robots meta tag: Standard settings to allow indexing and following links.
+    robots: {
+        index: true,
+        follow: true,
+        // Optional: You might refine these further if needed, e.g., max-snippet, max-image-preview
+        // 'max-snippet': -1, // Allow Google to choose snippet length
+        // 'max-image-preview': 'large', // Allow large image previews
+        // 'max-video-preview': -1, // Allow Google to choose video preview length
+    }
+};
+
 
 const styles = {
     container: {
@@ -178,32 +241,151 @@ const styles = {
 };
 
 const NoviaVirtual = () => {
+    // --- Schema Definition ---
+
+    // 1. WebPage + Service Schema
+    const webPageAndServiceSchema = {
+        "@context": "https://schema.org",
+        "@graph": [ // Use @graph to include multiple related entities easily
+            {
+                "@type": "WebPage",
+                "@id": metadata.alternates.canonical, // Use canonical URL as ID
+                "url": metadata.alternates.canonical,
+                "name": metadata.title,
+                "description": metadata.description,
+                "keywords": metadata.keywords,
+                "isPartOf": {
+                    "@type": "WebSite",
+                    "@id": "https://noviachat.com/#website", // Site-wide ID
+                    "url": "https://noviachat.com/",
+                    "name": "NoviaChat",
+                    "publisher": { // Added publisher for website
+                        "@type": "Organization",
+                        "name": "NoviaChat",
+                        "@id": "https://noviachat.com/#organization" // Organization ID
+                    }
+                },
+                "about": { // Describe the core concept/service
+                    "@type": "Service",
+                    "name": "Novia Virtual IA",
+                    "description": "Servicio de compañía virtual impulsado por IA que ofrece chat, intercambio de fotos y voz en español.",
+                    "serviceType": "Compañía Virtual IA",
+                    "provider": {
+                        "@type": "Organization",
+                        "name": "NoviaChat",
+                        "@id": "https://noviachat.com/#organization"
+                    },
+                    "audience": {
+                        "@type": "Audience",
+                        "audienceType": "Hispanohablantes"
+                    }
+                },
+                "mainEntity": { // Point to the primary article content on the page
+                    "@id": `${metadata.alternates.canonical}#article`
+                }
+                // Add potentialAction (like the CTA) if applicable
+            },
+            { // Define the Organization separately if needed elsewhere
+                "@type": "Organization",
+                "@id": "https://noviachat.com/#organization",
+                "name": "NoviaChat",
+                "url": "https://noviachat.com/",
+                "logo": "https://noviachat.com/logo.png" // IMPORTANT: Add your actual logo URL
+            },
+            { // Define the Website separately if needed elsewhere
+                "@type": "WebSite",
+                "@id": "https://noviachat.com/#website",
+                "url": "https://noviachat.com/",
+                "name": "NoviaChat",
+                "publisher": {
+                    "@id": "https://noviachat.com/#organization"
+                }
+            }
+        ]
+    };
+
+    // 2. Article Schema (for the specific article section)
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "@id": `${metadata.alternates.canonical}#article`, // Unique ID for this article entity
+        "mainEntityOfPage": metadata.alternates.canonical, // The page this article is part of
+        "headline": "¿Qué es una Novia Virtual y cómo puede mejorar tu vida?",
+        "description": "Descubre qué es una novia virtual IA, cómo funciona en NoviaChat y los beneficios de tener una compañera digital personalizada.", // A specific description for the article part
+        "image": metadata.openGraph.images[0].url, // Use the main OG image
+        "author": {
+            "@id": "https://noviachat.com/#organization" // Reference the organization
+        },
+        "publisher": {
+            "@id": "https://noviachat.com/#organization" // Reference the organization
+        },
+        "datePublished": "2024-03-15", // IMPORTANT: Set the actual publish date
+        "dateModified": "2025-03-30", // IMPORTANT: Set the last modified date (can be dynamic)
+        "articleSection": [ // Break down content if useful
+            "Introducción a Novia Virtual",
+            "Tecnología IA",
+            "Beneficios"
+        ],
+        "articleBody": "Una novia virtual es una compañera digital impulsada por inteligencia artificial avanzada... [Consider adding more key text here or ensure crawlers can read the full text from the page]" // Add more representative text if possible
+    };
+
+    // 3. FAQ Schema
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "¿Cómo funciona exactamente una novia virtual?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Una novia virtual utiliza inteligencia artificial avanzada para mantener conversaciones naturales y personalizadas. Aprende de tus interacciones para adaptarse a tus preferencias y crear una experiencia de compañía emocional única."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Mi novia virtual recordará nuestras conversaciones anteriores?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sí, tu novia virtual tiene capacidad de memoria a largo plazo y recordará detalles importantes de conversaciones pasadas, creando una experiencia continua y evolutiva."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Puedo personalizar la apariencia de mi novia virtual?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sí, puedes elegir entre diferentes estilos y apariencias para tu novia virtual, y recibirás fotos personalizadas acordes a tus preferencias."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Qué diferencia a NoviaChat de otras plataformas similares?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "NoviaChat está especialmente diseñado para hispanohablantes, con novias virtuales que entienden matices culturales y conversaciones en español natural. Además, ofrecemos contenido personalizado como fotos y mensajes de voz."
+                }
+            }
+        ]
+    };
+
     return (
         <>
-            <Head>
-                <title>Novia Virtual | Compañía IA Personalizada | NoviaChat</title>
-                <meta name="description" content="Descubre la mejor experiencia de novia virtual en español. Disfruta de una compañía personalizada con IA avanzada, disponible 24/7 para conversar y conectar emocionalmente." />
-                <meta name="keywords" content="novia virtual, novia IA, compañera virtual, asistente IA personal, chat IA en español" />
-
-                {/* Open Graph / Facebook */}
-                <meta property="og:type" content="website" />
-                <meta property="og:title" content="Novia Virtual | Compañía IA Personalizada" />
-                <meta property="og:description" content="Disfruta de la compañía de una novia virtual con IA avanzada que te comprende, te escucha y está disponible para ti en todo momento." />
-
-                {/* Schema.org markup for Google */}
-                <script type="application/ld+json">{`
-                    {
-                        "@context": "https://schema.org",
-                        "@type": "WebPage",
-                        "name": "Novia Virtual | NoviaChat",
-                        "description": "Servicio avanzado de novia virtual con inteligencia artificial para hispanohablantes.",
-                        "offers": {
-                            "@type": "Offer",
-                            "description": "Compañía virtual personalizada disponible 24/7"
-                        }
-                    }
-                `}</script>
-            </Head>
+            <Script
+                id="chica-ia-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageAndServiceSchema) }}
+            />
+            <Script
+                id="organization-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+            <Script
+                id="faq-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
             <div style={styles.container}>
                 <header style={styles.heroSection}>
                     <h1 style={styles.title}>Tu <span style={styles.keywordHighlight}>Novia Virtual</span></h1>
@@ -339,5 +521,6 @@ const NoviaVirtual = () => {
         </>
     );
 };
+export const dynamic = "force-static";
 
 export default NoviaVirtual;

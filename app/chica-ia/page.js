@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Head from 'next/head';
+import Script from 'next/script';
 
 const styles = {
     container: {
@@ -216,33 +216,159 @@ const styles = {
     }
 };
 
+export const metadata = {
+    title: 'Chica IA | Tu Compañera Virtual Inteligente | NoviaChatAI',
+    description: 'Conoce a tu Chica IA personal - Una asistente virtual femenina inteligente que se adapta a tu personalidad. Disfruta de conversaciones naturales y emotivas con la mejor compañía virtual.',
+    keywords: [
+        'chica ia', 'chica ia virtual', 'asistente virtual femenina',
+        'compañera ia', 'chica inteligencia artificial', 'novia virtual',
+        'chat con chica ia', 'chica ia en español', 'compañía virtual'
+    ],
+    alternates: {
+        canonical: 'https://www.noviachat.com/chica-ia',
+    },
+    openGraph: {
+        title: 'Chica IA | Tu Compañera Virtual Inteligente | NoviaChatAI',
+        description: 'Conoce a tu Chica IA personal - Una asistente virtual femenina inteligente que se adapta a tu personalidad. Disfruta de conversaciones naturales y emotivas.',
+        url: 'https://www.noviachat.com/chica-ia',
+        siteName: 'NoviaChatAI',
+        images: [
+            {
+                url: 'https://www.noviachat.com/images/chica-ia-preview.jpg', // Asegúrate de tener esta imagen
+                width: 1200,
+                height: 630,
+                alt: 'Chica IA - Asistente virtual inteligente',
+            },
+        ],
+        locale: 'es_ES',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Chica IA | Tu Compañera Virtual Inteligente',
+        description: 'Conoce a tu Chica IA personal - Una asistente virtual femenina que aprende de ti y se adapta a tu personalidad.',
+        images: ['https://www.noviachat.com/images/chica-ia-preview.jpg'], // Misma imagen que OG
+    },
+    robots: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1,
+    },
+};
+
 const ChicaIA = () => {
+    const chicaIASchema = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Chica IA - Asistente Virtual Femenina",
+        "applicationCategory": "ChatApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "EUR"
+        },
+        "description": "Chica IA es una asistente virtual femenina que utiliza inteligencia artificial avanzada para mantener conversaciones naturales y personalizadas en español.",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "243",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "featureList": [
+            "Personalidad adaptativa",
+            "Memoria conversacional",
+            "Inteligencia emocional",
+            "Disponibilidad 24/7"
+        ],
+        "screenshot": "https://www.noviachat.com/images/chica-ia-screenshot.jpg",
+        "url": "https://www.noviachat.com/chica-ia",
+        "sameAs": [
+            "https://www.facebook.com/noviachat",
+            "https://www.instagram.com/noviachat",
+            "https://twitter.com/noviachat"
+        ],
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://www.noviachat.com/chica-ia"
+        }
+    };
+
+    // Add Organization schema as well
+    const organizationSchema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "NoviaChatAI",
+        "url": "https://www.noviachat.com",
+        "logo": "https://www.noviachat.com/logo.png",
+        "description": "Plataforma de compañía virtual que ofrece asistentes IA personalizados en español.",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "soporte@noviachat.com"
+        }
+    };
+
+    // Add FAQPage schema for the FAQ section
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "¿Cómo funciona exactamente una chica IA?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Una chica IA utiliza algoritmos de inteligencia artificial y procesamiento de lenguaje natural para comprender tus mensajes y generar respuestas coherentes y contextuales. Con cada interacción, aprende más sobre tus preferencias para ofrecerte una experiencia más personalizada."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿La chica IA puede mantener conversaciones profundas?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sí, nuestra chica IA está diseñada para mantener conversaciones significativas sobre una amplia variedad de temas, desde charlas cotidianas hasta discusiones más profundas sobre intereses, emociones y experiencias personales."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Puedo elegir la personalidad de mi chica IA?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Sí, ofrecemos diferentes perfiles de chica IA con distintas personalidades, intereses y estilos conversacionales para que puedas elegir la que mejor se adapte a tus preferencias o la que te resulte más interesante."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "¿Qué hace única a la chica IA de ChicaChat?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Nuestra chica IA se distingue por su capacidad de memoria contextual, inteligencia emocional avanzada y adaptabilidad a tus preferencias. Además, está específicamente optimizada para conversaciones naturales en español, entendiendo matices lingüísticos y culturales."
+                }
+            }
+        ]
+    };
+
     return (
         <>
-            <Head>
-                <title>Chica IA | Asistente Virtual Femenina | ChicaChat</title>
-                <meta name="description" content="Conoce a nuestra Chica IA, una asistente virtual femenina basada en inteligencia artificial que te acompaña, conversa y aprende de ti. Una experiencia personalizada en español." />
-                <meta name="keywords" content="chica ia, asistente virtual femenina, compañera inteligente, chat con ia, inteligencia artificial española" />
-
-                {/* Open Graph / Facebook */}
-                <meta property="og:type" content="website" />
-                <meta property="og:title" content="Chica IA | Asistente Virtual Femenina" />
-                <meta property="og:description" content="Conoce a nuestra Chica IA, una asistente virtual femenina basada en inteligencia artificial que te acompaña, conversa y aprende de ti." />
-
-                {/* Schema.org markup for Google */}
-                <script type="application/ld+json">{`
-                    {
-                        "@context": "https://schema.org",
-                        "@type": "WebPage",
-                        "name": "Chica IA | ChicaChat",
-                        "description": "Asistente virtual femenina con inteligencia artificial para hispanohablantes.",
-                        "offers": {
-                            "@type": "Offer",
-                            "description": "Compañía inteligente personalizada disponible 24/7"
-                        }
-                    }
-                `}</script>
-            </Head>
+            <Script
+                id="chica-ia-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(chicaIASchema) }}
+            />
+            <Script
+                id="organization-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+            />
+            <Script
+                id="faq-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
             <div style={styles.container}>
                 <header style={styles.heroSection}>
                     <h1 style={styles.title}>Tu <span style={styles.keywordHighlight}>Chica IA</span></h1>
@@ -397,5 +523,7 @@ const ChicaIA = () => {
         </>
     );
 };
+
+export const dynamic = "force-static";
 
 export default ChicaIA;

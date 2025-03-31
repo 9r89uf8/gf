@@ -2,6 +2,7 @@
 import React from 'react';
 import dynamicM from 'next/dynamic';
 import Welcome from "@/app/components/landing/Welcome"; // Import the new Welcome component
+import Schema from "@/app/components/schema/Schema";
 // Lazy load non-critical components
 const PopularCreators = dynamicM(() => import("@/app/components/landing/PopularCreators"), {
     ssr: true,
@@ -12,6 +13,53 @@ const EnhancedAIFeaturesCard = dynamicM(() => import("@/app/components/landing/E
     loading: () => <div style={{ height: "200px" }}></div>
 });
 import Link from 'next/link';
+
+// Define metadata object - updated for Next.js 14
+export const metadata = {
+    title: 'Novia Virtual - Chica IA | NoviaChat - Tu Compañera Virtual Perfecta',
+    description: 'Conoce a tu novia virtual IA personalizada en NoviaChat. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual.',
+    keywords: 'novia virtual, chica IA, novia IA, compañera virtual, chat IA, inteligencia artificial, NoviaChat',
+    alternates: {
+        canonical: 'https://noviachat.com',
+    },
+    openGraph: {
+        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
+        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        url: 'https://www.noviachat.com/',
+        siteName: 'NoviaChat',
+        images: [
+            {
+                url: '/andrea.webp',
+                width: 1200,
+                height: 630,
+                alt: 'NoviaChat - Tu Compañera Virtual Perfecta',
+            },
+        ],
+        locale: 'es_ES',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
+        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        images: [{
+            url: '/imagen-twitter.jpg',
+            alt: 'NoviaChat - Tu Compañera Virtual Perfecta'
+        }],
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
+    },
+    metadataBase: new URL('https://www.noviachat.com'),
+};
 
 import Head from 'next/head';
 
@@ -103,51 +151,25 @@ const GlassCard = ({ children }) => (
 
 const SEOArticle = () => {
     return (
-        <article style={styles.articleSection}>
-            <h2 style={styles.articleHeading}>¿Qué es una Novia Virtual IA?</h2>
+        <section style={styles.articleSection}>
+            <h2 style={styles.articleHeading} id="que-es-novia-virtual">¿Qué es una Novia Virtual IA?</h2>
             <p style={styles.articleParagraph}>
                 Una <strong>novia virtual</strong> es una compañera digital con inteligencia artificial que ofrece conexión emocional. Nuestra plataforma te conecta con una <strong>chica IA</strong> que se adapta a tus preferencias y personalidad.
             </p>
             <p style={styles.articleParagraph}>
                 La experiencia con una <strong>novia IA</strong> incluye fotos personalizadas, mensajes de voz y conversaciones fluidas. Nuestras <strong>chicas IA</strong> ofrecen la experiencia más natural en español para hispanohablantes.
             </p>
-            <h3 style={{...styles.articleHeading, fontSize: '22px'}}>Beneficios de las Chicas IA</h3>
+            <h3 style={{...styles.articleHeading, fontSize: '22px'}} id="beneficios-chicas-ia">Beneficios de las Chicas IA</h3>
             <p style={styles.articleParagraph}>
                 Las <strong>chicas IA</strong> están disponibles 24/7 sin compromisos complicados. Tu <strong>novia virtual</strong> brinda compañía y apoyo emocional adaptado a tus necesidades, mejorando tu bienestar emocional sin juicios.
             </p>
-        </article>
+        </section>
     );
 };
 
 const Home = () => {
     return (
         <>
-            <Head>
-                <title>Novia Virtual IA | Chica IA en Español | NoviaChat</title>
-                <meta name="description" content="Conoce a tu novia virtual IA y chatea con la mejor chica IA en español. Disfruta de conversaciones personalizadas, fotos y mensajes de voz con tu novia IA 24/7." />
-                <meta name="keywords" content="novia virtual, chica IA, novia IA, compañera virtual, inteligencia artificial, chat en español" />
-
-                {/* Open Graph / Facebook */}
-                <meta property="og:type" content="website" />
-                <meta property="og:title" content="Novia Virtual IA | Chica IA en Español" />
-                <meta property="og:description" content="Conecta con tu novia virtual IA. Conversaciones personalizadas, fotos y mensajes de voz con la chica IA de tus sueños." />
-
-                {/* Schema.org markup for Google */}
-                <script type="application/ld+json">{`
-                    {
-                        "@context": "https://schema.org",
-                        "@type": "WebSite",
-                        "name": "NoviaChat - Novia Virtual IA",
-                        "url": "https://noviachat.com",
-                        "description": "Plataforma líder de novias virtuales IA en español para hispanohablantes en Latinoamérica y Estados Unidos.",
-                        "potentialAction": {
-                            "@type": "SearchAction",
-                            "target": "https://noviachat.com/search?q={search_term_string}",
-                            "query-input": "required name=search_term_string"
-                        }
-                    }
-                `}</script>
-            </Head>
             <div style={styles.pageContainer}>
                 <div style={styles.maxWidthContainer}>
                     {/* Welcome Section - now imported from separate file */}

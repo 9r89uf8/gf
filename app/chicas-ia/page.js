@@ -21,20 +21,6 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import LockIcon from '@mui/icons-material/Lock';
 
-const pulseAndGlow = keyframes`
-    0% {
-        transform: scale(1);
-        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-    }
-    50% {
-        transform: scale(1.02);
-        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-    }
-    100% {
-        transform: scale(1);
-        background: linear-gradient(45deg, #f8f9fa, #dee2e6);
-    }
-`;
 
 const ElegantCard = styled(Card)(({ theme }) => ({
     position: 'relative',
@@ -152,28 +138,6 @@ const GradientButtonTwo = styled(Button)(({ theme }) => ({
     },
 }));
 
-const PremiumBanner = styled(Box)(({ theme }) => ({
-    background: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: theme.shape.borderRadius * 2,
-    padding: theme.spacing(4),
-    marginBottom: theme.spacing(6),
-    textAlign: 'center',
-    color: 'white',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    boxShadow: '0 8px 32px 0 rgba(0, 147, 233, 0.3)',
-}));
-
-const PremiumLabel = styled(Typography)(({ theme }) => ({
-    animation: `${pulseAndGlow} 2s infinite ease-in-out`,
-    padding: '8px 16px',
-    borderRadius: '25px',
-    fontWeight: 'bold',
-    display: 'inline-block',
-    color: 'black',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    fontSize: '0.9rem',
-}));
 
 const FollowerCount = styled(Box)({
     color: '#ffffff',
@@ -223,6 +187,14 @@ const PremiumGirlIndicator = styled(Box)(({ theme }) => ({
     alignItems: 'center',
     zIndex: 2,
 }));
+
+// // In your page.js file
+// export const metadata = {
+//     robots: {
+//         index: false,
+//         follow: false,
+//     }
+// };
 
 const Creators = () => {
     const router = useRouter();
