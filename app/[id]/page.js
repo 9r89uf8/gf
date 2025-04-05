@@ -1,33 +1,32 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState, lazy, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl } from "@/app/services/girlService";
-import PostsFilter from "@/app/components/posts/PostsFilter";
-import { followGirl } from "@/app/services/girlService";
-
-import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
-import {
-    Container,
-    Box,
-    Paper,
-    Typography,
-    Button,
-    Card,
-    Avatar,
-    Grid,
-    Divider,
-    Skeleton,
-    Modal, Stack,
-} from '@mui/material';
+// Optimize imports - only import what you need
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
+import Skeleton from '@mui/material/Skeleton';
+import Modal from '@mui/material/Modal';
+import Stack from '@mui/material/Stack';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
 import { alpha, styled } from "@mui/material/styles";
+
+// Import icons individually to reduce bundle size
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CakeIcon from '@mui/icons-material/Cake';
-import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded';
 import LockIcon from "@mui/icons-material/Lock";
+// Lazy load components that aren't needed immediately
+const PostsFilter = lazy(() => import("@/app/components/posts/PostsFilter"));
+const GirlPostsComp = lazy(() => import("@/app/components/posts/GirlPostsComp"));
+const VerifiedIcon = lazy(() => import("@/app/components/landing/VerifiedIcon"));
 
 const GlassCard = styled(Card)(({ theme }) => ({
     textAlign: 'center',
@@ -57,31 +56,6 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     },
 }));
 
-const UnfollowButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
-    '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B9B 30%, #FFA873 90%)',
-    },
-}));
-
-const FollowButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-    border: 0,
-    borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-    color: 'white',
-    height: 48,
-    padding: '0 30px',
-    '&:hover': {
-        background: 'linear-gradient(45deg, #41A6F3 30%, #41DBF3 90%)',
-    },
-}));
 
 const GradientButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
@@ -134,7 +108,6 @@ const GirlProfile = ({ params }) => {
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
     const router = useRouter();
-    const [loading, setLoading] = React.useState(true);
     const isPremium = user && user.premium;
 
     useEffect(() => {
@@ -329,21 +302,7 @@ const GirlProfile = ({ params }) => {
                                                 Seguidores
                                             </Typography>
                                         </Box>
-                                        {/*{isFollowing ? (*/}
-                                        {/*    <UnfollowButton*/}
-                                        {/*        onClick={handleFollowClick}*/}
-                                        {/*        disabled={!user || isFollowLoading}*/}
-                                        {/*    >*/}
-                                        {/*        No Seguir*/}
-                                        {/*    </UnfollowButton>*/}
-                                        {/*) : (*/}
-                                        {/*    <FollowButton*/}
-                                        {/*        onClick={handleFollowClick}*/}
-                                        {/*        disabled={!user || isFollowLoading}*/}
-                                        {/*    >*/}
-                                        {/*        Seguir*/}
-                                        {/*    </FollowButton>*/}
-                                        {/*)}*/}
+
                                     </Box>
                                 )}
                                 {!girl ? (
