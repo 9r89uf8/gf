@@ -134,23 +134,16 @@ const GirlProfile = ({ params }) => {
     const girl = useStore((state) => state.girl);
     const router = useRouter();
     const [loading, setLoading] = React.useState(true);
-    const [isFollowing, setIsFollowing] = React.useState(false);
-    const [isFollowLoading, setIsFollowLoading] = React.useState(false);
     const isPremium = user && user.premium;
 
     useEffect(() => {
         const fetchGirl = async () => {
             await getGirl({ id: params.id });
-            setLoading(false);
+            // setLoading(false);
         };
         fetchGirl();
     }, [params.id]);
 
-    useEffect(() => {
-        if (user && girl && girl.followers) {
-            setIsFollowing(girl.followers.includes(user.uid));
-        }
-    }, [user, girl]);
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
@@ -160,13 +153,6 @@ const GirlProfile = ({ params }) => {
         router.push('/premium');
     };
 
-    const handleFollowClick = async () => {
-        if (user) {
-            setIsFollowLoading(true);
-            await followGirl({ girlId: girl.id });
-            setIsFollowLoading(false);
-        }
-    };
 
     const formatNumber = (num) => {
         if (num >= 1000000) {
@@ -208,11 +194,14 @@ const GirlProfile = ({ params }) => {
             }}
         >
             <Container maxWidth="md">
+
+
+
                 <GlassCard elevation={4}>
                     <Grid container spacing={4} alignItems="flex-start">
                         <Grid item xs={12} md={4}>
                             {/* Background Image Box */}
-                            {loading ? (
+                            {!girl ? (
                                 <Skeleton variant="rectangular" width="100%" height={200} />
                             ) : (
                                 <Box
@@ -252,7 +241,7 @@ const GirlProfile = ({ params }) => {
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box sx={{ marginTop: { xs: 10, md: 5 } }}>
-                                {loading ? (
+                                {!girl ? (
                                     <Skeleton variant="text" width={200} height={40} />
                                 ) : (
                                     <Box display="flex" justifyContent="center">
@@ -262,7 +251,7 @@ const GirlProfile = ({ params }) => {
                                         <VerifiedIcon/>
                                     </Box>
                                 )}
-                                {loading ? (
+                                {!girl ? (
                                     <Box
                                         display="flex"
                                         alignItems="center"
@@ -297,24 +286,24 @@ const GirlProfile = ({ params }) => {
                                                 Seguidores
                                             </Typography>
                                         </Box>
-                                        {isFollowing ? (
-                                            <UnfollowButton
-                                                onClick={handleFollowClick}
-                                                disabled={!user || isFollowLoading}
-                                            >
-                                                No Seguir
-                                            </UnfollowButton>
-                                        ) : (
-                                            <FollowButton
-                                                onClick={handleFollowClick}
-                                                disabled={!user || isFollowLoading}
-                                            >
-                                                Seguir
-                                            </FollowButton>
-                                        )}
+                                        {/*{isFollowing ? (*/}
+                                        {/*    <UnfollowButton*/}
+                                        {/*        onClick={handleFollowClick}*/}
+                                        {/*        disabled={!user || isFollowLoading}*/}
+                                        {/*    >*/}
+                                        {/*        No Seguir*/}
+                                        {/*    </UnfollowButton>*/}
+                                        {/*) : (*/}
+                                        {/*    <FollowButton*/}
+                                        {/*        onClick={handleFollowClick}*/}
+                                        {/*        disabled={!user || isFollowLoading}*/}
+                                        {/*    >*/}
+                                        {/*        Seguir*/}
+                                        {/*    </FollowButton>*/}
+                                        {/*)}*/}
                                     </Box>
                                 )}
-                                {loading ? (
+                                {!girl ? (
                                     <Skeleton variant="text" width={150} height={30} />
                                 ) : (
                                     <Box display="flex" alignItems="center" mb={2}>
@@ -324,7 +313,7 @@ const GirlProfile = ({ params }) => {
                                         </Typography>
                                     </Box>
                                 )}
-                                {loading ? (
+                                {!girl ? (
                                     <Skeleton variant="text" width={200} height={30} />
                                 ) : (
                                     <Box display="flex" alignItems="center" mb={2}>
@@ -340,7 +329,7 @@ const GirlProfile = ({ params }) => {
                                         backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                     }}
                                 />
-                                {loading ? (
+                                {!girl ? (
                                     <Skeleton variant="text" width="100%" height={30} />
                                 ) : (
                                     <Typography variant="h6" paragraph>
@@ -408,14 +397,10 @@ const GirlProfile = ({ params }) => {
                 </Modal>
 
                 <GlassCard>
-                    {loading ? (
-                        <Skeleton variant="text" width={150} height={30} />
-                    ) : (
-                        <PostsFilter postsCount={girl ? girl.posts.length : '9'} />
-                    )}
+                    <PostsFilter postsCount={girl ? girl.posts.length : '9'} />
                 </GlassCard>
 
-                {loading ? (
+                {!girl ? (
                     <Grid container spacing={3}>
                         {[...Array(9)].map((_, index) => (
                             <Grid item xs={12} sm={6} md={4} key={index}>
