@@ -110,11 +110,19 @@ const GirlProfile = ({ params }) => {
     const router = useRouter();
     const isPremium = user && user.premium;
 
+    // Modified: Use non-blocking data fetching
     useEffect(() => {
         const fetchGirl = async () => {
-            await getGirl({ id: params.id });
-            // setLoading(false);
+            try {
+                getGirl({ id: params.id }).catch(err => {
+                    console.error("Error fetching girl data:", err);
+                })
+            } catch (error) {
+                console.error("Error in fetchGirl:", error);
+            }
         };
+
+        // Start fetching but don't block rendering
         fetchGirl();
     }, [params.id]);
 
