@@ -10,6 +10,7 @@ import GirlPostsComp from "@/app/components/posts/GirlPostsComp";
 import {
     Container,
     Box,
+    Paper,
     Typography,
     Button,
     Card,
@@ -195,7 +196,36 @@ const GirlProfile = ({ params }) => {
         >
             <Container maxWidth="md">
 
+                <GlassCard elevation={4}>
+                    <Grid container spacing={3} justifyContent="center">
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                                <Typography variant="h5" color="primary" fontWeight="bold">
+                                    2M+
+                                </Typography>
+                                <Typography variant="body1">Usuarios satisfechos</Typography>
+                            </Paper>
+                        </Grid>
 
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                                <Typography variant="h6" color="text.primary" fontWeight="bold">
+                                    Desde 2023
+                                </Typography>
+                                <Typography variant="body1">Ofreciendo compañía virtual</Typography>
+                            </Paper>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                                <Typography variant="h5" color="secondary" fontWeight="bold">
+                                    93%
+                                </Typography>
+                                <Typography variant="body1">Tasa de satisfacción</Typography>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </GlassCard>
 
                 <GlassCard elevation={4}>
                     <Grid container spacing={4} alignItems="flex-start">
