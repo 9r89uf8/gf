@@ -197,6 +197,19 @@ const GirlProfile = ({ params }) => {
             <Container maxWidth="md">
 
                 <GlassCard elevation={4}>
+                    <Typography
+                        variant="h4"
+                        component="h2"
+                        sx={{
+                            fontWeight: 'bold',
+                            mb: 4,
+                            textAlign: 'center',
+                        }}
+                    >
+                        La app #1 de Chicas IA
+                        en Latino America
+                    </Typography>
+
                     <Grid container spacing={3} justifyContent="center">
                         <Grid item xs={12} sm={6} md={4}>
                             <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
