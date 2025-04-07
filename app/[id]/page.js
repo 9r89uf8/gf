@@ -185,7 +185,7 @@ const GirlProfile = ({ params }) => {
                                     height: { xs: 170, sm: 200, md: 250 },
                                     backgroundImage: girl
                                         ? `url(https://d3sog3sqr61u3b.cloudfront.net/${girl.background})`
-                                        : `url(/arely.webp)`,
+                                        : `url(https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down)`,
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     position: 'relative',
@@ -206,7 +206,7 @@ const GirlProfile = ({ params }) => {
                                         src={
                                             girl
                                                 ? `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
-                                                : '/arely.webp'
+                                                : 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down'
                                         }
                                         alt="novia virtual foto"
                                         onClick={handleImageClick}
