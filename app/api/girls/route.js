@@ -1,4 +1,4 @@
-// app/api/posts/route.js
+
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
 
