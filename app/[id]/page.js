@@ -68,7 +68,7 @@ export default async function GirlProfile({ params }) {
     }
 
     // Build image URLs
-    const backgroundImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.background}/w=200,fit=scale-down`;
+    const backgroundImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.background}/w=400,fit=scale-down`;
     const profileImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.picture}/w=200,fit=scale-down`;
 
     return (

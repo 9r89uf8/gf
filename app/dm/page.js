@@ -373,7 +373,7 @@ const DMList = () => {
                                                     <Grid item xs={4}>
                                                         <Link href={`/${chat.girlId}`} passHref>
                                                             <Avatar
-                                                                src={`https://d3sog3sqr61u3b.cloudfront.net/${chat.picture}`}
+                                                                src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${chat.picture}/w=200,fit=scale-down`}
                                                                 alt={`Foto de ${chat.girlName}`}
                                                                 sx={{ width: 70, height: 70, borderRadius: '10%' }}
                                                             />
