@@ -1,5 +1,6 @@
 // Server Component
 import { redirect } from 'next/navigation';
+import Image from 'next/image'; // Import Next.js Image component
 import GirlPostsSection from "@/app/components/bio/GirlPostsSection";
 import ProfileClient from "@/app/components/bio/ProfileClient";
 import Container from '@mui/material/Container';
@@ -23,7 +24,6 @@ export async function generateStaticParams() {
         id: girl.id,
     }));
 }
-
 
 // Server-side data fetching
 async function getGirlData(id) {
@@ -53,7 +53,6 @@ async function getGirlData(id) {
     }
 }
 
-
 export default async function GirlProfile({ params }) {
     // Server-side data fetching
     const girlData = await getGirlData(params.id);
@@ -63,6 +62,9 @@ export default async function GirlProfile({ params }) {
         redirect('/not-found');
     }
 
+    // Preload images on the server side
+    const backgroundImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.background}`;
+    const profileImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.picture}`;
 
     return (
         <Box
@@ -71,11 +73,30 @@ export default async function GirlProfile({ params }) {
                 padding: 2,
             }}
         >
-            <Container maxWidth="md">
+            {/* Preload images */}
+            <Image
+                src={backgroundImageUrl}
+                priority
+                alt="Background"
+                width={1200}
+                height={400}
+                style={{ display: 'none' }} // Hide but preload
+            />
+            <Image
+                src={profileImageUrl}
+                priority
+                alt="Profile"
+                width={150}
+                height={150}
+                style={{ display: 'none' }} // Hide but preload
+            />
 
-                 {/*Profile Client Component - contains interactive elements */}
+            <Container maxWidth="md">
+                {/* Profile Client Component - contains interactive elements */}
                 <ProfileClient
                     girl={girlData}
+                    preloadedBackground={backgroundImageUrl}
+                    preloadedProfile={profileImageUrl}
                 />
 
                 {/* Posts Section - contains interactive elements */}

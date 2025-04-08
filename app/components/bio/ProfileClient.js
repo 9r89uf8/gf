@@ -94,12 +94,16 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
-export default function ProfileClient({ girl }) {
+export default function ProfileClient({ girl, preloadedBackground, preloadedProfile }) {
     const router = useRouter();
     const user = useStore((state) => state.user);
     const isPremium = user && user.premium;
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [fullscreenImageSrc, setFullscreenImageSrc] = useState(null);
+
+    // Use preloaded images or fallback to constructed URLs
+    const backgroundImage = preloadedBackground || `https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`;
+    const profileImage = preloadedProfile || `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`;
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
@@ -121,16 +125,12 @@ export default function ProfileClient({ girl }) {
 
     const handleImageClick = (event) => {
         event.stopPropagation(); // Prevent the event from bubbling up
-        setFullscreenImageSrc(
-            `https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`
-        );
+        setFullscreenImageSrc(profileImage);
         setIsFullscreen(true);
     };
 
     const handleBackgroundImageClick = () => {
-        setFullscreenImageSrc(
-            `https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`
-        );
+        setFullscreenImageSrc(backgroundImage);
         setIsFullscreen(true);
     };
 
@@ -143,18 +143,27 @@ export default function ProfileClient({ girl }) {
             <GlassCard elevation={4}>
                 <Grid container spacing={4} alignItems="flex-start">
                     <Grid item xs={12} md={4}>
-                        {/* Background Image Box */}
+                        {/* Background Image Box using Next.js Image when possible */}
                         <Box
                             sx={{
                                 height: { xs: 170, sm: 200, md: 250 },
-                                backgroundImage: `url(https://d3sog3sqr61u3b.cloudfront.net/${girl.background})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
                                 position: 'relative',
-                                cursor: 'pointer', // Make it look clickable
+                                cursor: 'pointer',
+                                overflow: 'visible', // Ensure image doesn't overflow
                             }}
                             onClick={handleBackgroundImageClick}
                         >
+                            {/* Server-side optimized image */}
+                            <Box
+                                sx={{
+                                    backgroundImage: `url(${backgroundImage})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    width: '100%',
+                                    height: '100%',
+                                }}
+                            />
+
                             {/* Avatar Positioned Over the Background */}
                             <Box
                                 sx={{
@@ -165,7 +174,7 @@ export default function ProfileClient({ girl }) {
                                 }}
                             >
                                 <StyledAvatar
-                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                    src={profileImage}
                                     alt="novia virtual foto"
                                     onClick={handleImageClick}
                                 />

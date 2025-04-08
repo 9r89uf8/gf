@@ -16,6 +16,10 @@ const nextConfig = {
         // Optionally, you can restrict the path as well:
         // pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'd3sog3sqr61u3b.cloudfront.net',
+      },
     ],
   },
   compiler: {
