@@ -7,6 +7,13 @@ import { NextResponse } from "next/server";
 
 export const dynamic = 'force-dynamic';
 
+// Cloudflare configuration
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+const CLOUDFLARE_ACCOUNT_HASH = process.env.CLOUDFLARE_ACCOUNT_HASH;
+const CLOUDFLARE_IMAGES_BASE_URL = `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/images/v2`;
+const CLOUDFLARE_IMAGE_DELIVERY_URL = `https://imagedelivery.net/${CLOUDFLARE_ACCOUNT_HASH}`;
+
 // Set the AWS region
 const REGION = "us-east-2";
 
@@ -18,6 +25,100 @@ const s3Client = new S3Client({
         secretAccessKey: process.env.STHREESEC,
     }
 });
+
+// Function to get a one-time upload URL from Cloudflare
+const getCloudflareUploadURL = async (metadata = {}) => {
+    try {
+        // Create a FormData object for the multipart/form-data request
+        const formData = new FormData();
+        formData.append('requireSignedURLs', 'false');
+        formData.append('metadata', JSON.stringify(metadata));
+
+        const response = await fetch(`${CLOUDFLARE_IMAGES_BASE_URL}/direct_upload`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`
+                // Don't set Content-Type - fetch will automatically set it with boundary for FormData
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`Failed to get Cloudflare upload URL: ${JSON.stringify(error)}`);
+        }
+
+        const data = await response.json();
+        return data.result;
+    } catch (error) {
+        console.error('Error getting Cloudflare upload URL:', error);
+        throw error;
+    }
+};
+
+// Function to upload an image to Cloudflare Images
+const uploadToCloudflare = async (file, metadata = {}) => {
+    try {
+        // Check if file is an image
+        const supportedImageTypes = {
+            'image/jpeg': true,
+            'image/png': true,
+            'image/gif': true,
+            'image/webp': true,
+        };
+
+        if (!supportedImageTypes[file.type]) {
+            throw new Error(`File type not supported for Cloudflare Images: ${file.type}`);
+        }
+
+        // Get a one-time upload URL
+        const uploadData = await getCloudflareUploadURL(metadata);
+
+        // Upload the file directly to Cloudflare
+        const buffer = await file.arrayBuffer();
+        const formData = new FormData();
+        formData.append('file', new Blob([buffer], { type: file.type }));
+
+        const uploadResponse = await fetch(uploadData.uploadURL, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!uploadResponse.ok) {
+            throw new Error(`Failed to upload to Cloudflare: ${uploadResponse.statusText}`);
+        }
+
+        // Return the image ID and constructed URL
+        return {
+            id: uploadData.id,
+            url: `${CLOUDFLARE_IMAGE_DELIVERY_URL}/${uploadData.id}/public` // Using 'public' variant by default
+        };
+    } catch (error) {
+        console.error('Error uploading to Cloudflare:', error);
+        throw error;
+    }
+};
+
+// Function to delete an image from Cloudflare
+const deleteFromCloudflare = async (imageId) => {
+    try {
+        const response = await fetch(`${CLOUDFLARE_IMAGES_BASE_URL}/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`Failed to delete Cloudflare image: ${JSON.stringify(error)}`);
+        }
+    } catch (error) {
+        console.error('Error deleting from Cloudflare:', error);
+        throw error;
+    }
+};
+
 
 // Updated uploadToS3 function to support audio files
 const uploadToS3 = async (file, fileName) => {
@@ -62,6 +163,8 @@ const deleteFromS3 = async (fileUrl) => {
 };
 
 export async function POST(req) {
+    // Array to track resources that need cleanup if the operation fails
+    const createdResources = [];
     try {
         const authResult = await authMiddleware(req);
         if (!authResult.authenticated) {
@@ -161,20 +264,20 @@ export async function POST(req) {
             girlRecord.audioFiles = (girlRecord.audioFiles || []).filter(url => !audioFilesToRemove.includes(url));
         }
 
-        // Handle image upload
+        // Handle profile image upload using Cloudflare Images
         if (file) {
-            const fileName = uuidv4();
-            const fileType = file.type.split('/')[1];
-            const imageUrl = await uploadToS3(file, fileName);
-            girlRecord.picture = `${fileName}.${fileType}`;
+            const imageResult = await uploadToCloudflare(file, { girlId, type: 'profile' });
+            girlRecord.picture = imageResult.id; // Store the Cloudflare image ID
+            girlRecord.pictureUrl = imageResult.url; // Store the constructed URL for easy access
+            createdResources.push({ type: 'cloudflare', id: imageResult.id });
         }
 
-        // Handle background image upload
+        // Handle background image upload using Cloudflare Images
         if (fileBackground) {
-            const fileName = uuidv4();
-            const fileType = fileBackground.type.split('/')[1];
-            const imageUrl = await uploadToS3(fileBackground, fileName);
-            girlRecord.background = `${fileName}.${fileType}`;
+            const imageResult = await uploadToCloudflare(fileBackground, { girlId, type: 'background' });
+            girlRecord.background = imageResult.id; // Store the Cloudflare image ID
+            girlRecord.backgroundUrl = imageResult.url; // Store the constructed URL for easy access
+            createdResources.push({ type: 'cloudflare', id: imageResult.id });
         }
 
         // Update the girl record in the database
@@ -205,6 +308,20 @@ export async function POST(req) {
 
     } catch (error) {
         console.error('Error updating girl:', error.message);
+
+        // Cleanup any created resources
+        for (const resource of createdResources) {
+            try {
+                if (resource.type === 'cloudflare') {
+                    await deleteFromCloudflare(resource.id);
+                    console.log(`Cleaned up Cloudflare image ${resource.id}`);
+                }
+                // Add other resource cleanup as needed
+            } catch (cleanupError) {
+                console.error(`Error cleaning up resource ${resource.id}:`, cleanupError);
+            }
+        }
+
         return NextResponse.json({ error: error.message }, { status: 400 });
     }
 }

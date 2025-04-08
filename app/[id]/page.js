@@ -68,8 +68,8 @@ export default async function GirlProfile({ params }) {
     }
 
     // Build image URLs
-    const backgroundImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.background}`;
-    const profileImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.picture}`;
+    const backgroundImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.background}/w=200,fit=scale-down`;
+    const profileImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.picture}/w=200,fit=scale-down`;
 
     return (
         <Box sx={{ minHeight: '100vh', padding: 2 }}>

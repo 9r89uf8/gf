@@ -255,7 +255,7 @@ const GirlHeader = ({ girl, loadingGirl }) => {
                     <Box display="flex" flexDirection="column" alignItems="center">
                         <Box position="relative" mb={2}>
                             <ProfileAvatar
-                                src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                                 alt={girl.username}
                                 onClick={handleImageClick}
                             />
@@ -348,7 +348,7 @@ const GirlHeader = ({ girl, loadingGirl }) => {
             >
                 <Box sx={modalStyle}>
                     <img
-                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                        src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                         alt={`Post ${girl.id} Fullscreen`}
                         style={{
                             maxWidth: '100%',

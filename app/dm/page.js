@@ -256,7 +256,8 @@ const DMList = () => {
                                 <AvatarWrapper>
                                     <Link href={`/${girl.id}`} passHref>
                                     <Avatar
-                                        src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                        src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
+                                        // src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
                                         alt={girl.name}
                                         sx={{
                                             width: 120,

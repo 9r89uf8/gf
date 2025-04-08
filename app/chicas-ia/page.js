@@ -316,14 +316,14 @@ const Creators = () => {
                                         </PremiumGirlIndicator>
                                     )}
                                     <BackgroundImage
-                                        backgroundurl={`https://d3sog3sqr61u3b.cloudfront.net/${girl.background}`}
+                                        backgroundurl={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.background}/w=200,fit=scale-down`}
                                     />
                                     <Box sx={{ position: 'relative', zIndex: 1 }}>
                                         <ProfileImageContainer
-                                            onClick={() => handleImageClick(`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`)}
+                                            onClick={() => handleImageClick(`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`)}
                                         >
                                             <StyledAvatar
-                                                src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                                src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                                                 alt={girl.name}
                                             />
                                         </ProfileImageContainer>
