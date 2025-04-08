@@ -1,10 +1,13 @@
-// Server Component
+// app/[id]/page.jsx
 import { redirect } from 'next/navigation';
-import Image from 'next/image'; // Import Next.js Image component
 import GirlPostsSection from "@/app/components/bio/GirlPostsSection";
 import ProfileClient from "@/app/components/bio/ProfileClient";
+import ProfileImagesServer from "@/app/components/bio/ProfileImagesServer";
+import ImageModalClient from "@/app/components/bio/ImageModalClient";
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import GlassCard from "@/app/components/bio/GlassCard";
 
 // Static metadata
 export const metadata = {
@@ -53,6 +56,8 @@ async function getGirlData(id) {
     }
 }
 
+// Keep your existing metadata and data fetching functions
+
 export default async function GirlProfile({ params }) {
     // Server-side data fetching
     const girlData = await getGirlData(params.id);
@@ -62,47 +67,35 @@ export default async function GirlProfile({ params }) {
         redirect('/not-found');
     }
 
-    // Preload images on the server side
+    // Build image URLs
     const backgroundImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.background}`;
     const profileImageUrl = `https://d3sog3sqr61u3b.cloudfront.net/${girlData.picture}`;
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                padding: 2,
-            }}
-        >
-            {/* Preload images */}
-            <Image
-                src={backgroundImageUrl}
-                priority
-                alt="Background"
-                width={1200}
-                height={400}
-                style={{ display: 'none' }} // Hide but preload
-            />
-            <Image
-                src={profileImageUrl}
-                priority
-                alt="Profile"
-                width={150}
-                height={150}
-                style={{ display: 'none' }} // Hide but preload
-            />
-
+        <Box sx={{ minHeight: '100vh', padding: 2 }}>
             <Container maxWidth="md">
-                {/* Profile Client Component - contains interactive elements */}
-                <ProfileClient
-                    girl={girlData}
-                    preloadedBackground={backgroundImageUrl}
-                    preloadedProfile={profileImageUrl}
-                />
+                <GlassCard>
+                    <Grid container spacing={4} alignItems="flex-start">
+                        {/* Left side: Server-rendered images */}
+                        <Grid item xs={12} md={4}>
+                            <ProfileImagesServer
+                                backgroundUrl={backgroundImageUrl}
+                                profileUrl={profileImageUrl}
+                            />
+                        </Grid>
 
-                {/* Posts Section - contains interactive elements */}
-                <GirlPostsSection
-                    girl={girlData}
-                />
+                        {/* Right side: Client-side profile info */}
+                        <Grid item xs={12} md={8}>
+                            <ProfileClient girl={girlData} />
+                        </Grid>
+                    </Grid>
+                </GlassCard>
+
+                {/* Client component for modal functionality */}
+                <ImageModalClient />
+
+                {/* Posts Section */}
+                <GirlPostsSection girl={girlData} />
             </Container>
         </Box>
     );
