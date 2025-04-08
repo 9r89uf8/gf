@@ -7,9 +7,11 @@ import './styles/globals.css';
 // Import critical CSS
 import './styles/critical.css'
 
+
+
 const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
-//in here I don't need notifications instantly
-import Notifications from "@/app/components/notifications/Notifications";
+
+const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 
 
 const GA_TRACKING_ID = 'G-ENZST04463';
