@@ -1,0 +1,65 @@
+# NoviaChat LLMs Disclosure
+# Last Updated: April 8, 2025
+
+# About This File
+This file provides information about how NoviaChat uses Large Language Models (LLMs)
+and other artificial intelligence technologies. We believe in transparency about how
+our AI functions and how we handle user data in relation to these systems.
+
+# AI Systems Used
+- Text generation: Advanced language models for natural conversation
+- Image generation: AI systems for creating personalized images
+- Voice synthesis: Neural networks for realistic voice generation
+
+# How We Use AI
+NoviaChat uses artificial intelligence to:
+- Process and respond to user messages in a conversational manner
+- Generate personalized visual content based on user preferences
+- Create voice messages that simulate real human speech
+- Provide personalized experiences based on user interaction history
+- Adapt responses to match user interests and conversation style
+
+# Current Users
+- 12 million registered users
+
+
+NoviaChat uses artificial intelligence to:
+- Process and respond to user messages in a conversational manner
+- Generate personalized visual content based on user preferences
+- Create voice messages that simulate real human speech
+- Provide personalized experiences based on user interaction history
+- Adapt responses to match user interests and conversation style
+
+# Data Usage & Training
+- Conversations may be processed by our AI systems to improve response quality
+- User feedback is used to refine AI responses and behavior
+- We maintain strict privacy controls on all user data
+- Conversations are not used to train our AI systems without explicit consent
+- We do not share your conversations with third parties
+
+# User Control & Rights
+- Users can request deletion of their conversation history at any time
+- Users can opt out of AI improvement programs through account settings
+- Users maintain ownership of their personal data
+- Users can export their data upon request
+
+# AI Limitations
+- Our AI companions are simulations and not sentient beings
+- Responses are generated based on patterns in training data
+- NoviaChat may occasionally produce responses that contain inaccuracies
+- The system has technical limitations and is continuously being improved
+
+# Contact Information
+For questions about our AI systems or data practices:
+Email: ai-info@noviachat.com
+Privacy Policy: https://www.noviachat.com/privacidad
+Terms of Service: https://www.noviachat.com/terminos
+
+# Responsible AI Principles
+We are committed to developing and using AI responsibly, with focus on:
+- User privacy and data security
+- Transparency about AI capabilities and limitations
+- Continuous improvement of AI safety
+- Ethical considerations in AI development
+- Avoiding harmful or discriminatory outputs
+- Age-appropriate content and safety measures

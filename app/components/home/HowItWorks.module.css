@@ -1,0 +1,255 @@
+.howItWorksSection {
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.sectionTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 4rem;
+    color: #ffffff;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sectionTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff8e53 100%);
+    border-radius: 2px;
+}
+
+.stepsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.stepCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stepCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.stepContent {
+    display: flex;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.stepNumber {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff8e53 100%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-right: 1.5rem;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    flex-shrink: 0;
+}
+
+.stepInfo {
+    flex: 1;
+}
+
+.stepIconContainer {
+    background: rgba(255, 255, 255, 0.1);
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.stepIcon {
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.stepTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+}
+
+.stepDescription {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.stepImageContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.phoneFrame {
+    position: relative;
+    width: 270px;
+    height: 550px;
+    background: #000000;
+    border-radius: 36px;
+    padding: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.phoneFrame::before {
+    content: '';
+    position: absolute;
+    width: 30%;
+    height: 20px;
+    background: #000000;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 10px 10px;
+    z-index: 2;
+}
+
+.stepImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 28px;
+}
+
+.connector {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.getStartedContainer {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.getStartedButton {
+    display: inline-block;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff8e53 100%);
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 1rem 3rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+}
+
+.getStartedButton:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(255, 107, 107, 0.5);
+}
+
+.noCardNeeded {
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .stepCard {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 3rem;
+    }
+
+    .stepContent {
+        width: 50%;
+        margin-bottom: 0;
+    }
+
+    .stepImageContainer {
+        width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 2.25rem;
+    }
+
+    .stepNumber {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+
+    .stepTitle {
+        font-size: 1.35rem;
+    }
+
+    .phoneFrame {
+        width: 220px;
+        height: 450px;
+    }
+}
+
+@media (max-width: 480px) {
+    .howItWorksSection {
+        padding: 3rem 1rem;
+    }
+
+    .sectionTitle {
+        font-size: 2rem;
+    }
+
+    .stepContent {
+        flex-direction: column;
+    }
+
+    .stepNumber {
+        margin-bottom: 1rem;
+        margin-right: 0;
+    }
+
+    .phoneFrame {
+        width: 200px;
+        height: 400px;
+    }
+
+    .getStartedButton {
+        width: 100%;
+    }
+}

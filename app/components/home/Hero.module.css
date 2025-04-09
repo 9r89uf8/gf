@@ -1,0 +1,160 @@
+/* Hero Section Styles */
+.heroSection {
+    min-height: 90vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.heroContent {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    z-index: 1;
+}
+
+/* Top Row: Stats & Image */
+.heroTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 3rem;
+}
+
+.heroStats {
+    flex: 1;
+    text-align: left;
+    color: #ffffff;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    /* Optional: add some left margin or padding if necessary */
+}
+
+.userCount {
+    font-weight: 600;
+}
+
+/* Phone image container remains largely the same */
+.heroImageContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.phoneFrame {
+    position: relative;
+    width: 270px;
+    height: 550px;
+    background: #000000;
+    border-radius: 36px;
+    padding: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.phoneFrame::before {
+    content: '';
+    position: absolute;
+    width: 30%;
+    height: 20px;
+    background: #000000;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 0 0 10px 10px;
+    z-index: 2;
+}
+
+.stepImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 28px;
+}
+
+/* Bottom Row: Hero text */
+.heroBottom {
+    text-align: center;
+    color: #ffffff;
+}
+
+.heroTitle {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.heroSubtext {
+    font-size: 1.25rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.ctaContainer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.ctaButton {
+    display: inline-block;
+    background: linear-gradient(45deg, #ff6b6b 0%, #ff8e53 100%);
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.ctaButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(255, 107, 107, 0.5);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .heroTop {
+        flex-direction: column;
+        text-align: center;
+    }
+    .heroStats {
+        margin-bottom: 1rem;
+    }
+    .heroTitle {
+        font-size: 2rem;
+    }
+    .phoneFrame {
+        width: 220px;
+        height: 450px;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroSection {
+        padding: 1rem;
+    }
+    .heroTitle {
+        font-size: 1.75rem;
+    }
+    .heroSubtext {
+        font-size: 1rem;
+    }
+    .phoneFrame {
+        width: 200px;
+        height: 400px;
+    }
+}

@@ -8,6 +8,7 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  optimizeFonts: true, // Make sure font optimization is enabled
   images: {
     remotePatterns: [
       {

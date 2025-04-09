@@ -5,10 +5,8 @@ const Navbar = () => {
     // Inline style objects for the navbar container, navigation bar, and title
     const appBarStyle = {
         background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)',
-        backdropFilter: 'blur(10px)',
         margin: '16px auto',
         borderRadius: '8px',
-        boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.16)',
         width: 'calc(100% - 32px)',
         maxWidth: '1200px',
         overflow: 'visible',

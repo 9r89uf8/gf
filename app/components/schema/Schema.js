@@ -1,4 +1,3 @@
-// Add this component to your project (e.g., in app/components/Schema.jsx)
 import React from 'react';
 import Script from 'next/script';
 
@@ -85,7 +84,7 @@ export default function Schema() {
     };
 
     return (
-        <Schema
+        <Script
             id="chica-ia-schema2"
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -8,6 +8,12 @@ body {
 * {
     box-sizing: border-box;
 }
+/* In your global CSS */
+@font-face {
+    font-family: 'YourFont';
+    font-display: swap;
+    /* other properties */
+}
 /* Add this to your existing globals.css */
 
 /* Enhanced Glass Card Styling */

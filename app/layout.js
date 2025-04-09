@@ -20,8 +20,9 @@ const Layout = ({ children }) => {
     return (
         <html lang="es">
         <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-            <Script async src={"https://challenges.cloudflare.com/turnstile/v0/api.js"} strategy="lazyOnload" />
+            <Script src={"https://challenges.cloudflare.com/turnstile/v0/api.js"} strategy="lazyOnload"/>
 
 
             <Script
@@ -47,8 +48,8 @@ const Layout = ({ children }) => {
 
         </head>
         <body>
-        <Navbar />
-        <Notifications />
+        <Navbar/>
+        <Notifications/>
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
         <ConditionalFloatingNavbar />
         </body>
