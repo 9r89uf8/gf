@@ -3,13 +3,14 @@ import React from 'react';
 import Navbar from "@/app/components/nab/Navbar";
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
+import { headers } from 'next/headers';
 import './styles/globals.css';
 // Import critical CSS
 import './styles/critical.css'
 
 
 
-const ConditionalFloatingNavbar = dynamic(() => import('@/app/components/nab/ConditionalFloatingNavbar'), { ssr: false });
+import ConditionalFloatingNavbar from '@/app/components/nab/ConditionalFloatingNavbar';
 
 const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 
@@ -17,6 +18,7 @@ const Notifications = dynamic(() => import('@/app/components/notifications/Notif
 const GA_TRACKING_ID = 'G-ENZST04463';
 
 const Layout = ({ children }) => {
+
     return (
         <html lang="es">
         <head>
@@ -51,7 +53,7 @@ const Layout = ({ children }) => {
         <Navbar/>
         <Notifications/>
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
-        <ConditionalFloatingNavbar />
+        <ConditionalFloatingNavbar/>
         </body>
         </html>
     );

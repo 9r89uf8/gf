@@ -1,0 +1,48 @@
+.floating-navbar {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 999;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.16);
+    height: var(--floating-navbar-height, 64px);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: rgba(255, 255, 255, 1);
+}
+
+.nav-item .icon {
+    font-size: 3.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-item .label {
+    display: none; /* Hidden as in the original */
+}
+
+/* If you want to add back the PopOver functionality, you'd need custom CSS for that */

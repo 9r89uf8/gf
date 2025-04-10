@@ -1,20 +1,34 @@
-'use client';
-
+// app/components/nab/ServerConditionalFloatingNavbar.js
 import React from 'react';
-import { usePathname } from 'next/navigation';
-import FloatingNavbar from "./FloatingNavbar";
+import FloatingNavbar from './FloatingNavbar';
+import { headers } from 'next/headers';
 
-const ConditionalFloatingNavbar = () => {
-    const pathname = usePathname();
+export default function ConditionalFloatingNavbar() {
+    // Get the full URL from the request headers
+    const headersList = headers();
+    const referer = headersList.get('referer') || '';
 
-    // Check if pathname starts with '/chat/' or equals '/clips'
-    const showFloatingNavbar = !(pathname.startsWith('/chat/') || pathname === '/chat' || pathname === '/clips');
-
-    if (!showFloatingNavbar) {
-        return null;
+    // Extract the pathname from the URL
+    let pathname = '/';
+    try {
+        if (referer) {
+            // If referer exists, extract pathname from it
+            const url = new URL(referer);
+            pathname = url.pathname;
+        } else if (headersList.get('x-forwarded-uri')) {
+            // Some hosting platforms provide this
+            pathname = headersList.get('x-forwarded-uri');
+        }
+    } catch (e) {
+        console.error('Error parsing pathname:', e);
     }
 
-    return <FloatingNavbar />;
-};
 
-export default ConditionalFloatingNavbar;
+    // Hide on /chat and /clips routes
+    const hide = pathname.startsWith('/chat') || pathname === '/clips';
+
+    if (hide) return null;
+
+    return <FloatingNavbar pathname={pathname} />;
+}
+

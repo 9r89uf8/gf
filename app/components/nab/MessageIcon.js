@@ -4,7 +4,7 @@ const MessageIcon = () => {
     const blueColor = '#0077b6';
 
     return (
-        <div style={{ height: 100 }}>
+        <div style={{ height: 90 }}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 100 100"
