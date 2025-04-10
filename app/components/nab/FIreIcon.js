@@ -1,6 +1,6 @@
 import React from 'react';
 
-const UsersIcon = () => {
+const FireIcon = () => {
     const blackColor = '#000000';
 
     return (
@@ -31,5 +31,5 @@ const UsersIcon = () => {
     );
 };
 
-export default UsersIcon;
+export default FireIcon;
 
