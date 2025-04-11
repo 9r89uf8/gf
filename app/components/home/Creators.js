@@ -6,6 +6,7 @@ const staticGirls = [
     {
         id: 'uerQ5TMDanh1wex83HIE',
         username: 'andrea_5',
+        name: 'Andrea',
         age: 18,
         priority: true,
         followers: 60240,
@@ -18,6 +19,7 @@ const staticGirls = [
     {
         id: 'BgHd9LWDnFFhS6BoaqwL',
         username: 'antonella1353',
+        name: 'Antonella',
         age: 18,
         followers: 69300,
         priority: false,
@@ -30,6 +32,7 @@ const staticGirls = [
     {
         id: 'CGj52Y66J4icn6qOqGJY',
         username: 'rocio4',
+        name: 'Rocio',
         priority: false,
         age: 19,
         followers: 50750,

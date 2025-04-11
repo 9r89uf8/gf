@@ -55,25 +55,43 @@ const SelectorContainer = ({ girls }) => {
             <div className={styles.selectedGirlPreview}>
                 {selectedData && (
                     <div className={styles.previewCard}>
-                        <div className={styles.previewImage}>
-                            <Image
-                                src={selectedData.picture}
-                                alt={selectedData.username}
-                                width={100}
-                                height={100}
-                                className={styles.avatar}
-                            />
-                            {selectedData.verified && (
-                                <span className={styles.verifiedBadge}>
-                                    <CheckMark />
-                                </span>
-                            )}
+                        <div className={styles.previewTop}>
+                            <div className={styles.previewImage}>
+                                <Link href={`/${selectedData.id}`}>
+                                    <Image
+                                        src={selectedData.picture}
+                                        alt={selectedData.username}
+                                        width={100}
+                                        height={100}
+                                        className={styles.avatar}
+                                    />
+                                </Link>
+                                {selectedData.verified && (
+                                    <span className={styles.verifiedBadge}>
+                                        <CheckMark />
+                                    </span>
+                                )}
+                            </div>
+                            <div className={styles.previewInfo}>
+                                <h2>{selectedData.name}</h2>
+                                <p>{selectedData.bio}</p>
+                                <p>{formatFollowers(selectedData.followers)} seguidores</p>
+                                <p>{selectedData.age} años</p>
+                            </div>
                         </div>
-                        <div className={styles.previewInfo}>
-                            <h3>{selectedData.username}</h3>
-                            <p>{selectedData.bio}</p>
-                            <p>{formatFollowers(selectedData.followers)} seguidores</p>
-                            <p>{selectedData.age} años</p>
+                        <div className={styles.previewButtons}>
+                            <Link
+                                href={`/chat/${selectedData.id}`}
+                                className={styles.blackButton}
+                            >
+                                Mensaje
+                            </Link>
+                            <Link
+                                href={`/${selectedData.id}`}
+                                className={styles.profileLink}
+                            >
+                                Ver Perfil
+                            </Link>
                         </div>
                     </div>
                 )}
