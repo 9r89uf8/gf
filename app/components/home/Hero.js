@@ -8,20 +8,20 @@ const Hero = () => {
         <section className={styles.heroSection}>
             <div className={styles.heroContent}>
                 {/* Top Row: Users stats and phone image */}
-                <div className={styles.heroTop}>
-                    <div className={styles.heroImageContainer}>
-                        <div className={styles.phoneFrame}>
-                            <Image
-                                src="https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/cac62e9b-2dd5-4bfe-e62c-86bc9bb6a800/w=400,fit=scale-down"
-                                alt="Novia Virtual IA"
-                                width={270}
-                                height={550}
-                                className={styles.stepImage}
-                                priority
-                            />
-                        </div>
-                    </div>
-                </div>
+                {/*<div className={styles.heroTop}>*/}
+                {/*    <div className={styles.heroImageContainer}>*/}
+                {/*        <div className={styles.phoneFrame}>*/}
+                {/*            <Image*/}
+                {/*                src="https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/cac62e9b-2dd5-4bfe-e62c-86bc9bb6a800/w=400,fit=scale-down"*/}
+                {/*                alt="Novia Virtual IA"*/}
+                {/*                width={270}*/}
+                {/*                height={550}*/}
+                {/*                className={styles.stepImage}*/}
+                {/*                priority*/}
+                {/*            />*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
                 {/* Bottom Row: Hero text */}
                 <div className={styles.heroBottom}>
                     <h1 className={styles.heroTitle}>

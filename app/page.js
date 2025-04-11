@@ -1,13 +1,14 @@
+//app/page.js
 import React from 'react';
 import dynamicM from 'next/dynamic';
 import Schema from "@/app/components/schema/Schema";
-import Link from 'next/link';
-import Hero from '@/app/components/home/Hero'; // Import the Hero component
+import Creators from "@/app/components/home/Creators";
 import FeatureHighlights from '@/app/components/home/FeatureHighlights'; // Import the FeatureHighlights component
 import HowItWorks from '@/app/components/home/HowItWorks'; // Import the HowItWorks component
 import UserTestimonials from "@/app/components/home/UserTestimonials";
 import FAQ from "@/app/components/home/FAQ";
 import Footer from "@/app/components/home/Footer";
+
 
 // Define metadata object - updated for Next.js 14
 export const metadata = {
@@ -61,7 +62,7 @@ import styles from './Home.module.css';
 const Home = () => {
     return (
         <div className={styles.mainContainer}>
-            <Hero />
+            <Creators/>
             {/* Add other section components here as you develop them */}
             <FeatureHighlights />
              <HowItWorks />

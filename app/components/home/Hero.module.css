@@ -1,11 +1,9 @@
 /* Hero Section Styles */
 .heroSection {
-    min-height: 90vh;
     width: 100%;
-    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 0;
     overflow: hidden;
     position: relative;
 }
@@ -15,8 +13,9 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 0;
     z-index: 1;
+    margin: 0 auto; /* Center the content */
 }
 
 /* Top Row: Stats & Image */
