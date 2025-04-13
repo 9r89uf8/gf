@@ -62,7 +62,7 @@ export default async function DMList() {
             <Container maxWidth="lg">
                 <GirlsCarousel
                     girls={girls}
-                    isPremium={user.userData.premium}
+                    isPremium={user?user.userData.premium:false}
                 />
 
                 <MessageList/>
