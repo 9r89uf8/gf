@@ -10,7 +10,7 @@ import './styles/critical.css'
 
 
 
-import ConditionalFloatingNavbar from '@/app/components/nab/ConditionalFloatingNavbar';
+import FloatingNavbar from "@/app/components/nab/FloatingNavbar";
 
 const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 
@@ -53,7 +53,7 @@ const Layout = ({ children }) => {
         <Navbar/>
         <Notifications/>
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
-        <ConditionalFloatingNavbar/>
+        <FloatingNavbar/>
         </body>
         </html>
     );
