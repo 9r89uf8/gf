@@ -1,0 +1,148 @@
+/* components/GirlCard.module.css */
+@keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+}
+
+.girlCard {
+    width: 130px;
+    height: 230px;
+    margin: 0 12px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 0 0 auto;
+}
+
+.girlCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.avatarWrapper {
+    position: relative;
+    margin: 8px 0;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border: 4px solid white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.statusIndicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.statusIndicator.active {
+    background-color: #4CAF50;
+    animation: flash 2s infinite;
+}
+
+.statusIndicator.inactive {
+    background-color: #FFA000;
+}
+
+.cardContent {
+    text-align: center;
+    padding: 8px;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: -40px;
+    margin-bottom: -40px;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.cardActions {
+    width: 100%;
+    padding: 16px;
+    padding-top: 0;
+}
+
+.noUnderline {
+    text-decoration: none;
+}
+
+.gradientButton {
+    background: linear-gradient(45deg, #0096c7 30%, #023e8a 90%);
+    border: 0;
+    border-radius: 25px;
+    box-shadow: 0 3px 5px 2px rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 18px;
+    height: 48px;
+    padding: 0 8px;
+    margin: 3px 0;
+    font-weight: bold;
+    text-transform: none;
+    text-decoration: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+.gradientButton:hover {
+    background: linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%);
+}
+
+.premiumButton {
+    background: linear-gradient(45deg, #FFD700 30%, #FFA500 90%);
+    border: 0;
+    border-radius: 25px;
+    color: #000000;
+    font-size: 14px;
+    height: 48px;
+    padding: 0 8px;
+    text-transform: none;
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.premiumButton:hover {
+    background: linear-gradient(45deg, #FFA500 30%, #FFD700 90%);
+    box-shadow: 0 3px 10px rgba(255, 165, 0, 0.3);
+}
+
+.lockIcon {
+    margin-right: 4px;
+    font-size: 16px;
+}
+
+/* Glass card styling that was part of DMListStyled */
+.glassCard {
+    text-align: center;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    margin-top: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.2);
+    padding: 16px;
+    margin-bottom: 32px;
+    user-select: none;
+}

@@ -1,17 +1,37 @@
 // components/MessageList.js
-import React from 'react';
+'use client'
+import React,{useEffect} from 'react';
+import { getChatList } from '@/app/services/chatService';
+import { useStore } from '@/app/store/store';
 import { List, ListItem, Grid, Skeleton, Typography } from '@mui/material';
 import MessageItem from './MessageItem';
 import { GlassCard } from './DMListStyled';
+import { useRouter } from 'next/navigation';
+import { useMultipleMessageResponder } from "@/app/components/hooks/UseMultipleMessageResponder";
+import { convertFirestoreTimestampToDate, truncateWithEllipsis } from '@/app/components/dm/messageUtils';
 
-const MessageList = ({
-                         loading,
-                         user,
-                         chats,
-                         convertTimestamp,
-                         truncateWithEllipsis,
-                         onMessageClick
-                     }) => {
+const MessageList = () => {
+    const router = useRouter();
+    const chats = useStore((state) => state.chats);
+    const user = useStore((state) => state.user);
+
+    useMultipleMessageResponder({
+        userId: user?.uid,
+        chats: chats || []
+    });
+
+    useEffect(() => {
+        async function fetchChats() {
+            if (user) {
+                await getChatList();
+            }
+        }
+        fetchChats();
+    }, []);
+
+    const handleMessageClick = (girlId) => {
+        router.push(`/chat/${girlId}`);
+    };
     return (
         <GlassCard>
             <Typography
@@ -28,7 +48,7 @@ const MessageList = ({
 
             {user ? (
                 <List>
-                    {loading ? (
+                    {!chats ? (
                         [...Array(4)].map((_, index) => (
                             <ListItem
                                 key={index}
@@ -59,8 +79,8 @@ const MessageList = ({
                                 chat={chat}
                                 index={index}
                                 totalChats={chats.length}
-                                onMessageClick={onMessageClick}
-                                convertTimestamp={convertTimestamp}
+                                onMessageClick={handleMessageClick}
+                                convertTimestamp={convertFirestoreTimestampToDate}
                                 truncateWithEllipsis={truncateWithEllipsis}
                             />
                         ))

@@ -1,74 +1,43 @@
 // components/GirlCard.js
 import React from 'react';
-import { Avatar, Typography, CardContent, CardActions } from '@mui/material';
 import Link from 'next/link';
-import LockIcon from "@mui/icons-material/Lock";
-import {
-    GirlCard as StyledGirlCard,
-    AvatarWrapper,
-    StatusIndicator,
-    GradientButton,
-    PremiumButton
-} from './DMListStyled';
+import styles from './GirlCard.module.css';
 
-const GirlCard = ({ girl, isPremium, onMessageClick, onPremiumClick }) => {
+
+const GirlCard = ({ girl, isPremium }) => {
     return (
-        <StyledGirlCard>
-            <AvatarWrapper>
+        <div className={styles.girlCard}>
+            <div className={styles.avatarWrapper}>
                 <Link href={`/${girl.id}`} passHref>
-                    <Avatar
+                    <img
+                        className={styles.avatar}
                         src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                         alt={girl.name}
-                        sx={{
-                            width: 120,
-                            height: 120,
-                            border: '4px solid white',
-                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                        }}
                     />
                 </Link>
-                <StatusIndicator isActive={girl.isActive} />
-            </AvatarWrapper>
+            </div>
 
-            <CardContent sx={{
-                textAlign: 'center',
-                p: 1,
-                flex: '1 0 auto',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                marginTop: -5,
-                marginBottom: -5
-            }}>
-                <Typography
-                    variant="body1"
-                    sx={{
-                        fontWeight: 'bold',
-                        color: '#333',
-                        mb: 0.5,
-                    }}
-                >
-                    {girl.username}
-                </Typography>
-            </CardContent>
+            <div className={styles.cardContent}>
+                <p className={styles.username}>{girl.username}</p>
+            </div>
 
-            <CardActions sx={{ width: '100%', p: 2, pt: 0 }}>
+            <div className={styles.cardActions}>
                 {girl.premium && !isPremium ? (
-                    <PremiumButton
-                        onClick={onPremiumClick}
-                        startIcon={<LockIcon />}
-                    >
-                        Premium
-                    </PremiumButton>
+                    <Link href="/premium" passHref className={styles.noUnderline}>
+                        <button className={styles.premiumButton} type="button">
+                            <span className={styles.lockIcon}>🔒</span>
+                            Premium
+                        </button>
+                    </Link>
                 ) : (
-                    <GradientButton
-                        onClick={() => onMessageClick(girl.id)}
-                    >
-                        Mensaje
-                    </GradientButton>
+                    <Link href={`/chat/${girl.id}`} passHref className={styles.noUnderline}>
+                        <button className={styles.gradientButton} type="button">
+                            Mensaje
+                        </button>
+                    </Link>
                 )}
-            </CardActions>
-        </StyledGirlCard>
+            </div>
+        </div>
     );
 };
 

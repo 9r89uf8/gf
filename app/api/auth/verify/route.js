@@ -10,10 +10,17 @@ async function authCheckHandler(req) {
     try {
         const authResult = await authMiddleware(req);
         let isAuthenticated = authResult.authenticated;
+        const userRef = adminDb.firestore().collection('users').doc(authResult.user.uid);
+        const userDoc = await userRef.get();
 
-        return NextResponse.json({ isAuthenticated }, { status: 200 });
+        if (!userDoc.exists) {
+            throw new Error('User not found in Firestore');
+        }
+
+        const userData = userDoc.data();
+
+        return NextResponse.json({ isAuthenticated, userData }, { status: 200 });
     } catch (error) {
-        console.log(error.message);
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },
