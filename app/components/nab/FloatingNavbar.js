@@ -8,7 +8,7 @@ import UsersIcon from "@/app/components/nab/UsersIcon";
 
 import './floating-navbar.css';
 
-export default function FloatingNavbar({ pathname }) {
+export default function FloatingNavbar() {
     const routes = [
         { name: 'HOME', path: '/chicas-ia', icon: <UsersIcon /> },
         { name: 'TOP', path: '/dm', icon: <MessageIcon /> },
@@ -18,13 +18,12 @@ export default function FloatingNavbar({ pathname }) {
     return (
         <nav className="floating-navbar">
             {routes.map((route, index) => {
-                const isActive = pathname === route.path;
 
                 return (
                     <Link
                         key={index}
                         href={route.path}
-                        className={`nav-item ${isActive ? 'active' : ''}`}
+                        className={`nav-item`}
                         aria-label={route.name}
                     >
                         <span className="icon">{route.icon}</span>

@@ -7,11 +7,7 @@ import { getGirl } from '@/app/services/girlService';
 import { checkIfCookie } from '@/app/services/authService';
 import {getGirlTweet} from "@/app/services/girlService";
 import {
-    fetchMessages,
     saveUserMessage,
-    sendChatPrompt,
-    responseFromLLM,
-    fetchAudios,
     likeMessage,
 } from '@/app/services/chatService';
 import {Box, CircularProgress, Container, styled} from '@mui/material';
@@ -66,8 +62,6 @@ const Chat = ({params}) => {
         userId: user?.uid,
         girlId: params.id
     });
-
-
 
     const handleBuy = () => {
         router.push('/premium'); // Adjust the path to your premium page

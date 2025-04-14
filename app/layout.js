@@ -10,7 +10,7 @@ import './styles/critical.css'
 
 
 
-import FloatingNavbar from "@/app/components/nab/FloatingNavbar";
+const FloatingNavbar = dynamic(() => import('@/app/components/nab/FloatingNavbar'), { ssr: true });
 
 const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 
@@ -29,22 +29,22 @@ const Layout = ({ children }) => {
 
             <Script
                 src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-                strategy="lazyOnload"
+                strategy="afterInteractive"
             />
 
             <Script
                 id="google-analytics-init"
-                strategy="lazyOnload"
+                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{
                     __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', { 
-                page_path: window.location.pathname,
-                transport_type: 'beacon'
-            });
-        `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GA_TRACKING_ID}', {
+        page_path: window.location.pathname,
+        transport_type: 'beacon'
+      });
+    `
                 }}
             />
 
