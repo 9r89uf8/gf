@@ -38,9 +38,6 @@ async function getGirlData(id) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id }), // Include the id in the request body
-            next: {
-                revalidate: 3600 // Revalidate every hour
-            }
         });
 
         if (!response.ok) {

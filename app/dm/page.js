@@ -26,9 +26,6 @@ async function getUserData() {
             headers: {
                 // Forward the auth cookie
                 Cookie: token ? `tokenAIGF=${token.value}` : ''
-            },
-            next: {
-                revalidate: 3600 // Revalidate every hour
             }
         });
 
