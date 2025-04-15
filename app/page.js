@@ -1,13 +1,33 @@
 //app/page.js
 import React from 'react';
-import dynamicM from 'next/dynamic';
+import dynamicImport from 'next/dynamic';  // Rename the import
 import Schema from "@/app/components/schema/Schema";
 import Creators from "@/app/components/home/Creators";
-import FeatureHighlights from '@/app/components/home/FeatureHighlights'; // Import the FeatureHighlights component
-import HowItWorks from '@/app/components/home/HowItWorks'; // Import the HowItWorks component
-import UserTestimonials from "@/app/components/home/UserTestimonials";
-import FAQ from "@/app/components/home/FAQ";
-import Footer from "@/app/components/home/Footer";
+
+// Lazy load components that aren't needed for initial viewport
+const FeatureHighlights = dynamicImport(() => import('@/app/components/home/FeatureHighlights'), {
+    loading: () => <div>Loading...</div>,
+    ssr: true
+});
+
+const HowItWorks = dynamicImport(() => import('@/app/components/home/HowItWorks'), {
+    loading: () => <div>Loading...</div>,
+    ssr: true
+});
+
+const UserTestimonials = dynamicImport(() => import('@/app/components/home/UserTestimonials'), {
+    loading: () => <div>Loading...</div>,
+    ssr: true
+});
+
+const FAQ = dynamicImport(() => import('@/app/components/home/FAQ'), {
+    loading: () => <div>Loading...</div>,
+    ssr: true
+});
+
+const Footer = dynamicImport(() => import('@/app/components/home/Footer'), {
+    ssr: true
+});
 
 
 // Define metadata object - updated for Next.js 14
