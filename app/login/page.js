@@ -1,6 +1,7 @@
 // app/login/page.jsx
 'use client'
 import React, { useState, useEffect } from 'react';
+import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 import { loginUser } from "@/app/services/authService";
 import { useStore } from '@/app/store/store';
@@ -91,19 +92,19 @@ const LoginPage = () => {
     const [turnstileToken, setTurnstileToken] = useState(null);
     let data = { email, password, turnstileToken };
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         if (window.turnstile) {
-    //             window.turnstile.render('#turnstile-widget', {
-    //                 sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
-    //                 callback: (token) => setTurnstileToken(token),
-    //             });
-    //             clearInterval(interval);
-    //         }
-    //     }, 100);
-    //
-    //     return () => clearInterval(interval);
-    // }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         // Simulating fetching user count
@@ -122,6 +123,8 @@ const LoginPage = () => {
                     event_label: 'login Button'
                 });
             }
+            // Revalidate the profile page
+            revalidatePath('/user');
             router.push('/dm');
         } else {
             console.error(error);
@@ -180,7 +183,7 @@ const LoginPage = () => {
                                     )
                                 }}
                             />
-                            {/*<div id="turnstile-widget"></div>*/}
+                            <div id="turnstile-widget"></div>
                             <GradientButton
                                 type="submit"
                                 disabled={disableLogin}
