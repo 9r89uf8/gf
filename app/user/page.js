@@ -19,7 +19,6 @@ async function getUserData() {
 
         // Parse JSON only once and store the result
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         return null;
@@ -30,8 +29,8 @@ async function getUserData() {
 async function UserProfilePage() {
     const user = await getUserData()
 
-    if (user.isAuthenticated===false) {
-        // Either return a login prompt component or redirect
+    // Check if user exists before accessing its properties
+    if (!user || user.isAuthenticated === false) {
         return <LoginPrompt />;
     }
 
