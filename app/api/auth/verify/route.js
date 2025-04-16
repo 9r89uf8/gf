@@ -10,11 +10,22 @@ async function authCheckHandler(req) {
     try {
         const authResult = await authMiddleware(req);
         let isAuthenticated = authResult.authenticated;
+
+        // If not authenticated at middleware level, return early
+        if (!isAuthenticated) {
+            return NextResponse.json({
+                isAuthenticated: false,
+                message: 'User not authenticated'
+            }, { status: 401 });
+        }
         const userRef = adminDb.firestore().collection('users').doc(authResult.user.uid);
         const userDoc = await userRef.get();
-
         if (!userDoc.exists) {
-            throw new Error('User not found in Firestore');
+            // Return 401 Unauthorized instead of throwing an error
+            return NextResponse.json({
+                isAuthenticated: false,
+                message: 'User not found in database'
+            }, { status: 401 });
         }
 
         const userData = userDoc.data();

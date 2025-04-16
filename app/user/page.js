@@ -29,7 +29,7 @@ async function getUserData() {
 async function UserProfilePage() {
     const user = await getUserData()
 
-    if (user&&!user.userData) {
+    if (!user.isAuthenticated) {
         // Either return a login prompt component or redirect
         return <LoginPrompt />;
     }
