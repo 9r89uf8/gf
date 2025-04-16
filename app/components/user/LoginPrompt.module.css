@@ -1,0 +1,70 @@
+/* app/profile/components/LoginPrompt.module.css */
+.loginPromptContainer {
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.loginPromptInner {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.loginCard {
+    text-align: center;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.10);
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    padding: 24px;
+}
+
+.loginHeading {
+    margin-bottom: 16px;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.loginButtons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.actionButton {
+    margin: 8px;
+    border-radius: 12px;
+    padding: 6px 16px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.primary {
+    background-color: #1976d2;
+    color: white;
+    border: 1px solid #1976d2;
+}
+
+.primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
+
+.secondary {
+    background-color: transparent;
+    color: #1976d2;
+    border: 1px solid #1976d2;
+}
+
+.secondary:hover {
+    background-color: rgba(25, 118, 210, 0.04);
+}
