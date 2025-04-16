@@ -27,9 +27,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
     padding: theme.spacing(3),
 }));
 
-const UserProfileClient = () => {
+const UserProfileClient = ({initialUserData}) => {
+    const [user, setUser] = useState(initialUserData);
     const [isEditing, setIsEditing] = useState(false);
-    const user = useStore((state) => state.user);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const router = useRouter();
 

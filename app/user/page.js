@@ -37,7 +37,7 @@ async function UserProfilePage() {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.container}>
-                <UserProfileClient/>
+                <UserProfileClient initialUserData={user} />
             </div>
         </div>
     );
