@@ -1,7 +1,6 @@
 // app/login/page.jsx
 'use client'
 import React, { useState, useEffect } from 'react';
-import { revalidatePath } from 'next/cache';
 import { useRouter } from 'next/navigation';
 import { loginUser } from "@/app/services/authService";
 import { useStore } from '@/app/store/store';
@@ -117,6 +116,9 @@ const LoginPage = () => {
         const { user, error } = await loginUser(data);
         setDisableLogin(false);
         if (user) {
+            // 1️⃣ clear the RSC payloads that were prefetched without the cookie
+            router.refresh();       // ↖️ bust the App‑Router cache :contentReference[oaicite:0]{index=0}
+
             if (typeof window !== 'undefined' && window.gtag) {
                 window.gtag('event', 'user_loged_in', {
                     event_category: 'CTA',
@@ -124,7 +126,7 @@ const LoginPage = () => {
                 });
             }
             // Revalidate the profile page
-            revalidatePath('/user');
+
             router.push('/dm');
         } else {
             console.error(error);
