@@ -19,6 +19,7 @@ async function getUserData() {
 
         // Parse JSON only once and store the result
         const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         return null;
