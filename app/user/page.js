@@ -28,8 +28,9 @@ async function getUserData() {
 // This is a server component - no 'use client' directive
 async function UserProfilePage() {
     const user = await getUserData()
+    console.log(user);
 
-    if (!user.isAuthenticated) {
+    if (user&&!user.isAuthenticated) {
         // Either return a login prompt component or redirect
         return <LoginPrompt />;
     }
