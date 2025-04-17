@@ -15,7 +15,7 @@ import AudioRecorder from "@/app/components/chat/conversation/AudioRecorder";
 
 const ChatInputStyled = styled(Paper)(({ theme }) => ({
     position: 'fixed',
-    bottom: theme.spacing(1),
+    bottom: theme.spacing(0),
     left: 0,
     right: 0,
     width: '100%',
