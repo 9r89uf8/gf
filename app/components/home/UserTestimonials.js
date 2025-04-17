@@ -221,6 +221,13 @@ const UserTestimonials = () => {
                     </div>
                 </div>
             </div>
+            {/* Structured data for SEO */}
+            <Script
+                id="chica-ia-schema5"
+                type="application/ld+json"
+                strategy="afterInteractive" // Add this
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
         </section>
     );
 };
