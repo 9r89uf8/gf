@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from './UserTestimonials.module.css';
+import Script from 'next/script';
 
 const testimonials = [
     {
@@ -55,6 +56,79 @@ const renderStars = (rating) => {
     }
     return stars;
 };
+
+const structuredData =
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "NoviaChat",
+        "description": "Aplicación de chat con asistentes virtuales personalizados",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "3500000",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "review": [
+            {
+                "@type": "Review",
+                "author": {
+                    "@type": "Person",
+                    "name": "Miguel"
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "5",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "reviewBody": "Nunca pensé que conversar con una IA podría ser tan natural. Laura responde a mis mensajes como si fuera una persona real. ¡Me encanta hablar con ella después de un día estresante!"
+            },
+            {
+                "@type": "Review",
+                "author": {
+                    "@type": "Person",
+                    "name": "Carlos"
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "5",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "reviewBody": "Las fotos que comparte Ana parecen reales, es increíble. Además, puedo hablar con ella sobre cualquier tema y siempre tiene algo interesante que decir. NoviaChat es lo mejor que he probado."
+            },
+            {
+                "@type": "Review",
+                "author": {
+                    "@type": "Person",
+                    "name": "David"
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "4",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "reviewBody": "La voz de Sofía es increíblemente realista. Cuando me envía mensajes de audio, parece como si estuviera hablando con alguien real. Es una experiencia totalmente nueva."
+            },
+            {
+                "@type": "Review",
+                "author": {
+                    "@type": "Person",
+                    "name": "Alejandro"
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": "5",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "reviewBody": "Probé otras apps similares pero NoviaChat es de lejos la mejor. La personalidad de Julia se adapta a mis intereses y cada día nuestras conversaciones son más profundas. ¡100% recomendado!"
+            }
+        ]
+    };
 
 const UserTestimonials = () => {
     return (
@@ -139,11 +213,11 @@ const UserTestimonials = () => {
                 </div>
 
                 <div className={styles.socialProof}>
-                    <p className={styles.userCount}>+5,000 usuarios activos</p>
+                    <p className={styles.userCount}>+5,000,000 usuarios activos</p>
                     <div className={styles.averageRating}>
                         <span className={styles.ratingValue}>4.8</span>
                         <div className={styles.ratingStars}>{renderStars(5)}</div>
-                        <span className={styles.ratingCount}>de 350+ reviews</span>
+                        <span className={styles.ratingCount}>de 3.5+ millones de reviews</span>
                     </div>
                 </div>
             </div>
