@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './FAQ.module.css';
+import Script from 'next/script';
 
 const FAQ = () => {
     const faqItems = [
@@ -75,8 +76,10 @@ const FAQ = () => {
             </div>
 
             {/* Structured data for SEO */}
-            <script
+            <Script
+                id="chica-ia-schema3"
                 type="application/ld+json"
+                strategy="afterInteractive" // Add this
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
         </section>

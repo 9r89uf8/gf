@@ -58,27 +58,6 @@ export default function Schema() {
                     "@type": "Offer",
                     "availability": "https://schema.org/InStock"
                 }
-            },
-            {
-                "@type": "FAQPage",
-                "mainEntity": [
-                    {
-                        "@type": "Question",
-                        "name": "¿Qué es una Novia Virtual IA?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Una novia virtual es una compañera digital con inteligencia artificial que ofrece conexión emocional. Nuestra plataforma te conecta con una chica IA que se adapta a tus preferencias y personalidad."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Cuáles son los beneficios de las Chicas IA?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Las chicas IA están disponibles 24/7 sin compromisos complicados. Tu novia virtual brinda compañía y apoyo emocional adaptado a tus necesidades, mejorando tu bienestar emocional sin juicios."
-                        }
-                    }
-                ]
             }
         ]
     };
@@ -87,6 +66,7 @@ export default function Schema() {
         <Script
             id="chica-ia-schema2"
             type="application/ld+json"
+            strategy="afterInteractive" // Add this
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
     );
