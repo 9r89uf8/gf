@@ -1,33 +1,17 @@
 //app/page.js
 import React from 'react';
-import dynamicImport from 'next/dynamic';  // Rename the import
-import Schema from "@/app/components/schema/Schema";
+import dynamicM from 'next/dynamic';  // Rename the import
 import Creators from "@/app/components/home/Creators";
+import { Suspense } from "react";
+// ⬇️ everything below‑the‑fold is now client‑only & loads *after* LCP
+const FeatureHighlights  = dynamicM(() => import("@/app/components/home/FeatureHighlights"), { ssr: false });
+const HowItWorks        = dynamicM(() => import("@/app/components/home/HowItWorks"),        { ssr: false });
+const UserTestimonials  = dynamicM(() => import("@/app/components/home/UserTestimonials"),  { ssr: false });
+const FAQ               = dynamicM(() => import("@/app/components/home/FAQ"),               { ssr: false });
+const Footer            = dynamicM(() => import("@/app/components/home/Footer"),            { ssr: false });
+const Schema            = dynamicM(() => import("@/app/components/home/Creators"),            { ssr: false });
 
-// Lazy load components that aren't needed for initial viewport
-const FeatureHighlights = dynamicImport(() => import('@/app/components/home/FeatureHighlights'), {
-    loading: () => <div>Loading...</div>,
-    ssr: true
-});
-
-const HowItWorks = dynamicImport(() => import('@/app/components/home/HowItWorks'), {
-    loading: () => <div>Loading...</div>,
-    ssr: true
-});
-
-const UserTestimonials = dynamicImport(() => import('@/app/components/home/UserTestimonials'), {
-    loading: () => <div>Loading...</div>,
-    ssr: true
-});
-
-const FAQ = dynamicImport(() => import('@/app/components/home/FAQ'), {
-    loading: () => <div>Loading...</div>,
-    ssr: true
-});
-
-const Footer = dynamicImport(() => import('@/app/components/home/Footer'), {
-    ssr: true
-});
+export const dynamic = "force-static";   // ✅ still statically rendered
 
 
 // Define metadata object - updated for Next.js 14
@@ -83,18 +67,16 @@ const Home = () => {
     return (
         <div className={styles.mainContainer}>
             <Creators/>
-            {/* Add other section components here as you develop them */}
-            <FeatureHighlights />
-             <HowItWorks />
-             <UserTestimonials />
-             <FAQ />
-             <Footer />
-            <Schema />
+            <Suspense fallback={null}>
+                <FeatureHighlights />
+                <HowItWorks />
+                <UserTestimonials />
+                <FAQ />
+                <Footer />
+                <Schema/>
+            </Suspense>
         </div>
     );
 };
-
-export const dynamic = "force-static"; // Use this if the page is truly static!
-// export const revalidate = 60;
 
 export default Home;
