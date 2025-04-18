@@ -5,7 +5,9 @@ import Image from 'next/image';
 import styles from './Creators.module.css';
 
 const SelectorContainer = ({ girls }) => {
-    const [selectedGirl, setSelectedGirl] = useState(girls[0]?.username || '');
+    const firstGirlUsername = girls[0]?.username;        // 👉 keep a reference
+    const [selectedGirl, setSelectedGirl] = useState(firstGirlUsername || '');
+
 
     const handleSelectChange = (e) => {
         setSelectedGirl(e.target.value);
@@ -64,6 +66,10 @@ const SelectorContainer = ({ girls }) => {
                                         width={100}
                                         height={100}
                                         className={styles.avatar}
+                                        priority={selectedData.username === firstGirlUsername}
+                                        fetchPriority={
+                                            selectedData.username === firstGirlUsername ? 'high' : 'auto'
+                                        }
                                     />
                                 </Link>
                                 {selectedData.verified && (
