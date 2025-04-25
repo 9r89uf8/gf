@@ -8,8 +8,7 @@
       "path": "/api/clean",
       "schedule": "0 * * * *"
     }
-  ],
-  "regions":["gru1","gdl1"]
+  ]
 }
 
 
