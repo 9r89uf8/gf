@@ -49,7 +49,7 @@ const ClientSelector = ({ girls }) => {
                     </option>
                 ))}
             </select>
-            {selectedGirl && selectedData && (
+            {selectedGirl && selectedData && selectedData.texting && (
                 <Link
                     href={`/chat/${selectedData.id}`}
                     className={styles.messageButton}

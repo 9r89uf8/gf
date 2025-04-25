@@ -191,135 +191,138 @@ const PrivateMember = () => {
                     </Typography>
 
                     {!user && (
+                        // <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+                        //     Por favor, inicie sesión o cree una cuenta para ver los precios.
+                        // </Typography>
                         <Typography variant="h6" align="center" sx={{ mb: 2 }}>
-                            Por favor, inicie sesión o cree una cuenta para ver los precios.
+                            La cuenta premium aún no está disponible. Disponible en 2026
                         </Typography>
                     )}
 
-                    {user && unsupportedMessage}
+                    {/*{user && unsupportedMessage}*/}
 
-                    {displayedPricingOptions.length > 0 && (
-                        <Grid container spacing={3} justifyContent="center">
-                            {displayedPricingOptions.map((option) => (
-                                <Grid item xs={12} sm={6} key={option.country}>
-                                    <PriceCard
-                                        onClick={() => setSelectedCountry(option.country)}
-                                        sx={{
-                                            border:
-                                                selectedCountry === option.country
-                                                    ? '2px solid #007bff'
-                                                    : '1px solid #ced4da',
-                                        }}
-                                    >
-                                        <Typography variant="h6" sx={{ mb: 2 }}>
-                                            {option.fullName}
-                                        </Typography>
-                                        <Typography variant="h3" fontWeight="bold">
-                                            {option.currency === 'PEN'
-                                                ? 'S/'
-                                                : '$'}
-                                            {Number(option.price).toFixed(0)}
-                                        </Typography>
-                                        <Typography variant="h6" sx={{ mt: 1 }}>
-                                            {option.name}
-                                        </Typography>
-                                        <Typography variant="h5" mt={2} fontWeight="bold">
-                                            Acceso por {option.duration} días
-                                        </Typography>
-                                        <Box display="flex" justifyContent="center" mt={2}>
-                                            {user ? (
-                                                <CheckoutButton />
-                                            ) : (
-                                                <SimpleButton
-                                                    variant="contained"
-                                                    onClick={handleLoginRedirect}
-                                                >
-                                                    Crear Cuenta
-                                                </SimpleButton>
-                                            )}
-                                        </Box>
-                                    </PriceCard>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    )}
+                    {/*{displayedPricingOptions.length > 0 && (*/}
+                    {/*    <Grid container spacing={3} justifyContent="center">*/}
+                    {/*        {displayedPricingOptions.map((option) => (*/}
+                    {/*            <Grid item xs={12} sm={6} key={option.country}>*/}
+                    {/*                <PriceCard*/}
+                    {/*                    onClick={() => setSelectedCountry(option.country)}*/}
+                    {/*                    sx={{*/}
+                    {/*                        border:*/}
+                    {/*                            selectedCountry === option.country*/}
+                    {/*                                ? '2px solid #007bff'*/}
+                    {/*                                : '1px solid #ced4da',*/}
+                    {/*                    }}*/}
+                    {/*                >*/}
+                    {/*                    <Typography variant="h6" sx={{ mb: 2 }}>*/}
+                    {/*                        {option.fullName}*/}
+                    {/*                    </Typography>*/}
+                    {/*                    <Typography variant="h3" fontWeight="bold">*/}
+                    {/*                        {option.currency === 'PEN'*/}
+                    {/*                            ? 'S/'*/}
+                    {/*                            : '$'}*/}
+                    {/*                        {Number(option.price).toFixed(0)}*/}
+                    {/*                    </Typography>*/}
+                    {/*                    <Typography variant="h6" sx={{ mt: 1 }}>*/}
+                    {/*                        {option.name}*/}
+                    {/*                    </Typography>*/}
+                    {/*                    <Typography variant="h5" mt={2} fontWeight="bold">*/}
+                    {/*                        Acceso por {option.duration} días*/}
+                    {/*                    </Typography>*/}
+                    {/*                    <Box display="flex" justifyContent="center" mt={2}>*/}
+                    {/*                        {user ? (*/}
+                    {/*                            <CheckoutButton />*/}
+                    {/*                        ) : (*/}
+                    {/*                            <SimpleButton*/}
+                    {/*                                variant="contained"*/}
+                    {/*                                onClick={handleLoginRedirect}*/}
+                    {/*                            >*/}
+                    {/*                                Crear Cuenta*/}
+                    {/*                            </SimpleButton>*/}
+                    {/*                        )}*/}
+                    {/*                    </Box>*/}
+                    {/*                </PriceCard>*/}
+                    {/*            </Grid>*/}
+                    {/*        ))}*/}
+                    {/*    </Grid>*/}
+                    {/*)}*/}
 
-                    <SafetyBox>
-                        <Typography variant="h5" fontWeight="bold">
-                            Pago Seguro Garantizado
-                        </Typography>
-                        <Typography variant="h6">
-                            Tu transacción es 100% segura. Stripe.com, líder en pagos en línea,
-                            procesa tu pago de forma segura y confiable.
-                        </Typography>
-                    </SafetyBox>
+                    {/*<SafetyBox>*/}
+                    {/*    <Typography variant="h5" fontWeight="bold">*/}
+                    {/*        Pago Seguro Garantizado*/}
+                    {/*    </Typography>*/}
+                    {/*    <Typography variant="h6">*/}
+                    {/*        Tu transacción es 100% segura. Stripe.com, líder en pagos en línea,*/}
+                    {/*        procesa tu pago de forma segura y confiable.*/}
+                    {/*    </Typography>*/}
+                    {/*</SafetyBox>*/}
 
-                    <FeatureList>
-                        <ListItem>
-                            <ListItemIcon>
-                                <CameraAltIcon sx={{ fontSize: 40, color: '#212529' }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Fotos Privadas"
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemIcon>
-                                <SpatialAudioOffIcon sx={{ fontSize: 40, color: '#212529' }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Audios ilimitados"
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemIcon>
-                                <MessageIcon sx={{ fontSize: 40, color: '#212529' }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary="Mensajes ilimitados"
-                                primaryTypographyProps={{ fontSize: '1.4rem' }}
-                            />
-                        </ListItem>
-                    </FeatureList>
+                    {/*<FeatureList>*/}
+                    {/*    <ListItem>*/}
+                    {/*        <ListItemIcon>*/}
+                    {/*            <CameraAltIcon sx={{ fontSize: 40, color: '#212529' }} />*/}
+                    {/*        </ListItemIcon>*/}
+                    {/*        <ListItemText*/}
+                    {/*            primary="Fotos Privadas"*/}
+                    {/*            primaryTypographyProps={{ fontSize: '1.4rem' }}*/}
+                    {/*        />*/}
+                    {/*    </ListItem>*/}
+                    {/*    <ListItem>*/}
+                    {/*        <ListItemIcon>*/}
+                    {/*            <SpatialAudioOffIcon sx={{ fontSize: 40, color: '#212529' }} />*/}
+                    {/*        </ListItemIcon>*/}
+                    {/*        <ListItemText*/}
+                    {/*            primary="Audios ilimitados"*/}
+                    {/*            primaryTypographyProps={{ fontSize: '1.4rem' }}*/}
+                    {/*        />*/}
+                    {/*    </ListItem>*/}
+                    {/*    <ListItem>*/}
+                    {/*        <ListItemIcon>*/}
+                    {/*            <MessageIcon sx={{ fontSize: 40, color: '#212529' }} />*/}
+                    {/*        </ListItemIcon>*/}
+                    {/*        <ListItemText*/}
+                    {/*            primary="Mensajes ilimitados"*/}
+                    {/*            primaryTypographyProps={{ fontSize: '1.4rem' }}*/}
+                    {/*        />*/}
+                    {/*    </ListItem>*/}
+                    {/*</FeatureList>*/}
 
-                    <SimpleButton
-                        onClick={() => setShowPaymentInfo(!showPaymentInfo)}
-                        startIcon={showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        variant="contained"
-                    >
-                        {showPaymentInfo ? 'Ocultar' : 'Mostrar'} Información de Pago
-                    </SimpleButton>
+                    {/*<SimpleButton*/}
+                    {/*    onClick={() => setShowPaymentInfo(!showPaymentInfo)}*/}
+                    {/*    startIcon={showPaymentInfo ? <ExpandLessIcon /> : <ExpandMoreIcon />}*/}
+                    {/*    fullWidth*/}
+                    {/*    sx={{ mt: 2 }}*/}
+                    {/*    variant="contained"*/}
+                    {/*>*/}
+                    {/*    {showPaymentInfo ? 'Ocultar' : 'Mostrar'} Información de Pago*/}
+                    {/*</SimpleButton>*/}
 
-                    <Collapse in={showPaymentInfo}>
-                        <Box mt={2} p={2} bgcolor="#e9ecef" borderRadius={2}>
-                            <Typography variant="h6" gutterBottom>
-                                Seguridad en el Pago
-                            </Typography>
-                            <Typography variant="h6" paragraph>
-                                Tu seguridad es nuestra prioridad. Todos los pagos son procesados de
-                                manera segura por Stripe.
-                            </Typography>
-                            <Typography variant="h6" paragraph>
-                                No almacenamos ningún dato de tarjetas de crédito en nuestros servidores.
-                                Stripe se encarga de todo, garantizando la seguridad y confidencialidad de
-                                tu información.
-                            </Typography>
-                            <Button
-                                variant="outlined"
-                                startIcon={<LockIcon />}
-                                href="https://stripe.com"
-                                target="_blank"
-                                fullWidth
-                                sx={{ color: '#212529', borderColor: '#212529' }}
-                            >
-                                Más información en stripe.com
-                            </Button>
-                        </Box>
-                    </Collapse>
+                    {/*<Collapse in={showPaymentInfo}>*/}
+                    {/*    <Box mt={2} p={2} bgcolor="#e9ecef" borderRadius={2}>*/}
+                    {/*        <Typography variant="h6" gutterBottom>*/}
+                    {/*            Seguridad en el Pago*/}
+                    {/*        </Typography>*/}
+                    {/*        <Typography variant="h6" paragraph>*/}
+                    {/*            Tu seguridad es nuestra prioridad. Todos los pagos son procesados de*/}
+                    {/*            manera segura por Stripe.*/}
+                    {/*        </Typography>*/}
+                    {/*        <Typography variant="h6" paragraph>*/}
+                    {/*            No almacenamos ningún dato de tarjetas de crédito en nuestros servidores.*/}
+                    {/*            Stripe se encarga de todo, garantizando la seguridad y confidencialidad de*/}
+                    {/*            tu información.*/}
+                    {/*        </Typography>*/}
+                    {/*        <Button*/}
+                    {/*            variant="outlined"*/}
+                    {/*            startIcon={<LockIcon />}*/}
+                    {/*            href="https://stripe.com"*/}
+                    {/*            target="_blank"*/}
+                    {/*            fullWidth*/}
+                    {/*            sx={{ color: '#212529', borderColor: '#212529' }}*/}
+                    {/*        >*/}
+                    {/*            Más información en stripe.com*/}
+                    {/*        </Button>*/}
+                    {/*    </Box>*/}
+                    {/*</Collapse>*/}
                 </WhiteCard>
             </Container>
         </Box>

@@ -48,7 +48,7 @@ const GirlPreview = ({ girl }) => {
                 </div>
                 <div className={styles.previewButtons}>
                     <Link
-                        href={`/chat/${girl.id}`}
+                        href={!girl.texting ? "/dm" : `/chat/${girl.id}`}
                         className={styles.blackButton}
                     >
                         Mensaje

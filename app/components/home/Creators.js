@@ -33,7 +33,7 @@ const staticGirls = [
         priority: false,
         bio: 'No sean chismosos 😏😂',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
-        texting: false,
+        texting: true,
         verified: true,
         verifiedType: 'blue'
     },
@@ -47,7 +47,8 @@ const staticGirls = [
         bio: '👾',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,fit=scale-down',
         verified: true,
-        verifiedType: 'blue'
+        verifiedType: 'blue',
+        texting: false,
     }
 ];
 

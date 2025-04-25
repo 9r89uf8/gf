@@ -130,12 +130,12 @@ export default function ProfileClient({ girl }) {
             </Typography>
 
             <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center' }}>
-                {girl.premium && !isPremium ? (
+                {(girl.premium && !isPremium)||girl.private ? (
                     <PremiumButton
                         onClick={handlePremium}
                         startIcon={<LockIcon />}
                     >
-                        Premium
+                        2026
                     </PremiumButton>
                 ) : (
                     <GradientButton

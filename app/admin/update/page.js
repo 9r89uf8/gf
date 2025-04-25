@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/app/store/store';
 import { getGirl, updateGirl } from "@/app/services/girlService";
+import {getGirls} from "@/app/services/girlsService";
 import {
     Container,
     Box,
@@ -133,6 +134,13 @@ const UpdateGirlInfo = () => {
     const [backgroundPreview, setBackgroundPreview] = useState('');
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const initializeData = async () => {
+            await getGirls()
+        }
+        initializeData();
+    }, []);
+
     // Populate form when a girl is selected
     useEffect(() => {
         if (selectedGirl) {
@@ -158,8 +166,8 @@ const UpdateGirlInfo = () => {
                 sexStory: selectedGirl.sexStory,
                 name: selectedGirl.name
             });
-            setPicturePreview(`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.picture}`);
-            setBackgroundPreview(`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.background}`);
+            setPicturePreview(`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${selectedGirl.picture}/w=200,fit=scale-down`);
+            setBackgroundPreview(`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${selectedGirl.background}/w=200,fit=scale-down`);
             setExistingAudioFiles(selectedGirl.audioFiles || []); // Set existing audio files
             setAudioFilesToRemove([]); // Reset the list of audio files to remove
         }
@@ -300,7 +308,7 @@ const UpdateGirlInfo = () => {
                                         <ListItem button onClick={() => handleSelectGirl(girl.id)} selected={selectedGirl?.id === girl.id}>
                                             <ListItemAvatar>
                                                 <Avatar
-                                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                                    src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                                                     alt={girl.username}
                                                 />
                                             </ListItemAvatar>

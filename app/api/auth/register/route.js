@@ -69,7 +69,7 @@ async function registerHandler(req) {
             freeAudio: 3,
             freeImages: 1,
             freeMessages: 20,
-            premium: false,
+            premium: true,
             name: username,
             timestamp: adminDb.firestore.FieldValue.serverTimestamp()
         });

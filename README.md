@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+## TODO when we get more users:
+- components/GirlCard.js line 24
+- change premium page
+- when a user registers set premium to false
+- app/components/bio/ProfileClient.jsx line 133
+
 First, run the development server:
 
 ```bash

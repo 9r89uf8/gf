@@ -208,7 +208,7 @@ const ManageGirlPosts = () => {
                                         <ListItem button onClick={() => handleSelectGirl(girl.id)} selected={selectedGirl?.id === girl.id}>
                                             <ListItemAvatar>
                                                 <Avatar
-                                                    src={`https://d3sog3sqr61u3b.cloudfront.net/${girl.picture}`}
+                                                    src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
                                                     alt={girl.username}
                                                 />
                                             </ListItemAvatar>
@@ -236,7 +236,7 @@ const ManageGirlPosts = () => {
                                         {/* Girl Info */}
                                         <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
                                             <StyledAvatar
-                                                src={`https://d3sog3sqr61u3b.cloudfront.net/${selectedGirl.picture}`}
+                                                src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${selectedGirl.picture}/w=200,fit=scale-down`}
                                                 alt={selectedGirl.username}
                                             />
                                             <Typography variant="h4" sx={{ color: 'white', marginTop: 2 }}>
