@@ -1,6 +1,11 @@
 import React from 'react';
 import styles from './Creators.module.css';
-import SelectorContainer from './SelectorContainer';
+import dynamic from 'next/dynamic';
+const SelectorContainer = dynamic(() => import('./SelectorContainer'), {
+    ssr: false,
+    loading: () => null,
+});
+
 
 const staticGirls = [
     {

@@ -4,12 +4,12 @@ import dynamicM from 'next/dynamic';  // Rename the import
 import Creators from "@/app/components/home/Creators";
 import { Suspense } from "react";
 // ⬇️ everything below‑the‑fold is now client‑only & loads *after* LCP
-const FeatureHighlights  = dynamicM(() => import("@/app/components/home/FeatureHighlights"), { ssr: false });
-const HowItWorks        = dynamicM(() => import("@/app/components/home/HowItWorks"),        { ssr: false });
-const UserTestimonials  = dynamicM(() => import("@/app/components/home/UserTestimonials"),  { ssr: false });
-const FAQ               = dynamicM(() => import("@/app/components/home/FAQ"),               { ssr: false });
-const Footer            = dynamicM(() => import("@/app/components/home/Footer"),            { ssr: false });
-const Schema            = dynamicM(() => import("@/app/components/home/Creators"),            { ssr: false });
+const FeatureHighlights  = dynamicM(() => import("@/app/components/home/FeatureHighlights"), { ssr: true, loading: () => null });
+const HowItWorks        = dynamicM(() => import("@/app/components/home/HowItWorks"),        { ssr: true, loading: () => null });
+const UserTestimonials  = dynamicM(() => import("@/app/components/home/UserTestimonials"),  { ssr: true, loading: () => null });
+const FAQ               = dynamicM(() => import("@/app/components/home/FAQ"),               { ssr: true, loading: () => null });
+const Footer            = dynamicM(() => import("@/app/components/home/Footer"),            { ssr: true, loading: () => null });
+const Schema            = dynamicM(() => import("@/app/components/schema/Schema"),            { ssr: true, loading: () => null });
 
 export const dynamic = "force-static";   // ✅ still statically rendered
 
