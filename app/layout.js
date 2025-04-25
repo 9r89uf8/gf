@@ -103,6 +103,7 @@ const Layout = ({ children }) => {
             />
         </head>
         <body>
+
         <Navbar/>
         <Notifications/>
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
