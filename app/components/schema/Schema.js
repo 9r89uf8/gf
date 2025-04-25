@@ -61,6 +61,8 @@ export default function Schema() {
             }
         ]
     };
+
+
     return (
         <Script
             id="chica-ia-schema2"
