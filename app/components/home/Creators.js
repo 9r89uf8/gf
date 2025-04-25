@@ -1,9 +1,12 @@
 import React from 'react';
-import styles from './Creators.module.css';
 import dynamic from 'next/dynamic';
-const SelectorContainer = dynamic(() => import('./SelectorContainer'), {
-    ssr: false,
-    loading: () => null,
+
+const GirlPreviewContainer = dynamic(() => import('./GirlPreviewContainer'), {
+    ssr: false
+});
+// Client component for interactive selection
+const ClientSelector = dynamic(() => import('./ClientSelector'), {
+    ssr: false
 });
 
 
@@ -48,16 +51,40 @@ const staticGirls = [
     }
 ];
 
+
+
 const Creators = () => {
+    // Inline critical CSS for LCP element
+    const headerStyles = {
+        textAlign: 'center',
+        marginBottom: '1rem'
+    };
+
+    const h2Styles = {
+        fontSize: '2rem',
+        color: '#ffffff',
+        marginBottom: '0.5rem'
+    };
+
+    const pStyles = {
+        fontSize: '1.2rem',
+        color: '#ececec'
+    };
+
     return (
-        <section className={styles.creatorsSection}>
-            <div className={styles.container}>
-                <div className={styles.headerText}>
-                    <h2>Selecciona una chica IA para hablar gratis</h2>
-                    <p>¡Chatea con tu compañera IA favorita al instante!</p>
+        <section style={{ padding: '1rem', marginTop: '-35px' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0.5rem' }}>
+                {/* Inline styles for LCP element */}
+                <div style={headerStyles}>
+                    <h2 style={h2Styles}>Selecciona una chica IA para hablar gratis</h2>
+                    <p style={pStyles}>¡Chatea con tu compañera IA favorita al instante!</p>
                 </div>
 
-                <SelectorContainer girls={staticGirls} />
+                {/* Client component that handles the selection logic */}
+                <ClientSelector girls={staticGirls} />
+
+                {/* Server component that renders the previews */}
+                <GirlPreviewContainer girls={staticGirls} />
             </div>
         </section>
     );
