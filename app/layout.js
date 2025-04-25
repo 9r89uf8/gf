@@ -109,7 +109,6 @@ const Layout = ({ children }) => {
         <FloatingNavbar/>
         <GoogleAnalytics />
         </body>
-
         </html>
     );
 };
