@@ -2,11 +2,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 
 const GirlPreviewContainer = dynamic(() => import('./GirlPreviewContainer'), {
-    ssr: false
-});
-// Client component for interactive selection
-const ClientSelector = dynamic(() => import('./ClientSelector'), {
-    ssr: false
+    ssr: true
 });
 
 
@@ -81,8 +77,6 @@ const Creators = () => {
                     <p style={pStyles}>¡Chatea con tu compañera IA favorita al instante!</p>
                 </div>
 
-                {/* Client component that handles the selection logic */}
-                <ClientSelector girls={staticGirls} />
 
                 {/* Server component that renders the previews */}
                 <GirlPreviewContainer girls={staticGirls} />

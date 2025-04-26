@@ -67,21 +67,29 @@ const GirlPreview = ({ girl }) => {
 
 // In GirlPreviewContainer.js
 const GirlPreviewContainer = ({ girls }) => {
-    // Assume first girl is default
-    const defaultGirl = girls[0]?.username;
+    // Use slice(0, 2) to get the first two girls from the array
+    const firstTwoGirls = girls.slice(0, 2);
 
     return (
         <div id="preview-container" style={{ display: 'block' }}>
-            {girls.map(girl => (
+            {/* Map over only the first two girls */}
+            {firstTwoGirls.map(girl => (
                 <div
                     key={girl.id}
                     id={`preview-${girl.username}`}
                     className="girl-preview"
-                    style={{ display: girl.username === defaultGirl ? 'block' : 'none' }}
+                    // Remove the conditional style as we want both to display
+                    // style={{ display: girl.username === defaultGirl ? 'block' : 'none' }}
                 >
                     <GirlPreview girl={girl} />
                 </div>
             ))}
+            <Link
+                href={`/dm`}
+                className={styles.messageButton}
+            >
+                Comenzar a Chatear Ahora
+            </Link>
         </div>
     );
 };
