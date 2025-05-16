@@ -7,7 +7,7 @@ import './styles/globals.css';
 
 
 
-const FloatingNavbar = dynamic(() => import('@/app/components/nab/FloatingNavbar'), { ssr: false });
+const FloatingNavbar = dynamic(() => import('@/app/components/nab/FloatingNavbar'), { ssr: true });
 
 const Notifications = dynamic(() => import('@/app/components/notifications/Notifications'), { ssr: false });
 const GoogleAnalytics = dynamic(() => import('@/app/components/google/GoogleAnalytics'), { ssr: false });
