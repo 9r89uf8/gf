@@ -20,14 +20,26 @@ const Layout = ({ children }) => {
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             <link rel="preconnect" href="https://imagedelivery.net"/>
-            <Script src={"https://challenges.cloudflare.com/turnstile/v0/api.js"} strategy="lazyOnload"/>
         </head>
         <body>
         <Navbar/>
-        <Notifications/>
+        {/* Delay non-critical components */}
+        <React.Suspense fallback={null}>
+            <Notifications/>
+        </React.Suspense>
         <main style={{ paddingBottom: 'var(--floating-navbar-height, 0px)' }}>{children}</main>
         <FloatingNavbar/>
-        <GoogleAnalytics />
+        {/* Load analytics after interaction */}
+        <React.Suspense fallback={null}>
+            <GoogleAnalytics />
+        </React.Suspense>
+
+        {/* Defer Turnstile script */}
+        <Script
+            src={"https://challenges.cloudflare.com/turnstile/v0/api.js"}
+            strategy="afterInteractive"
+            defer
+        />
         </body>
         </html>
     );

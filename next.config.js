@@ -1,3 +1,4 @@
+// next.config.js
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -9,6 +10,8 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   optimizeFonts: true, // Make sure font optimization is enabled
+  // Enable SWC minification for better performance
+  swcMinify: true,
   images: {
     remotePatterns: [
       {
