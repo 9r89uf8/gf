@@ -394,7 +394,7 @@ const NoviaVirtual = () => {
                     </p>
                     <div style={styles.ctaContainer}>
                         <Link
-                            href="/creadoras"
+                            href="/chicas-ia"
                             style={styles.ctaButton}
                         >
                             Conoce a tu Novia Virtual
@@ -504,7 +504,7 @@ const NoviaVirtual = () => {
 
                 <div style={styles.ctaContainer} style={{ textAlign: 'center', margin: '3rem 0' }}>
                     <Link
-                        href="/creadoras"
+                        href="/chicas-ia"
                         style={styles.ctaButton}
                     >
                         Encuentra tu Novia Virtual Ideal
