@@ -40,7 +40,7 @@ const Navbar = () => {
             <nav style={navStyle}>
                 <div style={{ flex: 1, position: 'relative' }}>
                     <Link href="/" style={{ textDecoration: 'none' }}>
-                        <span style={titleStyle}>NoviaChat</span>
+                        <span style={titleStyle}>Novia Virtual</span>
                     </Link>
                 </div>
             </nav>

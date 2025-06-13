@@ -12,33 +12,30 @@ const staticGirls = [
         followers: 60240,
         bio: 'Hola....',
         picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down',
+        videos: [
+            'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/968e0cd899e526e6d41569da9b871f62/watch',
+            'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/37bd43633ce622b6760534d46f1094d3/watch'
+        ],
         texting: true,
         verified: true,
         verifiedType: 'blue'
     },
-    {
-        id: 'BgHd9LWDnFFhS6BoaqwL',
-        username: 'antonella1353',
-        age: 18,
-        followers: 69300,
-        priority: false,
-        bio: 'No sean chismosos 😏😂',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
-        texting: false,
-        verified: true, // Adding verified status
-        verifiedType: 'blue' // 'gold' or 'blue'
-    },
-    {
-        id: 'CGj52Y66J4icn6qOqGJY',
-        username: 'rocio4',
-        priority: false,
-        age: 19,
-        followers: 50750,
-        bio: '👾',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/86af997f-81c4-4775-1bca-e8172f456e00/w=200,fit=scale-down',
-        verified: true, // Adding verified status
-        verifiedType: 'blue' // 'gold' or 'blue'
-    }
+    // {
+    //     id: 'BgHd9LWDnFFhS6BoaqwL',
+    //     username: 'antonella1353',
+    //     age: 18,
+    //     followers: 69300,
+    //     priority: false,
+    //     bio: 'No sean chismosos 😏😂',
+    //     picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
+    //     videos: [
+    //         'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/968e0cd899e526e6d41569da9b871f62/watch',
+    //         'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/37bd43633ce622b6760534d46f1094d3/watch'
+    //     ],
+    //     texting: false,
+    //     verified: true, // Adding verified status
+    //     verifiedType: 'blue' // 'gold' or 'blue'
+    // }
 ];
 
 const styles = {
@@ -227,6 +224,22 @@ const styles = {
         maxWidth: '110px',
         boxShadow: '0 4px 12px rgba(67, 97, 238, 0.3)',
     },
+    videoWrapper: {
+        /* pushes videos tight under the avatar */
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        width: '100%',
+        marginTop: '12px',
+        marginBottom: '8px',
+    },
+    video: {
+        width: '100%',
+        /* vertical 9 : 16 aspect ratio */
+        aspectRatio: '9 / 16',
+        borderRadius: '16px',
+        boxShadow: '0 6px 16px rgba(0,0,0,0.25)',
+    },
 };
 
 // CheckMark SVG component
@@ -279,6 +292,7 @@ const PopularCreators = () => {
                                 />
                             </Link>
 
+
                         </div>
 
                         <div style={styles.profileInfo}>
@@ -291,7 +305,7 @@ const PopularCreators = () => {
                                             ...(girl.verifiedType === 'gold' ? styles.goldBadge : styles.blueBadge)
                                         }}
                                     >
-                                        <CheckMark />
+                                        <CheckMark/>
                                     </div>
                                 )}
                             </div>
@@ -304,6 +318,18 @@ const PopularCreators = () => {
                             </div>
 
                             <p style={styles.bio}>{girl.bio}</p>
+
+                            <div style={styles.videoWrapper}>
+                                {girl.videos.map((src, i) => (
+                                    <video
+                                        key={i}
+                                        src={src}
+                                        style={styles.video}
+                                        muted
+                                        controls
+                                    />
+                                ))}
+                            </div>
 
                             <div style={styles.buttonContainer}>
                                 {girl.texting ? (

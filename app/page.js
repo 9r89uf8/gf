@@ -2,6 +2,7 @@
 import React from 'react';
 import dynamicM from 'next/dynamic';  // Rename the import
 import Creators from "@/app/components/home/Creators";
+import PopularCreators from "@/app/components/landing/PopularCreators";
 import { Suspense } from "react";
 // ⬇️ everything below‑the‑fold is now client‑only & loads *after* LCP
 const FeatureHighlights  = dynamicM(() => import("@/app/components/home/FeatureHighlights"), { ssr: true, loading: () => null });
@@ -66,7 +67,8 @@ import styles from './Home.module.css';
 const Home = () => {
     return (
         <div className={styles.mainContainer}>
-            <Creators/>
+            {/*<Creators/>*/}
+            <PopularCreators/>
             <Suspense fallback={null}>
                 <FeatureHighlights />
                 <HowItWorks />
