@@ -67,8 +67,8 @@ import styles from './Home.module.css';
 const Home = () => {
     return (
         <div className={styles.mainContainer}>
-            {/*<Creators/>*/}
-            <PopularCreators/>
+            <Creators/>
+            {/*<PopularCreators/>*/}
             <Suspense fallback={null}>
                 <FeatureHighlights />
                 <HowItWorks />
