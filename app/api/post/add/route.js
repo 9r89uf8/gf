@@ -43,7 +43,7 @@ export async function POST(req) {
             girlName:girlData.name,
             girlUsername: girlData.username,
             girlId: girlId,
-            girlPicUrl: girlData.picture,
+            girlPicUrl: girlData.pictureUrl,
             description,
             likes: [],
             likesAmount: Math.floor(Math.random() * (30000 - 14000 + 1)) + 14000,

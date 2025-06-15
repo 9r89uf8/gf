@@ -174,7 +174,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                 <Header>
                     <Link href={`/${post.girlId}`} passHref>
                         <Avatar
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${post.girlPicUrl}`}
+                            src={post.girlPicUrl}
                             alt={post.girlName}
                             sx={{ width: 60, height: 60, cursor: 'pointer', marginTop: -1.5, marginBottom: -1.5 }}
                         />

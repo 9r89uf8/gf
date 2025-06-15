@@ -2,6 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+// Extract video IDs from your URLs
+const extractVideoId = (url) => {
+    // Extract the ID from URLs like: https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/968e0cd899e526e6d41569da9b871f62/watch
+    const matches = url.match(/cloudflarestream\.com\/([a-z0-9]+)/);
+    return matches ? matches[1] : null;
+};
+
 // Modified the staticGirls array to include age, followers and verified status
 const staticGirls = [
     {
@@ -11,7 +18,7 @@ const staticGirls = [
         priority: true,
         followers: 60240,
         bio: 'Hola....',
-        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/3cc53e5e-99ae-434f-ff28-a23a589b2400/w=200,fit=scale-down',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/1c16c7b4-4a81-48e2-af82-e9893c87b700/w=200,fit=scale-down',
         videos: [
             'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/968e0cd899e526e6d41569da9b871f62/watch',
             'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/37bd43633ce622b6760534d46f1094d3/watch'
@@ -20,22 +27,22 @@ const staticGirls = [
         verified: true,
         verifiedType: 'blue'
     },
-    // {
-    //     id: 'BgHd9LWDnFFhS6BoaqwL',
-    //     username: 'antonella1353',
-    //     age: 18,
-    //     followers: 69300,
-    //     priority: false,
-    //     bio: 'No sean chismosos 😏😂',
-    //     picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/0c9fee91-9365-4796-7c5d-bf46a9ea5e00/w=200,fit=scale-down',
-    //     videos: [
-    //         'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/968e0cd899e526e6d41569da9b871f62/watch',
-    //         'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/37bd43633ce622b6760534d46f1094d3/watch'
-    //     ],
-    //     texting: false,
-    //     verified: true, // Adding verified status
-    //     verifiedType: 'blue' // 'gold' or 'blue'
-    // }
+    {
+        id: 'BgHd9LWDnFFhS6BoaqwL',
+        username: 'antonella1353',
+        age: 18,
+        followers: 69300,
+        priority: false,
+        bio: 'No sean chismosos 😏😂',
+        picture: 'https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/26d34e68-8505-417d-1a9c-cc903138ae00/w=200,fit=scale-down',
+        videos: [
+            'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/2e91bc148fb54fa50d149882294c99c1/watch',
+            'https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/f16df0e61fd6e163993a8e4c2d51bd0b/watch'
+        ],
+        texting: false,
+        verified: true,
+        verifiedType: 'blue'
+    }
 ];
 
 const styles = {
@@ -168,10 +175,10 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         gap: '12px',
-        fontSize: '18px', // Increased from 14px
+        fontSize: '18px',
         color: 'black',
         marginBottom: '12px',
-        fontWeight: '500', // Added to make it more prominent
+        fontWeight: '500',
     },
     bio: {
         color: 'black',
@@ -225,7 +232,6 @@ const styles = {
         boxShadow: '0 4px 12px rgba(67, 97, 238, 0.3)',
     },
     videoWrapper: {
-        /* pushes videos tight under the avatar */
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
@@ -233,12 +239,21 @@ const styles = {
         marginTop: '12px',
         marginBottom: '8px',
     },
-    video: {
+    videoIframeContainer: {
+        position: 'relative',
         width: '100%',
-        /* vertical 9 : 16 aspect ratio */
         aspectRatio: '9 / 16',
         borderRadius: '16px',
+        overflow: 'hidden',
         boxShadow: '0 6px 16px rgba(0,0,0,0.25)',
+    },
+    videoIframe: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        border: 'none',
     },
 };
 
@@ -266,7 +281,6 @@ const formatFollowers = (followers) => {
 };
 
 const PopularCreators = () => {
-
     return (
         <div style={styles.container}>
             <div style={styles.grid}>
@@ -291,8 +305,6 @@ const PopularCreators = () => {
                                     priority={girl.priority}
                                 />
                             </Link>
-
-
                         </div>
 
                         <div style={styles.profileInfo}>
@@ -320,15 +332,21 @@ const PopularCreators = () => {
                             <p style={styles.bio}>{girl.bio}</p>
 
                             <div style={styles.videoWrapper}>
-                                {girl.videos.map((src, i) => (
-                                    <video
-                                        key={i}
-                                        src={src}
-                                        style={styles.video}
-                                        muted
-                                        controls
-                                    />
-                                ))}
+                                {girl.videos.map((url, i) => {
+                                    const videoId = extractVideoId(url);
+                                    if (!videoId) return null;
+
+                                    return (
+                                        <div key={i} style={styles.videoIframeContainer}>
+                                            <iframe
+                                                src={`https://customer-6smvuu0v7hu7e2r2.cloudflarestream.com/${videoId}/iframe`}
+                                                style={styles.videoIframe}
+                                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             <div style={styles.buttonContainer}>
@@ -363,7 +381,6 @@ const PopularCreators = () => {
                     </div>
                 ))}
             </div>
-
         </div>
     );
 };
