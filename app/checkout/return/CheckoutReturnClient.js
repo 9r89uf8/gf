@@ -211,7 +211,6 @@ export default function CheckoutReturnClient() {
       try {
         const session = await fetchSessionStatus(sessionId);
         setSessionData(session);
-        console.log(session)
 
         if (session.payment_status === 'paid') {
           try {
@@ -234,7 +233,6 @@ export default function CheckoutReturnClient() {
               console.error('Failed to upgrade user to premium');
             } else {
               const result = await response.json();
-              console.log(result.user)
               setUser(result.user)
               if (result.alreadyProcessed) {
                 console.log('Payment already processed - skipping duplicate');
