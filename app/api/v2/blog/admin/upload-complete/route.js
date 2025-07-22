@@ -1,7 +1,6 @@
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
 import cloudflareService from '@/app/api/v2/services/cloudflareService';
-import { invalidateBlogCache } from '@/app/api/v2/services/blogServerService';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -50,11 +49,6 @@ export async function POST(req) {
             uploadId: null,
             updatedAt: adminDb.firestore.FieldValue.serverTimestamp()
         });
-
-        // Invalidate cache if the post is published
-        if (postData.published && postData.slug) {
-            await invalidateBlogCache(postData.slug);
-        }
 
         return NextResponse.json({
             success: true,
