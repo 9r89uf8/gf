@@ -230,7 +230,7 @@ export default function ProductsPage() {
         {/* Security Info Section */}
         <SecurityInfoCard elevation={0}>
           <Grid container spacing={3}>
-            <Grid item size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FeatureItem>
                 <CheckCircleIcon />
                 <Box>
@@ -243,7 +243,7 @@ export default function ProductsPage() {
                 </Box>
               </FeatureItem>
             </Grid>
-            <Grid item size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FeatureItem>
                 <ShieldIcon />
                 <Box>
@@ -256,7 +256,7 @@ export default function ProductsPage() {
                 </Box>
               </FeatureItem>
             </Grid>
-            <Grid item size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <FeatureItem>
                 <CreditCardOffIcon />
                 <Box>
@@ -288,7 +288,7 @@ export default function ProductsPage() {
         ) : (
           <Grid container spacing={4}>
             {products.map((price) => (
-              <Grid item key={price.id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <Grid key={price.id} size={{ xs: 12, sm: 6, md: 4 }}>
                 <ModernCard variant="elevated" animate={true}>
                   <CardContentWrapper>
                     <Stack spacing={3}>
