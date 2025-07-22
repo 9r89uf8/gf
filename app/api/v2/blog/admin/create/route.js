@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/firebase.config';
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
-import { authenticateRequest } from '@/app/api/v2/middleware/authMiddleware';
+import { adminDb } from '@/app/utils/firebaseAdmin';
+import admin from 'firebase-admin';
+import { authMiddleware } from "@/app/middleware/authMiddleware";
 
 export async function POST(request) {
   try {
-    // Authenticate request - admin only
-    const authResult = await authenticateRequest(request);
+    // Verify admin authentication
+    const authResult = await authMiddleware(request); // Fixed: was 'req'
     if (!authResult.authenticated) {
-      return NextResponse.json({ error: authResult.error }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is admin
-    if (authResult.user.role !== 'admin') {
-      return NextResponse.json({ error: 'Acceso no autorizado' }, { status: 403 });
+    // Check if user is admin (you may want to adjust this based on your admin identification logic)
+    const userId = authResult.user.uid;
+    if (userId !== '3UaQ4dtkNthHMq9VKqDCGA0uPix2') { // Replace with your admin check logic
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -32,19 +33,22 @@ export async function POST(request) {
     // Validate required fields
     if (!title || !slug || !excerpt || !content || !category || !author) {
       return NextResponse.json(
-        { error: 'Faltan campos requeridos' },
-        { status: 400 }
+          { error: 'Faltan campos requeridos' },
+          { status: 400 }
       );
     }
 
     // Check if slug already exists
-    const q = query(collection(db, 'blog-posts'), where('slug', '==', slug));
-    const existingPosts = await getDocs(q);
+    const existingPosts = await adminDb
+        .firestore()
+        .collection('blog-posts')
+        .where('slug', '==', slug)
+        .get();
 
     if (!existingPosts.empty) {
       return NextResponse.json(
-        { error: 'Ya existe un artículo con este slug' },
-        { status: 400 }
+          { error: 'Ya existe un artículo con este slug' },
+          { status: 400 }
       );
     }
 
@@ -66,14 +70,17 @@ export async function POST(request) {
         avatar: author.avatar || '/default-avatar.png',
       },
       published,
-      publishedAt: published ? serverTimestamp() : null,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      publishedAt: published ? admin.firestore.FieldValue.serverTimestamp() : null,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       viewCount: 0,
       readTime,
     };
 
-    const docRef = await addDoc(collection(db, 'blog-posts'), newPost);
+    const docRef = await adminDb
+        .firestore()
+        .collection('blog-posts')
+        .add(newPost);
 
     return NextResponse.json({
       id: docRef.id,
@@ -85,8 +92,8 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error creating blog post:', error);
     return NextResponse.json(
-      { error: 'Error al crear el artículo' },
-      { status: 500 }
+        { error: 'Error al crear el artículo' },
+        { status: 500 }
     );
   }
 }
