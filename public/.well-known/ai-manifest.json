@@ -1,0 +1,104 @@
+{
+  "name": "NoviaChat",
+  "description": "Plataforma líder de novias virtuales con IA en español. Más de 12 millones de usuarios disfrutan de experiencias personalizadas con inteligencia artificial avanzada.",
+  "url": "https://noviachat.com",
+  "version": "2.0",
+  "language": "es-ES",
+  "last_updated": "2025-01-22",
+  
+  "ai_capabilities": {
+    "conversational_ai": {
+      "enabled": true,
+      "languages": ["es", "es-MX", "es-ES"],
+      "features": [
+        "multi-turn dialogue",
+        "context awareness",
+        "emotion recognition",
+        "personality modeling",
+        "memory persistence"
+      ]
+    },
+    "image_generation": {
+      "enabled": true,
+      "features": [
+        "personalized images",
+        "style consistency",
+        "content moderation"
+      ]
+    },
+    "voice_synthesis": {
+      "enabled": true,
+      "features": [
+        "natural Spanish voices",
+        "emotion expression",
+        "personalized tones"
+      ]
+    },
+    "content_generation": {
+      "enabled": true,
+      "types": ["messages", "posts", "tweets", "audio_messages"]
+    }
+  },
+  
+  "content_types": [
+    "virtual companions",
+    "ai girlfriends",
+    "personalized conversations",
+    "romantic interactions",
+    "entertainment content"
+  ],
+  
+  "user_statistics": {
+    "registered_users": "12,000,000+",
+    "active_creators": "50+",
+    "daily_conversations": "1,000,000+",
+    "languages_supported": ["Spanish"]
+  },
+  
+  "technical_details": {
+    "platform": "Next.js 14",
+    "ai_models": [
+      "Advanced LLMs",
+      "Image Diffusion Models",
+      "Neural TTS"
+    ],
+    "update_frequency": "daily",
+    "api_available": false,
+    "plugin_support": "coming_soon"
+  },
+  
+  "ethical_ai": {
+    "transparency": true,
+    "user_consent": true,
+    "data_privacy": "GDPR compliant",
+    "content_moderation": true,
+    "age_restriction": "18+"
+  },
+  
+  "integration_files": {
+    "openai_config": "/.well-known/openai.json",
+    "anthropic_config": "/.well-known/anthropic.json",
+    "ai_sitemap": "/.well-known/ai-sitemap.xml",
+    "human_readable": "/.well-known/llms.txt",
+    "robots_txt": "/robots.txt"
+  },
+  
+  "contact": {
+    "email": "ai-info@noviachat.com",
+    "support": "https://noviachat.com/contacto",
+    "documentation": "https://noviachat.com/ai"
+  },
+  
+  "legal": {
+    "terms_of_service": "https://noviachat.com/terminos",
+    "privacy_policy": "https://noviachat.com/privacidad",
+    "ai_usage_policy": "https://noviachat.com/ai#ethical-ai"
+  },
+  
+  "crawling_preferences": {
+    "allow_ai_crawlers": true,
+    "preferred_crawl_rate": "1 request/second",
+    "excluded_paths": ["/api/", "/admin/", "/checkout/"],
+    "priority_paths": ["/", "/chicas-ia", "/ai", "/posts"]
+  }
+}

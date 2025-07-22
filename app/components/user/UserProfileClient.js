@@ -3,29 +3,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, Typography, Divider, Box } from '@mui/material';
-import { alpha, styled } from '@mui/material/styles';
+import { Typography, Divider, Box } from '@mui/material';
 import { useStore } from '@/app/store/store';
+import { logoutUser } from '@/app/services/authService';
 import ProfileDisplay from './ProfileDisplay';
 import ProfileEditForm from './ProfileEditForm';
 import DeleteAccountDialog from './DeleteAccountDialog';
 import PremiumStatusSection from './PremiumStatusSection';
-
-// Styled Components
-const StyledCard = styled(Card)(({ theme }) => ({
-    textAlign: 'center',
-    color: 'white',
-    background: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: 15,
-    marginBottom: 40,
-    border: `1px solid ${alpha('#ffffff', 0.2)}`,
-    boxShadow: '0 8px 32px 0 rgba(255, 255, 255, 0.10)',
-    userSelect: 'none',
-    WebkitUserSelect: 'none',
-    msUserSelect: 'none',
-    padding: theme.spacing(3),
-}));
+import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
 
 const UserProfileClient = ({initialUserData}) => {
     const [user, setUser] = useState(initialUserData);
@@ -39,40 +24,52 @@ const UserProfileClient = ({initialUserData}) => {
         setIsEditing(false);
     };
 
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            router.push('/');
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
+
     return (
-        <StyledCard>
-            {isEditing ? (
-                <ProfileEditForm
-                    user={user}
-                    onSave={handleProfileUpdate}
-                    onCancel={() => setIsEditing(false)}
+        <ModernCard variant="elevated" animate={true}>
+            <CardContentWrapper>
+                {isEditing ? (
+                    <ProfileEditForm
+                        user={user}
+                        onSave={handleProfileUpdate}
+                        onCancel={() => setIsEditing(false)}
+                    />
+                ) : (
+                    <>
+                        <ProfileDisplay
+                            user={user}
+                            onEdit={() => setIsEditing(true)}
+                            onDelete={() => setOpenDeleteDialog(true)}
+                            onLogout={handleLogout}
+                        />
+
+                        <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.1)' }} />
+
+                        <PremiumStatusSection
+                            user={user}
+                            onUpgrade={() => router.push('/products')}
+                        />
+                    </>
+                )}
+
+                <DeleteAccountDialog
+                    open={openDeleteDialog}
+                    onClose={() => setOpenDeleteDialog(false)}
+                    onConfirm={() => {
+                        // Handle deletion logic
+                        router.push('/register');
+                    }}
                 />
-            ) : (
-                <>
-                    <ProfileDisplay
-                        user={user}
-                        onEdit={() => setIsEditing(true)}
-                        onDelete={() => setOpenDeleteDialog(true)}
-                    />
-
-                    <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.2)' }} />
-
-                    <PremiumStatusSection
-                        user={user}
-                        onUpgrade={() => router.push('/premium')}
-                    />
-                </>
-            )}
-
-            <DeleteAccountDialog
-                open={openDeleteDialog}
-                onClose={() => setOpenDeleteDialog(false)}
-                onConfirm={() => {
-                    // Handle deletion logic
-                    router.push('/register');
-                }}
-            />
-        </StyledCard>
+            </CardContentWrapper>
+        </ModernCard>
     );
 };
 

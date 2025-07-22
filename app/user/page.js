@@ -8,8 +8,15 @@ async function getUserData() {
     try {
         const cookieStore = cookies();
         const token = cookieStore.get('tokenAIGF');
+
+
+        // If no token, return early - no need to make API call
+        if (!token) {
+            return null;
+        }
+
         // Direct server-side API call with POST method and id in the body
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v2/auth/verify`, {
             method: 'GET',
             headers: {
                 // Forward the auth cookie

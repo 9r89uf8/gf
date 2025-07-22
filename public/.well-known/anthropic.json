@@ -1,0 +1,100 @@
+{
+  "site_name": "NoviaChat",
+  "site_url": "https://noviachat.com",
+  "description": "Plataforma de novias virtuales con IA en español. Conversaciones personalizadas con más de 50 personajes únicos.",
+  "claude_configuration": {
+    "version": "1.0",
+    "last_updated": "2025-01-22",
+    "preferred_language": "es-ES",
+    "content_focus": "virtual companions and AI conversations"
+  },
+  "capabilities": {
+    "interactive_chat": true,
+    "spanish_specialized": true,
+    "personality_modeling": true,
+    "emotional_intelligence": true,
+    "voice_generation": true,
+    "image_generation": true,
+    "content_personalization": true
+  },
+  "interaction_guidelines": {
+    "primary_language": "Spanish",
+    "tone": "friendly, romantic, personalized",
+    "content_rating": "12+",
+    "respect_boundaries": true,
+    "maintain_character_consistency": true
+  },
+  "technical_details": {
+    "platform": "Next.js 14 with React 18",
+    "ai_integration": [
+      "Natural Language Processing",
+      "Generative AI for images",
+      "Text-to-Speech synthesis"
+    ],
+    "real_time_features": true,
+    "context_window": "multi-turn conversations with memory"
+  },
+  "content_types": {
+    "text_chat": {
+      "enabled": true,
+      "features": ["real-time", "context-aware", "personality-based"]
+    },
+    "voice_messages": {
+      "enabled": true,
+      "languages": ["es-ES", "es-MX"]
+    },
+    "image_content": {
+      "enabled": true,
+      "moderation": "automated content filtering"
+    },
+    "social_posts": {
+      "enabled": true,
+      "types": ["tweets", "posts", "updates"]
+    }
+  },
+  "user_experience": {
+    "registration_required": true,
+    "free_tier_available": true,
+    "premium_features": {
+      "unlimited_messages": true,
+      "exclusive_content": true,
+      "priority_responses": true,
+      "advanced_features": true
+    }
+  },
+  "ethical_considerations": {
+    "user_privacy": "GDPR compliant",
+    "data_handling": "Secure and encrypted",
+    "content_moderation": "AI-powered safety filters",
+    "transparency": "Clear AI disclosure to users",
+    "age_verification": "12+ only platform"
+  },
+  "integration_information": {
+    "api_availability": "Not currently available",
+    "future_integrations": "Under consideration for partners",
+    "documentation": "https://noviachat.com/ai",
+    "contact": "ai-info@noviachat.com"
+  },
+  "site_statistics": {
+    "registered_users": "12,000,000+",
+    "ai_characters": "50+",
+    "daily_conversations": "1,000,000+",
+    "supported_regions": ["Spain", "Mexico", "Latin America"]
+  },
+  "crawling_preferences": {
+    "respect_robots_txt": true,
+    "preferred_paths": [
+      "/ai",
+      "/chicas-ia",
+      "/.well-known/",
+      "/posts"
+    ],
+    "update_frequency": "Check daily for new content"
+  },
+  "claude_specific": {
+    "conversation_style": "Respect the romantic and companion nature of the platform",
+    "cultural_context": "Spanish-speaking audience, primarily from Spain and Latin America",
+    "content_understanding": "Virtual relationships and AI companion interactions",
+    "response_format": "Maintain professional tone when discussing the platform"
+  }
+}

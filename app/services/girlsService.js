@@ -5,7 +5,7 @@ export const getGirls = async () => {
     const setGirls = useStore.getState().setGirls;
 
     try {
-        const response = await fetch(`/api/girls`);
+        const response = await fetch(`/api/v2/girls`);
         if (response.ok) {
             const data = await response.json();
             setGirls(data);

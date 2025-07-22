@@ -2,34 +2,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
-    Button,
-    Paper,
     Typography,
-    Grid,
-    IconButton,
     Avatar,
     Modal,
 } from '@mui/material';
-import VideoPlayer from "@/app/components/videoPlayer/VideoPlayer";
-import {likeGirlPost} from "@/app/services/postsService";
+import { ModernCard } from '@/app/components/ui/ModernCard';
+import { Stream } from "@cloudflare/stream-react";
 import { styled } from "@mui/material/styles";
-import LockIcon from '@mui/icons-material/Lock';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 
 // Styled Components
 
-const PostCard = styled(Paper)(({ theme }) => ({
-    borderRadius: theme.shape.borderRadius * 2,
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    margin: theme.spacing(2, 0),
-    userSelect: 'none',
-    overflow: 'hidden',
-}));
+// Using ModernCard instead of custom PostCard for consistency
 
 const Header = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -40,73 +25,40 @@ const Header = styled(Box)(({ theme }) => ({
 const MediaWrapper = styled(Box)({
     position: 'relative',
     width: '100%',
-    maxHeight: '500px',
+    maxHeight: '600px', // Max height to prevent overly tall posts
     overflow: 'hidden',
+    backgroundColor: '#000',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
 });
 
 const PostImage = styled('img')({
     width: '100%',
     height: 'auto',
+    maxHeight: '600px',
+    objectFit: 'contain',
     display: 'block',
     transition: 'transform 0.3s',
+    cursor: 'pointer',
     '&:hover': {
-        transform: 'scale(1.05)',
+        transform: 'scale(1.02)',
     },
 });
 
-const BlurredOverlay = styled(Box)({
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backdropFilter: 'blur(10px)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-});
-
-const Actions = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(1, 2),
-}));
 
 const Description = styled(Box)(({ theme }) => ({
     padding: theme.spacing(0, 2, 2),
 }));
 
-const DurationText = styled(Typography)(({ theme }) => ({
-    display: 'inline-flex',
-    alignItems: 'center',
-    color: theme.palette.text.secondary,
-    marginLeft: theme.spacing(1),
-}));
-
-const PremiumButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #343a40 30%, #000814 90%)',
-    color: '#f8f9fa',
-    fontWeight: 'bold',
-    fontSize: 20,
-    '&:hover': {
-        backgroundImage: 'linear-gradient(45deg, #f39c12, #f1c40f)',
-    },
-}));
-
-const DurationBadge = styled(Box)(({ theme }) => ({
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    color: 'white',
-    padding: theme.spacing(0.5, 1),
-    borderRadius: theme.shape.borderRadius,
-    zIndex: 5,
+const TextPostContent = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(4),
+    minHeight: '300px',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    borderRadius: theme.shape.borderRadius,
 }));
 
 // Modal Style
@@ -123,39 +75,10 @@ const modalStyle = {
     p: 0, // Remove padding
 };
 
-// Format time function
-const formatDuration = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-};
-
 // Main Component
-function GirlPostComp({ girl, user, post, index, onLike }) {
+function GirlPostComp({ girl, user, post, index }) {
     const router = useRouter();
-    const isUserLoggedIn = !!user;
-    const isUserPremium = user?.premium;
-    const canViewPremiumContent = isUserPremium || !post.isPremium;
-    const videoRef = useRef(null);
-
     const [isFullscreen, setIsFullscreen] = useState(false);
-    // Fixed duration of 5 seconds for preview
-    const fixedDuration = 5;
-    const [videoPlayerKey, setVideoPlayerKey] = useState(Date.now());
-
-    const handleLike = async () => {
-        if (isUserLoggedIn) {
-            await likeGirlPost({ postId: post.id });
-            if (onLike) onLike(post.id);
-        } else {
-            // Redirect to login or show a login prompt
-            console.log("User must be logged in to like posts");
-        }
-    };
-
-    const handleBuyPremium = () => {
-        router.push('/premium');
-    };
 
     const handleImageClick = () => {
         setIsFullscreen(true);
@@ -169,119 +92,120 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
 
     return (
         <>
-            <PostCard elevation={3}>
+            <ModernCard variant="elevated" animate={false} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {/* Header */}
                 <Header>
-                    <Link href={`/${post.girlId}`} passHref>
+                    <Link href={`/${post.girlId}`} passHref style={{ textDecoration: 'none' }}>
                         <Avatar
-                            src={post.girlPicUrl}
-                            alt={post.girlName}
-                            sx={{ width: 60, height: 60, cursor: 'pointer', marginTop: -1.5, marginBottom: -1.5 }}
+                            src={post.girlPictureUrl}
+                            alt={post.girlUsername}
+                            sx={{ 
+                                width: 50, 
+                                height: 50, 
+                                cursor: 'pointer',
+                                border: '2px solid rgba(0, 0, 0, 0.1)',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': {
+                                    transform: 'scale(1.1)',
+                                }
+                            }}
                         />
                     </Link>
-                    <Box sx={{ marginLeft: 2 }}>
-                        <Typography variant="h6" fontWeight="bold">
+                    <Box sx={{ marginLeft: 2, flex: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: 'rgba(15, 23, 42, 0.95)' }}>
                             {post.girlUsername}
                         </Typography>
+                        {post.mediaType === 'text' && post.createdAt && (
+                            <Typography variant="caption" sx={{ color: 'rgba(100, 116, 139, 0.8)' }}>
+                                {new Date(post.createdAt).toLocaleDateString('es-ES', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
+                        )}
                     </Box>
                 </Header>
 
                 {/* Media */}
-                <MediaWrapper>
-                    {post.image ? (
-                        <>
-                            <PostImage
-                                src={`https://d3sog3sqr61u3b.cloudfront.net/${post.image}`}
-                                alt={`Post ${index}`}
-                                onClick={handleImageClick}
-                                style={{ cursor: 'pointer' }}
-                            />
-                            {!canViewPremiumContent && (
-                                <BlurredOverlay>
-                                    <LockIcon sx={{ fontSize: 60, mb: 2, color: 'white' }} />
-                                    <Typography variant="h5" align="center" gutterBottom style={{ color: 'white' }}>
-                                        Contenido Premium
-                                    </Typography>
-                                    <PremiumButton variant="contained" onClick={handleBuyPremium}>
-                                        Comprar Premium
-                                    </PremiumButton>
-                                </BlurredOverlay>
-                            )}
-                        </>
-                    ) : post.video ? (
-                        <Box sx={{ position: 'relative' }}>
-                            <VideoPlayer
-                                key={videoPlayerKey}
-                                ref={videoRef}
-                                options={{
-                                    controls: canViewPremiumContent,
-                                    sources: [{
-                                        src: `https://d3sog3sqr61u3b.cloudfront.net/${post.video}`,
-                                        type: 'video/mp4'
-                                    }],
-                                    controlBar: {
-                                        volumePanel: true,
-                                        fullscreenToggle: false,
-                                    },
-                                    autoplay: false,
-                                }}
-                                // No longer need onReady handler
-                            />
-                            {/* Show duration badge for all users regardless of premium status */}
-                            <DurationBadge>
-                                <AccessTimeIcon sx={{ fontSize: 16, mr: 0.5 }} />
-                                <Typography variant="caption">
-                                    {formatDuration(fixedDuration)}
-                                </Typography>
-                            </DurationBadge>
-                            {!canViewPremiumContent && (
-                                <BlurredOverlay>
-                                    <LockIcon sx={{ fontSize: 60, mb: 2, color: 'white' }} />
-                                    <Typography variant="h5" align="center" gutterBottom style={{ color: 'white' }}>
-                                        Contenido Premium
-                                    </Typography>
-                                    <PremiumButton variant="contained" onClick={handleBuyPremium}>
-                                        Comprar Premium
-                                    </PremiumButton>
-                                </BlurredOverlay>
-                            )}
-                        </Box>
-                    ) : null}
-                </MediaWrapper>
+                {post.mediaType === 'text' ? (
+                    <TextPostContent>
+                        <Typography 
+                            variant="h5" 
+                            align="center" 
+                            sx={{ 
+                                color: 'rgba(15, 23, 42, 0.95)',
+                                fontWeight: 500,
+                                lineHeight: 1.6,
+                                px: 2
+                            }}
+                        >
+                            {post.text}
+                        </Typography>
+                    </TextPostContent>
+                ) : (
+                    <MediaWrapper>
+                        {post.mediaType === 'image' ? (
+                            <>
+                                <PostImage
+                                    src={post.mediaUrl}
+                                    alt={`Post ${index}`}
+                                    onClick={handleImageClick}
+                                    style={{ cursor: 'pointer' }}
+                                />
+                            </>
+                        ) : post.mediaType === 'video' ? (
+                            <Box sx={{ 
+                                width: '100%',
+                                maxHeight: '600px',
+                                aspectRatio: '9/16',
+                                '& iframe': {
+                                    width: '100%',
+                                    height: '100%',
+                                    border: 'none',
+                                }
+                            }}>
+                                <Stream 
+                                    controls
+                                    src={post.uploadId}
+                                    autoplay={false}
+                                    muted={false}
+                                    preload="metadata"
+                                />
+                            </Box>
+                        ) : null}
+                    </MediaWrapper>
+                )}
 
-                {/* Actions */}
-                <Actions>
-                    <IconButton onClick={handleLike} color="inherit">
-                        {user && post.likes.includes(user.uid) ? (
-                            <FavoriteIcon color="error" style={{ fontSize: 36, marginBottom: -12, marginTop: -10 }}/>
-                        ) : (
-                            <FavoriteBorderIcon style={{ fontSize: 36, marginBottom: -12, marginTop: -10 }} />
-                        )}
-                    </IconButton>
-                    <Typography variant="h6" sx={{ marginLeft: 1 }}>
-                        {post.likesAmount} Likes
-                    </Typography>
-                    {/* Additional action buttons can be added here (e.g., Comment, Share) */}
-                </Actions>
 
                 {/* Description */}
-                <Description>
-                    <Typography variant="h6">
-                        {post.video && (
-                            <DurationText variant="h5" component="span">
-                                <AccessTimeIcon sx={{ fontSize: 30, ml: 1, mr: 0.5, marginLeft: 0.5 }} />
-                                {formatDuration(fixedDuration)}
-                            </DurationText>
+                {post.mediaType !== 'text' && (
+                    <Description>
+                        <Typography variant="body1" sx={{ color: 'rgba(71, 85, 105, 0.9)', lineHeight: 1.6 }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: 'rgba(15, 23, 42, 0.95)' }}>
+                                {post.girlUsername}
+                            </Box>{' '}
+                            {post.text}
+                        </Typography>
+                        {post.createdAt && (
+                            <Typography variant="caption" sx={{ color: 'rgba(100, 116, 139, 0.8)', mt: 1, display: 'block' }}>
+                                {new Date(post.createdAt).toLocaleDateString('es-ES', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
                         )}
-                    </Typography>
-                    <Typography variant="h6">
-                        <strong>{post.girlName}</strong> {post.description}
-                    </Typography>
-                </Description>
-            </PostCard>
+                    </Description>
+                )}
+            </ModernCard>
 
             {/* Fullscreen Modal */}
-            {post.image && (
+            {post.mediaType === 'image' && post.uploadId && (
                 <Modal
                     open={isFullscreen}
                     onClose={handleCloseFullscreen}
@@ -291,7 +215,7 @@ function GirlPostComp({ girl, user, post, index, onLike }) {
                 >
                     <Box sx={modalStyle}>
                         <img
-                            src={`https://d3sog3sqr61u3b.cloudfront.net/${post.image}`}
+                            src={post.mediaUrl}
                             alt={`Post ${index} Fullscreen`}
                             style={{
                                 maxWidth: '100%',

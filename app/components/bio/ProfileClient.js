@@ -13,41 +13,62 @@ import { styled } from "@mui/material/styles";
 import CakeIcon from '@mui/icons-material/Cake';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LockIcon from "@mui/icons-material/Lock";
-import VerifiedIcon from "@/app/components/landing/VerifiedIcon";
+import VerifiedIcon from "@/app/components/homepage/VerifiedIcon";
 
 // Keep your styled components for buttons
 const GradientButton = styled(Button)(({ theme }) => ({
-    // Your existing styles
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
     border: 0,
     borderRadius: 25,
-    boxShadow: '0 3px 5px 2px rgba(255, 255, 255, .2)',
-    color: 'white',
-    fontSize: 24,
-    height: 48,
-    padding: '0 30px',
+    color: '#ffffff',
+    fontSize: '1.2rem',
+    height: 56,
+    padding: '0 40px',
     margin: '10px 0',
-    fontWeight: 'bold',
+    fontWeight: 600,
     textTransform: 'none',
+    boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.2)',
+    transition: 'all 0.3s ease',
     '&:hover': {
-        background: 'linear-gradient(45deg, #FE8B8B 30%, #FFAE53 90%)',
+        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 6px 20px 0 rgba(0, 0, 0, 0.3)',
     },
 }));
 
 const PremiumButton = styled(Button)(({ theme }) => ({
-    // Your existing styles
-    background: 'linear-gradient(45deg, #FFD700 30%, #FFA500 90%)',
+    background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
     border: 0,
     borderRadius: 25,
     color: '#000000',
-    fontSize: '1.1rem',
-    height: 48,
-    padding: '0 32px',
+    fontSize: '1.2rem',
+    height: 56,
+    padding: '0 40px',
     textTransform: 'none',
     fontWeight: 600,
+    boxShadow: '0 4px 15px 0 rgba(255, 165, 0, 0.3)',
+    transition: 'all 0.3s ease',
     '&:hover': {
-        background: 'linear-gradient(45deg, #FFA500 30%, #FFD700 90%)',
-        boxShadow: '0 3px 10px rgba(255, 165, 0, 0.3)',
+        background: 'linear-gradient(135deg, #FFA500 0%, #FFD700 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 6px 20px 0 rgba(255, 165, 0, 0.4)',
+    },
+}));
+
+const ComingSoonButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+    border: 0,
+    borderRadius: 25,
+    color: '#ffffff',
+    fontSize: '1.2rem',
+    height: 56,
+    padding: '0 40px',
+    textTransform: 'none',
+    fontWeight: 600,
+    cursor: 'not-allowed',
+    opacity: 0.8,
+    '&:hover': {
+        background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
     },
 }));
 
@@ -76,8 +97,8 @@ export default function ProfileClient({ girl }) {
 
     return (
         <Box sx={{ marginTop: { xs: 10, md: 5 } }}>
-            <Box display="flex" justifyContent="center">
-                <Typography variant="h4" gutterBottom>
+            <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+                <Typography variant="h4" gutterBottom sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 700 }}>
                     {girl.username}
                 </Typography>
                 <VerifiedIcon/>
@@ -95,47 +116,56 @@ export default function ProfileClient({ girl }) {
                     alignItems="center"
                     mr={2}
                 >
-                    <Typography variant="h5">
+                    <Typography variant="h5" sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 700 }}>
                         {formatNumber(girl.followersCount)}
                     </Typography>
-                    <Typography variant="subtitle1">
+                    <Typography variant="subtitle1" sx={{ color: 'rgba(71, 85, 105, 0.8)' }}>
                         Seguidores
                     </Typography>
                 </Box>
             </Box>
 
             <Box display="flex" alignItems="center" mb={2}>
-                <CakeIcon sx={{ mr: 1, fontSize: 36 }} />
-                <Typography variant="h6">
+                <CakeIcon sx={{ mr: 1, fontSize: 28, color: 'rgba(71, 85, 105, 0.8)' }} />
+                <Typography variant="h6" sx={{ color: 'rgba(51, 65, 85, 0.9)' }}>
                     {girl.age} años
                 </Typography>
             </Box>
 
             <Box display="flex" alignItems="center" mb={2}>
-                <LocationOnIcon sx={{ mr: 1, fontSize: 36 }} />
-                <Typography variant="h6">
+                <LocationOnIcon sx={{ mr: 1, fontSize: 28, color: 'rgba(71, 85, 105, 0.8)' }} />
+                <Typography variant="h6" sx={{ color: 'rgba(51, 65, 85, 0.9)' }}>
                     {girl.country}
                 </Typography>
             </Box>
 
             <Divider
                 sx={{
-                    my: 2,
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    my: 3,
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
                 }}
             />
 
-            <Typography variant="h6" paragraph>
+            <Typography variant="body1" paragraph sx={{ 
+                color: 'rgba(71, 85, 105, 0.9)', 
+                fontSize: '1.1rem',
+                lineHeight: 1.8,
+                mb: 4
+            }}>
                 {girl.bio}
             </Typography>
 
             <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center' }}>
-                {(girl.premium && !isPremium)||girl.private ? (
+                {girl.private ? (
+                    <ComingSoonButton disabled>
+                        Próximamente
+                    </ComingSoonButton>
+                ) : girl.premium && !isPremium ? (
                     <PremiumButton
                         onClick={handlePremium}
                         startIcon={<LockIcon />}
                     >
-                        2026
+                        Premium
                     </PremiumButton>
                 ) : (
                     <GradientButton
@@ -146,15 +176,29 @@ export default function ProfileClient({ girl }) {
                 )}
             </Stack>
 
-            {girl.premium && !isPremium && (
+            {girl.private ? (
                 <Typography variant="body2" sx={{
-                    color: '#FFA500',
+                    color: '#64748b',
                     fontStyle: 'italic',
                     mt: -2,
-                    mb: 2
+                    mb: 2,
+                    textAlign: 'center'
                 }}>
-                    Necesitas una cuenta premium para hablar con esta chica
+                    Esta chica estará disponible pronto
                 </Typography>
+            ) : (
+                girl.premium && !isPremium && (
+                    <Typography variant="body2" sx={{
+                        color: '#f59e0b',
+                        fontStyle: 'italic',
+                        mt: -2,
+                        mb: 2,
+                        fontWeight: 500,
+                        textAlign: 'center'
+                    }}>
+                        Necesitas una cuenta premium para hablar con esta chica
+                    </Typography>
+                )
             )}
         </Box>
     );

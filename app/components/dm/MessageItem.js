@@ -1,157 +1,187 @@
 // components/MessageItem.js
 import React from 'react';
-import { ListItem, Grid, Avatar, Typography, Box, Button } from '@mui/material';
+import { ListItem, Avatar, Typography, Box, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import { flash } from './DMListStyled';
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+    width: 80,
+    height: 80,
+    border: '3px solid rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.1)',
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+        transform: 'scale(1.05)',
+    },
+}));
+
+const MessageButton = styled(Button)(({ theme }) => ({
+    borderRadius: 12,
+    padding: '8px 20px',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    textTransform: 'none',
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+    color: 'white',
+    boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.2)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 6px 20px 0 rgba(0, 0, 0, 0.3)',
+    },
+}));
 
 const MessageItem = ({ chat, index, totalChats, onMessageClick, convertTimestamp, truncateWithEllipsis }) => {
     const date = convertTimestamp(chat.lastMessage?.timestamp);
-    const dateLastSeenGirl = convertTimestamp(chat.lastSeenGirl);
 
     return (
         <ListItem
             sx={{
-                borderBottom: index !== totalChats - 1 ? '1px solid grey' : 'none',
+                borderBottom: index !== totalChats - 1 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
                 mb: 2,
                 alignItems: 'flex-start',
-                paddingBottom: '25px',
+                paddingBottom: '20px',
+                paddingTop: '20px',
+                px: 2,
+                display: 'flex',
+                gap: 3,
             }}
         >
-            <Grid container spacing={2} alignItems="center">
-                <Grid item xs={4}>
-                    <Link href={`/${chat.girlId}`} passHref>
-                        <Avatar
-                            src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${chat.picture}/w=200,fit=scale-down`}
-                            alt={`Foto de ${chat.girlName}`}
-                            sx={{ width: 70, height: 70, borderRadius: '10%' }}
-                        />
-                    </Link>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                        <Box
-                            sx={{
-                                width: 10,
-                                height: 10,
-                                borderRadius: '50%',
-                                backgroundColor: chat.isActive ? 'green' : 'red',
-                                marginRight: 1,
-                                animation: `${flash} ${chat.isActive ? '2s' : '2s'} infinite`,
-                            }}
-                        />
-                        <Typography variant="body2" style={{ color: 'gray' }}>
-                            {chat.isActive ? 'Activa' : 'Inactiva'}
-                        </Typography>
-                    </Box>
-                    {!chat.isActive && dateLastSeenGirl && (
-                        <Typography variant="body2" style={{ marginTop: 1, color: 'gray' }}>
-                            Activa{' '}
-                            {formatDistanceToNow(dateLastSeenGirl, { addSuffix: true, locale: es })}
-                        </Typography>
-                    )}
-                </Grid>
+            {/* Avatar Column */}
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                minWidth: 'fit-content'
+            }}>
+                <Link href={`/${chat.girlId}`} passHref style={{ textDecoration: 'none' }}>
+                    <StyledAvatar
+                        src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${chat.picture}/w=200,fit=scale-down`}
+                        alt={`Foto de ${chat.girlName}`}
+                    />
+                </Link>
+                <Typography
+                    variant="body2"
+                    sx={{ 
+                        mt: 1,
+                        fontWeight: 600,
+                        color: 'rgba(15, 23, 42, 0.95)',
+                        textAlign: 'center',
+                        maxWidth: 100,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {chat.girlName}
+                </Typography>
+            </Box>
 
-                <Grid item xs={8}>
-                    <Typography
-                        variant="subtitle1"
-                        sx={{ fontFamily: 'Pacifico, cursive', marginBottom: 1 }}
-                    >
-                        {chat.girlName}
-                    </Typography>
+            {/* Message Content Column */}
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {/* Message Content */}
 
+                <Box sx={{
+                    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                    borderRadius: 2,
+                    p: 2,
+                    mb: 2,
+                    flex: 1,
+                }}>
                     <Box sx={{
-                        width: '100%',
                         display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px'
+                        alignItems: 'center',
+                        gap: 1,
+                        color: 'rgba(51, 65, 85, 0.95)',
+                        mb: 1,
                     }}>
-                        <Box sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            color: 'white',
-                            fontWeight: 'bold',
-                            fontSize: 12,
-                        }}>
-                            {chat.lastMessage?.mediaType === 'image' && (
-                                <>
-                                    <PhotoCameraIcon fontSize="small" />
-                                    {chat.lastMessage?.content || 'Sin mensajes'}
-                                </>
-                            )}
-                            {chat.lastMessage?.mediaType === 'audio' && (
-                                <>
-                                    <AudiotrackIcon fontSize="small" />
-                                    {chat.lastMessage?.content || 'Sin mensajes'}
-                                </>
-                            )}
-                            {chat.lastMessage?.mediaType === 'video' && (
-                                <>
-                                    <VideocamIcon fontSize="small" />
-                                    {chat.lastMessage?.content || 'Sin mensajes'}
-                                </>
-                            )}
-                            {chat.lastMessage?.mediaType === 'text' && (
-                                <Typography
-                                    component="span"
-                                    sx={{
-                                        overflow: 'hidden',
-                                        display: 'inline-block',
-                                        width: '100%',
-                                        '& span:nth-of-type(1)': { fontWeight: 'bold' },
-                                        '& span:nth-of-type(2)': {
-                                            opacity: 0.7,
-                                            background: 'linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
-                                        }
-                                    }}
-                                >
-                                    {chat.lastMessage?.message && (
-                                        truncateWithEllipsis(chat.lastMessage?.message || 'Sin mensajes', 22)
-                                    )}
+                        {chat.lastMessage?.mediaType === 'image' && (
+                            <>
+                                <PhotoCameraIcon fontSize="small" sx={{ color: '#1a1a1a' }} />
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    Foto enviada
                                 </Typography>
-                            )}
-                        </Box>
-
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            onClick={() => onMessageClick(chat.girlId)}
-                            sx={{
-                                backgroundImage: 'linear-gradient(45deg, #FFFFFF, #E0E0E0)',
-                                color: 'black',
-                                padding: '6px 12px',
-                                borderRadius: '5px',
-                                fontWeight: 'bold',
-                                fontSize: 11,
-                                boxShadow: '0 2px 4px 1px rgba(255, 255, 255, .3)',
-                                '&:hover': {
-                                    background: 'linear-gradient(45deg, #E0E0E0 30%, #FFFFFF 90%)',
-                                },
-                            }}
-                        >
-                            {chat.lastMessage?.mediaType === 'image' && 'Ver imagen'}
-                            {chat.lastMessage?.mediaType === 'audio' && 'Escuchar audio'}
-                            {chat.lastMessage?.mediaType === 'video' && 'Ver video'}
-                            {chat.lastMessage?.mediaType === 'text' && 'Ver mensaje'}
-                            {!chat.lastMessage?.mediaType && 'Sin mensajes'}
-                        </Button>
+                            </>
+                        )}
+                        {chat.lastMessage?.mediaType === 'audio' && (
+                            <>
+                                <AudiotrackIcon fontSize="small" sx={{ color: '#1a1a1a' }} />
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    Audio enviado
+                                </Typography>
+                            </>
+                        )}
+                        {chat.lastMessage?.mediaType === 'video' && (
+                            <>
+                                <VideocamIcon fontSize="small" sx={{ color: '#1a1a1a' }} />
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    Video enviado
+                                </Typography>
+                            </>
+                        )}
+                        {(!chat.lastMessage?.mediaType || chat.lastMessage?.mediaType === 'text') && (
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    lineHeight: 1.5,
+                                    color: 'rgba(15, 23, 42, 0.8)',
+                                    maxHeight: '3em', // 2 lines * 1.5 line height
+                                }}
+                            >
+                                {chat.lastMessage?.content ? 
+                                    (chat.lastMessage.content.length > 60 ? 
+                                        chat.lastMessage.content.substring(0, 60) + '...' : 
+                                        chat.lastMessage.content
+                                    ) : 
+                                    'Sin mensajes'
+                                }
+                            </Typography>
+                        )}
                     </Box>
+                </Box>
 
-                    <Typography variant="body2" sx={{ marginTop: 1, color: 'gray' }}>
-                        {date
-                            ? formatDistanceToNow(date, {
-                                addSuffix: true,
-                                locale: es,
-                            })
-                            : 'Tiempo desconocido'}
-                    </Typography>
-                </Grid>
-            </Grid>
+                {/* Action Button */}
+                <MessageButton
+                    onClick={() => onMessageClick(chat.girlId)}
+                    fullWidth
+                >
+                    {chat.lastMessage?.mediaType === 'image' && 'Ver imagen'}
+                    {chat.lastMessage?.mediaType === 'audio' && 'Escuchar audio'}
+                    {chat.lastMessage?.mediaType === 'video' && 'Ver video'}
+                    {(chat.lastMessage?.mediaType === 'text' || (chat.lastMessage?.content && !chat.lastMessage?.mediaType)) && 'Ver mensaje'}
+                    {!chat.lastMessage && 'Iniciar conversación'}
+                </MessageButton>
+                
+                {/* Timestamp */}
+                <Typography 
+                    variant="caption" 
+                    sx={{ 
+                        color: 'rgba(71, 85, 105, 0.6)', 
+                        fontSize: '0.75rem',
+                        textAlign: 'center',
+                        mt: 1
+                    }}
+                >
+                    {date
+                        ? formatDistanceToNow(date, {
+                            addSuffix: true,
+                            locale: es,
+                        })
+                        : 'Tiempo desconocido'}
+                </Typography>
+            </Box>
         </ListItem>
     );
 };

@@ -11,30 +11,16 @@ import {
     Button,
     Box,
     Typography,
-    Card,
     Skeleton,
     Stack,
     Modal
 } from '@mui/material';
+import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
 
 import CloseIcon from '@mui/icons-material/Close';
 import LockIcon from '@mui/icons-material/Lock';
 
-const ElegantCard = styled(Card)(({ theme }) => ({
-    position: 'relative',
-    textAlign: 'center',
-    background: '#1a1a1a',
-    borderRadius: theme.shape.borderRadius * 2,
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
-    padding: theme.spacing(4),
-    height: '100%',
-    overflow: 'hidden',
-    transition: 'transform 0.3s ease-in-out',
-    '&:hover': {
-        transform: 'translateY(-5px)',
-    },
-}));
+// Using ModernCard instead of custom ElegantCard for consistency
 
 const ProfileImageContainer = styled(Box)(({ theme }) => ({
     position: 'relative',
@@ -42,6 +28,7 @@ const ProfileImageContainer = styled(Box)(({ theme }) => ({
     height: '120px',
     margin: '0 auto',
     marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(-8),
     cursor: 'pointer',
     '&::after': {
         content: '""',
@@ -50,7 +37,7 @@ const ProfileImageContainer = styled(Box)(({ theme }) => ({
         left: -3,
         right: -3,
         bottom: -3,
-        background: 'linear-gradient(45deg, #0096c7, #023e8a)',
+        background: 'linear-gradient(135deg, #1a1a1a, #000000)',
         borderRadius: '50%',
         zIndex: 0,
     },
@@ -59,9 +46,13 @@ const ProfileImageContainer = styled(Box)(({ theme }) => ({
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
     width: '100%',
     height: '100%',
-    border: '4px solid #1a1a1a',
+    border: '4px solid rgba(255, 255, 255, 0.9)',
     position: 'relative',
     zIndex: 1,
+    transition: 'transform 0.3s ease',
+    '&:hover': {
+        transform: 'scale(1.05)',
+    },
 }));
 
 const ExpandedImageModal = styled(Modal)({
@@ -89,18 +80,21 @@ const CloseButton = styled(Button)({
 });
 
 const GradientButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #0096c7 30%, #023e8a 90%)',
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
     border: 0,
     borderRadius: 25,
     color: '#ffffff',
-    fontSize: '1.1rem',
+    fontSize: '1rem',
     height: 48,
     padding: '0 32px',
     textTransform: 'none',
     fontWeight: 600,
+    boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.2)',
+    transition: 'all 0.3s ease',
     '&:hover': {
-        background: 'linear-gradient(45deg, #023e8a 30%, #0096c7 90%)',
-        boxShadow: '0 3px 10px rgba(0, 150, 199, 0.3)',
+        background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+        transform: 'translateY(-2px)',
+        boxShadow: '0 6px 20px 0 rgba(0, 0, 0, 0.3)',
     },
 }));
 
@@ -121,23 +115,24 @@ const PremiumButton = styled(Button)(({ theme }) => ({
 }));
 
 const GradientButtonTwo = styled(Button)(({ theme }) => ({
-    background: 'white',
-    border: 0,
+    background: 'transparent',
+    border: '2px solid rgba(0, 0, 0, 0.2)',
     borderRadius: 25,
-    color: 'black',
-    fontSize: '1.1rem',
+    color: 'rgba(15, 23, 42, 0.95)',
+    fontSize: '1rem',
     height: 48,
     padding: '0 32px',
     textTransform: 'none',
     fontWeight: 600,
+    transition: 'all 0.3s ease',
     '&:hover': {
-        background: 'linear-gradient(45deg, #023e8a 30%, #0096c7 90%)',
-        boxShadow: '0 3px 10px rgba(0, 150, 199, 0.3)',
+        border: '2px solid rgba(0, 0, 0, 0.4)',
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
     },
 }));
 
-const FollowerCount = styled(Box)({
-    color: '#ffffff',
+const FollowerCount = styled(Box)(({ theme }) => ({
+    color: 'rgba(15, 23, 42, 0.95)',
     display: 'flex',
     alignItems: 'baseline',
     justifyContent: 'center',
@@ -148,29 +143,22 @@ const FollowerCount = styled(Box)({
     },
     '& .label': {
         fontSize: '14px',
-        color: 'rgba(255, 255, 255, 0.7)',
+        color: 'rgba(71, 85, 105, 0.8)',
     },
-});
+}));
 
 const BackgroundImage = styled(Box)(({ backgroundurl }) => ({
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: '30%',
+    height: '35%',
     backgroundImage: `url(${backgroundurl})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    opacity: 0.3,
-    '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'linear-gradient(to bottom, rgba(26,26,26,0) 0%, rgba(26,26,26,1) 100%)',
-    },
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
 }));
 
 const PremiumGirlIndicator = styled(Box)(({ theme }) => ({
@@ -183,6 +171,23 @@ const PremiumGirlIndicator = styled(Box)(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     zIndex: 2,
+}));
+
+const ComingSoonButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+    border: 0,
+    borderRadius: 25,
+    color: '#ffffff',
+    fontSize: '1rem',
+    height: 48,
+    padding: '0 32px',
+    textTransform: 'none',
+    fontWeight: 600,
+    cursor: 'not-allowed',
+    opacity: 0.8,
+    '&:hover': {
+        background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+    },
 }));
 
 const CreatorsGrid = ({ initialGirls }) => {
@@ -246,25 +251,34 @@ const CreatorsGrid = ({ initialGirls }) => {
 
     return (
         <>
-            <Grid container spacing={4}>
+            <Grid container spacing={4} justifyContent="center">
                 {loading ? (
                     [...Array(6)].map((_, index) => (
-                        <Grid item xs={12} sm={6} md={4} key={index}>
+                        <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                             <Skeleton
                                 variant="rectangular"
                                 height={400}
                                 sx={{
-                                    bgcolor: 'rgba(255, 255, 255, 0.1)',
-                                    borderRadius: 4
+                                    bgcolor: 'rgba(0, 0, 0, 0.11)',
+                                    borderRadius: '20px'
                                 }}
                             />
                         </Grid>
                     ))
                 ) : (
                     girls && girls.length > 0 && girls.map((girl) => (
-                        <Grid item xs={12} sm={6} md={4} key={girl.id}>
-                            <ElegantCard>
-                                {girl.premium && (
+                        <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={girl.id}>
+                            <ModernCard 
+                                variant="elevated" 
+                                animate={true}
+                                sx={{ 
+                                    height: '100%',
+                                    textAlign: 'center',
+                                    position: 'relative',
+                                    overflow: 'hidden'
+                                }}
+                            >
+                                {girl.premium && !girl.private && (
                                     <PremiumGirlIndicator>
                                         <LockIcon sx={{ fontSize: 16, mr: 0.5, color: '#000' }} />
                                         <Typography variant="caption" sx={{ fontWeight: 600, color: '#000' }}>
@@ -272,10 +286,28 @@ const CreatorsGrid = ({ initialGirls }) => {
                                         </Typography>
                                     </PremiumGirlIndicator>
                                 )}
+                                {girl.private && (
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+                                        borderRadius: '25px',
+                                        padding: '4px 12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        zIndex: 2,
+                                    }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 600, color: '#fff' }}>
+                                            Próximamente
+                                        </Typography>
+                                    </Box>
+                                )}
                                 <BackgroundImage
                                     backgroundurl={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.background}/w=200,fit=scale-down`}
                                 />
-                                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                                <CardContentWrapper>
+                                    <Box sx={{ position: 'relative', zIndex: 1, mt: '25%' }}>
                                     <ProfileImageContainer
                                         onClick={() => handleImageClick(`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`)}
                                     >
@@ -285,20 +317,20 @@ const CreatorsGrid = ({ initialGirls }) => {
                                         />
                                     </ProfileImageContainer>
 
-                                    <Typography variant="h5" sx={{ color: '#ffffff', fontWeight: 600, mb: 1 }}>
+                                    <Typography variant="h5" sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, mb: 1 }}>
                                         {girl.name}
                                     </Typography>
 
-                                    <Typography variant="h6" sx={{ color: '#ffffff', fontWeight: 600, mb: 1 }}>
+                                    <Typography variant="h6" sx={{ color: 'rgba(51, 65, 85, 0.9)', fontWeight: 500, mb: 1 }}>
                                         {girl.age} años
                                     </Typography>
 
                                     <Typography
                                         variant="body1"
                                         sx={{
-                                            color: '#9e9e9e',
+                                            color: 'rgba(71, 85, 105, 0.8)',
                                             mb: 2,
-                                            height: 30,
+                                            height: 60,
                                             overflow: 'hidden',
                                             display: '-webkit-box',
                                             WebkitLineClamp: 3,
@@ -315,7 +347,11 @@ const CreatorsGrid = ({ initialGirls }) => {
 
                                     <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: 'center' }}>
                                         {/* Conditional logic for buttons */}
-                                        {girl.premium && !isPremium ? (
+                                        {girl.private ? (
+                                            <ComingSoonButton disabled>
+                                                Próximamente
+                                            </ComingSoonButton>
+                                        ) : girl.premium && !isPremium ? (
                                             <PremiumButton
                                                 onClick={handleBuyPremiumClick}
                                                 startIcon={<LockIcon />}
@@ -336,19 +372,33 @@ const CreatorsGrid = ({ initialGirls }) => {
                                         </GradientButtonTwo>
                                     </Stack>
 
-                                    {/* Premium notification for non-premium users */}
-                                    {girl.premium && !isPremium && (
+                                    {/* Notifications */}
+                                    {girl.private ? (
                                         <Typography variant="body2" sx={{
-                                            color: '#FFA500',
+                                            color: '#64748b',
                                             fontStyle: 'italic',
                                             mt: -2,
-                                            mb: 2
+                                            mb: 2,
+                                            fontWeight: 500
                                         }}>
-                                            Necesitas una cuenta premium para hablar con esta chica
+                                            Esta chica estará disponible pronto
                                         </Typography>
+                                    ) : (
+                                        girl.premium && !isPremium && (
+                                            <Typography variant="body2" sx={{
+                                                color: '#f59e0b',
+                                                fontStyle: 'italic',
+                                                mt: -2,
+                                                mb: 2,
+                                                fontWeight: 500
+                                            }}>
+                                                Necesitas una cuenta premium para hablar con esta chica
+                                            </Typography>
+                                        )
                                     )}
-                                </Box>
-                            </ElegantCard>
+                                    </Box>
+                                </CardContentWrapper>
+                            </ModernCard>
                         </Grid>
                     ))
                 )}

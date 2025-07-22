@@ -5,48 +5,52 @@ import { getChatList } from '@/app/services/chatService';
 import { useStore } from '@/app/store/store';
 import { List, ListItem, Grid, Skeleton, Typography } from '@mui/material';
 import MessageItem from './MessageItem';
-import { GlassCard } from './DMListStyled';
+import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
 import { useRouter } from 'next/navigation';
-import { useMultipleMessageResponder } from "@/app/components/hooks/UseMultipleMessageResponder";
 import { convertFirestoreTimestampToDate, truncateWithEllipsis } from '@/app/components/dm/messageUtils';
 
-const MessageList = () => {
+const MessageList = ({ initialUser }) => {
     const router = useRouter();
-    const chats = useStore((state) => state.chats);
+    const chats = useStore((state) => state.chatsV2);
     const user = useStore((state) => state.user);
+    const setUser = useStore((state) => state.setUser);
 
-    useMultipleMessageResponder({
-        userId: user?.uid,
-        chats: chats || []
-    });
+    // Set user in store if provided as prop
+    useEffect(() => {
+        if (initialUser && !user) {
+            setUser(initialUser);
+        }
+    }, [initialUser, user, setUser]);
 
     useEffect(() => {
         async function fetchChats() {
-            if (user) {
+            const currentUser = user || initialUser;
+            if (currentUser) {
                 await getChatList();
             }
         }
         fetchChats();
-    }, []);
+    }, [user, initialUser]);
 
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
     };
     return (
-        <GlassCard>
-            <Typography
-                variant="h5"
-                sx={{
-                    mb: 2,
-                    color: 'white',
-                    textAlign: 'center',
-                    fontFamily: 'Anton, sans-serif',
-                }}
-            >
-                Tus Mensajes
-            </Typography>
+        <ModernCard variant="elevated" animate={true} sx={{ mt: 4 }}>
+            <CardContentWrapper>
+                <Typography
+                    variant="h5"
+                    sx={{
+                        mb: 3,
+                        color: 'rgba(15, 23, 42, 0.95)',
+                        textAlign: 'center',
+                        fontWeight: 700,
+                    }}
+                >
+                    Tus Mensajes
+                </Typography>
 
-            {user ? (
+            {(user || initialUser) ? (
                 <List>
                     {!chats ? (
                         [...Array(4)].map((_, index) => (
@@ -60,14 +64,14 @@ const MessageList = () => {
                                 }}
                             >
                                 <Grid container spacing={2} alignItems="center">
-                                    <Grid item xs={4}>
-                                        <Skeleton variant="rectangular" width={70} height={70} sx={{ borderRadius: '10%' }} />
+                                    <Grid item size={4}>
+                                        <Skeleton variant="rectangular" width={70} height={70} sx={{ borderRadius: '10%', bgcolor: 'rgba(0, 0, 0, 0.11)' }} />
                                     </Grid>
 
-                                    <Grid item xs={8}>
-                                        <Skeleton variant="text" width="80%" height={30} sx={{ marginBottom: 1 }} />
-                                        <Skeleton variant="rectangular" width="100%" height={36} />
-                                        <Skeleton variant="text" width="60%" height={20} sx={{ marginTop: 1 }} />
+                                    <Grid item size={8}>
+                                        <Skeleton variant="text" width="80%" height={30} sx={{ marginBottom: 1, bgcolor: 'rgba(0, 0, 0, 0.11)' }} />
+                                        <Skeleton variant="rectangular" width="100%" height={36} sx={{ bgcolor: 'rgba(0, 0, 0, 0.11)' }} />
+                                        <Skeleton variant="text" width="60%" height={20} sx={{ marginTop: 1, bgcolor: 'rgba(0, 0, 0, 0.11)' }} />
                                     </Grid>
                                 </Grid>
                             </ListItem>
@@ -87,18 +91,19 @@ const MessageList = () => {
                     ) : (
                         <Typography
                             variant="h6"
-                            sx={{ textAlign: 'center', color: 'white', mt: 3 }}
+                            sx={{ textAlign: 'center', color: 'rgba(71, 85, 105, 0.8)', mt: 3 }}
                         >
                             No hay chats recientes
                         </Typography>
                     )}
                 </List>
             ) : (
-                <Typography variant="h6" sx={{ textAlign: 'center', color: 'white', mt: 3, marginBottom: 2 }}>
+                <Typography variant="h6" sx={{ textAlign: 'center', color: 'rgba(71, 85, 105, 0.8)', mt: 3, marginBottom: 2 }}>
                     Regístrate para textear
                 </Typography>
             )}
-        </GlassCard>
+            </CardContentWrapper>
+        </ModernCard>
     );
 };
 

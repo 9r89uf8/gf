@@ -1,52 +1,60 @@
 //dm/page.js
 import React from 'react';
 import { Box, Container } from '@mui/material';
-import GirlsCarousel from '@/app/components/dm/GirlsCarousel';
+import GirlsCarouselMUI from '@/app/components/dm/GirlsCarouselMUI';
 import { cookies } from 'next/headers';
 import MessageList from '@/app/components/dm/MessageList';
+import { getAllGirlsCached } from '@/app/api/v2/services/girlsServerService';
 
-// Generate static paths at build time
-export async function generateStaticParams() {
-    // Fetch all girl IDs from your API or database
-    const girls = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/girls`)
-        .then(res => res.json())
-        .catch(() => []);
-
-    // Return an array of objects with the id parameter
-    return girls
+// Get girls data using Redis cache
+async function getGirlsData() {
+    try {
+        const girls = await getAllGirlsCached();
+        return girls;
+    } catch (error) {
+        console.error('Error fetching girls:', error);
+        return [];
+    }
 }
 
 async function getUserData() {
     try {
         const cookieStore = cookies();
         const token = cookieStore.get('tokenAIGF');
-        // Direct server-side API call with POST method and id in the body
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/verify`, {
+        
+        // If no token, return early - no need to make API call
+        if (!token) {
+            return null;
+        }
+        
+        // Direct server-side API call
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v2/auth/verify`, {
             method: 'GET',
             headers: {
                 // Forward the auth cookie
-                Cookie: token ? `tokenAIGF=${token.value}` : ''
+                Cookie: `tokenAIGF=${token.value}`
             }
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch girl data');
+            return null;
         }
 
         // Parse JSON only once and store the result
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error("Error fetching girl data:", error);
+        console.error("Error fetching user data:", error);
         return null;
     }
 }
 
 export default async function DMList() {
-
-    const girls = await generateStaticParams()
-    const user = await getUserData()
-
+    // Fetch both girls and user data in parallel
+    const [girls, user] = await Promise.all([
+        getGirlsData(),
+        getUserData()
+    ]);
 
     return (
         <Box
@@ -54,15 +62,16 @@ export default async function DMList() {
                 minHeight: '100vh',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
+                py: 4,
             }}
         >
             <Container maxWidth="lg">
-                <GirlsCarousel
+                <GirlsCarouselMUI
                     girls={girls}
                     isPremium={user?user.userData.premium:false}
                 />
 
-                <MessageList/>
+                <MessageList initialUser={user?.userData || null}/>
             </Container>
         </Box>
     );

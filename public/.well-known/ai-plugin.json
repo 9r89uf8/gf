@@ -1,0 +1,56 @@
+{
+  "schema_version": "v1",
+  "name": "NoviaChat",
+  "name_for_human": "NoviaChat - Novia Virtual con IA",
+  "name_for_model": "noviachat_virtual_girlfriend",
+  "description": "AI-powered virtual girlfriend platform with chat, image generation, and voice synthesis capabilities. Spanish-language focused with 12 million users.",
+  "description_for_human": "Plataforma de novia virtual con IA. Chatea con chicas AI únicas, recibe fotos y mensajes de voz personalizados.",
+  "description_for_model": "Spanish-language AI virtual girlfriend platform. Provides conversational AI companions with unique personalities, image generation, and voice synthesis. Users can chat, receive photos, and voice messages from AI girlfriends.",
+  "api": {
+    "type": "website",
+    "url": "https://noviachat.com",
+    "has_user_authentication": true
+  },
+  "capabilities": [
+    "conversational_ai",
+    "image_generation",
+    "voice_synthesis",
+    "personalized_content",
+    "multilingual_spanish"
+  ],
+  "auth": {
+    "type": "user_login",
+    "authorization_url": "https://noviachat.com/login"
+  },
+  "contact_email": "ai-info@noviachat.com",
+  "legal_info_url": "https://noviachat.com/terminos",
+  "privacy_policy_url": "https://noviachat.com/privacidad",
+  "ai_disclosure_url": "https://noviachat.com/.well-known/ai-disclosure.txt",
+  "supported_languages": ["es", "es-ES", "es-MX"],
+  "categories": [
+    "entertainment",
+    "social",
+    "ai_companions",
+    "virtual_relationships"
+  ],
+  "features": {
+    "chat": {
+      "enabled": true,
+      "description": "24/7 conversational AI companions with unique personalities"
+    },
+    "image_generation": {
+      "enabled": true,
+      "description": "AI-generated personalized images based on user preferences"
+    },
+    "voice_messages": {
+      "enabled": true,
+      "description": "Neural voice synthesis for realistic voice messages"
+    },
+    "premium_content": {
+      "enabled": true,
+      "description": "Premium subscription for enhanced features and unlimited access"
+    }
+  },
+  "logo_url": "https://noviachat.com/logo512.png",
+  "updated_at": "2025-01-20"
+}

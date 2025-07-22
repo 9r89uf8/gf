@@ -7,7 +7,8 @@ import ImageModalClient from "@/app/components/bio/ImageModalClient";
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import GlassCard from "@/app/components/bio/GlassCard";
+import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
+import { getGirlDataForSSR, getAllGirlsCached } from '@/app/api/v2/services/girlsServerService';
 
 // Static metadata
 export const metadata = {
@@ -17,36 +18,26 @@ export const metadata = {
 
 // Generate static paths at build time
 export async function generateStaticParams() {
-    // Fetch all girl IDs from your API or database
-    const girls = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/girls`)
-        .then(res => res.json())
-        .catch(() => []);
-
-    // Return an array of objects with the id parameter
-    return girls.map(girl => ({
-        id: girl.id,
-    }));
+    try {
+        // Use the cached service directly instead of API call
+        const girls = await getAllGirlsCached();
+        
+        // Return an array of objects with the id parameter
+        return girls.map(girl => ({
+            id: girl.id,
+        }));
+    } catch (error) {
+        console.error('Error generating static params:', error);
+        return [];
+    }
 }
 
 // Server-side data fetching
 async function getGirlData(id) {
     try {
-        // Direct server-side API call with POST method and id in the body
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/girl`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id }), // Include the id in the request body
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch girl data');
-        }
-
-        // Parse JSON only once and store the result
-        const data = await response.json();
-        return data;
+        // Use the cached service directly
+        const girlData = await getGirlDataForSSR(id);
+        return girlData;
     } catch (error) {
         console.error("Error fetching girl data:", error);
         return null;
@@ -69,24 +60,26 @@ export default async function GirlProfile({ params }) {
     const profileImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.picture}/w=200,fit=scale-down`;
 
     return (
-        <Box sx={{ minHeight: '100vh', padding: 2 }}>
-            <Container maxWidth="md">
-                <GlassCard>
-                    <Grid container spacing={4} alignItems="flex-start">
-                        {/* Left side: Server-rendered images */}
-                        <Grid item xs={12} md={4}>
-                            <ProfileImagesServer
-                                backgroundUrl={backgroundImageUrl}
-                                profileUrl={profileImageUrl}
-                            />
-                        </Grid>
+        <Box sx={{ minHeight: '100vh', py: 4 }}>
+            <Container maxWidth="lg">
+                <ModernCard variant="elevated" animate={true} sx={{ mb: 4 }}>
+                    <CardContentWrapper>
+                        <Grid container spacing={4} alignItems="flex-start">
+                            {/* Left side: Server-rendered images */}
+                            <Grid item size={{ xs: 12, md: 4 }}>
+                                <ProfileImagesServer
+                                    backgroundUrl={backgroundImageUrl}
+                                    profileUrl={profileImageUrl}
+                                />
+                            </Grid>
 
-                        {/* Right side: Client-side profile info */}
-                        <Grid item xs={12} md={8}>
-                            <ProfileClient girl={girlData} />
+                            {/* Right side: Client-side profile info */}
+                            <Grid item size={{ xs: 12, md: 8 }}>
+                                <ProfileClient girl={girlData} />
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </GlassCard>
+                    </CardContentWrapper>
+                </ModernCard>
 
                 {/* Client component for modal functionality */}
                 <ImageModalClient />

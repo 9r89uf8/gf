@@ -1,16 +1,8 @@
 // next.config.js
-const withPWA = require('next-pwa')({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  register: process.env.NODE_ENV !== 'development',
-  skipWaiting: true,
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   optimizeFonts: true, // Make sure font optimization is enabled
-  // Enable SWC minification for better performance
   swcMinify: true,
   images: {
     remotePatterns: [
@@ -34,42 +26,6 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/chicas-ia',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow'
-          }
-        ]
-      },
-      {
-        source: '/creadoras',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow'
-          }
-        ]
-      },
-    {
-      source: '/BgHd9LWDnFFhS6BoaqwL',
-          headers: [
-      {
-        key: 'X-Robots-Tag',
-        value: 'noindex, nofollow'
-      }
-    ]
-    },
-      {
-        source: '/uerQ5TMDanh1wex83HIE',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow'
-          }
-        ]
-      },
-      {
         // Add security headers for all pages
         source: '/:path*',
         headers: [
@@ -91,4 +47,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;

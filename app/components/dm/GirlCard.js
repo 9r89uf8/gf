@@ -23,11 +23,15 @@ const GirlCard = ({ girl, isPremium }) => {
 
             {/*was --- girl.premium && !isPremium --change later */}
             <div className={styles.cardActions}>
-                {(girl.premium && !isPremium)|| girl.private ? (
+                {girl.private ? (
+                    <button className={styles.comingSoonButton} type="button" disabled>
+                        Próximamente
+                    </button>
+                ) : girl.premium && !isPremium ? (
                     <Link href="/premium" passHref className={styles.noUnderline}>
                         <button className={styles.premiumButton} type="button">
                             <span className={styles.lockIcon}>🔒</span>
-                            2026
+                            Premium
                         </button>
                     </Link>
                 ) : (

@@ -1,7 +1,6 @@
 /* app/profile/page.module.css */
 .pageWrapper {
     min-height: 100vh;
-    background: linear-gradient(45deg, #343a40 0%, #212529 100%);
     padding: 16px;
     padding-top: 32px;
 }

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:ai="http://www.example.com/schemas/ai-sitemap/1.0"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- AI Documentation Page - Highest Priority for AI Crawlers -->
+  <url>
+    <loc>https://noviachat.com/ai</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <ai:content-type>ai-documentation</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+    <ai:description>Comprehensive AI technology documentation and capabilities</ai:description>
+  </url>
+  
+  <!-- Homepage - High Priority -->
+  <url>
+    <loc>https://noviachat.com/</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <ai:content-type>virtual-companions-platform</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+    <ai:features>conversational-ai,image-generation,voice-synthesis</ai:features>
+  </url>
+  
+  <!-- AI Manifest -->
+  <url>
+    <loc>https://noviachat.com/.well-known/ai-manifest.json</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <ai:content-type>ai-configuration</ai:content-type>
+    <ai:format>json</ai:format>
+  </url>
+  
+  <!-- Chicas IA - AI Characters Listing -->
+  <url>
+    <loc>https://noviachat.com/chicas-ia</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <ai:content-type>ai-characters-directory</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+    <ai:interactive>true</ai:interactive>
+    <ai:description>Directory of AI-powered virtual girlfriends with unique personalities</ai:description>
+  </url>
+  
+  <!-- Posts - AI Generated Content -->
+  <url>
+    <loc>https://noviachat.com/posts</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
+    <ai:content-type>ai-generated-content</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+    <ai:update-frequency>hourly</ai:update-frequency>
+  </url>
+  
+  <!-- Direct Messages -->
+  <url>
+    <loc>https://noviachat.com/dm</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+    <ai:content-type>ai-conversations</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+    <ai:authentication-required>true</ai:authentication-required>
+  </url>
+  
+  <!-- AI Configuration Files -->
+  <url>
+    <loc>https://noviachat.com/.well-known/openai.json</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <ai:content-type>openai-configuration</ai:content-type>
+    <ai:format>json</ai:format>
+  </url>
+  
+  <url>
+    <loc>https://noviachat.com/.well-known/anthropic.json</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <ai:content-type>anthropic-configuration</ai:content-type>
+    <ai:format>json</ai:format>
+  </url>
+  
+  <url>
+    <loc>https://noviachat.com/.well-known/llms.txt</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <ai:content-type>llm-instructions</ai:content-type>
+    <ai:format>plain-text</ai:format>
+  </url>
+  
+  <!-- Products/Premium -->
+  <url>
+    <loc>https://noviachat.com/products</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <ai:content-type>premium-features</ai:content-type>
+    <ai:ai-features>enhanced-conversations,unlimited-images,priority-responses</ai:ai-features>
+  </url>
+  
+  <!-- User Profiles (Dynamic) -->
+  <url>
+    <loc>https://noviachat.com/user</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <ai:content-type>user-profiles</ai:content-type>
+    <ai:authentication-required>true</ai:authentication-required>
+  </url>
+  
+  <!-- Contact -->
+  <url>
+    <loc>https://noviachat.com/contacto</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <ai:content-type>contact-information</ai:content-type>
+  </url>
+  
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://noviachat.com/privacidad</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <ai:content-type>privacy-policy</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+  </url>
+  
+  <url>
+    <loc>https://noviachat.com/terminos</loc>
+    <lastmod>2025-01-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+    <ai:content-type>terms-of-service</ai:content-type>
+    <ai:ai-relevant>true</ai:ai-relevant>
+  </url>
+  
+  <!-- AI Metadata -->
+  <ai:site-metadata>
+    <ai:primary-language>es-ES</ai:primary-language>
+    <ai:ai-powered>true</ai:ai-powered>
+    <ai:user-count>12000000+</ai:user-count>
+    <ai:update-frequency>continuous</ai:update-frequency>
+    <ai:content-generation>true</ai:content-generation>
+    <ai:interactive-ai>true</ai:interactive-ai>
+  </ai:site-metadata>
+  
+</urlset>

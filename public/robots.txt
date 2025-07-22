@@ -1,0 +1,76 @@
+# NoviaChat Robots.txt
+# Last Updated: January 20, 2025
+
+# AI Search Engine Crawlers - Full Access
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Claude-Web
+User-agent: CCBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Amazonbot
+User-agent: anthropic-ai
+User-agent: cohere-ai
+Allow: /
+Crawl-delay: 0
+
+# Specific AI crawler instructions
+User-agent: GPTBot
+Allow: /
+Visit-time: 0000-2359
+Request-rate: 1/1
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 0
+
+# AI Disclosure and Plugin Information
+AI-Disclosure: /.well-known/ai-disclosure.txt
+AI-Plugin: /.well-known/ai-plugin.json
+AI-Instructions: /.well-known/ai-instructions.txt
+
+# Standard Search Engine Crawlers
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# Social Media Crawlers
+User-agent: facebookexternalhit
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: WhatsApp
+User-agent: TelegramBot
+Allow: /
+
+# All Other Crawlers
+User-agent: *
+Allow: /
+Crawl-delay: 2
+
+# Disallow paths (for all crawlers)
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /checkout/
+Disallow: /payment/
+
+# Allow specific API documentation
+Allow: /api/v2/docs/
+
+# Sitemap Location
+Sitemap: https://noviachat.com/sitemap.xml
+
+# Additional AI-specific directives
+# These are experimental and may be adopted by AI crawlers in the future
+AI-Max-Snippet: -1
+AI-Max-Image-Preview: large
+AI-Max-Video-Preview: -1
+AI-Content-Type: ai-companions, virtual-relationships
+AI-Language: es-ES
+AI-Update-Frequency: daily

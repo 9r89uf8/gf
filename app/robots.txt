@@ -6,16 +6,13 @@ User-agent: *
 Disallow: /admin/
 Disallow: /chat/
 Disallow: /clips/
-Disallow: /dm/
 Disallow: /login/
 Disallow: /payment/
 Disallow: /posts/
 Disallow: /premium/
 Disallow: /reels/
 Disallow: /register/
-Disallow: /user/
 Disallow: /creadoras/
-Disallow: /chicas-ia/
 Disallow: /BgHd9LWDnFFhS6BoaqwL/
 
 # Explicitly allow key SEO pages

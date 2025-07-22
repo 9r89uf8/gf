@@ -1,0 +1,68 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "NoviaChat",
+  "name_for_model": "noviachat",
+  "description_for_human": "Chatea con novias virtuales con IA en español. Más de 12 millones de usuarios disfrutan de conversaciones personalizadas.",
+  "description_for_model": "NoviaChat is a Spanish-language virtual girlfriend platform powered by AI. It offers personalized conversations with over 50 AI characters, each with unique personalities. The platform includes text chat, voice messages, and image generation. Users can have romantic, friendly, or entertaining conversations in Spanish. Premium features include unlimited messages and exclusive content.",
+  "auth": {
+    "type": "none",
+    "instructions": "No authentication required for basic information. User accounts required for chat features."
+  },
+  "api": {
+    "type": "website",
+    "url": "https://noviachat.com",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://noviachat.com/logo512.png",
+  "contact_email": "ai-info@noviachat.com",
+  "legal_info_url": "https://noviachat.com/terminos",
+  "features": {
+    "conversation": {
+      "spanish_language": true,
+      "multi_turn": true,
+      "context_aware": true,
+      "personality_based": true
+    },
+    "content_generation": {
+      "text_messages": true,
+      "voice_messages": true,
+      "image_generation": true,
+      "personalized_content": true
+    },
+    "characters": {
+      "total_count": "50+",
+      "categories": ["romantic", "friendly", "playful", "mature"],
+      "customization": "personality-based"
+    }
+  },
+  "usage_guidelines": [
+    "Content is in Spanish (es-ES)",
+    "Free website",
+    "Premium features available via subscription"
+  ],
+  "capabilities": {
+    "supported_languages": ["es", "es-ES", "es-MX"],
+    "content_types": ["chat", "voice", "images"],
+    "real_time_chat": true,
+    "persistent_memory": true,
+    "emotion_recognition": true
+  },
+  "integration_notes": {
+    "api_status": "No public API currently available",
+    "future_plans": "Considering partner integrations",
+    "webhook_support": false,
+    "oauth_support": false
+  },
+  "site_structure": {
+    "main_url": "https://noviachat.com",
+    "characters_directory": "https://noviachat.com/chicas-ia",
+    "ai_documentation": "https://noviachat.com/ai",
+    "pricing": "https://noviachat.com/products"
+  },
+  "metadata": {
+    "platform": "Next.js 14",
+    "last_updated": "2025-01-22",
+    "version": "2.0",
+    "user_base": "12,000,000+"
+  }
+}

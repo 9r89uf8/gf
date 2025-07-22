@@ -23,6 +23,8 @@ export default function ProfileImagesServer({ backgroundUrl, profileUrl }) {
                     height: '100%',
                     position: 'relative',
                     cursor: 'pointer',
+                    borderRadius: 2,
+                    overflow: 'hidden',
                 }}
             >
                 <Image
@@ -47,8 +49,8 @@ export default function ProfileImagesServer({ backgroundUrl, profileUrl }) {
                     height: 150,
                     borderRadius: '50%',
                     overflow: 'hidden',
-                    border: '4px solid rgba(255, 255, 255, 0.5)',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                    border: '4px solid rgba(255, 255, 255, 0.9)',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
                     cursor: 'pointer',
                     transition: 'transform 0.3s',
                     '&:hover': {

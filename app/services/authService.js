@@ -2,11 +2,10 @@
 import { useStore } from '../store/store'; // Ensure you import the correct store
 
 export const loginUser = async (data) => {
-    const addNotification = useStore.getState().addNotification;
     const setUser = useStore.getState().setUser;
 
     try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('/api/v2/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -17,18 +16,8 @@ export const loginUser = async (data) => {
         if (response.ok) {
             const data = await response.json();
             setUser(data.user);
-            // addNotification({
-            //     id: Date.now(),
-            //     type: 'success',
-            //     message: 'Inicio de sesión exitosa',
-            // });
             return { user: data.user, error: null };
         } else {
-            addNotification({
-                id: Date.now(),
-                type: 'error',
-                message: 'contraseña o correo electrónico incorrecto',
-            });
             const errorData = await response.json();
             return { user: null, error: errorData.error };
         }
@@ -41,7 +30,7 @@ export const loginUser = async (data) => {
 export const registerUser = async (data) => {
     const setUser = useStore.getState().setUser;
     try {
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch('/api/v2/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,11 +43,6 @@ export const registerUser = async (data) => {
             setUser(data.user);
             return { user: data.user, error: null };
         } else {
-            addNotification({
-                id: Date.now(),
-                type: 'error',
-                message: 'por favor intenta de nuevo',
-            });
             const errorData = await response.json();
             return { user: null, error: errorData.error };
         }
@@ -69,7 +53,7 @@ export const registerUser = async (data) => {
 
 export const passwordReset = async (data) => {
     try {
-        const response = await fetch('/api/auth/reset-password', {
+        const response = await fetch('/api/v2/auth/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -89,9 +73,10 @@ export const passwordReset = async (data) => {
 
 export const logoutUser = async () => {
     const logout = useStore.getState().logout;
-    const clear = useStore.getState().clearAll;
+    const clearConversationsV2 = useStore.getState().clearConversationsV2;
+
     try {
-        const response = await fetch('/api/auth/signout', {
+        const response = await fetch('/api/v2/auth/signout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,7 +86,8 @@ export const logoutUser = async () => {
         if (response.ok) {
             const data = await response.json();
             logout(); // Call the logout action from userSlice
-            clear()
+            clearConversationsV2(); // Clear all conversation data
+
             return data;
         } else {
             throw new Error('error');
@@ -116,7 +102,7 @@ export const checkIfCookie = async () => {
     const logout = useStore.getState().logout;
     const clear = useStore.getState().clearAll;
     try {
-        const response = await fetch('/api/auth/verify', {
+        const response = await fetch('/api/v2/auth/verify', {
             method: 'GET',
         });
 
@@ -138,7 +124,7 @@ export const checkIfCookie = async () => {
 export const editUser = async (formData) => {
     const setUser = useStore.getState().setUser;
     try {
-        const response = await fetch('/api/auth/edit-user', {
+        const response = await fetch('/api/v2/auth/edit-user', {
             method: 'POST',
             body: formData,
         });
@@ -158,7 +144,7 @@ export const editUser = async (formData) => {
 export const deleteUser = async () => {
     const logout = useStore.getState().logout;
     try {
-        const response = await fetch('/api/auth/delete', {
+        const response = await fetch('/api/v2/auth/delete', {
             method: 'GET'
         });
 

@@ -9,28 +9,61 @@ import { editUser } from "@/app/services/authService";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
     marginBottom: theme.spacing(2),
+    '& label': {
+        color: 'rgba(71, 85, 105, 0.8)',
+    },
     '& label.Mui-focused': {
-        color: 'white',
+        color: '#1a1a1a',
     },
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
-            borderColor: 'rgba(255, 255, 255, 0.5)',
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+            borderWidth: '2px',
         },
         '&:hover fieldset': {
-            borderColor: 'white',
+            borderColor: 'rgba(0, 0, 0, 0.3)',
         },
         '&.Mui-focused fieldset': {
-            borderColor: 'white',
+            borderColor: '#1a1a1a',
+            borderWidth: '2px',
         },
         '& input': {
-            color: 'white',
+            color: 'rgba(15, 23, 42, 0.95)',
         }
     }
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
+const ActionButton = styled(Button)(({ theme, variant }) => ({
     margin: theme.spacing(1),
-    borderRadius: theme.shape.borderRadius * 3,
+    borderRadius: 12,
+    padding: '10px 24px',
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.3s ease',
+    
+    ...(variant === 'contained' && {
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+        color: 'white',
+        boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.2)',
+        '&:hover': {
+            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 6px 20px 0 rgba(0, 0, 0, 0.3)',
+        },
+        '&:disabled': {
+            background: 'rgba(0, 0, 0, 0.12)',
+            color: 'rgba(0, 0, 0, 0.26)',
+        },
+    }),
+    
+    ...(variant === 'outlined' && {
+        border: '2px solid rgba(0, 0, 0, 0.2)',
+        color: 'rgba(15, 23, 42, 0.95)',
+        '&:hover': {
+            border: '2px solid rgba(0, 0, 0, 0.4)',
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        },
+    }),
 }));
 
 const ProfileEditForm = ({ user, onSave, onCancel }) => {
@@ -120,7 +153,14 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
             <Avatar
                 src={newUserInfo.profilePic || ''}
                 alt={newUserInfo.name}
-                sx={{ width: 100, height: 100, margin: 'auto', mb: 2, border: '2px solid white' }}
+                sx={{ 
+                    width: 100, 
+                    height: 100, 
+                    margin: 'auto', 
+                    mb: 2, 
+                    border: '3px solid rgba(0, 0, 0, 0.1)',
+                    boxShadow: '0 4px 15px 0 rgba(0, 0, 0, 0.1)'
+                }}
             />
             <input
                 accept="image/*"
@@ -135,7 +175,18 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                     variant="contained"
                     component="span"
                     startIcon={<PhotoCamera />}
-                    sx={{ mb: 2 }}
+                    sx={{ 
+                        mb: 2,
+                        background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+                        color: 'white',
+                        borderRadius: '12px',
+                        padding: '10px 24px',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        '&:hover': {
+                            background: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)',
+                        },
+                    }}
                 >
                     Cambiar foto de perfil
                 </Button>
@@ -146,7 +197,7 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                 label="Nombre"
                 value={newUserInfo.name}
                 onChange={handleInputChange}
-                InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.7)' } }}
+                InputLabelProps={{ style: { color: 'rgba(71, 85, 105, 0.8)' } }}
             />
             <StyledTextField
                 fullWidth
@@ -154,7 +205,7 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                 label="Correo electrónico"
                 value={newUserInfo.email}
                 onChange={handleInputChange}
-                InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.7)' } }}
+                InputLabelProps={{ style: { color: 'rgba(71, 85, 105, 0.8)' } }}
             />
 
             <Box
@@ -175,8 +226,6 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                 </ActionButton>
                 <ActionButton
                     variant="outlined"
-                    color="secondary"
-                    sx={{ color: 'white', borderColor: 'white' }}
                     startIcon={<Close />}
                     onClick={onCancel}
                     disabled={isUpdating}

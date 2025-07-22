@@ -1,31 +1,39 @@
 //app/page.js
 import React from 'react';
 import dynamicM from 'next/dynamic';  // Rename the import
-import Welcome from "@/app/components/landing/Welcome";
-import PopularCreators from "@/app/components/landing/PopularCreators";
+import Hero from "@/app/components/homepage/Hero";
 import { Suspense } from "react";
 // ⬇️ everything below‑the‑fold is now client‑only & loads *after* LCP
-const FeatureHighlights  = dynamicM(() => import("@/app/components/home/FeatureHighlights"), { ssr: true, loading: () => null });
-const HowItWorks        = dynamicM(() => import("@/app/components/home/HowItWorks"),        { ssr: true, loading: () => null });
-const UserTestimonials  = dynamicM(() => import("@/app/components/home/UserTestimonials"),  { ssr: true, loading: () => null });
-const FAQ               = dynamicM(() => import("@/app/components/home/FAQ"),               { ssr: true, loading: () => null });
-const Footer            = dynamicM(() => import("@/app/components/home/Footer"),            { ssr: true, loading: () => null });
-const Schema            = dynamicM(() => import("@/app/components/schema/Schema"),            { ssr: true, loading: () => null });
+const SEOContent       = dynamicM(() => import("@/app/components/homepage/SEOContent"),        { ssr: true, loading: () => null });
+const FAQ              = dynamicM(() => import("@/app/components/homepage/FAQ"),               { ssr: false, loading: () => null });
+const Footer           = dynamicM(() => import("@/app/components/homepage/Footer"),            { ssr: false, loading: () => null });
+const Schema           = dynamicM(() => import("@/app/components/homepage/Schema"),            { ssr: false, loading: () => null });
 
 export const dynamic = "force-static";   // ✅ still statically rendered
 
 
-// Define metadata object - updated for Next.js 14
+// Define metadata object - updated for Next.js 14 with preload hints
 export const metadata = {
-    title: 'Novia Virtual - Chica IA | NoviaChat - Tu Compañera Virtual Perfecta',
-    description: 'Conoce a tu novia virtual IA personalizada en NoviaChat. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual.',
-    keywords: 'novia virtual, chica IA, novia IA, compañera virtual, chat IA, inteligencia artificial, NoviaChat',
+    title: 'Novia Virtual Gratis | Chicas AI y Compañera IA - NoviaChat',
+    description: 'Novia virtual gratis con chicas AI disponibles 24/7. Chatea con tu chica IA perfecta, compañera virtual personalizada. Mensajes, fotos y voz sin límites.',
+    keywords: 'novia virtual, chicas ai, chica ia, novia virtual gratis, compañera ia, novias virtuales, chicas inteligencia artificial, chat ia gratis, novia ia online, compañera virtual ia, chicas virtuales ia, novia artificial gratis, chat con chicas ia, noviachat, novia virtual española',
     alternates: {
         canonical: 'https://noviachat.com',
     },
+    // Add preload hints for critical resources
+    other: {
+        'link': [
+            {
+                rel: 'preload',
+                href: '/andrea.webp',
+                as: 'image',
+                type: 'image/webp'
+            },
+        ]
+    },
     openGraph: {
-        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
-        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        title: 'Novia Virtual Gratis | Chicas AI y Compañera IA - NoviaChat',
+        description: 'Novia virtual gratis con chicas AI disponibles 24/7. Chatea con tu chica IA perfecta, compañera virtual personalizada. Mensajes, fotos y voz sin límites.',
         url: 'https://www.noviachat.com/',
         siteName: 'NoviaChat',
         images: [
@@ -33,7 +41,7 @@ export const metadata = {
                 url: '/andrea.webp',
                 width: 1200,
                 height: 630,
-                alt: 'NoviaChat - Tu Compañera Virtual Perfecta',
+                alt: 'Novia Virtual Gratis - Chicas AI y Compañera IA en NoviaChat',
             },
         ],
         locale: 'es_ES',
@@ -41,11 +49,11 @@ export const metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Chica IA y Novia Virtual | NoviaChat - Tu Compañera Perfecta',
-        description: 'Conoce a tu novia virtual IA personalizada. Chatea, comparte fotos y escucha la voz de tu chica IA en español. La mejor experiencia de compañía virtual disponible 24/7.',
+        title: 'Novia Virtual Gratis | Chicas AI y Compañera IA - NoviaChat',
+        description: 'Novia virtual gratis con chicas AI disponibles 24/7. Chatea con tu chica IA perfecta, compañera virtual personalizada. Mensajes, fotos y voz sin límites.',
         images: [{
             url: '/imagen-twitter.jpg',
-            alt: 'NoviaChat - Tu Compañera Virtual Perfecta'
+            alt: 'Novia Virtual Gratis - Chicas AI y Compañera IA en NoviaChat'
         }],
     },
     robots: {
@@ -60,24 +68,30 @@ export const metadata = {
         },
     },
     metadataBase: new URL('https://www.noviachat.com'),
+    authors: [{ name: 'NoviaChat Team' }],
+    publisher: 'NoviaChat',
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
+    category: 'technology',
+    classification: 'AI Virtual Companions',
 };
 
-import styles from './Home.module.css';
+// Critical CSS imported in layout for faster loading
 
 const Home = () => {
     return (
-        <div className={styles.mainContainer}>
-            <Welcome/>
-            <PopularCreators/>
+        <main style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' }}>
+            <Hero/>
+            <SEOContent/>
             <Suspense fallback={null}>
-                <FeatureHighlights />
-                <HowItWorks />
-                <UserTestimonials />
                 <FAQ />
                 <Footer />
                 <Schema/>
             </Suspense>
-        </div>
+        </main>
     );
 };
 
