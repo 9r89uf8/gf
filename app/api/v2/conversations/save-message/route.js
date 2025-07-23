@@ -111,7 +111,9 @@ async function saveMessageHandler(req) {
             }
 
             // Upload media
+            console.log('saving video')
             const uploadResult = await handleMediaUpload(media, mediaType, userMessage, rekognitionClient);
+            console.log('uploadResult', uploadResult);
             mediaUrl = uploadResult.mediaUrl;
             processedContent = uploadResult.processedContent;
         }
