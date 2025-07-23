@@ -27,7 +27,7 @@ const UserProfileClient = ({initialUserData}) => {
     const handleLogout = async () => {
         try {
             await logoutUser();
-            router.push('/');
+            router.push('/login');
         } catch (error) {
             console.error('Error during logout:', error);
         }
@@ -63,8 +63,9 @@ const UserProfileClient = ({initialUserData}) => {
                 <DeleteAccountDialog
                     open={openDeleteDialog}
                     onClose={() => setOpenDeleteDialog(false)}
-                    onConfirm={() => {
+                    onConfirm={async () => {
                         // Handle deletion logic
+                        await logoutUser();
                         router.push('/register');
                     }}
                 />

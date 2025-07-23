@@ -2,7 +2,6 @@
 import { adminAuth, adminDb } from '@/app/utils/firebaseAdmin';
 import {authMiddleware} from "@/app/middleware/authMiddleware";
 import {NextResponse} from "next/server";
-import { getAuthRateLimiters } from '../../middleware/rateLimiter.js';
 export const dynamic = 'force-dynamic';
 
 
@@ -15,14 +14,9 @@ export async function deleteHandler(req) {
         }
 
         const id = authResult.user.uid;
-        
-        // Apply rate limiting after authentication
-        const rateLimiters = await getAuthRateLimiters();
-        const rateLimitResponse = await rateLimiters.deleteUser(req, id);
-        if (rateLimitResponse) return rateLimitResponse;
 
         // Delete the user's authentication record
-        await adminDb.auth().deleteUser(id);
+        await adminAuth.deleteUser(id);
 
         // Delete the user's document from Firestore
         await adminDb.firestore().collection('users').doc(id).delete();

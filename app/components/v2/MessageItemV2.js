@@ -160,8 +160,8 @@ const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
                             </Typography>
                         </Box>
                     )}
-                    {message.content && message.mediaType !== 'image' && message.mediaType !== 'audio' && (
-                        <Typography variant="body2">{message.content}</Typography>
+                    {message.content && message.mediaType !== 'image' && message.mediaType !== 'audio' && message.mediaType !== 'video' && (
+                        <Typography variant="h6">{message.content}</Typography>
                     )}
 
                     {(message.mediaUrl || message.audioData) && (
@@ -241,7 +241,7 @@ const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
 
                     {/* Show text content below media for image/video messages */}
                     {message.content && (message.mediaUrl || message.audioData) && message.mediaType !== 'audio' && !isUser && (
-                        <Typography variant="body2" sx={{ mt: 1 }}>
+                        <Typography variant="h6" sx={{ mt: 1 }}>
                             {message.content}
                         </Typography>
                     )}
