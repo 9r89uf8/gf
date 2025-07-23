@@ -183,19 +183,19 @@ const LoginPage = () => {
     const router = useRouter();
     const [turnstileToken, setTurnstileToken] = useState(null);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         if (window.turnstile) {
-    //             window.turnstile.render('#turnstile-widget', {
-    //                 sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
-    //                 callback: (token) => setTurnstileToken(token),
-    //             });
-    //             clearInterval(interval);
-    //         }
-    //     }, 100);
-    //
-    //     return () => clearInterval(interval);
-    // }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         // Animated user count
@@ -342,9 +342,9 @@ const LoginPage = () => {
                                 }}
                             />
 
-                            {/*<Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>*/}
-                            {/*    <div id="turnstile-widget"></div>*/}
-                            {/*</Box>*/}
+                            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                                <div id="turnstile-widget"></div>
+                            </Box>
 
                             <GradientButton
                                 type="submit"

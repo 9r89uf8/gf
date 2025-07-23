@@ -10,7 +10,7 @@ const ChatHeaderV2 = ({ girl, limits, user, onClearMessages, messages }) => {
     const [clearing, setClearing] = useState(false);
     
     // Total message limit - can be easily changed later
-    const totalMessageLimit = 20;
+    const totalMessageLimit = 30;
     
     const handleMenuClick = (event) => {
         setAnchorEl(event.currentTarget);

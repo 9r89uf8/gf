@@ -23,7 +23,7 @@ export async function createOrGetConversation(userId, girlId) {
             latestMessage: null,
             freeAudio: 5,
             freeImages: 3,
-            freeMessages: 10,
+            freeMessages: 30,
             messages: []
         };
         await conversationRef.set(newConversation);
