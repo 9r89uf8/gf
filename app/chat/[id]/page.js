@@ -285,7 +285,7 @@ export default function TestV2Page({params}) {
                         flexDirection="column"
                     >
                         <Typography variant="h6" gutterBottom>
-                            Please log in to chat
+                            Por favor inicia sesión para chatear
                         </Typography>
                         <Link href="/login" style={{ textDecoration: 'none' }}>
                             <Box
@@ -299,7 +299,7 @@ export default function TestV2Page({params}) {
                                     '&:hover': { bgcolor: '#0084e1' }
                                 }}
                             >
-                                Go to Login
+                                Iniciar sesión
                             </Box>
                         </Link>
                     </Box>
