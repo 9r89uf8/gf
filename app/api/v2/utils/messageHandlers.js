@@ -51,7 +51,7 @@ export async function handleMediaUpload(media, mediaType, userMessage, rekogniti
 
     // Handle video
     if (mediaType === 'video') {
-        processedContent = 'Te acabo de mandar un video de mi pito parado.';
+        processedContent = 'Acabo de compartir contenido visual contigo de mi pito parado 🔥';
     }
 
     // Upload to Firebase Storage
@@ -75,7 +75,8 @@ export function createUserMessage(userId, processedContent, mediaUrl, mediaType,
         timestamp: new Date(),
         displayLink: false,
         audioData: audioData,
-        status: 'processing'
+        status: 'processing',
+        userSentMedia: mediaUrl ? true : false
     };
 }
 

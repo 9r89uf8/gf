@@ -43,12 +43,12 @@ function quickAnalyzeMessage(message) {
     ];
 
     // Detect video requests
-    // Create a single regex that excludes the specific phrase
     const videoPatterns = [
-        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(video|vid|videos|grabacion|clip)\b/,
-        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(mandame|enviame|envia|manda|muestra).*\b(video|grabacion)\b/,
-        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(quiero|puedo|podrias).*\b(ver|video)\b/,
-        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(bailando|baila|baile)\b/
+        /\b(mandame|mandáme|enviame|envíame|envia|envía|manda|muestra|muéstrame).*\b(video|vid|videos|grabacion|grabación|clip)\b/,
+        /\b(quiero|puedo|podrias|podrías|puedes).*\b(ver|video|grabacion|grabación)\b/,
+        /\b(hazme|grábate|grabate|graba).*\b(video|bailando|baile)\b/,
+        /\bmuestra.*\b(bailando|baila|moviendote|moviéndote)\b/,
+        /\b(necesito|dame|quiero).*\b(video|clip|grabacion|grabación)\b/
     ];
     
     // Detect moaning requests
@@ -100,11 +100,18 @@ function quickAnalyzeMessage(message) {
  * Analyze user message for intent and tone
  * Now uses lightweight pattern matching instead of AWS Bedrock
  */
-export async function analyzeMessage(userMessageContent) {
+export async function analyzeMessage(userMessageContent, userSentMedia = false) {
     if (!userMessageContent) return { emotional_tone: 'neutral' };
     
     // Use lightweight pattern matching for instant results
-    return quickAnalyzeMessage(userMessageContent);
+    const analysis = quickAnalyzeMessage(userMessageContent);
+    
+    // If user sent media, override video request detection
+    if (userSentMedia) {
+        analysis.requesting_video = false;
+    }
+    
+    return analysis;
 }
 
 /**
@@ -160,6 +167,9 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
             if (messageLabels.requesting_audio===true&&(!userData.premium || limits.freeAudio === 0)) {
                 enrichedData.displayLink = true;
             }
+            if (messageLabels.requesting_video===true&&(!userData.premium || limits.freeImages === 0)) {
+                enrichedData.displayLink = true;
+            }
             break;
 
 
@@ -169,10 +179,10 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
                     girlData.id || girlData.girlId, 
                     'image', 
                     parsedResponse.description, 
-                    userData.premium
+                    userData.premium,
+                    messageLabels
                 );
                 if (imageContent) {
-                    console.log(imageContent)
                     enrichedData.mediaUrl = imageContent.mediaUrl
                     enrichedData.mediaType = 'image';
                 }else {
@@ -191,7 +201,8 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
                     girlData.id || girlData.girlId, 
                     'video', 
                     parsedResponse.description, 
-                    userData.premium
+                    userData.premium,
+                    messageLabels
                 );
                 if (videoContent) {
                     enrichedData.mediaUrl = videoContent.mediaUrl;

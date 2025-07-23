@@ -108,14 +108,23 @@ export async function generateAudio(text, voiceId) {
 /**
  * Get media content (image/video) from database
  */
-export async function getMediaContent(girlId, mediaType, description, isPremium) {
+export async function getMediaContent(girlId, mediaType, description, isPremium, messageLabels) {
     try {
+
+        let media = ''
+        if (messageLabels.requesting_video) {
+            media = 'video'
+        }
+        if (messageLabels.requesting_picture) {
+            media = 'image'
+        }
 
         // Build query
         let query = adminDb.firestore()
             .collection('girls-gallery')
             .where('girlId', '==', girlId)
-            .where('displayToGallery', '==', false);
+            .where('displayToGallery', '==', false)
+            .where('mediaType', '==', media);
 
         // Filter by premium status
         if (!isPremium) {

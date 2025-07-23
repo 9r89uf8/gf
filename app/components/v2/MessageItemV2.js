@@ -8,6 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import Link from 'next/link';
 import FloatingHearts from './FloatingHearts';
+import { Stream } from "@cloudflare/stream-react";
 
 const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
     const isUser = message.role === 'user';
@@ -47,6 +48,17 @@ const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
         } finally {
             setIsLiking(false);
         }
+    };
+
+    // Extract video ID from Cloudflare Stream iframe URL
+    const extractVideoId = (url) => {
+        if (!url) return null;
+        // Check if it's an iframe.videodelivery.net URL
+        const match = url.match(/iframe\.videodelivery\.net\/([a-zA-Z0-9]+)/);
+        if (match) {
+            return match[1];
+        }
+        return null;
     };
 
 
@@ -168,15 +180,48 @@ const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
                                 />
                             )}
                             {message.mediaType === 'video' && message.mediaUrl && (
-                                <video 
-                                    controls 
-                                    style={{ 
-                                        maxWidth: '200px', 
-                                        borderRadius: '8px' 
-                                    }}
-                                >
-                                    <source src={message.mediaUrl} />
-                                </video>
+                                (() => {
+                                    const videoId = extractVideoId(message.mediaUrl);
+                                    if (videoId) {
+                                        // Use Stream component for Cloudflare Stream videos
+                                        return (
+                                            <Box sx={{
+                                                width: '200px',
+                                                aspectRatio: '16/9',
+                                                borderRadius: '8px',
+                                                backgroundColor: '#000',
+                                                '& iframe': {
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    border: 'none',
+                                                }
+                                            }}>
+                                                <Stream 
+                                                    controls
+                                                    src={videoId}
+                                                    autoplay={false}
+                                                    muted={false}
+                                                    preload="metadata"
+                                                />
+                                            </Box>
+                                        );
+                                    } else {
+                                        // Fallback to regular video tag for non-Cloudflare videos
+                                        return (
+                                            <video 
+                                                controls 
+                                                style={{ 
+                                                    maxWidth: '200px', 
+                                                    borderRadius: '8px' 
+                                                }}
+                                            >
+                                                <source src={message.mediaUrl} type="video/mp4" />
+                                                <source src={message.mediaUrl} type="video/webm" />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        );
+                                    }
+                                })()
                             )}
                             {message.mediaType === 'audio' && message.audioData && (
                                 <audio 

@@ -111,9 +111,7 @@ async function saveMessageHandler(req) {
             }
 
             // Upload media
-            console.log('saving video')
             const uploadResult = await handleMediaUpload(media, mediaType, userMessage, rekognitionClient);
-            console.log('uploadResult', uploadResult);
             mediaUrl = uploadResult.mediaUrl;
             processedContent = uploadResult.processedContent;
         }
@@ -163,7 +161,7 @@ async function saveMessageHandler(req) {
         // 9. Process AI response
         try {
             // Analyze user message
-            const messageLabels = await analyzeMessage(sanitizedContent);
+            const messageLabels = await analyzeMessage(sanitizedContent, userMessageObj.userSentMedia);
 
             // Generate AI response
             const { assistantMessage, parsedResponse, responseData } = await processAIResponse(
