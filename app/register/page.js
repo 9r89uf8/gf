@@ -206,19 +206,19 @@ const RegisterPage = () => {
     const router = useRouter();
     const [turnstileToken, setTurnstileToken] = useState(null);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         if (window.turnstile) {
-    //             window.turnstile.render('#turnstile-widget', {
-    //                 sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
-    //                 callback: (token) => setTurnstileToken(token),
-    //             });
-    //             clearInterval(interval);
-    //         }
-    //     }, 100);
-    //
-    //     return () => clearInterval(interval);
-    // }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (window.turnstile) {
+                window.turnstile.render('#turnstile-widget', {
+                    sitekey: '0x4AAAAAAA_HdjBUf9sbezTK',
+                    callback: (token) => setTurnstileToken(token),
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         fetch('https://ipinfo.io/json?token=5a17bbfded96f7')
@@ -434,9 +434,9 @@ const RegisterPage = () => {
                                 }}
                             />
 
-                            {/*<Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>*/}
-                            {/*    <div id="turnstile-widget"></div>*/}
-                            {/*</Box>*/}
+                            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                                <div id="turnstile-widget"></div>
+                            </Box>
 
                             <RegisterButton
                                 type="submit"
