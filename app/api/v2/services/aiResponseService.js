@@ -41,13 +41,14 @@ function quickAnalyzeMessage(message) {
         /\b(di|dime|canta|cantame).*\b(algo|cancion)\b/,
         /\b(grabate|grabame|graba)\b/
     ];
-    
+
     // Detect video requests
+    // Create a single regex that excludes the specific phrase
     const videoPatterns = [
-        /\b(video|vid|videos|grabacion|clip)\b/,
-        /\b(mandame|enviame|envia|manda|muestra).*\b(video|grabacion)\b/,
-        /\b(quiero|puedo|podrias).*\b(ver|video)\b/,
-        /\b(bailando|baila|baile)\b/
+        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(video|vid|videos|grabacion|clip)\b/,
+        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(mandame|enviame|envia|manda|muestra).*\b(video|grabacion)\b/,
+        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(quiero|puedo|podrias).*\b(ver|video)\b/,
+        /^(?!.*Te acabo de mandar un video de mi pito parado.).*\b(bailando|baila|baile)\b/
     ];
     
     // Detect moaning requests

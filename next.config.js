@@ -18,10 +18,6 @@ const nextConfig = {
       },
     ],
   },
-  compiler: {
-    // Remove console logs only in production
-    removeConsole: process.env.NODE_ENV === "production"
-  },
   // Add headers configuration for caching
   async headers() {
     return [
