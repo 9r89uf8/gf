@@ -30,24 +30,43 @@ export async function createPost(userId, imageFile, text = '') {
         };
         const moderationCommand = new DetectModerationLabelsCommand(moderationParams);
         const moderationResponse = await rekognitionClient.send(moderationCommand);
-        
+
+
+
         const hasChild = moderationResponse.ModerationLabels.some(label =>
-            ['Child', 'Minor', 'Kid'].some(term => label.Name.includes(term))
+            ['Child', 'Minor'].some(term => label.Name.includes(term))
         );
-        
+
         if (hasChild) {
             throw new Error('Images containing children are not allowed');
         }
-        
-        const labelsParams = {
-            Image: { Bytes: fileBuffer },
-            MaxLabels: 10,
-            MinConfidence: 70,
-        };
-        const labelsCommand = new DetectLabelsCommand(labelsParams);
-        const labelsResponse = await rekognitionClient.send(labelsCommand);
-        
-        const llmDescription = buildImageDescription(labelsResponse.Labels);
+        let llmDescription
+
+        if (moderationResponse.ModerationLabels.length === 0) {
+            // Get image labels for description
+            const labelsParams = {
+                Image: { Bytes: fileBuffer },
+                MaxLabels: 10,
+                MinConfidence: 70,
+            };
+
+            const labelsCommand = new DetectLabelsCommand(labelsParams);
+            const labelsResponse = await rekognitionClient.send(labelsCommand);
+
+            // Build description from labels
+            const labelsDescription = labelsResponse.Labels.map(label =>
+                `${label.Name} (${label.Confidence.toFixed(1)}%)`
+            ).join(', ');
+
+            llmDescription = `The User sent you an image. The image contains: ${labelsDescription}. `;
+        }
+
+        // Handle explicit content
+        if (moderationResponse.ModerationLabels.some(label =>
+            ['Explicit', 'Exposed Male Genitalia', 'Explicit Sexual Activity'].includes(label.Name)
+        )) {
+            llmDescription = 'EL User subio una foto de su pito.';
+        }
         
         const imageId = uuidv4();
         const s3Key = `posts/${userId}/${imageId}`;

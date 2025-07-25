@@ -15,12 +15,20 @@ import {
     Button,
     CircularProgress,
     Fab,
-    Alert
+    Alert,
+    Collapse,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Divider
 } from '@mui/material';
+import Link from 'next/link';
 import { styled } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PostUploadModal from './PostUploadModal';
 import { ModernCard } from '@/app/components/ui/ModernCard';
 
@@ -43,12 +51,26 @@ const PostCard = styled(ModernCard)(({ theme }) => ({
     background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'
 }));
 
+const formatRelativeTime = (timestamp) => {
+    // Handle Firestore Timestamp object
+    const date = new Date(timestamp._seconds * 1000 + timestamp._nanoseconds / 1000000);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return 'hace un momento';
+    if (diffInSeconds < 3600) return `hace ${Math.floor(diffInSeconds / 60)} minutos`;
+    if (diffInSeconds < 86400) return `hace ${Math.floor(diffInSeconds / 3600)} horas`;
+    if (diffInSeconds < 604800) return `hace ${Math.floor(diffInSeconds / 86400)} días`;
+    return `hace ${Math.floor(diffInSeconds / 604800)} semanas`;
+};
+
 const UserPostsSection = ({ userId }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [openUploadModal, setOpenUploadModal] = useState(false);
     const [deletingPost, setDeletingPost] = useState(null);
+    const [expandedComments, setExpandedComments] = useState({});
 
     const fetchPosts = async () => {
         try {
@@ -107,6 +129,13 @@ const UserPostsSection = ({ userId }) => {
     const handlePostCreated = (newPost) => {
         setPosts([newPost, ...posts]);
         setOpenUploadModal(false);
+    };
+
+    const toggleComments = (postId) => {
+        setExpandedComments(prev => ({
+            ...prev,
+            [postId]: !prev[postId]
+        }));
     };
 
     if (loading) {
@@ -171,24 +200,56 @@ const UserPostsSection = ({ userId }) => {
                                                 {post.text}
                                             </Typography>
                                         )}
+                                        {post.createdAt && (
+                                            <Typography 
+                                                variant="caption" 
+                                                sx={{ 
+                                                    color: 'rgba(71, 85, 105, 0.6)',
+                                                    display: 'block',
+                                                    mt: 1
+                                                }}
+                                            >
+                                                {formatRelativeTime(post.createdAt)}
+                                            </Typography>
+                                        )}
                                     </CardContent>
                                     <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <FavoriteIcon sx={{ color: '#8992ff', fontSize: 20 }} />
-                                            <Typography variant="body2">
-                                                {post.likes.length}
-                                            </Typography>
-                                            {post.likes.length > 0 && (
-                                                <AvatarGroup max={3} sx={{ ml: 1 }}>
-                                                    {post.likes.map((like, index) => (
-                                                        <Avatar
-                                                            key={index}
-                                                            src={like.profilePic}
-                                                            sx={{ width: 24, height: 24 }}
-                                                        />
-                                                    ))}
-                                                </AvatarGroup>
-                                            )}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <FavoriteIcon sx={{ color: '#8992ff', fontSize: 20 }} />
+                                                <Typography variant="body2">
+                                                    {post.likes.length}
+                                                </Typography>
+                                                {post.likes.length > 0 && (
+                                                    <AvatarGroup max={3} sx={{ ml: 1 }}>
+                                                        {post.likes.map((like, index) => (
+                                                            <Link href={`/${like.girlId}`} passHref style={{ textDecoration: 'none' }}>
+                                                                <Avatar
+                                                                    key={index}
+                                                                    src={like.profilePic}
+                                                                    sx={{ width: 24, height: 24 }}
+                                                                />
+                                                            </Link>
+                                                        ))}
+                                                    </AvatarGroup>
+                                                )}
+                                            </Box>
+                                            
+                                            <IconButton
+                                                onClick={() => toggleComments(post.id)}
+                                                sx={{ 
+                                                    color: '#64748b',
+                                                    padding: '4px',
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(100, 116, 139, 0.08)'
+                                                    }
+                                                }}
+                                            >
+                                                <ChatBubbleOutlineIcon sx={{ fontSize: 20 }} />
+                                                <Typography variant="body2" sx={{ ml: 0.5 }}>
+                                                    {post.comments?.length || 0}
+                                                </Typography>
+                                            </IconButton>
                                         </Box>
                                         <IconButton
                                             onClick={() => handleDeletePost(post.id)}
@@ -202,6 +263,69 @@ const UserPostsSection = ({ userId }) => {
                                             )}
                                         </IconButton>
                                     </CardActions>
+                                    
+                                    <Collapse in={expandedComments[post.id]} timeout="auto" unmountOnExit>
+                                        <Divider />
+                                        <Box sx={{ 
+                                            bgcolor: 'rgba(248, 250, 252, 0.5)',
+                                            maxHeight: 300,
+                                            overflowY: 'auto'
+                                        }}>
+                                            {post.comments && post.comments.length > 0 ? (
+                                                <List sx={{ py: 0 }}>
+                                                    {post.comments.map((comment, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <ListItem alignItems="flex-start" sx={{ px: 2, py: 1 }}>
+                                                                <ListItemAvatar>
+                                                                    <Link href={`/${comment.girlId}`} passHref style={{ textDecoration: 'none' }}>
+                                                                        <Avatar
+                                                                            src={comment.profilePic}
+                                                                            sx={{ width: 32, height: 32 }}
+                                                                        />
+                                                                    </Link>
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    primary={
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                                                                {comment.name}
+                                                                            </Typography>
+                                                                            <Typography 
+                                                                                variant="caption" 
+                                                                                sx={{ color: 'rgba(71, 85, 105, 0.6)' }}
+                                                                            >
+                                                                                {formatRelativeTime(comment.createdAt)}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    }
+                                                                    secondary={
+                                                                        <Typography 
+                                                                            variant="body2" 
+                                                                            sx={{ 
+                                                                                color: 'rgba(15, 23, 42, 0.85)',
+                                                                                mt: 0.5
+                                                                            }}
+                                                                        >
+                                                                            {comment.comment}
+                                                                        </Typography>
+                                                                    }
+                                                                />
+                                                            </ListItem>
+                                                            {index < post.comments.length - 1 && (
+                                                                <Divider variant="inset" component="li" />
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </List>
+                                            ) : (
+                                                <Box sx={{ p: 2, textAlign: 'center' }}>
+                                                    <Typography variant="body2" sx={{ color: 'rgba(71, 85, 105, 0.6)' }}>
+                                                        No hay comentarios aún
+                                                    </Typography>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </Collapse>
                                 </PostCard>
                             </Grid>
                         ))}
