@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/v2/cron/ai-likes",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

@@ -203,6 +203,13 @@ export async function getRateLimiters() {
       maxRequests: 20, // 20 messages per minute
       keyPrefix: 'conversations:save-message',
       getKey: (req) => req.userId || 'unknown'
+    }),
+    
+    // User posts rate limiters
+    createPost: await createAuthenticatedRateLimiter({
+      windowMs: 60 * 60 * 1000, // 1 hour
+      maxRequests: 5, // 5 posts per hour
+      keyPrefix: 'posts:create'
     })
   };
   

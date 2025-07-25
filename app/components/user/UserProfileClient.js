@@ -10,6 +10,7 @@ import ProfileDisplay from './ProfileDisplay';
 import ProfileEditForm from './ProfileEditForm';
 import DeleteAccountDialog from './DeleteAccountDialog';
 import PremiumStatusSection from './PremiumStatusSection';
+import UserPostsSection from './UserPostsSection';
 import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
 
 const UserProfileClient = ({initialUserData}) => {
@@ -57,6 +58,10 @@ const UserProfileClient = ({initialUserData}) => {
                             user={user}
                             onUpgrade={() => router.push('/products')}
                         />
+
+                        <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.1)' }} />
+
+                        <UserPostsSection userId={user.id} />
                     </>
                 )}
 
