@@ -1,9 +1,9 @@
 // app/profile/components/ProfileDisplay.jsx
 'use client';
 
-import React from 'react';
-import { Avatar, Typography, Box, Button, Chip } from '@mui/material';
-import { Edit, DeleteForever, Logout, Person, Cake, FavoriteBorder, LocationOn, Wc, Add } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { Avatar, Typography, Box, Button, Chip, Menu, MenuItem, Divider } from '@mui/material';
+import { Edit, DeleteForever, Logout, Person, Cake, FavoriteBorder, LocationOn, Wc, Add, ArrowDropDown } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
 const InfoChip = styled(Chip)(({ theme }) => ({
@@ -76,6 +76,22 @@ const ActionButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 const ProfileDisplay = ({ user, onEdit, onDelete, onLogout }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    
+    const handleMenuAction = (action) => {
+        handleClose();
+        action();
+    };
+    
     return (
         <>
             <Avatar
@@ -162,41 +178,54 @@ const ProfileDisplay = ({ user, onEdit, onDelete, onLogout }) => {
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-                <ActionButton variant="contained" startIcon={<Edit />} onClick={onEdit}>
-                    Editar Perfil
+                <ActionButton 
+                    variant="contained" 
+                    endIcon={<ArrowDropDown />} 
+                    onClick={handleClick}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                >
+                    Opciones de Cuenta
                 </ActionButton>
-                <ActionButton
-                    variant="outlined"
-                    startIcon={<Logout />}
-                    onClick={onLogout}
+                <Menu
+                    id="account-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'account-button',
+                    }}
                     sx={{
-                        border: '2px solid #1a1a1a',
-                        color: '#1a1a1a',
-                        '&:hover': {
-                            border: '2px solid #000000',
-                            backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                            color: '#000000',
+                        '& .MuiPaper-root': {
+                            borderRadius: 2,
+                            minWidth: 200,
+                            boxShadow: '0 4px 20px 0 rgba(0, 0, 0, 0.1)',
                         },
                     }}
                 >
-                    Cerrar Sesión
-                </ActionButton>
-                <ActionButton
-                    variant="outlined"
-                    startIcon={<DeleteForever />}
-                    onClick={onDelete}
-                    sx={{
-                        border: '2px solid #dc2626',
-                        color: '#dc2626',
-                        '&:hover': {
-                            border: '2px solid #b91c1c',
-                            backgroundColor: 'rgba(220, 38, 38, 0.05)',
-                            color: '#b91c1c',
-                        },
-                    }}
-                >
-                    Eliminar cuenta
-                </ActionButton>
+                    <MenuItem onClick={() => handleMenuAction(onEdit)}>
+                        <Edit sx={{ mr: 2, fontSize: 20 }} />
+                        <Typography>Editar Perfil</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(onLogout)}>
+                        <Logout sx={{ mr: 2, fontSize: 20 }} />
+                        <Typography>Cerrar Sesión</Typography>
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem 
+                        onClick={() => handleMenuAction(onDelete)}
+                        sx={{
+                            color: '#dc2626',
+                            '&:hover': {
+                                backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                            },
+                        }}
+                    >
+                        <DeleteForever sx={{ mr: 2, fontSize: 20 }} />
+                        <Typography>Eliminar cuenta</Typography>
+                    </MenuItem>
+                </Menu>
             </Box>
         </>
     );
