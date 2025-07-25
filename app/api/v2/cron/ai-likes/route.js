@@ -18,14 +18,15 @@ export async function GET(req) {
         const allGirls = await getAllGirlsCached();
         
         // Filter for AI girls that are not private
-        const aiGirls = allGirls.filter(girl => !girl.private);
+        // const aiGirls = allGirls.filter(girl => !girl.private);
         
-        if (aiGirls.length === 0) {
-            return NextResponse.json({ 
-                success: true, 
-                message: 'No AI girls available for liking' 
-            });
-        }
+        // if (aiGirls.length === 0) {
+        //     return NextResponse.json({
+        //         success: true,
+        //         message: 'No AI girls available for liking'
+        //     });
+        // }
+        const aiGirls = allGirls
         
         // Select a random AI girl
         const randomGirl = aiGirls[Math.floor(Math.random() * aiGirls.length)];
