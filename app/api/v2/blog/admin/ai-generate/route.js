@@ -4,6 +4,7 @@ import { authMiddleware } from '@/app/middleware/authMiddleware';
 import { generateBlogArticle } from '@/app/api/v2/services/openaiService';
 import { generateArticleHTML} from "@/app/api/v2/blog/admin/seed-articles";
 import { postToReddit } from '@/app/api/v2/services/redditService';
+// import { postToGitHub } from '@/app/api/v2/services/githubService';
 
 export async function POST(req) {
   try {
@@ -82,6 +83,20 @@ export async function POST(req) {
         console.error('Reddit posting error (non-blocking):', redditError);
         response.redditError = 'El artículo se publicó pero falló la publicación en Reddit';
       }
+
+      // Post to GitHub Pages
+      // try {
+      //   const githubResult = await postToGitHub(article);
+      //
+      //   if (githubResult.success) {
+      //     response.githubUrl = githubResult.url;
+      //     response.githubFilePath = githubResult.filePath;
+      //     response.message += ' También publicado en GitHub Pages.';
+      //   }
+      // } catch (githubError) {
+      //   console.error('GitHub posting error (non-blocking):', githubError);
+      //   response.githubError = 'El artículo se publicó pero falló la publicación en GitHub';
+      // }
     }
 
     return NextResponse.json(response);

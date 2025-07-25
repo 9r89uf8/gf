@@ -2,9 +2,58 @@
 'use client';
 
 import React from 'react';
-import { Avatar, Typography, Box, Button } from '@mui/material';
-import { Edit, DeleteForever, Logout } from '@mui/icons-material';
+import { Avatar, Typography, Box, Button, Chip } from '@mui/material';
+import { Edit, DeleteForever, Logout, Person, Cake, FavoriteBorder, LocationOn, Wc, Add } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+
+const InfoChip = styled(Chip)(({ theme }) => ({
+    margin: theme.spacing(0.5),
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    border: '1px solid rgba(0, 0, 0, 0.1)',
+    '& .MuiChip-icon': {
+        color: 'rgba(0, 0, 0, 0.6)',
+    },
+}));
+
+const EmptyInfoChip = styled(Chip)(({ theme }) => ({
+    margin: theme.spacing(0.5),
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    border: '1px dashed rgba(0, 0, 0, 0.2)',
+    color: 'rgba(0, 0, 0, 0.4)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    '& .MuiChip-icon': {
+        color: 'rgba(0, 0, 0, 0.3)',
+    },
+    '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        border: '1px dashed rgba(0, 0, 0, 0.3)',
+        color: 'rgba(0, 0, 0, 0.6)',
+        '& .MuiChip-icon': {
+            color: 'rgba(0, 0, 0, 0.5)',
+        },
+    },
+}));
+
+const getRelationshipLabel = (status) => {
+    const labels = {
+        'single': 'Soltero/a',
+        'in_relationship': 'En una relación',
+        'married': 'Casado/a',
+        'complicated': 'Es complicado'
+    };
+    return labels[status] || status;
+};
+
+const getSexLabel = (sex) => {
+    const labels = {
+        'male': 'Masculino',
+        'female': 'Femenino',
+        'other': 'Otro',
+        'prefer_not_to_say': 'Prefiero no decir'
+    };
+    return labels[sex] || sex;
+};
 
 const ActionButton = styled(Button)(({ theme, variant }) => ({
     margin: theme.spacing(1),
@@ -44,9 +93,73 @@ const ProfileDisplay = ({ user, onEdit, onDelete, onLogout }) => {
             <Typography variant="h5" sx={{ mb: 1, fontWeight: 'bold', color: 'rgba(15, 23, 42, 0.95)' }}>
                 {user.name}
             </Typography>
-            <Typography variant="body1" sx={{ mb: 3, color: 'rgba(51, 65, 85, 0.8)' }}>
+            <Typography variant="body1" sx={{ mb: 1, color: 'rgba(51, 65, 85, 0.8)' }}>
                 {user.email}
             </Typography>
+            {user.username && (
+                <Typography variant="body2" sx={{ mb: 3, color: 'rgba(71, 85, 105, 0.8)' }}>
+                    @{user.username}
+                </Typography>
+            )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', mb: 3 }}>
+                {user.age ? (
+                    <InfoChip
+                        icon={<Cake />}
+                        label={`${user.age} años`}
+                        size="small"
+                    />
+                ) : (
+                    <EmptyInfoChip
+                        icon={<Add />}
+                        label="Agregar edad"
+                        size="small"
+                        onClick={onEdit}
+                    />
+                )}
+                {user.sex ? (
+                    <InfoChip
+                        icon={<Person />}
+                        label={getSexLabel(user.sex)}
+                        size="small"
+                    />
+                ) : (
+                    <EmptyInfoChip
+                        icon={<Add />}
+                        label="Agregar sexo"
+                        size="small"
+                        onClick={onEdit}
+                    />
+                )}
+                {user.relationshipStatus ? (
+                    <InfoChip
+                        icon={<FavoriteBorder />}
+                        label={getRelationshipLabel(user.relationshipStatus)}
+                        size="small"
+                    />
+                ) : (
+                    <EmptyInfoChip
+                        icon={<Add />}
+                        label="Agregar estado"
+                        size="small"
+                        onClick={onEdit}
+                    />
+                )}
+                {user.country ? (
+                    <InfoChip
+                        icon={<LocationOn />}
+                        label={user.country}
+                        size="small"
+                    />
+                ) : (
+                    <EmptyInfoChip
+                        icon={<Add />}
+                        label="Agregar país"
+                        size="small"
+                        onClick={onEdit}
+                    />
+                )}
+            </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 3 }}>
                 <ActionButton variant="contained" startIcon={<Edit />} onClick={onEdit}>

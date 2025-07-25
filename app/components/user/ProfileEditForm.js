@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { TextField, Button, Box, Avatar } from '@mui/material';
+import { TextField, Button, Box, Avatar, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { Save, Close, PhotoCamera } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { editUser } from "@/app/services/authService";
@@ -30,6 +30,32 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
         '& input': {
             color: 'rgba(15, 23, 42, 0.95)',
         }
+    }
+}));
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+    marginBottom: theme.spacing(2),
+    '& label': {
+        color: 'rgba(71, 85, 105, 0.8)',
+    },
+    '& label.Mui-focused': {
+        color: '#1a1a1a',
+    },
+    '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+            borderWidth: '2px',
+        },
+        '&:hover fieldset': {
+            borderColor: 'rgba(0, 0, 0, 0.3)',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#1a1a1a',
+            borderWidth: '2px',
+        },
+    },
+    '& .MuiSelect-select': {
+        color: 'rgba(15, 23, 42, 0.95)',
     }
 }));
 
@@ -132,6 +158,12 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
         formData.append('name', newUserInfo.name);
         formData.append('email', newUserInfo.email);
         formData.append('turnstileToken', turnstileToken);
+        
+        // Add new fields
+        if (newUserInfo.age) formData.append('age', newUserInfo.age);
+        if (newUserInfo.sex) formData.append('sex', newUserInfo.sex);
+        if (newUserInfo.country) formData.append('country', newUserInfo.country);
+        if (newUserInfo.relationshipStatus) formData.append('relationshipStatus', newUserInfo.relationshipStatus);
 
         if (image) {
             formData.append('image', image);
@@ -207,6 +239,78 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                 onChange={handleInputChange}
                 InputLabelProps={{ style: { color: 'rgba(71, 85, 105, 0.8)' } }}
             />
+            <StyledTextField
+                fullWidth
+                name="age"
+                label="Edad"
+                type="number"
+                value={newUserInfo.age || ''}
+                onChange={handleInputChange}
+                placeholder="Dinos tu edad"
+                helperText="Añadir tu edad mejora tu perfil"
+                InputLabelProps={{ style: { color: 'rgba(71, 85, 105, 0.8)' } }}
+                inputProps={{ min: 18, max: 120 }}
+            />
+            <StyledFormControl fullWidth>
+                <InputLabel>Sexo</InputLabel>
+                <Select
+                    name="sex"
+                    value={newUserInfo.sex || ''}
+                    onChange={handleInputChange}
+                    label="Sexo"
+                >
+                    <MenuItem value="">No especificado</MenuItem>
+                    <MenuItem value="male">Masculino</MenuItem>
+                    <MenuItem value="female">Femenino</MenuItem>
+                    <MenuItem value="other">Otro</MenuItem>
+                    <MenuItem value="prefer_not_to_say">Prefiero no decir</MenuItem>
+                </Select>
+                <FormHelperText>Completa tu perfil añadiendo tu sexo</FormHelperText>
+            </StyledFormControl>
+            <StyledFormControl fullWidth>
+                <InputLabel>Estado de relación</InputLabel>
+                <Select
+                    name="relationshipStatus"
+                    value={newUserInfo.relationshipStatus || ''}
+                    onChange={handleInputChange}
+                    label="Estado de relación"
+                >
+                    <MenuItem value="">No especificado</MenuItem>
+                    <MenuItem value="single">Soltero</MenuItem>
+                    <MenuItem value="in_relationship">En una relación</MenuItem>
+                    <MenuItem value="married">Casado</MenuItem>
+                    <MenuItem value="complicated">Es complicado</MenuItem>
+                </Select>
+                <FormHelperText>Comparte tu estado sentimental</FormHelperText>
+            </StyledFormControl>
+            <StyledFormControl fullWidth>
+                <InputLabel>País</InputLabel>
+                <Select
+                    name="country"
+                    value={newUserInfo.country || ''}
+                    onChange={handleInputChange}
+                    label="País"
+                >
+                    <MenuItem value="">No especificado</MenuItem>
+                    <MenuItem value="mexico">México</MenuItem>
+                    <MenuItem value="estados_unidos">Estados Unidos</MenuItem>
+                    <MenuItem value="argentina">Argentina</MenuItem>
+                    <MenuItem value="colombia">Colombia</MenuItem>
+                    <MenuItem value="espana">España</MenuItem>
+                    <MenuItem value="chile">Chile</MenuItem>
+                    <MenuItem value="peru">Perú</MenuItem>
+                    <MenuItem value="venezuela">Venezuela</MenuItem>
+                    <MenuItem value="ecuador">Ecuador</MenuItem>
+                    <MenuItem value="canada">Canadá</MenuItem>
+                    <MenuItem value="costa_rica">Costa Rica</MenuItem>
+                    <MenuItem value="panama">Panamá</MenuItem>
+                    <MenuItem value="south_america">Sudamérica</MenuItem>
+                    <MenuItem value="central_america">Centroamérica</MenuItem>
+                    <MenuItem value="north_america">Norteamérica</MenuItem>
+                    <MenuItem value="europe">Europa</MenuItem>
+                </Select>
+                <FormHelperText>Indica tu país de origen</FormHelperText>
+            </StyledFormControl>
 
             <Box
                 ref={turnstileContainerRef}
@@ -220,7 +324,7 @@ const ProfileEditForm = ({ user, onSave, onCancel }) => {
                     color="primary"
                     startIcon={<Save />}
                     onClick={handleSave}
-                    disabled={isUpdating || !turnstileToken}
+                    disabled={isUpdating}
                 >
                     Guardar
                 </ActionButton>

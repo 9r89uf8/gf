@@ -33,6 +33,10 @@ export async function editHandler(req) {
         const formData = await req.formData();
         const email = formData.get('email');
         const name = formData.get('name');
+        const age = formData.get('age');
+        const sex = formData.get('sex');
+        const country = formData.get('country');
+        const relationshipStatus = formData.get('relationshipStatus');
         const file = formData.get('image');
         const turnstileToken = formData.get('turnstileToken');
 
@@ -57,6 +61,37 @@ export async function editHandler(req) {
             });
         }
 
+        // Validate new fields
+        if (age && (isNaN(age) || age < 12 || age > 120)) {
+            return new Response(JSON.stringify({ error: 'La edad debe estar entre 18 y 120 años' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        const validSexOptions = ['male', 'female', 'other', 'prefer_not_to_say'];
+        if (sex && !validSexOptions.includes(sex)) {
+            return new Response(JSON.stringify({ error: 'Opción de sexo inválida' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        const validRelationshipOptions = ['single', 'in_relationship', 'married', 'complicated'];
+        if (relationshipStatus && !validRelationshipOptions.includes(relationshipStatus)) {
+            return new Response(JSON.stringify({ error: 'Estado de relación inválido' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        if (name && (name.length < 1 || name.length > 12 || !/^[a-zA-Z0-9_]+$/.test(name))) {
+            return new Response(JSON.stringify({ error: 'El nombre ddebe tener entre 1 y 12 caracteres alfanuméricos' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         // Update the user's email in Firebase Authentication
         await adminAuth.updateUser(id, { email });
 
@@ -65,6 +100,12 @@ export async function editHandler(req) {
             email,
             name
         };
+
+        // Add optional fields if provided
+        if (age) updatedData.age = parseInt(age);
+        if (sex) updatedData.sex = sex;
+        if (country) updatedData.country = country;
+        if (relationshipStatus) updatedData.relationshipStatus = relationshipStatus;
 
         // Handle file upload if a new image is provided
         if (file) {

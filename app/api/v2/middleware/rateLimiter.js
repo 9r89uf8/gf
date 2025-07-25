@@ -136,8 +136,8 @@ export function getIpAddress(req) {
 }
 
 // Create a rate limiter for authenticated endpoints
-export function createAuthenticatedRateLimiter(options) {
-  const limiter = createRateLimiter({
+export async function createAuthenticatedRateLimiter(options) {
+  const limiter = await createRateLimiter({
     ...options,
     getKey: (req) => req.userId || 'unknown'
   });
