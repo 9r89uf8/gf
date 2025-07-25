@@ -185,7 +185,7 @@ const UserPostsSection = ({ userId }) => {
                 ) : (
                     <Grid container spacing={3}>
                         {posts.map((post) => (
-                            <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={post.id}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post.id}>
                                 <PostCard variant="flat" animate={false}>
                                     <CardMedia
                                         component="img"
@@ -223,9 +223,8 @@ const UserPostsSection = ({ userId }) => {
                                                 {post.likes.length > 0 && (
                                                     <AvatarGroup max={3} sx={{ ml: 1 }}>
                                                         {post.likes.map((like, index) => (
-                                                            <Link href={`/${like.girlId}`} passHref style={{ textDecoration: 'none' }}>
+                                                            <Link key={index} href={`/${like.girlId}`} passHref style={{ textDecoration: 'none' }}>
                                                                 <Avatar
-                                                                    key={index}
                                                                     src={like.profilePic}
                                                                     sx={{ width: 24, height: 24 }}
                                                                 />
