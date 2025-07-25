@@ -6,7 +6,7 @@
 export function validateFile(file) {
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
     const validVideoTypes = ['video/mp4', 'video/quicktime'];
-    const validAudioTypes = ['audio/mp3', 'audio/wav', 'audio/m4a'];
+    const validAudioTypes = ['audio/mp3', 'audio/wav', 'audio/m4a', 'audio/webm'];
     const maxVideoSize = 10 * 1024 * 1024; // 10MB
     const maxImageSize = 5 * 1024 * 1024; // 5MB
     const maxAudioSize = 5 * 1024 * 1024; // 5MB

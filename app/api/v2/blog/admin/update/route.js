@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import admin from 'firebase-admin';
 import { authMiddleware } from '@/app/middleware/authMiddleware';
+import { postToReddit } from '@/app/api/v2/services/redditService';
 
 export async function PUT(request) {
   try {
@@ -47,13 +48,34 @@ export async function PUT(request) {
     // Update timestamp
     updateData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
 
+    // Check if publishing for the first time
+    const wasPublished = postDoc.data().published;
+    const isNowPublished = updateData.published;
+    
     // If publishing for the first time
-    if (updateData.published && !postDoc.data().published) {
+    if (isNowPublished && !wasPublished) {
       updateData.publishedAt = admin.firestore.FieldValue.serverTimestamp();
     }
 
     // Update the document
     await postRef.update(updateData);
+
+    // Post to Reddit if the blog post is being published for the first time
+    if (isNowPublished && !wasPublished) {
+      const postData = postDoc.data();
+      const slug = updateData.slug || postData.slug;
+      const title = updateData.title || postData.title;
+      const excerpt = updateData.excerpt || postData.excerpt;
+      const blogUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/blog/${slug}`;
+      const redditResult = await postToReddit(title, blogUrl, excerpt);
+      
+      if (redditResult.success) {
+        console.log(`Blog post shared to Reddit: ${redditResult.submissionUrl}`);
+      } else {
+        console.error(`Failed to share to Reddit: ${redditResult.error}`);
+        // Don't fail the blog update if Reddit posting fails
+      }
+    }
 
     // Get updated document
     const updatedDoc = await postRef.get();

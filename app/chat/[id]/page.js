@@ -25,6 +25,13 @@ export default function TestV2Page({params}) {
     const fileInputRef = useRef(null);
     const messagesEndRef = useRef(null);
     
+    // Audio recording states
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingTime, setRecordingTime] = useState(0);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const recordingTimerRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    
     // Get user and girl data from store
     const user = useStore((state) => state.user);
     const girl = useStore((state) => state.girl);
@@ -179,6 +186,10 @@ export default function TestV2Page({params}) {
             
             // Clear inputs
             setMessage('');
+            // Clean up audio preview URL if it exists
+            if (mediaPreview && selectedMedia?.type === 'audio') {
+                URL.revokeObjectURL(mediaPreview);
+            }
             setSelectedMedia(null);
             setMediaPreview(null);
 
@@ -229,6 +240,10 @@ export default function TestV2Page({params}) {
     };
 
     const clearMedia = () => {
+        // Revoke the object URL to prevent memory leaks
+        if (mediaPreview && selectedMedia?.type === 'audio') {
+            URL.revokeObjectURL(mediaPreview);
+        }
         setSelectedMedia(null);
         setMediaPreview(null);
     };
@@ -249,6 +264,88 @@ export default function TestV2Page({params}) {
             console.error('Error clearing messages:', err);
         }
     };
+
+    const startRecording = async () => {
+        try {
+            // Request microphone permission
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Create MediaRecorder instance
+            const recorder = new MediaRecorder(stream, {
+                mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+                    ? 'audio/webm;codecs=opus' 
+                    : 'audio/webm'
+            });
+            
+            // Reset chunks
+            audioChunksRef.current = [];
+            
+            // Handle data available
+            recorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+            
+            // Handle recording stop
+            recorder.onstop = async () => {
+                // Stop all tracks
+                stream.getTracks().forEach(track => track.stop());
+                
+                // Create blob from chunks
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                
+                // Create file from blob
+                const audioFile = new File([audioBlob], 'voice-message.webm', {
+                    type: 'audio/webm',
+                    lastModified: Date.now()
+                });
+                
+                // Set as selected media
+                setSelectedMedia({ file: audioFile, type: 'audio' });
+                
+                // Create preview URL
+                setMediaPreview(URL.createObjectURL(audioBlob));
+                
+                // Reset recording state
+                setIsRecording(false);
+                setRecordingTime(0);
+                clearInterval(recordingTimerRef.current);
+            };
+            
+            // Start recording
+            recorder.start();
+            setMediaRecorder(recorder);
+            setIsRecording(true);
+            
+            // Start timer
+            recordingTimerRef.current = setInterval(() => {
+                setRecordingTime((prev) => prev + 1);
+            }, 1000);
+            
+        } catch (err) {
+            console.error('Error starting recording:', err);
+            setErrorV2('No se pudo acceder al micrófono. Por favor, verifica los permisos.');
+        }
+    };
+    
+    const stopRecording = () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+    };
+
+    // Cleanup recording on unmount
+    useEffect(() => {
+        return () => {
+            if (recordingTimerRef.current) {
+                clearInterval(recordingTimerRef.current);
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        };
+    }, [mediaRecorder]);
 
     if (loading) {
         return (
@@ -333,46 +430,49 @@ export default function TestV2Page({params}) {
 
                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
                                     {/* Premium Button */}
-                                    <Link href="/products" style={{ textDecoration: 'none' }}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                            <Typography
-                                                variant="h6"
-                                                sx={{
-                                                    color: 'rgba(0,0,0,0.6)',
-                                                    mb: 0.5
-                                                }}
-                                            >
-                                                Comprar
-                                            </Typography>
-                                            <Box
-                                                sx={{
-                                                    background: 'linear-gradient(45deg, #FF6B6B 0%, #FF8E53 30%, #FE6B8B 60%, #FF8E53 90%)',
-                                                    borderRadius: '20px',
-                                                    padding: '8px 24px',
-                                                    display: 'inline-block',
-                                                    boxShadow: '0 3px 10px 2px rgba(255, 105, 135, .3)',
-                                                    transition: 'all 0.3s ease',
-                                                    '&:hover': {
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 5px 15px 3px rgba(255, 105, 135, .4)',
-                                                        background: 'linear-gradient(45deg, #FF8E53 0%, #FE6B8B 30%, #FF6B6B 60%, #FE6B8B 90%)',
-                                                    }
-                                                }}
-                                            >
+                                    {!user.premium &&(
+                                        <Link href="/products" style={{ textDecoration: 'none' }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                                 <Typography
-                                                    variant="button"
+                                                    variant="h6"
                                                     sx={{
-                                                        color: '#fff',
-                                                        fontWeight: 'bold',
-                                                        fontSize: '0.9rem',
-                                                        textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                                                        color: 'rgba(0,0,0,0.6)',
+                                                        mb: 0.5
                                                     }}
                                                 >
-                                                    ✨ Premium
+                                                    Comprar
                                                 </Typography>
+                                                <Box
+                                                    sx={{
+                                                        background: 'linear-gradient(45deg, #FF6B6B 0%, #FF8E53 30%, #FE6B8B 60%, #FF8E53 90%)',
+                                                        borderRadius: '20px',
+                                                        padding: '8px 24px',
+                                                        display: 'inline-block',
+                                                        boxShadow: '0 3px 10px 2px rgba(255, 105, 135, .3)',
+                                                        transition: 'all 0.3s ease',
+                                                        '&:hover': {
+                                                            transform: 'translateY(-2px)',
+                                                            boxShadow: '0 5px 15px 3px rgba(255, 105, 135, .4)',
+                                                            background: 'linear-gradient(45deg, #FF8E53 0%, #FE6B8B 30%, #FF6B6B 60%, #FE6B8B 90%)',
+                                                        }
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="button"
+                                                        sx={{
+                                                            color: '#fff',
+                                                            fontWeight: 'bold',
+                                                            fontSize: '0.9rem',
+                                                            textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                                                        }}
+                                                    >
+                                                        ✨ Premium
+                                                    </Typography>
+                                                </Box>
                                             </Box>
-                                        </Box>
-                                    </Link>
+                                        </Link>
+                                    )}
+
 
                                     {/* Different Girl Button */}
                                     <Link href="/chicas-ia" style={{ textDecoration: 'none' }}>
@@ -422,6 +522,10 @@ export default function TestV2Page({params}) {
                             sending={sending}
                             error={error}
                             fileInputRef={fileInputRef}
+                            isRecording={isRecording}
+                            onStartRecording={startRecording}
+                            onStopRecording={stopRecording}
+                            recordingTime={recordingTime}
                         />
                     </>
                 )}

@@ -15,6 +15,7 @@ import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
 import ChatIcon from '@mui/icons-material/Chat';
+import BookIcon from '@mui/icons-material/Book';
 
 const DashboardCard = styled(ModernCard)(({ theme }) => ({
     cursor: 'pointer',
@@ -136,6 +137,14 @@ export default function AdminDashboard() {
             },
             color: '#00BCD4',
         },
+        {
+            title: 'Manage Blog',
+            description: 'Create and manage blog articles',
+            icon: <BookIcon sx={{ fontSize: 40 }} />,
+            path: '/admin/blog',
+            stats: null,
+            color: '#E91E63',
+        },
     ];
 
 
@@ -178,7 +187,7 @@ export default function AdminDashboard() {
                 {/* Navigation Cards */}
                 <Grid container spacing={3}>
                     {navigationItems.map((item, index) => (
-                        <Grid item size={{ xs: 12, sm: 6, md: 6 }} key={index}>
+                        <Grid size={{ xs: 12, sm: 6, md: 6 }} key={index}>
                             <DashboardCard
                                 variant="elevated"
                                 onClick={() => router.push(item.path)}
@@ -242,7 +251,7 @@ export default function AdminDashboard() {
                             Platform Overview
                         </Typography>
                         <Grid container spacing={2}>
-                            <Grid item size={{ xs: 6, sm: 3 }}>
+                            <Grid size={{ xs: 6, sm: 3 }}>
                                 <StatBox>
                                     <Typography variant="h5" sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 700 }}>
                                         {stats.totalGirls}
@@ -252,7 +261,7 @@ export default function AdminDashboard() {
                                     </Typography>
                                 </StatBox>
                             </Grid>
-                            <Grid item size={{ xs: 6, sm: 3 }}>
+                            <Grid size={{ xs: 6, sm: 3 }}>
                                 <StatBox>
                                     <Typography variant="h5" sx={{ color: '#FFD700', fontWeight: 700 }}>
                                         {stats.premiumGirls}
@@ -262,7 +271,7 @@ export default function AdminDashboard() {
                                     </Typography>
                                 </StatBox>
                             </Grid>
-                            <Grid item size={{ xs: 6, sm: 3 }}>
+                            <Grid size={{ xs: 6, sm: 3 }}>
                                 <StatBox>
                                     <Typography variant="h5" sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 700 }}>
                                         {stats.privateGirls}
@@ -272,7 +281,7 @@ export default function AdminDashboard() {
                                     </Typography>
                                 </StatBox>
                             </Grid>
-                            <Grid item size={{ xs: 6, sm: 3 }}>
+                            <Grid size={{ xs: 6, sm: 3 }}>
                                 <StatBox>
                                     <Typography variant="h5" sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 700 }}>
                                         {stats.totalGirls - stats.premiumGirls - stats.privateGirls}

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { adminDb } from '@/app/utils/firebaseAdmin';
 import admin from 'firebase-admin';
 import { authMiddleware } from "@/app/middleware/authMiddleware";
+import { postToReddit } from '@/app/api/v2/services/redditService';
 
 export async function POST(request) {
   try {
@@ -81,6 +82,19 @@ export async function POST(request) {
         .firestore()
         .collection('blog-posts')
         .add(newPost);
+
+    // Post to Reddit if the blog post is being published
+    if (published) {
+      const blogUrl = `https://www.noviachat.com/blog/${slug}`;
+      const redditResult = await postToReddit(title, blogUrl, excerpt);
+      
+      if (redditResult.success) {
+        console.log(`Blog post shared to Reddit: ${redditResult.submissionUrl}`);
+      } else {
+        console.error(`Failed to share to Reddit: ${redditResult.error}`);
+        // Don't fail the blog creation if Reddit posting fails
+      }
+    }
 
     return NextResponse.json({
       id: docRef.id,

@@ -236,6 +236,19 @@ const MessageItemV2 = ({ message, user, girl, onLikeMessage }) => {
                                         Your browser does not support the audio element.
                                     </audio>
                             )}
+                            {message.mediaType === 'audio' && message.mediaUrl && message.role === 'user' && (
+                                <audio
+                                    controls
+                                    style={{
+                                        width: '200px',
+                                        height: '40px',
+                                        display: 'block'
+                                    }}
+                                >
+                                    <source src={message.mediaUrl} type="audio/mpeg" />
+                                    Your browser does not support the audio element.
+                                </audio>
+                            )}
                         </Box>
                     )}
 
