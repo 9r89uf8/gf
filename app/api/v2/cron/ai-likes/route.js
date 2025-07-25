@@ -12,6 +12,8 @@ export async function GET(req) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+
+
         // Get all AI girls
         const allGirls = await getAllGirlsCached();
         
