@@ -3,6 +3,10 @@
     {
       "path": "/api/v2/cron/ai-likes",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/v2/cron/ai-comments",
+      "schedule": "0 3 * * *"
     }
   ]
 }

@@ -62,6 +62,7 @@ export async function createPost(userId, imageFile, text = '') {
             text: text || '',
             llmDescription,
             likes: [],
+            comments: [],
             createdAt: new Date(),
             updatedAt: new Date()
         };
@@ -159,6 +160,40 @@ export async function addAILike(postId, girlData) {
         return { success: true, message: 'Like added successfully' };
     } catch (error) {
         console.error('Error adding AI like:', error);
+        throw error;
+    }
+}
+
+export async function addAIComment(postId, girlData, comment) {
+    try {
+        const postRef = adminDb.firestore().collection('posts').doc(postId);
+        const postDoc = await postRef.get();
+        
+        if (!postDoc.exists) {
+            throw new Error('Post not found');
+        }
+        
+        const postData = postDoc.data();
+        
+        const newComment = {
+            girlId: girlData.girlId,
+            name: girlData.name,
+            profilePic: girlData.profilePic,
+            comment: comment,
+            createdAt: new Date()
+        };
+        
+        // Initialize comments array if it doesn't exist (for existing posts)
+        const comments = postData.comments || [];
+        
+        await postRef.update({
+            comments: [...comments, newComment],
+            updatedAt: new Date()
+        });
+        
+        return { success: true, message: 'Comment added successfully' };
+    } catch (error) {
+        console.error('Error adding AI comment:', error);
         throw error;
     }
 }
