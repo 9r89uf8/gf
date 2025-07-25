@@ -51,7 +51,7 @@ export async function GET(req) {
                 await addAILike(post.id, {
                     girlId: randomGirl.id,
                     name: randomGirl.name,
-                    profilePic: randomGirl.profilePic
+                    profilePic: randomGirl.pictureUrl
                 });
                 likedCount++;
             } catch (error) {
