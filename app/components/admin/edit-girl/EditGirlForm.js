@@ -124,6 +124,9 @@ export default function EditGirlForm({ girlData, onBack, onUpdateSuccess }) {
         sexHistory: '',
         audioId: '',
         priority: '5',
+        bioPrompt: '',
+        physicalAttributes: '',
+        slang: '',
     });
 
     // File state
@@ -157,6 +160,9 @@ export default function EditGirlForm({ girlData, onBack, onUpdateSuccess }) {
                 sexHistory: girlData.sexHistory || '',
                 audioId: girlData.audioId || '',
                 priority: girlData.priority?.toString() || '5',
+                bioPrompt: girlData.bioPrompt || '',
+                physicalAttributes: girlData.physicalAttributes || '',
+                slang: girlData.slang || '',
             });
 
             // Set existing images
@@ -575,6 +581,52 @@ export default function EditGirlForm({ girlData, onBack, onUpdateSuccess }) {
                             helperText="Voice ID from ElevenLabs for audio generation"
                             sx={{ mb: 2 }}
                         />
+                    </Box>
+
+                    {/* AI Prompts Section */}
+                    <Box>
+                        <SectionTitle variant="h5">AI Prompts & Personality</SectionTitle>
+                        <Grid container spacing={2}>
+                            <Grid item size={{ xs: 12 }}>
+                                <TextField
+                                    fullWidth
+                                    label="Bio Prompt"
+                                    name="bioPrompt"
+                                    value={formData.bioPrompt}
+                                    onChange={handleInputChange}
+                                    multiline
+                                    rows={3}
+                                    helperText="Instructions for AI to generate personalized bio content"
+                                    sx={{ mb: 2 }}
+                                />
+                            </Grid>
+                            <Grid item size={{ xs: 12 }}>
+                                <TextField
+                                    fullWidth
+                                    label="Physical Attributes"
+                                    name="physicalAttributes"
+                                    value={formData.physicalAttributes}
+                                    onChange={handleInputChange}
+                                    multiline
+                                    rows={2}
+                                    helperText="Physical characteristics for image generation (e.g., hair color, eye color, body type)"
+                                    sx={{ mb: 2 }}
+                                />
+                            </Grid>
+                            <Grid item size={{ xs: 12 }}>
+                                <TextField
+                                    fullWidth
+                                    label="Slang & Speaking Style"
+                                    name="slang"
+                                    value={formData.slang}
+                                    onChange={handleInputChange}
+                                    multiline
+                                    rows={2}
+                                    helperText="Specific slang words, phrases, or speaking patterns to use"
+                                    sx={{ mb: 2 }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Box>
 
                     {/* Media Upload Section */}

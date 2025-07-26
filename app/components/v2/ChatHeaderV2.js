@@ -52,8 +52,8 @@ const ChatHeaderV2 = ({ girl, limits, user, onClearMessages, messages }) => {
             {girl && (
                 <Link href={`/${girl.id}`} passHref>
                     <Avatar
-                        src={girl.picture ? 
-                            `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down` : 
+                        src={girl.pictureUrl ?
+                            `${girl.pictureUrl}` :
                             girl.profileImage
                         }
                         sx={{ 

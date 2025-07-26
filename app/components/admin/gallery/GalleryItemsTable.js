@@ -19,7 +19,10 @@ import {
     DialogContentText,
     DialogTitle,
     Button,
-    Tooltip
+    Tooltip,
+    useMediaQuery,
+    useTheme,
+    Grid
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
@@ -38,7 +41,20 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
     background: 'rgba(255, 255, 255, 0.5)',
     backdropFilter: 'blur(10px)',
     borderRadius: 12,
-    overflow: 'hidden',
+    overflowX: 'auto',
+    '&::-webkit-scrollbar': {
+        height: 8,
+    },
+    '&::-webkit-scrollbar-track': {
+        backgroundColor: 'rgba(15, 23, 42, 0.05)',
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: 'rgba(15, 23, 42, 0.2)',
+        borderRadius: 4,
+        '&:hover': {
+            backgroundColor: 'rgba(15, 23, 42, 0.3)',
+        },
+    },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -87,12 +103,29 @@ const PremiumBadge = styled(Chip)(({ theme }) => ({
     }
 }));
 
+const MobileCard = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderRadius: 12,
+    background: 'rgba(255, 255, 255, 0.5)',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(15, 23, 42, 0.08)',
+    marginBottom: theme.spacing(2),
+    transition: 'all 0.3s ease',
+    '&:hover': {
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+        transform: 'translateY(-2px)',
+    }
+}));
+
 export default function GalleryItemsTable({ items, loading, selectedGirl, onRefresh, onDelete }) {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [deleting, setDeleting] = useState(false);
     const [previewDialog, setPreviewDialog] = useState({ open: false, url: '', type: '' });
     const [thumbnailErrors, setThumbnailErrors] = useState({});
+    
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleDeleteClick = (item) => {
         setItemToDelete(item);
@@ -176,17 +209,168 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
                         <Typography sx={{ color: 'rgba(71, 85, 105, 0.8)', textAlign: 'center', py: 5 }}>
                             No gallery items yet
                         </Typography>
+                    ) : isMobile ? (
+                        // Mobile Card View
+                        <Box>
+                            {items.map((item) => (
+                                <MobileCard key={item.id}>
+                                    <Grid container spacing={2}>
+                                        <Grid item size={{ xs: 4 }}>
+                                            <MediaPreview onClick={() => handlePreviewClick(item.mediaUrl, item.mediaType)}>
+                                                {item.cloudflareUploadPending ? (
+                                                    <Box sx={{ 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        height: '100%',
+                                                        background: 'rgba(15, 23, 42, 0.05)'
+                                                    }}>
+                                                        <CircularProgress size={30} />
+                                                    </Box>
+                                                ) : item.mediaType === 'image' ? (
+                                                    <img src={item.mediaUrl} alt="Gallery item" />
+                                                ) : item.uploadId && !thumbnailErrors[item.id] ? (
+                                                    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+                                                        <img 
+                                                            src={`https://videodelivery.net/${item.uploadId}/thumbnails/thumbnail.jpg?time=1s&height=80`}
+                                                            alt="Video thumbnail"
+                                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                            onError={() => {
+                                                                setThumbnailErrors(prev => ({ ...prev, [item.id]: true }));
+                                                            }}
+                                                        />
+                                                        <PlayCircleOutlineIcon 
+                                                            sx={{ 
+                                                                position: 'absolute', 
+                                                                top: '50%', 
+                                                                left: '50%', 
+                                                                transform: 'translate(-50%, -50%)',
+                                                                color: 'white',
+                                                                fontSize: 32,
+                                                                filter: 'drop-shadow(0 0 4px rgba(0,0,0,0.7))',
+                                                                pointerEvents: 'none'
+                                                            }} 
+                                                        />
+                                                    </Box>
+                                                ) : (
+                                                    <Box sx={{ 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        height: '100%',
+                                                        background: 'rgba(15, 23, 42, 0.05)',
+                                                        cursor: 'pointer'
+                                                    }}>
+                                                        <VideoFileIcon sx={{ fontSize: 40, color: 'rgba(71, 85, 105, 0.8)' }} />
+                                                    </Box>
+                                                )}
+                                            </MediaPreview>
+                                        </Grid>
+                                        <Grid item size={{ xs: 8 }}>
+                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                                    <Chip
+                                                        icon={item.mediaType === 'image' ? <PhotoIcon /> : <VideoFileIcon />}
+                                                        label={item.mediaType}
+                                                        size="small"
+                                                        sx={{ 
+                                                            color: 'rgba(15, 23, 42, 0.9)',
+                                                            borderRadius: 16
+                                                        }}
+                                                    />
+                                                    {item.isPremium ? (
+                                                        <PremiumBadge
+                                                            icon={<StarIcon />}
+                                                            label="Premium"
+                                                            size="small"
+                                                        />
+                                                    ) : (
+                                                        <Chip
+                                                            icon={<LockIcon />}
+                                                            label="Free"
+                                                            size="small"
+                                                            sx={{ 
+                                                                color: 'rgba(71, 85, 105, 0.8)',
+                                                                background: 'rgba(15, 23, 42, 0.05)',
+                                                                borderRadius: 16
+                                                            }}
+                                                        />
+                                                    )}
+                                                    <Chip
+                                                        icon={item.displayToGallery !== false ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                                        label={item.displayToGallery !== false ? 'Visible' : 'Hidden'}
+                                                        size="small"
+                                                        sx={{ 
+                                                            color: item.displayToGallery !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)',
+                                                            background: item.displayToGallery !== false ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                                            borderRadius: 16,
+                                                            '& .MuiChip-icon': {
+                                                                color: item.displayToGallery !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)'
+                                                            }
+                                                        }}
+                                                    />
+                                                </Box>
+                                                {item.text && (
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <TextFieldsIcon sx={{ fontSize: 18, color: 'rgba(71, 85, 105, 0.6)' }} />
+                                                        <Typography 
+                                                            variant="body2" 
+                                                            sx={{ 
+                                                                color: 'rgba(15, 23, 42, 0.9)',
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap'
+                                                            }}
+                                                            title={item.text}
+                                                        >
+                                                            {item.text}
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                                <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                                                    <IconButton 
+                                                        size="small"
+                                                        onClick={() => handlePreviewClick(item.mediaUrl, item.mediaType)}
+                                                        sx={{ 
+                                                            color: 'rgba(71, 85, 105, 0.8)',
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(15, 23, 42, 0.08)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <VisibilityIcon />
+                                                    </IconButton>
+                                                    <IconButton 
+                                                        size="small"
+                                                        onClick={() => handleDeleteClick(item)}
+                                                        sx={{ 
+                                                            color: '#ef4444',
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(239, 68, 68, 0.08)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Box>
+                                            </Box>
+                                        </Grid>
+                                    </Grid>
+                                </MobileCard>
+                            ))}
+                        </Box>
                     ) : (
+                        // Desktop Table View
                         <StyledTableContainer component={Paper}>
-                            <Table>
+                            <Table sx={{ minWidth: 650 }}>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Preview</TableCell>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Type</TableCell>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Status</TableCell>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Text</TableCell>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Visibility</TableCell>
-                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600 }}>Actions</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 100 }}>Preview</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 80 }}>Type</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 100 }}>Status</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 150 }}>Text</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 100 }}>Visibility</TableCell>
+                                        <TableCell sx={{ color: 'rgba(15, 23, 42, 0.95)', fontWeight: 600, minWidth: 120 }}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>

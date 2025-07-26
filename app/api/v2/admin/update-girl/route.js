@@ -88,6 +88,9 @@ export async function POST(req) {
             dad: formData.get('dad') || existingData.dad || '',
             sexHistory: formData.get('sexHistory') || existingData.sexHistory || '',
             audioId: formData.get('audioId') || existingData.audioId || '',
+            bioPrompt: formData.get('bioPrompt') || existingData.bioPrompt || '',
+            physicalAttributes: formData.get('physicalAttributes') || existingData.physicalAttributes || '',
+            slang: formData.get('slang') || existingData.slang || '',
             priority: parseInt(formData.get('priority')) || existingData.priority,
             updatedAt: new Date().toISOString(),
         };

@@ -304,15 +304,15 @@ const CreatorsGrid = ({ initialGirls }) => {
                                     </Box>
                                 )}
                                 <BackgroundImage
-                                    backgroundurl={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.background}/w=200,fit=scale-down`}
+                                    backgroundurl={`${girl.backgroundUrl}`}
                                 />
                                 <CardContentWrapper>
                                     <Box sx={{ position: 'relative', zIndex: 1, mt: '25%' }}>
                                     <ProfileImageContainer
-                                        onClick={() => handleImageClick(`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`)}
+                                        onClick={() => handleImageClick(`${girl.pictureUrl}`)}
                                     >
                                         <StyledAvatar
-                                            src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down`}
+                                            src={`${girl.pictureUrl}`}
                                             alt={girl.name}
                                         />
                                     </ProfileImageContainer>

@@ -1,5 +1,5 @@
 // app/[id]/page.jsx
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import GirlPostsSection from "@/app/components/bio/GirlPostsSection";
 import ProfileClient from "@/app/components/bio/ProfileClient";
 import ProfileImagesServer from "@/app/components/bio/ProfileImagesServer";
@@ -50,14 +50,14 @@ export default async function GirlProfile({ params }) {
     // Server-side data fetching
     const girlData = await getGirlData(params.id);
 
-    // If girl not found, redirect to 404 page
+    // If girl not found, trigger 404
     if (!girlData) {
-        redirect('/not-found');
+        notFound();
     }
 
     // Build image URLs
-    const backgroundImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.background}/w=400,fit=scale-down`;
-    const profileImageUrl = `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girlData.picture}/w=200,fit=scale-down`;
+    const backgroundImageUrl = `${girlData.backgroundUrl}`;
+    const profileImageUrl = `${girlData.pictureUrl}`;
 
     return (
         <Box sx={{ minHeight: '100vh', py: 4 }}>

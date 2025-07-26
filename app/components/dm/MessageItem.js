@@ -40,6 +40,14 @@ const MessageButton = styled(Button)(({ theme }) => ({
 
 const MessageItem = ({ chat, index, totalChats, onMessageClick, convertTimestamp, truncateWithEllipsis }) => {
     const date = convertTimestamp(chat.lastMessage?.timestamp);
+    const [imageError, setImageError] = React.useState(false);
+    
+    // Default fallback image - using a data URI for a simple gray placeholder
+    const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"%3E%3Crect width="80" height="80" fill="%23e0e0e0"/%3E%3Ctext x="40" y="40" text-anchor="middle" dy=".3em" fill="%23999" font-family="Arial" font-size="12"%3E%3F%3C/text%3E%3C/svg%3E';
+    
+    const handleImageError = () => {
+        setImageError(true);
+    };
 
     return (
         <ListItem
@@ -63,8 +71,9 @@ const MessageItem = ({ chat, index, totalChats, onMessageClick, convertTimestamp
             }}>
                 <Link href={`/${chat.girlId}`} passHref style={{ textDecoration: 'none' }}>
                     <StyledAvatar
-                        src={`https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${chat.picture}/w=200,fit=scale-down`}
+                        src={imageError || !chat.picture ? fallbackImage : chat.picture}
                         alt={`Foto de ${chat.girlName}`}
+                        onError={handleImageError}
                     />
                 </Link>
                 <Typography

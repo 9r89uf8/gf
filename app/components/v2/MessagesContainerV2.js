@@ -54,8 +54,8 @@ const MessagesContainerV2 = ({ messages, user, girl, onLikeMessage, messagesEndR
                     >
                         {/* Avatar */}
                         <Avatar
-                            src={girl.picture ? 
-                                `https://imagedelivery.net/12JrhW5z6bQapxz4zK9hRQ/${girl.picture}/w=200,fit=scale-down` : 
+                            src={girl.pictureUrl ?
+                                `${girl.pictureUrl}` :
                                 girl.profileImage
                             }
                             sx={{

@@ -65,7 +65,7 @@ export async function GET(req) {
 
                 return {
                     girlId: conversation.girlId,
-                    picture: girlData.picture,
+                    picture: girlData.pictureUrl,
                     girlName: girlData.username,
                     lastMessage: conversation.latestMessage, // Note: using latestMessage from new structure
                     // You can add other fields from the conversation here if needed
