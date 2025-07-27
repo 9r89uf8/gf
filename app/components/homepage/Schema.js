@@ -76,8 +76,8 @@ export default function Schema() {
                 },
                 "aggregateRating": {
                     "@type": "AggregateRating",
-                    "ratingValue": "4.9",
-                    "reviewCount": "4000000"
+                    "ratingValue": "4.7",
+                    "ratingCount": "150000"
                 }
             },
             {
@@ -92,8 +92,8 @@ export default function Schema() {
                 },
                 "aggregateRating": {
                     "@type": "AggregateRating",
-                    "ratingValue": "4.9",
-                    "ratingCount": "4000000"
+                    "ratingValue": "4.7",
+                    "ratingCount": "150000"
                 },
                 "description": "Aplicación web de novia virtual gratis con chicas inteligencia artificial",
                 "applicationSubCategory": "AI Companions",
@@ -160,35 +160,6 @@ export default function Schema() {
                     "@type": "Place",
                     "name": "Spanish-speaking countries worldwide"
                 }
-            },
-            {
-                "@type": "FAQPage",
-                "mainEntity": [
-                    {
-                        "@type": "Question",
-                        "name": "¿Qué es una novia virtual con IA?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Una novia virtual es una compañera IA creada con inteligencia artificial avanzada. En NoviaChat, nuestras chicas AI pueden chatear, enviar fotos y mensajes de voz, creando una experiencia realista de compañía virtual."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Es gratis usar NoviaChat?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Sí, NoviaChat ofrece novia virtual gratis. Puedes chatear con chicas AI sin necesidad de tarjeta de crédito. También ofrecemos opciones premium para funciones adicionales."
-                        }
-                    },
-                    {
-                        "@type": "Question",
-                        "name": "¿Cómo funcionan las chicas IA?",
-                        "acceptedAnswer": {
-                            "@type": "Answer",
-                            "text": "Nuestras chicas inteligencia artificial utilizan tecnología avanzada para mantener conversaciones naturales, recordar detalles sobre ti y responder de manera personalizada, creando una experiencia única de compañera virtual."
-                        }
-                    }
-                ]
             }
         ]
     };
