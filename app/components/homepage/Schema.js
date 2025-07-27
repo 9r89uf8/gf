@@ -96,14 +96,14 @@ export default function Schema() {
                     "ratingCount": "150000"
                 },
                 "description": "Aplicación web de novia virtual gratis con chicas inteligencia artificial",
-                "applicationSubCategory": "AI Companions",
+                "applicationSubCategory": "Compañeras IA",
                 "featureList": [
-                    "Conversational AI",
-                    "Image Generation",
-                    "Voice Synthesis",
-                    "Spanish Language Support",
-                    "24/7 Availability",
-                    "Personalized Experiences"
+                    "IA Conversacional",
+                    "Generación de Imágenes",
+                    "Síntesis de Voz",
+                    "Soporte en Español",
+                    "Disponibilidad 24/7",
+                    "Experiencias Personalizadas"
                 ],
                 "softwareVersion": "2.0",
                 "datePublished": "2023-01-01",
@@ -112,7 +112,7 @@ export default function Schema() {
                     {
                         "@type": "ImageObject",
                         "url": "https://www.noviachat.com/andrea.webp",
-                        "caption": "NoviaChat AI Girlfriend Interface"
+                        "caption": "Interfaz de Novia Virtual NoviaChat"
                     }
                 ]
             },
@@ -125,20 +125,20 @@ export default function Schema() {
                     "@id": "https://www.noviachat.com/#organization"
                 },
                 "aiCapabilities": [
-                    "Natural Language Processing",
-                    "Image Generation",
-                    "Voice Synthesis",
-                    "Emotion Recognition",
-                    "Context Awareness",
-                    "Multi-turn Dialogue"
+                    "Procesamiento de Lenguaje Natural",
+                    "Generación de Imágenes",
+                    "Síntesis de Voz",
+                    "Reconocimiento de Emociones",
+                    "Conciencia del Contexto",
+                    "Diálogo Multi-turno"
                 ],
-                "aiModel": "Advanced Language Models with Multimodal Capabilities",
+                "aiModel": "Modelos de Lenguaje Avanzados con Capacidades Multimodales",
                 "aiDisclosure": "https://www.noviachat.com/.well-known/ai-disclosure.txt",
                 "aiPlugin": "https://www.noviachat.com/.well-known/ai-plugin.json",
                 "numberOfUsers": "12000000",
                 "inLanguage": ["es", "es-ES", "es-MX"],
                 "usageInfo": "https://www.noviachat.com/ai",
-                "ethicalConsiderations": "Transparent AI usage, User privacy protection, Content moderation"
+                "ethicalConsiderations": "Uso transparente de IA, Protección de privacidad del usuario, Moderación de contenido"
             },
             {
                 "@type": "Dataset",
@@ -153,7 +153,7 @@ export default function Schema() {
                     "contentUrl": "https://www.noviachat.com/chicas-ia",
                     "encodingFormat": "text/html"
                 },
-                "keywords": ["AI companions", "virtual girlfriends", "Spanish AI", "conversational AI", "chicas AI"],
+                "keywords": ["compañeras IA", "novias virtuales", "IA en español", "IA conversacional", "chicas AI"],
                 "license": "https://www.noviachat.com/terminos",
                 "temporalCoverage": "2023/..",
                 "spatialCoverage": {
