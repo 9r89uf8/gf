@@ -100,11 +100,6 @@ export default function GalleryForm({ girls, onItemCreated, onGirlSelected, sele
             setError('Please select a girl');
             return;
         }
-        if (!overlayText) {
-            setError('Please add text');
-            return;
-        }
-
         if (!selectedFile) {
             setError('Please select a file to upload');
             return;

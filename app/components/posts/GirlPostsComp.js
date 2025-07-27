@@ -11,6 +11,7 @@ import { Stream } from "@cloudflare/stream-react";
 import { styled } from "@mui/material/styles";
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
+import PremiumOverlay from '@/app/components/ui/PremiumOverlay';
 
 // Styled Components
 
@@ -81,7 +82,10 @@ function GirlPostComp({ girl, user, post, index }) {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     const handleImageClick = () => {
-        setIsFullscreen(true);
+        // Only allow fullscreen for non-premium content or premium users
+        if (!post.isPremium || user?.premium) {
+            setIsFullscreen(true);
+        }
     };
 
     const handleCloseFullscreen = () => {
@@ -153,28 +157,36 @@ function GirlPostComp({ girl, user, post, index }) {
                                     src={post.mediaUrl}
                                     alt={`Post ${index}`}
                                     onClick={handleImageClick}
-                                    style={{ cursor: 'pointer' }}
+                                    style={{ 
+                                        cursor: (!post.isPremium || user?.premium) ? 'pointer' : 'default',
+                                        filter: (post.isPremium && !user?.premium) ? 'blur(20px)' : 'none'
+                                    }}
                                 />
+                                {post.isPremium && !user?.premium && <PremiumOverlay />}
                             </>
                         ) : post.mediaType === 'video' ? (
-                            <Box sx={{ 
-                                width: '100%',
-                                maxHeight: '600px',
-                                aspectRatio: '9/16',
-                                '& iframe': {
+                            <>
+                                <Box sx={{ 
                                     width: '100%',
-                                    height: '100%',
-                                    border: 'none',
-                                }
-                            }}>
-                                <Stream 
-                                    controls
-                                    src={post.uploadId}
-                                    autoplay={false}
-                                    muted={false}
-                                    preload="metadata"
-                                />
-                            </Box>
+                                    maxHeight: '600px',
+                                    aspectRatio: '9/16',
+                                    filter: (post.isPremium && !user?.premium) ? 'blur(20px)' : 'none',
+                                    '& iframe': {
+                                        width: '100%',
+                                        height: '100%',
+                                        border: 'none',
+                                    }
+                                }}>
+                                    <Stream 
+                                        controls
+                                        src={post.uploadId}
+                                        autoplay={false}
+                                        muted={false}
+                                        preload="metadata"
+                                    />
+                                </Box>
+                                {post.isPremium && !user?.premium && <PremiumOverlay />}
+                            </>
                         ) : null}
                     </MediaWrapper>
                 )}
@@ -183,12 +195,14 @@ function GirlPostComp({ girl, user, post, index }) {
                 {/* Description */}
                 {post.mediaType !== 'text' && (
                     <Description>
+
                         <Typography variant="body1" sx={{ color: 'rgba(71, 85, 105, 0.9)', lineHeight: 1.6 }}>
                             <Box component="span" sx={{ fontWeight: 600, color: 'rgba(15, 23, 42, 0.95)' }}>
                                 {post.girlUsername}
                             </Box>{' '}
-                            {post.text}
+                            {post.text?post.text:null}
                         </Typography>
+
                         {post.createdAt && (
                             <Typography variant="caption" sx={{ color: 'rgba(100, 116, 139, 0.8)', mt: 1, display: 'block' }}>
                                 {new Date(post.createdAt).toLocaleDateString('es-ES', { 

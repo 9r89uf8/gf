@@ -1,6 +1,6 @@
 // app/[id]/page.jsx
 import { notFound } from 'next/navigation';
-import GirlPostsSection from "@/app/components/bio/GirlPostsSection";
+import MediaToggleSection from "@/app/components/bio/MediaToggleSection";
 import ProfileClient from "@/app/components/bio/ProfileClient";
 import ProfileImagesServer from "@/app/components/bio/ProfileImagesServer";
 import ImageModalClient from "@/app/components/bio/ImageModalClient";
@@ -47,13 +47,14 @@ async function getGirlData(id) {
 // Keep your existing metadata and data fetching functions
 
 export default async function GirlProfile({ params }) {
+
     // Server-side data fetching
     const girlData = await getGirlData(params.id);
 
     // If girl not found, trigger 404
-    if (!girlData) {
-        notFound();
-    }
+    // if (!girlData) {
+    //     notFound();
+    // }
 
     // Build image URLs
     const backgroundImageUrl = `${girlData.backgroundUrl}`;
@@ -84,8 +85,8 @@ export default async function GirlProfile({ params }) {
                 {/* Client component for modal functionality */}
                 <ImageModalClient />
 
-                {/* Posts Section */}
-                <GirlPostsSection girl={girlData} />
+                {/* Media Section with Gallery/Posts toggle */}
+                <MediaToggleSection girl={girlData} />
             </Container>
         </Box>
     );

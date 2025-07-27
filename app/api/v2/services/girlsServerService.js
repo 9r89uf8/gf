@@ -5,6 +5,7 @@ const CACHE_TTL = 5 * 60 * 60; // 5 hours in seconds
 const ALL_GIRLS_CACHE_KEY = 'girls:all';
 const GIRL_CACHE_PREFIX = 'girl:';
 const GIRL_POSTS_CACHE_PREFIX = 'girl:posts:';
+const GIRL_GALLERY_CACHE_PREFIX = 'girl:gallery:';
 
 /**
  * Serialize Firestore document data to ensure it's safe for client components
@@ -218,6 +219,66 @@ export async function getGirlPostsCached(girlId) {
 }
 
 /**
+ * Get gallery items for a specific girl with Redis caching
+ * @param {string} girlId - The girl's ID
+ * @returns {Promise<Array>} Array of gallery items
+ */
+export async function getGirlGalleryCached(girlId) {
+    const cacheKey = `${GIRL_GALLERY_CACHE_PREFIX}${girlId}`;
+    
+    try {
+        // Try to get from Redis cache first
+        try {
+            const redis = await getRedisClient();
+            const cachedData = await redis.get(cacheKey);
+            if (cachedData) {
+                console.log(`[GirlsService] Cache hit for girl gallery ${girlId}`);
+                return JSON.parse(cachedData);
+            }
+        } catch (redisError) {
+            console.error('[GirlsService] Redis error, falling back to Firestore:', redisError);
+        }
+
+        // Cache miss or Redis error - fetch from Firestore
+        console.log(`[GirlsService] Cache miss, fetching gallery for girl ${girlId} from Firestore`);
+        const gallerySnapshot = await adminDb.firestore()
+            .collection('girls-gallery')
+            .where('girlId', '==', girlId)
+            .where('displayToGallery', '==', true)
+            .orderBy('createdAt', 'desc')
+            .get();
+
+        const gallery = [];
+        gallerySnapshot.forEach(doc => {
+            try {
+                const data = doc.data();
+                const serializedData = {
+                    id: doc.id,
+                    ...serializeFirestoreData(data)
+                };
+                gallery.push(serializedData);
+            } catch (error) {
+                console.error(`[GirlsService] Error serializing gallery item ${doc.id}:`, error);
+            }
+        });
+
+        // Try to cache the result
+        try {
+            const redis = await getRedisClient();
+            await redis.setEx(cacheKey, CACHE_TTL, JSON.stringify(gallery));
+            console.log(`[GirlsService] Cached ${gallery.length} gallery items for girl ${girlId}`);
+        } catch (redisError) {
+            console.error('[GirlsService] Failed to cache girl gallery:', redisError);
+        }
+
+        return gallery;
+    } catch (error) {
+        console.error(`[GirlsService] Error fetching gallery for girl ${girlId}:`, error);
+        throw error;
+    }
+}
+
+/**
  * Invalidate all girls-related caches
  * @returns {Promise<void>}
  */
@@ -238,6 +299,12 @@ export async function invalidateGirlsCache() {
         const postKeys = await redis.keys(`${GIRL_POSTS_CACHE_PREFIX}*`);
         if (postKeys.length > 0) {
             await redis.del(...postKeys);
+        }
+        
+        // Delete girl gallery caches
+        const galleryKeys = await redis.keys(`${GIRL_GALLERY_CACHE_PREFIX}*`);
+        if (galleryKeys.length > 0) {
+            await redis.del(...galleryKeys);
         }
         
         console.log('[GirlsService] All girls caches invalidated');
@@ -264,6 +331,9 @@ export async function invalidateGirlCache(girlId) {
         // Delete girl's posts cache
         await redis.del(`${GIRL_POSTS_CACHE_PREFIX}${girlId}`);
         
+        // Delete girl's gallery cache
+        await redis.del(`${GIRL_GALLERY_CACHE_PREFIX}${girlId}`);
+        
         console.log(`[GirlsService] Cache invalidated for girl ${girlId}`);
     } catch (error) {
         console.error('[GirlsService] Error invalidating girl cache:', error);
@@ -271,9 +341,9 @@ export async function invalidateGirlCache(girlId) {
 }
 
 /**
- * Get girl data for server-side rendering with posts
+ * Get girl data for server-side rendering with posts and gallery
  * @param {string} girlId - The girl's ID
- * @returns {Promise<Object>} Girl data with posts
+ * @returns {Promise<Object>} Girl data with posts and gallery
  */
 export async function getGirlDataForSSR(girlId) {
     const girl = await getGirlByIdCached(girlId);
@@ -282,15 +352,17 @@ export async function getGirlDataForSSR(girlId) {
         return null;
     }
     
-    // Get the girl's posts
+    // Get the girl's posts and gallery
     const posts = await getGirlPostsCached(girlId);
+    const gallery = await getGirlGalleryCached(girlId);
     
-    // Combine girl data with posts
-    const girlWithPosts = {
+    // Combine girl data with posts and gallery
+    const girlWithData = {
         ...girl,
-        posts: posts || []
+        posts: posts || [],
+        gallery: gallery || []
     };
     
     // Final serialization to ensure data is safe for client components
-    return JSON.parse(JSON.stringify(girlWithPosts));
+    return JSON.parse(JSON.stringify(girlWithData));
 }
