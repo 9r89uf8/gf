@@ -1,0 +1,60 @@
+/* Animations */
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+    50% { 
+        opacity: 0.8; 
+        transform: scale(1.05); 
+    }
+}
+
+@keyframes pulse-dot {
+    0%, 100% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0.5; 
+    }
+}
+
+/* Apply animations */
+.cta-button {
+    animation: pulse 2s infinite;
+}
+
+.online-indicator {
+    animation: pulse-dot 1.5s infinite;
+}
+
+/* Responsive Grid Styles */
+@media (max-width: 768px) {
+    .hero-grid {
+        grid-template-columns: 1fr !important;
+        gap: 40px !important;
+    }
+    
+    .girls-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .chat-preview {
+        max-width: 350px !important;
+    }
+    
+    .cta-button {
+        font-size: 16px !important;
+        padding: 15px 30px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .girls-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .trust-badges {
+        justify-content: center !important;
+    }
+}
