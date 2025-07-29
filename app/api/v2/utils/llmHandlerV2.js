@@ -2,6 +2,7 @@
 import Together from "together-ai";
 import { DateTime } from 'luxon';
 import OpenAI from "openai";
+// import { formatNewsForAI } from '@/app/api/v2/services/newsService';
 
 const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
@@ -13,7 +14,7 @@ const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 /**
  * Generate system prompt for the new conversation structure
  */
-function generateSystemPromptV2(user, girl, conversationLimits, lastUserMessage, messageLabels, preSelectedMedia = null) {
+async function generateSystemPromptV2(user, girl, conversationLimits, lastUserMessage, messageLabels, preSelectedMedia = null) {
     const nowInMexico = DateTime.now()
         .setZone('America/Mexico_City')
         .setLocale('es');
@@ -219,6 +220,7 @@ información importante sobre el User:
         }
     }
 
+
     return {
         "role": "system",
         "content": `
@@ -238,6 +240,7 @@ Eres una chica real con una personalidad coqueta, amigable y sexual. Tu comporta
 
 5. **Fecha y hora actual:**
    Hoy es ${dayNameSpanish} ${dayNumber} de ${monthNameSpanish} de ${yearNumber}, y son las ${timeString} en ${girl.country}.
+
    
 ${mediaInstructions}
 
@@ -338,7 +341,7 @@ export async function handleLLMInteractionV2(userData, girlData, conversation, l
         };
 
         // Generate system prompt
-        const systemPrompt = generateSystemPromptV2(userData, girlData, conversationLimits, lastUserMessage, messageLabels, preSelectedMedia);
+        const systemPrompt = await generateSystemPromptV2(userData, girlData, conversationLimits, lastUserMessage, messageLabels, preSelectedMedia);
         console.log(systemPrompt)
 
         // Convert conversation messages to LLM format

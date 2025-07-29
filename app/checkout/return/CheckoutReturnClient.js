@@ -409,11 +409,11 @@ export default function CheckoutReturnClient() {
                   variant="contained"
                   onClick={() => {
                     resetPaymentCheckout();
-                    router.push('/products');
+                    router.push('/dm');
                   }}
                   fullWidth
               >
-                {isSuccessful ? 'Continuar Comprando' : 'Intentar Nuevamente'}
+                {isSuccessful ? 'Continuar' : 'Intentar Nuevamente'}
               </StyledButton>
             </Box>
           </Box>

@@ -16,6 +16,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import StarIcon from '@mui/icons-material/Star';
 import ChatIcon from '@mui/icons-material/Chat';
 import BookIcon from '@mui/icons-material/Book';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 const DashboardCard = styled(ModernCard)(({ theme }) => ({
     cursor: 'pointer',
@@ -144,6 +145,18 @@ export default function AdminDashboard() {
             path: '/admin/blog',
             stats: null,
             color: '#E91E63',
+        },
+        {
+            title: 'News Management',
+            description: 'Manage real-time news and events by country',
+            icon: <NewspaperIcon sx={{ fontSize: 40 }} />,
+            path: '/admin/news',
+            stats: {
+                label: 'Countries',
+                value: '7',
+                icon: <NewspaperIcon sx={{ fontSize: 16 }} />,
+            },
+            color: '#FF5722',
         },
     ];
 
