@@ -24,7 +24,8 @@ export async function createOrGetConversation(userId, girlId) {
             freeAudio: 5,
             freeImages: 3,
             freeMessages: 30,
-            messages: []
+            messages: [],
+            sentMedia: [] // Track sent image/video IDs to prevent duplicates
         };
         await conversationRef.set(newConversation);
         return { conversationRef, conversation: newConversation, isNew: true };
@@ -114,7 +115,9 @@ export async function saveAssistantMessage(conversationRef, assistantMessage, us
     
     return await db.runTransaction(async (transaction) => {
         const conversationDoc = await transaction.get(conversationRef);
-        const messages = conversationDoc.data().messages || [];
+        const conversationData = conversationDoc.data();
+        const messages = conversationData.messages || [];
+        const sentMedia = conversationData.sentMedia || [];
         
         // Add assistant message
         messages.push(assistantMessage);
@@ -125,9 +128,15 @@ export async function saveAssistantMessage(conversationRef, assistantMessage, us
             messages[userMsgIndex].status = 'completed';
         }
 
+        // Track sent media ID if media was sent
+        if (responseData.mediaId && (responseData.mediaType === 'image' || responseData.mediaType === 'video')) {
+            sentMedia.push(responseData.mediaId);
+        }
+
         // Final update data
         let finalUpdateData = {
             messages: messages,
+            sentMedia: sentMedia,
             lastActivity: adminDb.firestore.FieldValue.serverTimestamp(),
             latestMessage: {
                 content: assistantMessage.content || 'Assistant response',
@@ -243,6 +252,7 @@ export async function clearConversationMessages(userId, girlId) {
         // Only update messages and latestMessage, preserve all other fields
         transaction.update(conversationRef, {
             messages: [],
+            sentMedia: [], // Reset sent media tracking when clearing conversation
             latestMessage: null,
             lastActivity: adminDb.firestore.FieldValue.serverTimestamp()
         });

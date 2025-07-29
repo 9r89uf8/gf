@@ -107,8 +107,14 @@ export async function generateAudio(text, voiceId) {
 
 /**
  * Get media content (image/video) from database
+ * @param {string} girlId - Girl ID
+ * @param {string} mediaType - Type of media
+ * @param {string} description - Media description
+ * @param {boolean} isPremium - User premium status
+ * @param {Object} messageLabels - Message analysis labels
+ * @param {Array<string>} sentMediaIds - Array of already sent media IDs to exclude
  */
-export async function getMediaContent(girlId, mediaType, description, isPremium, messageLabels) {
+export async function getMediaContent(girlId, mediaType, description, isPremium, messageLabels, sentMediaIds = []) {
     try {
 
         let media = ''
@@ -116,6 +122,9 @@ export async function getMediaContent(girlId, mediaType, description, isPremium,
             media = 'video'
         }
         if (messageLabels.requesting_picture) {
+            media = 'image'
+        }
+        if(!messageLabels.requesting_picture && mediaType==='image'){
             media = 'image'
         }
 
@@ -137,12 +146,23 @@ export async function getMediaContent(girlId, mediaType, description, isPremium,
             return null;
         }
 
-        const mediaItems = snapshot.docs.map(doc => ({
+        let mediaItems = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
 
-        // Return random item
+        // Filter out already sent media
+        if (sentMediaIds && sentMediaIds.length > 0) {
+            const unseenItems = mediaItems.filter(item => !sentMediaIds.includes(item.id));
+            
+            // If all media has been sent, reset and allow re-sending
+            if (unseenItems.length > 0) {
+                mediaItems = unseenItems;
+            }
+            // If unseenItems is empty, we'll use all mediaItems (allowing repeats)
+        }
+
+        // Return random item from available items
         const randomIndex = Math.floor(Math.random() * mediaItems.length);
         return mediaItems[randomIndex];
 

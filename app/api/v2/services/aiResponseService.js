@@ -106,9 +106,11 @@ export async function analyzeMessage(userMessageContent, userSentMedia = false) 
     // Use lightweight pattern matching for instant results
     const analysis = quickAnalyzeMessage(userMessageContent);
     
-    // If user sent media, override video request detection
+    // If user sent media, override all media request detection
     if (userSentMedia) {
+        analysis.requesting_picture = false;
         analysis.requesting_video = false;
+        analysis.requesting_audio = false;
     }
     
     return analysis;
@@ -117,14 +119,15 @@ export async function analyzeMessage(userMessageContent, userSentMedia = false) 
 /**
  * Process AI response and enrich with media if requested
  */
-export async function processAIResponse(userData, girlData, conversation, userMessage, messageLabels) {
+export async function processAIResponse(userData, girlData, conversation, userMessage, messageLabels, preSelectedMedia = null) {
     // Generate AI response
     const assistantMessage = await handleLLMInteractionV2(
         userData, 
         girlData, 
         conversation, 
         userMessage, 
-        messageLabels
+        messageLabels,
+        preSelectedMedia
     );
 
     // Parse response content
@@ -134,7 +137,8 @@ export async function processAIResponse(userData, girlData, conversation, userMe
         content: parsedResponse.content,
         mediaType: parsedResponse.type,
         displayLink: false,
-        status: 'completed'
+        status: 'completed',
+        mediaId: preSelectedMedia?.id || null // Include media ID if pre-selected
     };
 
     return { assistantMessage, parsedResponse, responseData };
@@ -155,9 +159,30 @@ function getRandomMoaningAudio(audioFiles) {
 
 /**
  * Enrich response with media based on type and limits
+ * @param {Object} responseData - Response data object
+ * @param {Object} parsedResponse - Parsed response from AI
+ * @param {Object} girlData - Girl data
+ * @param {Object} userData - User data
+ * @param {Object} limits - Current limits
+ * @param {Object} messageLabels - Message analysis labels
+ * @param {Object} preSelectedMedia - Pre-selected media if any
+ * @param {Array<string>} sentMediaIds - Array of already sent media IDs
  */
-export async function enrichResponseWithMedia(responseData, parsedResponse, girlData, userData, limits, messageLabels) {
+export async function enrichResponseWithMedia(responseData, parsedResponse, girlData, userData, limits, messageLabels, preSelectedMedia = null, sentMediaIds = []) {
     const enrichedData = { ...responseData };
+
+    // If we have pre-selected media and user requested it, use it directly
+    if (preSelectedMedia && (messageLabels.requesting_picture || messageLabels.requesting_video || messageLabels.requesting_audio)) {
+        if (preSelectedMedia.type === 'audio' && preSelectedMedia.mediaUrl) {
+            enrichedData.audioUrl = preSelectedMedia.mediaUrl;
+            enrichedData.mediaType = 'audio';
+        } else if (preSelectedMedia.mediaUrl) {
+            enrichedData.mediaUrl = preSelectedMedia.mediaUrl;
+            enrichedData.mediaType = preSelectedMedia.type;
+            enrichedData.mediaId = preSelectedMedia.id; // Track media ID
+        }
+        return enrichedData;
+    }
 
     switch (parsedResponse.type) {
         case 'text':
@@ -180,11 +205,13 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
                     'image', 
                     parsedResponse.description, 
                     userData.premium,
-                    messageLabels
+                    messageLabels,
+                    sentMediaIds
                 );
                 if (imageContent) {
                     enrichedData.mediaUrl = imageContent.mediaUrl
                     enrichedData.mediaType = 'image';
+                    enrichedData.mediaId = imageContent.id; // Track media ID
                 }else {
                     enrichedData.mediaUrl = null;
                     enrichedData.mediaType = 'text';
@@ -202,11 +229,13 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
                     'video', 
                     parsedResponse.description, 
                     userData.premium,
-                    messageLabels
+                    messageLabels,
+                    sentMediaIds
                 );
                 if (videoContent) {
                     enrichedData.mediaUrl = videoContent.mediaUrl;
                     enrichedData.mediaType = 'video';
+                    enrichedData.mediaId = videoContent.id; // Track media ID
                 }else {
                     enrichedData.mediaUrl = null;
                     enrichedData.mediaType = 'text';
@@ -259,8 +288,19 @@ export async function enrichResponseWithMedia(responseData, parsedResponse, girl
 /**
  * Add random media to text responses
  */
-export async function maybeAddRandomMedia(responseData, parsedResponse, girlData, userData, limits) {
+export async function maybeAddRandomMedia(responseData, parsedResponse, girlData, userData, limits, messageLabels = {}) {
+    // Skip if not a text response or random chance doesn't trigger
     if (parsedResponse.type !== 'text' || Math.random() >= 0.3) {
+        return responseData;
+    }
+
+    // Skip if media already exists (user requested specific media)
+    if (responseData.mediaUrl || responseData.audioUrl) {
+        return responseData;
+    }
+
+    // Skip if user explicitly requested any type of media
+    if (messageLabels.requesting_picture || messageLabels.requesting_video || messageLabels.requesting_audio) {
         return responseData;
     }
 

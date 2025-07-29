@@ -163,23 +163,67 @@ async function saveMessageHandler(req) {
             // Analyze user message
             const messageLabels = await analyzeMessage(sanitizedContent, userMessageObj.userSentMedia);
 
-            // Generate AI response
+            // Pre-fetch media if user requested it
+            let preSelectedMedia = null;
+            if (messageLabels.requesting_picture || messageLabels.requesting_video || messageLabels.requesting_audio) {
+                // Check if user has permissions for requested media
+                const canSendImage = (userData.premium || saveResult.updatedLimits.freeImages > 0) && (messageLabels.requesting_picture || messageLabels.requesting_video);
+                const canSendAudio = (userData.premium || saveResult.updatedLimits.freeAudio > 0) && messageLabels.requesting_audio;
+                
+                if (canSendImage || canSendAudio) {
+                    // Fetch media based on request type
+                    const mediaType = messageLabels.requesting_video ? 'video' : messageLabels.requesting_picture ? 'image' : 'audio';
+                    
+                    if (mediaType !== 'audio') {
+                        // For images/videos, fetch from gallery
+                        const { getMediaContent } = await import('../../utils/mediaProcessing');
+                        preSelectedMedia = await getMediaContent(
+                            girlData.id || girlData.girlId,
+                            mediaType,
+                            null, // description not needed here
+                            userData.premium,
+                            messageLabels,
+                            conversation.sentMedia || [] // Pass sent media IDs to avoid duplicates
+                        );
+                        
+                        if (preSelectedMedia) {
+                            preSelectedMedia.type = mediaType;
+                        }
+                    } else if (messageLabels.requesting_moan && girlData.audioFiles) {
+                        // For moaning audio, select from pre-existing files
+                        const audioFiles = girlData.audioFiles;
+                        if (audioFiles && audioFiles.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * audioFiles.length);
+                            preSelectedMedia = {
+                                type: 'audio',
+                                mediaUrl: audioFiles[randomIndex],
+                                description: 'moaning audio'
+                            };
+                        }
+                    }
+                }
+            }
+
+            // Generate AI response with media context
             const { assistantMessage, parsedResponse, responseData } = await processAIResponse(
                 userData,
                 girlData,
                 saveResult.conversation,
                 userMessageObj,
-                messageLabels
+                messageLabels,
+                preSelectedMedia
             );
 
-            // Enrich with media
+            // Enrich with media (now using pre-selected media if available)
             let enrichedResponse = await enrichResponseWithMedia(
                 responseData,
                 parsedResponse,
                 girlData,
                 userData,
                 saveResult.updatedLimits,
-                messageLabels
+                messageLabels,
+                preSelectedMedia,
+                saveResult.conversation.sentMedia || [] // Pass sent media IDs
             );
 
             // Maybe add random media
@@ -188,7 +232,8 @@ async function saveMessageHandler(req) {
                 parsedResponse,
                 girlData,
                 userData,
-                saveResult.updatedLimits
+                saveResult.updatedLimits,
+                messageLabels
             );
 
 

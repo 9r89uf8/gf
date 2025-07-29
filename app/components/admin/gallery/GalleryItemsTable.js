@@ -20,6 +20,9 @@ import {
     DialogTitle,
     Button,
     Tooltip,
+    TextField,
+    Switch,
+    FormControlLabel,
     useMediaQuery,
     useTheme,
     Grid
@@ -27,6 +30,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PhotoIcon from '@mui/icons-material/Photo';
 import VideoFileIcon from '@mui/icons-material/VideoFile';
@@ -124,6 +128,16 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
     const [previewDialog, setPreviewDialog] = useState({ open: false, url: '', type: '' });
     const [thumbnailErrors, setThumbnailErrors] = useState({});
     
+    // Edit dialog states
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState(null);
+    const [editing, setEditing] = useState(false);
+    const [editFormData, setEditFormData] = useState({
+        text: '',
+        isPremium: false,
+        displayToGallery: true
+    });
+    
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -155,6 +169,47 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
             console.error('Delete error:', error);
         } finally {
             setDeleting(false);
+        }
+    };
+
+    const handleEditClick = (item) => {
+        setItemToEdit(item);
+        setEditFormData({
+            text: item.text || '',
+            isPremium: item.isPremium || false,
+            displayToGallery: item.displayToGallery !== false
+        });
+        setEditDialogOpen(true);
+    };
+
+    const handleEditConfirm = async () => {
+        if (!itemToEdit) return;
+
+        setEditing(true);
+        try {
+            const response = await fetch('/api/v2/gallery/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    itemId: itemToEdit.id,
+                    text: editFormData.text,
+                    isPremium: editFormData.isPremium,
+                    displayToGallery: editFormData.displayToGallery
+                })
+            });
+
+            if (response.ok) {
+                onRefresh();
+                setEditDialogOpen(false);
+                setItemToEdit(null);
+            } else {
+                const error = await response.json();
+                console.error('Edit failed:', error);
+            }
+        } catch (error) {
+            console.error('Edit error:', error);
+        } finally {
+            setEditing(false);
         }
     };
 
@@ -342,6 +397,18 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
                                                     </IconButton>
                                                     <IconButton 
                                                         size="small"
+                                                        onClick={() => handleEditClick(item)}
+                                                        sx={{ 
+                                                            color: 'rgba(71, 85, 105, 0.8)',
+                                                            '&:hover': {
+                                                                backgroundColor: 'rgba(15, 23, 42, 0.08)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                    <IconButton 
+                                                        size="small"
                                                         onClick={() => handleDeleteClick(item)}
                                                         sx={{ 
                                                             color: '#ef4444',
@@ -513,6 +580,20 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
                                                             <VisibilityIcon />
                                                         </IconButton>
                                                     </Tooltip>
+                                                    <Tooltip title="Edit">
+                                                        <IconButton 
+                                                            size="small"
+                                                            onClick={() => handleEditClick(item)}
+                                                            sx={{ 
+                                                                color: 'rgba(71, 85, 105, 0.8)',
+                                                                '&:hover': {
+                                                                    backgroundColor: 'rgba(15, 23, 42, 0.08)'
+                                                                }
+                                                            }}
+                                                        >
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                     <Tooltip title="Delete">
                                                         <IconButton 
                                                             size="small"
@@ -567,6 +648,126 @@ export default function GalleryItemsTable({ items, loading, selectedGirl, onRefr
                         disabled={deleting}
                     >
                         {deleting ? 'Deleting...' : 'Delete'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Edit Dialog */}
+            <Dialog
+                open={editDialogOpen}
+                onClose={() => setEditDialogOpen(false)}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    style: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: 16,
+                    }
+                }}
+            >
+                <DialogTitle sx={{ color: 'rgba(15, 23, 42, 0.95)' }}>Edit Gallery Item</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
+                        <TextField
+                            label="Text (optional)"
+                            value={editFormData.text}
+                            onChange={(e) => setEditFormData({ ...editFormData, text: e.target.value })}
+                            fullWidth
+                            multiline
+                            rows={2}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&:hover fieldset': {
+                                        borderColor: 'rgba(15, 23, 42, 0.3)',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#1a1a1a',
+                                    },
+                                },
+                                '& label.Mui-focused': {
+                                    color: '#1a1a1a',
+                                },
+                            }}
+                        />
+                        
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={editFormData.isPremium}
+                                    onChange={(e) => setEditFormData({ ...editFormData, isPremium: e.target.checked })}
+                                    sx={{
+                                        '& .MuiSwitch-switchBase.Mui-checked': {
+                                            color: '#FFD700',
+                                            '&:hover': {
+                                                backgroundColor: 'rgba(255, 215, 0, 0.08)',
+                                            },
+                                        },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                            backgroundColor: '#FFD700',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <StarIcon sx={{ color: editFormData.isPremium ? '#FFD700' : 'rgba(71, 85, 105, 0.8)', fontSize: 20 }} />
+                                    <Typography>Premium Content</Typography>
+                                </Box>
+                            }
+                        />
+                        
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={editFormData.displayToGallery}
+                                    onChange={(e) => setEditFormData({ ...editFormData, displayToGallery: e.target.checked })}
+                                    sx={{
+                                        '& .MuiSwitch-switchBase.Mui-checked': {
+                                            color: 'rgba(34, 197, 94, 0.9)',
+                                        },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                            backgroundColor: 'rgba(34, 197, 94, 0.9)',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    {editFormData.displayToGallery ? 
+                                        <VisibilityIcon sx={{ color: 'rgba(34, 197, 94, 0.9)', fontSize: 20 }} /> : 
+                                        <VisibilityOffIcon sx={{ color: 'rgba(239, 68, 68, 0.9)', fontSize: 20 }} />
+                                    }
+                                    <Typography>Display in Gallery</Typography>
+                                </Box>
+                            }
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={() => setEditDialogOpen(false)} 
+                        sx={{ color: 'rgba(71, 85, 105, 0.8)' }}
+                        disabled={editing}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleEditConfirm} 
+                        variant="contained"
+                        disabled={editing}
+                        sx={{
+                            background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+                            color: '#ffffff',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 100%)',
+                            },
+                            '&:disabled': {
+                                background: 'rgba(0, 0, 0, 0.12)',
+                            },
+                        }}
+                    >
+                        {editing ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </DialogActions>
             </Dialog>
