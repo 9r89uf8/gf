@@ -11,7 +11,6 @@ const Schema           = dynamicM(() => import("@/app/components/homepage/Schema
 
 export const dynamic = "force-static";   // ✅ still statically rendered
 
-
 // Define metadata object - updated for Next.js 14 with preload hints
 export const metadata = {
     title: 'Novia Virtual Gratis | Chicas AI y Compañera IA - NoviaChat',

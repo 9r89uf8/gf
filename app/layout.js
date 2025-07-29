@@ -44,11 +44,48 @@ const Layout = ({ children }) => {
             <GoogleAnalytics />
         </React.Suspense>
 
-        {/* Defer Turnstile script */}
+        {/* Lazy load Turnstile on user interaction */}
         <Script
-            src={"https://challenges.cloudflare.com/turnstile/v0/api.js"}
-            strategy="afterInteractive"
-            defer
+            id="turnstile-loader"
+            strategy="lazyOnload"
+            dangerouslySetInnerHTML={{
+                __html: `
+                    (function() {
+                        let turnstileLoaded = false;
+                        
+                        function loadTurnstile() {
+                            if (turnstileLoaded) return;
+                            turnstileLoaded = true;
+                            
+                            const script = document.createElement('script');
+                            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+                            script.async = true;
+                            document.head.appendChild(script);
+                        }
+                        
+                        // Load on user interaction
+                        const events = ['click', 'scroll', 'touchstart', 'mousemove'];
+                        let timeoutId;
+                        
+                        function handleInteraction() {
+                            loadTurnstile();
+                            // Remove all event listeners
+                            events.forEach(event => {
+                                document.removeEventListener(event, handleInteraction);
+                            });
+                            if (timeoutId) clearTimeout(timeoutId);
+                        }
+                        
+                        // Add event listeners
+                        events.forEach(event => {
+                            document.addEventListener(event, handleInteraction, { once: true, passive: true });
+                        });
+                        
+                        // Also load after 5 seconds if no interaction
+                        timeoutId = setTimeout(loadTurnstile, 5000);
+                    })();
+                `
+            }}
         />
         </body>
         </html>
