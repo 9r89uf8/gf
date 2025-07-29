@@ -10,8 +10,8 @@ const ScrollContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     overflowX: 'auto',
     overflowY: 'hidden',
-    padding: theme.spacing(2, 0),
-    marginBottom: theme.spacing(4),
+    padding: theme.spacing(0.5, 0),
+    marginBottom: theme.spacing(1.5),
     scrollBehavior: 'smooth',
     WebkitOverflowScrolling: 'touch',
     '&::-webkit-scrollbar': {

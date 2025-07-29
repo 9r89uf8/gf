@@ -5,6 +5,9 @@ import GirlsCarouselMUI from '@/app/components/dm/GirlsCarouselMUI';
 import { cookies } from 'next/headers';
 import MessageList from '@/app/components/dm/MessageList';
 import { getAllGirlsCached } from '@/app/api/v2/services/girlsServerService';
+import { getPostsForSSR } from '@/app/api/v2/services/postsServerService';
+import PostsClient from '@/app/posts/PostsClient';
+
 
 // Get girls data using Redis cache
 async function getGirlsData() {
@@ -50,10 +53,11 @@ async function getUserData() {
 }
 
 export default async function DMList() {
-    // Fetch both girls and user data in parallel
-    const [girls, user] = await Promise.all([
+    // Fetch girls, user data and posts in parallel
+    const [girls, user, initialPosts] = await Promise.all([
         getGirlsData(),
-        getUserData()
+        getUserData(),
+        getPostsForSSR(15, 0)
     ]);
 
     return (
@@ -62,7 +66,7 @@ export default async function DMList() {
                 minHeight: '100vh',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                py: 4,
+                py: 1,
             }}
         >
             <Container maxWidth="lg">
@@ -72,6 +76,11 @@ export default async function DMList() {
                 />
 
                 <MessageList initialUser={user?.userData || null}/>
+
+                <Box sx={{ mt: 4 }}>
+                    <PostsClient initialPosts={initialPosts} />
+                </Box>
+
             </Container>
         </Box>
     );

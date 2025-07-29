@@ -35,6 +35,11 @@ const MessageList = ({ initialUser }) => {
     const handleMessageClick = (girlId) => {
         router.push(`/chat/${girlId}`);
     };
+    // Don't display anything if user is not logged in
+    if (!(user || initialUser)) {
+        return null;
+    }
+
     return (
         <ModernCard variant="elevated" animate={true} sx={{ mt: 4 }}>
             <CardContentWrapper>
@@ -50,7 +55,6 @@ const MessageList = ({ initialUser }) => {
                     Tus Mensajes
                 </Typography>
 
-            {(user || initialUser) ? (
                 <List>
                     {!chats ? (
                         [...Array(4)].map((_, index) => (
@@ -97,11 +101,6 @@ const MessageList = ({ initialUser }) => {
                         </Typography>
                     )}
                 </List>
-            ) : (
-                <Typography variant="h6" sx={{ textAlign: 'center', color: 'rgba(71, 85, 105, 0.8)', mt: 3, marginBottom: 2 }}>
-                    Regístrate para textear
-                </Typography>
-            )}
             </CardContentWrapper>
         </ModernCard>
     );
