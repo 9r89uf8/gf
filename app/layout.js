@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import './styles/globals.css';
 
-const GoogleAnalytics = dynamic(() => import('@/app/components/google/GoogleAnalytics'), { ssr: false });
+// const GoogleAnalytics = dynamic(() => import('@/app/components/google/GoogleAnalytics'), { ssr: false });
 
 
 const Layout = ({ children }) => {
@@ -40,9 +40,9 @@ const Layout = ({ children }) => {
         <NavbarOptimized/>
         <main>{children}</main>
         {/* Load analytics after interaction */}
-        <React.Suspense fallback={null}>
-            <GoogleAnalytics />
-        </React.Suspense>
+        {/*<React.Suspense fallback={null}>*/}
+        {/*    <GoogleAnalytics />*/}
+        {/*</React.Suspense>*/}
 
         {/* Lazy load Turnstile on user interaction */}
         <Script

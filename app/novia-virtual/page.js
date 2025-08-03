@@ -13,16 +13,6 @@ export const dynamic = "force-static"; // Static rendering for best performance
 
 // Hot Hero Component
 const HotHero = () => {
-    const urgencyBannerStyles = {
-        background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-        color: 'white',
-        padding: '12px 0',
-        textAlign: 'center',
-        fontSize: '14px',
-        fontWeight: '600',
-        position: 'relative',
-        overflow: 'hidden'
-    };
 
     const heroSectionStyles = {
         padding: '20px 0 80px',
@@ -318,9 +308,9 @@ const HotHero = () => {
 
 // SEO-optimized metadata specifically for "novia virtual" keyword
 export const metadata = {
-    title: 'Novia Virtual IA 2025 | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
-    description: 'Novia virtual con IA avanzada. Miles de chicas te esperan para chatear, compartir fotos privadas y mensajes de voz. Sin registro de tarjeta. ¡Empieza ya!',
-    keywords: 'novia virtual, novia virtual gratis, novia virtual online, chat novia virtual, novia virtual 2025, novia virtual ia, compañera virtual, novias virtuales gratis, novia virtual sin registro, chat hot, novia virtual 24 horas, chicas calientes, chat con chicas',
+    title: 'Novia Virtual APP | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
+    description: 'Novia virtual app con IA avanzada. Miles de chicas te esperan para chatear, compartir fotos privadas y mensajes de voz. Sin registro de tarjeta. ¡Empieza ya!',
+    keywords: 'novia virtual app, novia virtual gratis, novia virtual online, chat novia virtual, novia virtual 2025, novia virtual ia, compañera virtual, novias virtuales gratis, novia virtual sin registro, chat hot, novia virtual 24 horas, chicas calientes, chat con chicas',
     alternates: {
         canonical: 'https://noviachat.com/novia-virtual',
         languages: {
@@ -328,16 +318,6 @@ export const metadata = {
             'es-MX': 'https://noviachat.com/novia-virtual',
             'es-AR': 'https://noviachat.com/novia-virtual',
         }
-    },
-    other: {
-        'link': [
-            {
-                rel: 'preload',
-                href: '/andrea.webp',
-                as: 'image',
-                type: 'image/webp'
-            },
-        ]
     },
     openGraph: {
         title: 'Novia Virtual IA 2025 | Chat HOT Gratis 24/7 | +4M Usuarios',
@@ -466,7 +446,7 @@ const NoviaVirtual = () => {
     return (
         <main style={pageStyles}>
             {/* Hidden H1 for SEO */}
-            <h1 style={h1Styles}>Novia Virtual Gratis - Chat HOT con IA 24/7 - Miles de Chicas Online</h1>
+            <h1 style={h1Styles}>Novia Virtual - Chat HOT con IA 24/7 - Miles de Chicas Online</h1>
             
             {/* Custom Hero section for novia virtual */}
             <HotHero />
@@ -474,7 +454,7 @@ const NoviaVirtual = () => {
 
             {/* Location-Based Benefits */}
             <section style={locationSectionStyles}>
-                <h2 style={locationTitleStyles}>Novia Virtual para Todo el Mundo Hispano</h2>
+                <h2 style={locationTitleStyles}>Novia Virtual Gratis para Todo el Mundo Hispano</h2>
                 <p style={locationSubtitleStyles}>
                     Diseñada especialmente para hispanohablantes, tu novia virtual entiende tu cultura, modismos y forma de expresarte.
                 </p>
