@@ -251,10 +251,6 @@ const LoginPage = () => {
                 >
                     <CardContentWrapper>
                         <Box sx={{ textAlign: 'center', mb: 4 }}>
-                            <Logo 
-                                src="https://chicagocarhelp.s3.us-east-2.amazonaws.com/Untitled+design+(3).png" 
-                                alt="NoviaChat Logo"
-                            />
                             <Typography 
                                 variant="h3" 
                                 sx={{ 
