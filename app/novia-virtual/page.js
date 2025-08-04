@@ -308,7 +308,7 @@ const HotHero = () => {
 
 // SEO-optimized metadata specifically for "novia virtual" keyword
 export const metadata = {
-    title: 'Novia Virtual APP | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
+    title: 'Novia Virtual Gratis | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
     description: 'Novia virtual app con IA avanzada. Miles de chicas te esperan para chatear, compartir fotos privadas y mensajes de voz. Sin registro de tarjeta. ¡Empieza ya!',
     keywords: 'novia virtual app, novia virtual gratis, novia virtual online, chat novia virtual, novia virtual 2025, novia virtual ia, compañera virtual, novias virtuales gratis, novia virtual sin registro, chat hot, novia virtual 24 horas, chicas calientes, chat con chicas',
     alternates: {
