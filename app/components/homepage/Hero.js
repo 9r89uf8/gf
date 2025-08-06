@@ -1,5 +1,7 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { HERO_STATS, HERO_FEATURES, TYPING_TEXT } from './heroConstants';
 import { ChatIcon, CheckIcon, getIcon } from './icons';
@@ -11,6 +13,24 @@ const ChatPreview = dynamic(() => import('./ChatPreview'), {
 });
 
 const Hero = () => {
+  const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
+  
+  // Prefetch routes on component mount for faster navigation
+  useEffect(() => {
+    router.prefetch('/dm');
+    router.prefetch('/chicas-ia');
+  }, [router]);
+  
+  // Handle navigation with loading state
+  const handleNavigation = useCallback((e, href) => {
+    if (isNavigating) {
+      e.preventDefault();
+      return;
+    }
+    setIsNavigating(true);
+    // Let the Link component handle the actual navigation
+  }, [isNavigating]);
 
   return (
     <section className={styles.heroSection}>
@@ -43,12 +63,22 @@ const Hero = () => {
 
               {/* CTA Buttons */}
               <div className={styles.ctaButtons}>
-                <Link href="/dm" className={styles.gradientButton}>
-                  Comenzar a Chatear
-                  <ChatIcon />
+                <Link 
+                  href="/dm" 
+                  className={`${styles.gradientButton} ${isNavigating ? styles.loading : ''}`}
+                  onClick={(e) => handleNavigation(e, '/dm')}
+                  prefetch={true}
+                >
+                  {isNavigating ? 'Cargando...' : 'Comenzar a Chatear'}
+                  {!isNavigating && <ChatIcon />}
                 </Link>
-                <Link href="/chicas-ia" className={styles.secondaryButton}>
-                  Ver Chicas Disponibles
+                <Link 
+                  href="/chicas-ia" 
+                  className={`${styles.secondaryButton} ${isNavigating ? styles.loading : ''}`}
+                  onClick={(e) => handleNavigation(e, '/chicas-ia')}
+                  prefetch={true}
+                >
+                  {isNavigating ? 'Cargando...' : 'Ver Chicas Disponibles'}
                 </Link>
               </div>
 

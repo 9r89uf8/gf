@@ -88,8 +88,14 @@
   transition: transform 0.2s ease;
 }
 
-.gradientButton:hover {
+.gradientButton:hover:not(.loading) {
   transform: translateY(-2px);
+}
+
+.gradientButton.loading {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
 }
 
 .secondaryButton {
@@ -104,11 +110,17 @@
   text-decoration: none;
   border: 2px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.secondaryButton:hover {
+.secondaryButton:hover:not(.loading) {
   transform: translateY(-2px);
+}
+
+.secondaryButton.loading {
+  opacity: 0.7;
+  cursor: wait;
+  pointer-events: none;
 }
 
 .trustIndicators {

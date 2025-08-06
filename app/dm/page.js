@@ -1,12 +1,35 @@
 //dm/page.js
 import React from 'react';
 import { Box, Container } from '@mui/material';
-import GirlsCarouselMUI from '@/app/components/dm/GirlsCarouselMUI';
+import dynamic from 'next/dynamic';
 import { cookies } from 'next/headers';
-import MessageList from '@/app/components/dm/MessageList';
 import { getAllGirlsCached } from '@/app/api/v2/services/girlsServerService';
 import { getPostsForSSR } from '@/app/api/v2/services/postsServerService';
-import PostsClient from '@/app/posts/PostsClient';
+
+// Dynamic imports with loading states for better INP
+const GirlsCarouselMUI = dynamic(
+  () => import('@/app/components/dm/GirlsCarouselMUI'),
+  { 
+    loading: () => <div style={{ height: '120px', background: 'rgba(0,0,0,0.05)', borderRadius: '8px', margin: '8px 0' }} />,
+    ssr: false
+  }
+);
+
+const MessageList = dynamic(
+  () => import('@/app/components/dm/MessageList'),
+  { 
+    loading: () => null,
+    ssr: false
+  }
+);
+
+const PostsClient = dynamic(
+  () => import('@/app/posts/PostsClient'),
+  { 
+    loading: () => null,
+    ssr: false
+  }
+);
 
 
 // Get girls data using Redis cache
@@ -53,12 +76,14 @@ async function getUserData() {
 }
 
 export default async function DMList() {
-    // Fetch girls, user data and posts in parallel
-    const [girls, user, initialPosts] = await Promise.all([
+    // Only fetch critical data server-side, defer non-critical data
+    const [girls, user] = await Promise.all([
         getGirlsData(),
-        getUserData(),
-        getPostsForSSR(15, 0)
+        getUserData()
     ]);
+    
+    // Fetch posts separately to not block initial render
+    const initialPosts = await getPostsForSSR(15, 0).catch(() => []);
 
     return (
         <Box
@@ -72,7 +97,7 @@ export default async function DMList() {
             <Container maxWidth="lg">
                 <GirlsCarouselMUI
                     girls={girls}
-                    isPremium={user?user.userData.premium:false}
+                    isPremium={user?.userData?.premium || false}
                 />
 
                 <MessageList initialUser={user?.userData || null}/>
@@ -80,7 +105,6 @@ export default async function DMList() {
                 <Box sx={{ mt: 4 }}>
                     <PostsClient initialPosts={initialPosts} />
                 </Box>
-
             </Container>
         </Box>
     );

@@ -1,8 +1,29 @@
 // page.jsx (Static Server Component)
 import { Box, Container, Typography } from '@mui/material';
-import { ModernCard, CardContentWrapper } from '@/app/components/ui/ModernCard';
-import CreatorsGrid from "@/app/components/chicas/CreatorsGrid";
+import dynamic from 'next/dynamic';
 import { getAllGirlsCached } from '@/app/api/v2/services/girlsServerService';
+
+// Dynamic imports for better INP
+const ModernCard = dynamic(
+  () => import('@/app/components/ui/ModernCard').then(mod => ({ default: mod.ModernCard })),
+  { 
+    loading: () => <div style={{ padding: '32px', background: 'rgba(255,255,255,0.8)', borderRadius: '20px', marginBottom: '32px' }} />,
+    ssr: true
+  }
+);
+
+const CardContentWrapper = dynamic(
+  () => import('@/app/components/ui/ModernCard').then(mod => ({ default: mod.CardContentWrapper })),
+  { ssr: true }
+);
+
+const CreatorsGrid = dynamic(
+  () => import('@/app/components/chicas/CreatorsGrid'),
+  { 
+    loading: () => <div style={{ minHeight: '400px', background: 'rgba(0,0,0,0.03)', borderRadius: '12px' }} />,
+    ssr: false
+  }
+);
 
 // Get girls data using Redis cache
 async function getGirlsData() {

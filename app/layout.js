@@ -7,6 +7,12 @@ import './styles/globals.css';
 
 // const GoogleAnalytics = dynamic(() => import('@/app/components/google/GoogleAnalytics'), { ssr: false });
 
+// Lazy load performance monitoring
+// const WebVitalsReporter = dynamic(
+//   () => import('@/app/components/performance/WebVitalsReporter'),
+//   { ssr: false }
+// );
+
 
 const Layout = ({ children }) => {
 
@@ -39,6 +45,8 @@ const Layout = ({ children }) => {
         <body>
         <NavbarOptimized/>
         <main>{children}</main>
+        {/* Performance monitoring */}
+        {/*<WebVitalsReporter />*/}
         {/* Load analytics after interaction */}
         {/*<React.Suspense fallback={null}>*/}
         {/*    <GoogleAnalytics />*/}

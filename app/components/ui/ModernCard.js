@@ -19,9 +19,10 @@ const shimmer = keyframes`
 `;
 
 // Base styled card that accepts animate as a styled prop
+// Animation disabled by default for better INP performance
 const StyledCard = styled(Card, {
   shouldForwardProp: (prop) => prop !== 'animate'
-})(({ theme, variant = 'default', animate = true }) => ({
+})(({ theme, variant = 'default', animate = false }) => ({
   position: 'relative',
   backgroundColor: 'rgba(255, 255, 255, 0.8)',
   backdropFilter: 'blur(10px)',
@@ -50,8 +51,8 @@ const StyledCard = styled(Card, {
     background: variant === 'premium' 
       ? 'linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%, #000000 100%)'
       : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
-    backgroundSize: animate ? '400% 400%' : '100% 100%',
-    animation: animate ? `${shimmer} 15s ease infinite` : 'none',
+    backgroundSize: '100% 100%',
+    animation: 'none',
     WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
     WebkitMaskComposite: 'xor',
     maskComposite: 'exclude',
@@ -59,9 +60,9 @@ const StyledCard = styled(Card, {
     transition: 'opacity 0.3s ease',
   },
   
-  // Hover effects
+  // Hover effects - reduced for better performance
   '&:hover': {
-    transform: 'translateY(-4px)',
+    transform: 'translateY(-2px)',
     boxShadow: `
       0 20px 25px -5px rgba(0, 0, 0, 0.15),
       0 8px 10px -6px rgba(0, 0, 0, 0.1),
@@ -110,7 +111,7 @@ const StyledCard = styled(Card, {
       width: '200%',
       height: '200%',
       background: 'radial-gradient(circle, rgba(103, 126, 234, 0.1) 0%, transparent 70%)',
-      animation: `${shimmer} 20s linear infinite`,
+      animation: animate ? `${shimmer} 20s linear infinite` : 'none',
       pointerEvents: 'none',
     },
   }),
