@@ -1,32 +1,3 @@
-/* Animations */
-@keyframes pulse {
-    0%, 100% { 
-        opacity: 1; 
-        transform: scale(1); 
-    }
-    50% { 
-        opacity: 0.8; 
-        transform: scale(1.05); 
-    }
-}
-
-@keyframes pulse-dot {
-    0%, 100% { 
-        opacity: 1; 
-    }
-    50% { 
-        opacity: 0.5; 
-    }
-}
-
-/* Apply animations */
-.cta-button {
-    animation: pulse 2s infinite;
-}
-
-.online-indicator {
-    animation: pulse-dot 1.5s infinite;
-}
 
 /* Responsive Grid Styles */
 @media (max-width: 768px) {

@@ -49,7 +49,7 @@ const LoginPrompt = () => {
     return (
         <LoginPromptContainer>
             <Box sx={{ maxWidth: 600, width: '100%' }}>
-                <ModernCard variant="elevated" animate={true}>
+                <ModernCard variant="elevated" animate={false}>
                     <CardContentWrapper>
                         <Box sx={{ textAlign: 'center', py: 2 }}>
                             <Typography 

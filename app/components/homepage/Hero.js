@@ -2,15 +2,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { HERO_STATS, HERO_FEATURES, TYPING_TEXT } from './heroConstants';
 import { ChatIcon, CheckIcon, getIcon } from './icons';
+import ChatPreview from './ChatPreview';
 import styles from './Hero.module.css';
-
-// Lazy load the chat preview component
-const ChatPreview = dynamic(() => import('./ChatPreview'), {
-  loading: () => <div className={styles.chatPreviewSkeleton} />
-});
 
 const Hero = () => {
   const router = useRouter();

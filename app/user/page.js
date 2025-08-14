@@ -1,42 +1,56 @@
-// app/profile/page.jsx (Server Component)
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import styles from '@/app/styles/page.module.css';
 import UserProfileClient from "@/app/components/user/UserProfileClient";
 import LoginPrompt from "@/app/components/user/LoginPrompt";
-import {cookies} from "next/headers";
+import UserProfileSkeleton from "@/app/components/user/UserProfileSkeleton";
 
+// Client-side auth verification function
 async function getUserData() {
     try {
-        const cookieStore = cookies();
-        const token = cookieStore.get('tokenAIGF');
-
-
-        // If no token, return early - no need to make API call
-        if (!token) {
-            return null;
-        }
-
-        // Direct server-side API call with POST method and id in the body
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v2/auth/verify`, {
+        const response = await fetch(`/api/v2/auth/verify`, {
             method: 'GET',
-            headers: {
-                // Forward the auth cookie
-                Cookie: token ? `tokenAIGF=${token.value}` : ''
-            }
+            credentials: 'include'
         });
 
-        // Parse JSON only once and store the result
         const data = await response.json();
         return data;
     } catch (error) {
+        console.error('Auth verification error:', error);
         return null;
     }
 }
 
-// This is a server component - no 'use client' directive
-async function UserProfilePage() {
-    const user = await getUserData()
+// This is now a client component
+function UserProfilePage() {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [authChecked, setAuthChecked] = useState(false);
 
-    // Check if user exists before accessing its properties
+    useEffect(() => {
+        const checkAuth = async () => {
+            const userData = await getUserData();
+            setUser(userData);
+            setLoading(false);
+            setAuthChecked(true);
+        };
+
+        checkAuth();
+    }, []);
+
+    // Show skeleton immediately while checking auth
+    if (loading || !authChecked) {
+        return (
+            <div className={styles.pageWrapper}>
+                <div className={styles.container}>
+                    <UserProfileSkeleton />
+                </div>
+            </div>
+        );
+    }
+
+    // Check if user exists and is authenticated
     if (!user || user.isAuthenticated === false) {
         return <LoginPrompt />;
     }

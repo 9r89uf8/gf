@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Grid,
     Typography,
     IconButton,
     Card,
     CardMedia,
+    Grid,
     CardContent,
     CardActions,
     Avatar,
@@ -24,13 +24,19 @@ import {
     Divider
 } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { styled } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import PostUploadModal from './PostUploadModal';
 import { ModernCard } from '@/app/components/ui/ModernCard';
+
+// Lazy load PostUploadModal
+const PostUploadModal = dynamic(() => import('./PostUploadModal'), {
+    ssr: false
+});
 
 const StyledFab = styled(Fab)(({ theme }) => ({
     position: 'fixed',
@@ -71,6 +77,8 @@ const UserPostsSection = ({ userId }) => {
     const [openUploadModal, setOpenUploadModal] = useState(false);
     const [deletingPost, setDeletingPost] = useState(null);
     const [expandedComments, setExpandedComments] = useState({});
+    const [displayCount, setDisplayCount] = useState(6); // Initial load limit
+    const [loadingMore, setLoadingMore] = useState(false);
 
     const fetchPosts = async () => {
         try {
@@ -183,17 +191,21 @@ const UserPostsSection = ({ userId }) => {
                         </Typography>
                     </Box>
                 ) : (
-                    <Grid container spacing={3}>
-                        {posts.map((post) => (
+                    <>
+                        <Grid container spacing={3}>
+                        {posts.slice(0, displayCount).map((post) => (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post.id}>
                                 <PostCard variant="flat" animate={false}>
-                                    <CardMedia
-                                        component="img"
-                                        height="300"
-                                        image={post.imageUrl}
-                                        alt="User post"
-                                        sx={{ objectFit: 'cover' }}
-                                    />
+                                    <Box sx={{ position: 'relative', height: 300 }}>
+                                        <Image
+                                            src={post.imageUrl}
+                                            alt="User post"
+                                            fill
+                                            style={{ objectFit: 'cover' }}
+                                            loading="lazy"
+                                            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                                        />
+                                    </Box>
                                     <CardContent sx={{ flexGrow: 1 }}>
                                         {post.text && (
                                             <Typography variant="body2" color="text.secondary">
@@ -329,6 +341,38 @@ const UserPostsSection = ({ userId }) => {
                             </Grid>
                         ))}
                     </Grid>
+                    
+                    {posts.length > displayCount && (
+                        <Box sx={{ textAlign: 'center', mt: 4 }}>
+                            <Button
+                                onClick={() => {
+                                    setLoadingMore(true);
+                                    setTimeout(() => {
+                                        setDisplayCount(prev => prev + 6);
+                                        setLoadingMore(false);
+                                    }, 300);
+                                }}
+                                disabled={loadingMore}
+                                sx={{
+                                    background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+                                    color: '#ffffff',
+                                    borderRadius: 2,
+                                    px: 4,
+                                    py: 1.5,
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%)',
+                                    },
+                                }}
+                            >
+                                {loadingMore ? (
+                                    <CircularProgress size={20} sx={{ color: 'white' }} />
+                                ) : (
+                                    'Cargar más'
+                                )}
+                            </Button>
+                        </Box>
+                    )}
+                    </>
                 )}
             </Box>
 
@@ -339,11 +383,13 @@ const UserPostsSection = ({ userId }) => {
                 <AddPhotoAlternateIcon />
             </StyledFab>
 
-            <PostUploadModal
-                open={openUploadModal}
-                onClose={() => setOpenUploadModal(false)}
-                onPostCreated={handlePostCreated}
-            />
+            {openUploadModal && (
+                <PostUploadModal
+                    open={openUploadModal}
+                    onClose={() => setOpenUploadModal(false)}
+                    onPostCreated={handlePostCreated}
+                />
+            )}
         </>
     );
 };

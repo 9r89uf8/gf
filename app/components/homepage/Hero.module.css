@@ -85,11 +85,11 @@
   font-weight: 600;
   text-decoration: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .gradientButton:hover:not(.loading) {
-  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
 .gradientButton.loading {
@@ -110,11 +110,11 @@
   text-decoration: none;
   border: 2px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .secondaryButton:hover:not(.loading) {
-  transform: translateY(-2px);
+  opacity: 0.8;
 }
 
 .secondaryButton.loading {
@@ -166,13 +166,6 @@
   height: 450px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 24px;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { opacity: 0.8; }
-  50% { opacity: 0.6; }
-  100% { opacity: 0.8; }
 }
 
 /* Stats Section Critical CSS */
