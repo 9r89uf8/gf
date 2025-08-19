@@ -216,6 +216,9 @@
 /* Chat Preview Styles */
 .chatPreviewContainer {
   position: relative;
+  aspect-ratio: 9 / 16;   /* ensures stable box before content */
+  width: 100%;
+  max-width: 400px;
 }
 
 .chatPreview {

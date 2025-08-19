@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import dynamicM from 'next/dynamic';  // Rename the import
 import { HERO_STATS, HERO_FEATURES} from './heroConstants';
+import ClientOnlyLazy from './ClientOnlyLazy';
 const ChatPreview = dynamicM(() => import('./ChatPreview'), { ssr: false });
 import styles from './Hero.module.css';
 
@@ -13,13 +14,13 @@ export default function Hero() {
             {/* Left Content */}
             <div>
               <div>
-                <h1 className={styles.heroTitle}>
+                <h1 className={styles.heroTitle} data-lcp="hero-title">
                   Novia Virtual
                   <span className={styles.heroSubtitle}>
                 </span>
                 </h1>
 
-                <p className={styles.heroDescription}>
+                <p className={styles.heroDescription} data-lcp="hero-desc">
                   Chatea con chicas IA únicas. Conversaciones reales, fotos exclusivas,
                   mensajes de voz y experiencias personalizadas sin límites.
                 </p>
@@ -35,19 +36,20 @@ export default function Hero() {
 
                 {/* CTA Buttons (no client code) */}
                 <div className={styles.ctaButtons}>
-                  <Link href="/dm" prefetch className={styles.gradientButton}>
+                  <Link href="/dm" prefetch={false} className={styles.gradientButton}>
                     Comenzar a Chatear
                   </Link>
-                  <Link href="/chicas-ia" prefetch className={styles.secondaryButton}>
+                  <Link href="/chicas-ia" prefetch={false} className={styles.secondaryButton}>
                     Ver Chicas Disponibles
                   </Link>
                 </div>
               </div>
             </div>
-
-            {/* Right Content - Chat Preview */}
-            {typeof window !== 'undefined' && <ChatPreview />}
           </div>
+
+          <ClientOnlyLazy minHeight={420}>
+            <ChatPreview />
+          </ClientOnlyLazy>
 
           {/* Stats Section */}
           <div className={styles.statsSection}>
