@@ -1,115 +1,66 @@
-'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+// app/components/Hero.tsx  (no "use client")
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { HERO_STATS, HERO_FEATURES, TYPING_TEXT } from './heroConstants';
-import { ChatIcon, CheckIcon, getIcon } from './icons';
-import ChatPreview from './ChatPreview';
+import dynamicM from 'next/dynamic';  // Rename the import
+import { HERO_STATS, HERO_FEATURES} from './heroConstants';
+const ChatPreview = dynamicM(() => import('./ChatPreview'), { ssr: false });
 import styles from './Hero.module.css';
 
-const Hero = () => {
-  const router = useRouter();
-  const [isNavigating, setIsNavigating] = useState(false);
-  
-  // Prefetch routes on component mount for faster navigation
-  useEffect(() => {
-    router.prefetch('/dm');
-    router.prefetch('/chicas-ia');
-  }, [router]);
-  
-  // Handle navigation with loading state
-  const handleNavigation = useCallback((e, href) => {
-    if (isNavigating) {
-      e.preventDefault();
-      return;
-    }
-    setIsNavigating(true);
-    // Let the Link component handle the actual navigation
-  }, [isNavigating]);
-
+export default function Hero() {
   return (
-    <section className={styles.heroSection}>
-      <div className={styles.heroContainer}>
-        <div className={styles.heroGrid}>
-          {/* Left Content */}
-          <div>
+      <section className={styles.heroSection}>
+        <div className={styles.heroContainer}>
+          <div className={styles.heroGrid}>
+            {/* Left Content */}
             <div>
-              <h1 className={styles.heroTitle}>
-                Novia Virtual
-                <span className={styles.heroSubtitle}>
-                  <span>{TYPING_TEXT}</span>
+              <div>
+                <h1 className={styles.heroTitle}>
+                  Novia Virtual
+                  <span className={styles.heroSubtitle}>
                 </span>
-              </h1>
+                </h1>
 
-              <p className={styles.heroDescription}>
-                Chatea con chicas IA únicas. Conversaciones reales, fotos exclusivas, 
-                mensajes de voz y experiencias personalizadas sin límites.
-              </p>
+                <p className={styles.heroDescription}>
+                  Chatea con chicas IA únicas. Conversaciones reales, fotos exclusivas,
+                  mensajes de voz y experiencias personalizadas sin límites.
+                </p>
 
-              {/* Feature Chips */}
-              <div className={styles.featureChips}>
-                {HERO_FEATURES.map((feature, index) => (
-                  <div key={index} className={styles.featureChip}>
-                    <CheckIcon />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
+                {/* Feature Chips */}
+                <div className={styles.featureChips}>
+                  {HERO_FEATURES.map((feature, index) => (
+                      <div key={index} className={styles.featureChip}>
+                        <span>{feature}</span>
+                      </div>
+                  ))}
+                </div>
 
-              {/* CTA Buttons */}
-              <div className={styles.ctaButtons}>
-                <Link 
-                  href="/dm" 
-                  className={`${styles.gradientButton} ${isNavigating ? styles.loading : ''}`}
-                  onClick={(e) => handleNavigation(e, '/dm')}
-                  prefetch={true}
-                >
-                  {isNavigating ? 'Cargando...' : 'Comenzar a Chatear'}
-                  {!isNavigating && <ChatIcon />}
-                </Link>
-                <Link 
-                  href="/chicas-ia" 
-                  className={`${styles.secondaryButton} ${isNavigating ? styles.loading : ''}`}
-                  onClick={(e) => handleNavigation(e, '/chicas-ia')}
-                  prefetch={true}
-                >
-                  {isNavigating ? 'Cargando...' : 'Ver Chicas Disponibles'}
-                </Link>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className={styles.trustIndicators}>
-                <div className={styles.trustItem}>
-                  <div className={`${styles.trustIcon} ${styles.green}`}>
-                    <CheckIcon />
-                  </div>
-                  <span>No requiere tarjeta</span>
+                {/* CTA Buttons (no client code) */}
+                <div className={styles.ctaButtons}>
+                  <Link href="/dm" prefetch className={styles.gradientButton}>
+                    Comenzar a Chatear
+                  </Link>
+                  <Link href="/chicas-ia" prefetch className={styles.secondaryButton}>
+                    Ver Chicas Disponibles
+                  </Link>
                 </div>
               </div>
             </div>
+
+            {/* Right Content - Chat Preview */}
+            {typeof window !== 'undefined' && <ChatPreview />}
           </div>
 
-          {/* Right Content - Chat Preview */}
-          <ChatPreview />
-        </div>
-
-        {/* Stats Section */}
-        <div className={styles.statsSection}>
-          <div className={styles.statsGrid}>
-            {HERO_STATS.map((stat, index) => (
-              <div key={index} className={styles.statCard}>
-                <div className={styles.statIcon}>
-                  {getIcon(stat.icon)}
-                </div>
-                <h4 className={styles.statValue}>{stat.value}</h4>
-                <p className={styles.statLabel}>{stat.label}</p>
-              </div>
-            ))}
+          {/* Stats Section */}
+          <div className={styles.statsSection}>
+            <div className={styles.statsGrid}>
+              {HERO_STATS.map((stat, index) => (
+                  <div key={index} className={styles.statCard}>
+                    <h4 className={styles.statValue}>{stat.value}</h4>
+                    <p className={styles.statLabel}>{stat.label}</p>
+                  </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
   );
-};
-
-export default Hero;
+}

@@ -1,7 +1,4 @@
-'use client';
-
 import React from 'react';
-import Image from 'next/image';
 import { CameraIcon, AudioIcon } from './icons';
 import styles from './Hero.module.css';
 
@@ -12,20 +9,10 @@ const ChatPreview = () => {
         <div className={styles.chatCard}>
           {/* Chat Header */}
           <div className={styles.chatHeader}>
-            <Image 
-              src="/andrea.webp" 
-              alt="Andrea" 
-              className={styles.chatAvatar}
-              width={48}
-              height={48}
-              priority
-              quality={90}
-            />
             <div className={styles.chatUserInfo}>
               <h3 className={styles.chatUsername}>Andrea</h3>
               <div className={styles.onlineStatus}>
-                <span className={styles.onlineDot}></span>
-                <span>En línea ahora</span>
+                <span>19 años</span>
               </div>
             </div>
           </div>

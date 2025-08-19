@@ -12,5 +12,3 @@ export const HERO_FEATURES = [
   'Sin Censura',
   'IA Avanzada'
 ];
-
-export const TYPING_TEXT = 'Tu compañera virtual perfecta';

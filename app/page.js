@@ -5,9 +5,9 @@ import Hero from "@/app/components/homepage/Hero";
 import { Suspense } from "react";
 // ⬇️ everything below‑the‑fold is now client‑only & loads *after* LCP
 const SEOContent       = dynamicM(() => import("@/app/components/homepage/SEOContent"),        { ssr: true, loading: () => null });
-const FAQ              = dynamicM(() => import("@/app/components/homepage/FAQ"),               { ssr: false, loading: () => null });
+const FAQ              = dynamicM(() => import("@/app/components/homepage/FAQ"),               { ssr: true, loading: () => null });
 const Footer           = dynamicM(() => import("@/app/components/homepage/Footer"),            { ssr: false, loading: () => null });
-const Schema           = dynamicM(() => import("@/app/components/homepage/Schema"),            { ssr: false, loading: () => null });
+const Schema           = dynamicM(() => import("@/app/components/homepage/Schema"),            { ssr: true, loading: () => null });
 
 export const dynamic = "force-static";   // ✅ still statically rendered
 
@@ -19,30 +19,11 @@ export const metadata = {
     alternates: {
         canonical: 'https://noviachat.com',
     },
-    // Add preload hints for critical resources
-    other: {
-        'link': [
-            {
-                rel: 'preload',
-                href: '/andrea.webp',
-                as: 'image',
-                type: 'image/webp'
-            },
-        ]
-    },
     openGraph: {
         title: 'Novia Virtual Gratis | Chicas AI y Compañera IA - NoviaChat',
         description: 'Novia virtual gratis con chicas AI disponibles 24/7. Chatea con tu chica IA perfecta, compañera virtual personalizada. Mensajes, fotos y voz sin límites.',
-        url: 'https://www.noviachat.com/',
+        url: 'https://noviachat.com/',
         siteName: 'NoviaChat',
-        images: [
-            {
-                url: '/andrea.webp',
-                width: 1200,
-                height: 630,
-                alt: 'Novia Virtual Gratis - Chicas AI y Compañera IA en NoviaChat',
-            },
-        ],
         locale: 'es_ES',
         type: 'website',
     },
@@ -66,7 +47,7 @@ export const metadata = {
             'max-snippet': -1,
         },
     },
-    metadataBase: new URL('https://www.noviachat.com'),
+    metadataBase: new URL('https://noviachat.com'),
     authors: [{ name: 'NoviaChat Team' }],
     publisher: 'NoviaChat',
     formatDetection: {
@@ -85,10 +66,10 @@ const Home = () => {
         <main style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' }}>
             <Hero/>
             <SEOContent/>
+            <FAQ />
+            <Schema/>
             <Suspense fallback={null}>
-                <FAQ />
                 <Footer />
-                <Schema/>
             </Suspense>
         </main>
     );

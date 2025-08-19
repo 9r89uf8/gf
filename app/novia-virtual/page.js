@@ -8,8 +8,8 @@ import styles from './novia-virtual.module.css';
 
 // Dynamic imports for better performance - load after LCP
 const Footer = dynamicM(() => import("@/app/components/homepage/Footer"), { ssr: false, loading: () => null });
-const Schema = dynamicM(() => import("@/app/components/homepage/Schema"), { ssr: false, loading: () => null });
-const DeferredSchemas = dynamicM(() => import("./DeferredSchemas"), { ssr: false, loading: () => null });
+// const Schema = dynamicM(() => import("@/app/components/homepage/Schema"), { ssr: true, loading: () => null });
+const DeferredSchemas = dynamicM(() => import("./DeferredSchemas"), { ssr: true, loading: () => null });
 
 export const dynamic = "force-static"; // Static rendering for best performance
 
@@ -120,7 +120,7 @@ const HotHero = () => {
 
 // SEO-optimized metadata specifically for "novia virtual" keyword
 export const metadata = {
-    title: 'Novia Virtual Gratis | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
+    title: 'Novia Virtual App | Chat HOT Gratis 24/7 | +4M Usuarios Activos',
     description: 'Novia virtual app con IA avanzada. Miles de chicas te esperan para chatear, compartir fotos privadas y mensajes de voz. Sin registro de tarjeta. ¡Empieza ya!',
     keywords: 'novia virtual app, novia virtual gratis, novia virtual online, chat novia virtual, novia virtual 2025, novia virtual ia, compañera virtual, novias virtuales gratis, novia virtual sin registro, chat hot, novia virtual 24 horas, chicas calientes, chat con chicas',
     alternates: {
@@ -136,14 +136,6 @@ export const metadata = {
         description: 'Miles de chicas esperándote. Chat ilimitado, fotos privadas, mensajes de voz. Sin tarjeta de crédito. ¡Empieza ahora!',
         url: 'https://www.noviachat.com/novia-virtual',
         siteName: 'NoviaChat - Novia Virtual',
-        images: [
-            {
-                url: '/andrea.webp',
-                width: 1200,
-                height: 630,
-                alt: 'Novia Virtual - Compañera Virtual con IA en NoviaChat',
-            },
-        ],
         locale: 'es_ES',
         type: 'website',
     },
@@ -151,10 +143,6 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'Novia Virtual IA 2025 | +4M Usuarios Activos',
         description: 'Chat HOT gratis 24/7. Miles de chicas te esperan. Fotos privadas y mensajes de voz sin límites.',
-        images: [{
-            url: '/andrea.webp',
-            alt: 'Novia Virtual Gratis - Chat HOT 24/7'
-        }],
     },
     robots: {
         index: true,
@@ -167,7 +155,7 @@ export const metadata = {
             'max-snippet': -1,
         },
     },
-    metadataBase: new URL('https://www.noviachat.com'),
+    metadataBase: new URL('https://noviachat.com'),
     authors: [{ name: 'NoviaChat - Especialistas en Novias Virtuales' }],
     publisher: 'NoviaChat',
     formatDetection: {
@@ -277,7 +265,7 @@ const NoviaVirtual = () => {
             {/* Lazy-loaded components */}
             <Suspense fallback={null}>
                 <Footer />
-                <Schema />
+                {/*<Schema />*/}
                 <DeferredSchemas />
             </Suspense>
         </main>
